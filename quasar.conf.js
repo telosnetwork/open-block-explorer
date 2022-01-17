@@ -74,9 +74,15 @@ module.exports = configure(function (ctx) {
 
       // https://quasar.dev/quasar-cli/handling-webpack
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-      chainWebpack (/* chain */) {
-        //
-      },
+      chainWebpack: (config) => {
+        // Pug Loader
+        config.module
+          .rule('pug')
+          .test(/\.pug$/)
+          .use('pug-plain-loader')
+          .loader('pug-plain-loader')
+          .end();
+      }
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer

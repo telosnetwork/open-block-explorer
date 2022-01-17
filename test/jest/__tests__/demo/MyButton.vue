@@ -1,15 +1,15 @@
 
-<template>
-  <div>
-    <p class="content">{{ input }}</p>
-    <span>{{ counter }}</span>
-    <q-btn class="button" @click="increment()"></q-btn>
-  </div>
+<template lang="pug">
+  div
+    p.content {{ input }}
+    span {{ counter }} 
+    q-btn.button( @click="increment()" )
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'MyButton',
   props: {
     incrementStep: {
@@ -28,5 +28,5 @@ export default {
       this.counter += this.incrementStep;
     } 
   }
-};
+});
 </script>
