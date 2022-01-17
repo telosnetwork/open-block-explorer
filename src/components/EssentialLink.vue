@@ -44,7 +44,7 @@ export default defineComponent({
   },
   mounted() {
     console.log(process.env.ENV_TYPE);
-    console.log(this.$hyperion);
+    console.log(this.$axios);
   }
 });
 </script>
