@@ -20,10 +20,6 @@ module.exports = {
     sourceType: 'module' // Allows for the use of imports
   },
 
-  env: {
-    browser: true
-  },
-
   // Rules order is important, please avoid shuffling them
   extends: [
     // Base ESLint recommended rules

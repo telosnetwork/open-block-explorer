@@ -2,6 +2,9 @@
 .thumbs.db
 node_modules
 
+# Environment vars
+.env
+
 # Quasar core related directories
 .quasar
 /dist
@@ -31,3 +34,5 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+.quasar.env.json

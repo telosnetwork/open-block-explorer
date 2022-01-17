@@ -41,6 +41,10 @@ export default defineComponent({
       type: String,
       default: ''
     }
+  },
+  mounted() {
+    console.log(process.env.ENV_TYPE);
+    console.log(this.$hyperion);
   }
 });
 </script>

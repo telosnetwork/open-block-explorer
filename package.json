@@ -6,8 +6,8 @@
   "author": "DonaldPeat <don@caleos.io>",
   "private": true,
   "scripts": {
-    "dev": "quasar dev",
-    "build": "quasar clean && quasar build",
+    "dev": "QENV=development quasar dev",
+    "build": "QENV=production quasar clean && quasar build",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "jest",
     "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
     "@quasar/app": "^3.0.0",
+    "@quasar/quasar-app-extension-qenv": "^1.1.0",
     "@quasar/quasar-app-extension-testing-unit-jest": "^3.0.0-alpha.7",
     "@types/node": "^12.20.21",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
@@ -29,7 +30,9 @@
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-jest": "^25.2.2",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^7.0.0",
+    "prettier": "^2.5.1",
     "pug": "^3.0.2",
     "pug-plain-loader": "^1.1.0"
   },
