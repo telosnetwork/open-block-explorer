@@ -1347,14 +1347,6 @@
   resolved "https://registry.yarnpkg.com/@quasar/fastclick/-/fastclick-1.1.4.tgz#21ed3e9a4387dcb43022a08af4ef08a5f1abf159"
   integrity sha512-i9wbyV4iT+v4KhtHJynUFhH5LiEPvAEgSnwMqPN4hf/8uRe82nDl5qP5agrp2el1h0HzyBpbvHaW7NB0BPrtvA==
 
-"@quasar/quasar-app-extension-qenv@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@quasar/quasar-app-extension-qenv/-/quasar-app-extension-qenv-1.1.0.tgz#e636a428bb324069b64ddabe67d7c99400ebaf64"
-  integrity sha512-4VP27GHNXSTIGMCqOLTyos487CsKacUKmTNs6B1rHN15FiiU0ore08WGuIy89d7qG4IJrO/OHkgrbso9UhyJuw==
-  dependencies:
-    fs-extra "^9.1.0"
-    semver "^7.3.4"
-
 "@quasar/quasar-app-extension-testing-unit-jest@^3.0.0-alpha.7":
   version "3.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/@quasar/quasar-app-extension-testing-unit-jest/-/quasar-app-extension-testing-unit-jest-3.0.0-alpha.7.tgz#32df5b9727bf72470cdabfcf4dc83f9c87f9a401"
@@ -4366,7 +4358,7 @@ fs-extra@10.0.0:
     jsonfile "^6.0.1"
     universalify "^2.0.0"
 
-fs-extra@^9.0.0, fs-extra@^9.1.0:
+fs-extra@^9.0.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.1.0.tgz#5954460c764a8da2094ba3554bf839e6b9a7c86d"
   integrity sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==
