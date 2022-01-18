@@ -6,6 +6,8 @@ q-page.row.items-center.justify-evenly
     :todos="todos"
     :meta="meta"
   )
+  router-link(to="/contract") View Contract Page (router-link)
+  q-btn( label='View Contract Page (router link)' @click="$router.push({ name: 'contract' })")
 </template>
 
 <script lang="ts">
