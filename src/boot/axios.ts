@@ -16,8 +16,6 @@ declare module '@vue/runtime-core' {
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
 export default boot(({ app }) => {
-  debugger;
-  console.log(hyperion);
   app.config.globalProperties.$axios = axios;
   app.config.globalProperties.$hyperion = hyperion;
 });
