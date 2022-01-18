@@ -1,7 +1,5 @@
 # 'OBE' (open-block-explorer)
 
-..
-
 ### Install yarn package manager
 Follow the installation instructions at:
 https://classic.yarnpkg.com/en/
