@@ -1,7 +1,7 @@
 import { AxiosInstance } from 'axios';
 
 declare module 'vue/types/vue' {
-  interface VueConstructor {
+  interface Vue {
     $hyperion: AxiosInstance;
     $axios: AxiosInstance;
   }
