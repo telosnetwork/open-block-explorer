@@ -13,11 +13,11 @@ declare module '@vue/runtime-core' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
+// const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
 export default boot(({ app }) => {
   app.config.globalProperties.$axios = axios;
-  app.config.globalProperties.$hyperion = hyperion;
+  // app.config.globalProperties.$hyperion = hyperion;
 });
 
-export { hyperion };
+// export { hyperion };
