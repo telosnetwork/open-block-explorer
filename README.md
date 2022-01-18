@@ -2,7 +2,16 @@
 
 ..
 
+### Install yarn package manager
+Follow the installation instructions at:
+https://classic.yarnpkg.com/en/
+
+### Add Quasar CLI package
+```bash
+yarn global add @quasar/cli
+```
 ## Install the dependencies
+
 ```bash
 yarn
 ```
