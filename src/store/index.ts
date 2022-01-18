@@ -6,8 +6,8 @@ import {
   useStore as vuexUseStore
 } from 'vuex';
 
-// import example from './module-example'
-// import { ExampleStateInterface } from './module-example/state';
+import contract from './contract';
+import { ContractStateInterface } from './contract/state';
 
 /*
  * If not building with SSR mode, you can
@@ -20,9 +20,7 @@ import {
 
 export interface StateInterface {
   // Define your own store structure, using submodules if needed
-  // example: ExampleStateInterface;
-  // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  example: unknown;
+  contract: ContractStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -36,10 +34,10 @@ declare module '@vue/runtime-core' {
 export const storeKey: InjectionKey<VuexStore<StateInterface>> =
   Symbol('vuex-key');
 
-export default store(function (/* { ssrContext } */) {
+export default store(function () {
   const Store = createStore<StateInterface>({
     modules: {
-      // example
+      contract
     },
 
     // enable strict mode (adds overhead!)
