@@ -6,8 +6,8 @@
   "author": "DonaldPeat <don@caleos.io>",
   "private": true,
   "scripts": {
-    "dev": "QENV=development quasar dev",
-    "build": "QENV=production quasar clean && quasar build",
+    "dev": "quasar dev",
+    "build": "quasar clean && quasar build",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "jest",
     "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
