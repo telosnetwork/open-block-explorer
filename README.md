@@ -10,10 +10,15 @@ https://classic.yarnpkg.com/en/
 ```bash
 yarn global add @quasar/cli
 ```
-## Install the dependencies
+### Clone repo
+```bash
+git clone https://github.com/telosnetwork/open-block-explorer
+```
+
+### Install the dependencies
 
 ```bash
-yarn
+cd open-block-explorer && yarn
 ```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
