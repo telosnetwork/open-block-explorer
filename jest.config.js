@@ -7,13 +7,13 @@ module.exports = {
     // TODO: Remove if resolved natively
     // See https://github.com/vuejs/vue-jest/issues/175
     'vue-jest': {
-      pug: { doctype: 'html' },
+      pug: { doctype: 'html' }
     },
     // Remove if using `const enums`
     // See https://huafu.github.io/ts-jest/user/config/isolatedModules#example
     'ts-jest': {
-      isolatedModules: true,
-    },
+      isolatedModules: true
+    }
   },
   // noStackTrace: true,
   // bail: true,
@@ -27,7 +27,7 @@ module.exports = {
     '<rootDir>/src/**/*.js',
     '<rootDir>/src/**/*.ts',
     '<rootDir>/src/**/*.jsx',
-    '<rootDir>/src/**/*.tsx',
+    '<rootDir>/src/**/*.tsx'
   ],
   coveragePathIgnorePatterns: ['/node_modules/', '.d.ts$'],
   coverageThreshold: {
@@ -36,13 +36,13 @@ module.exports = {
       //  functions: 50,
       //  lines: 50,
       //  statements: 50
-    },
+    }
   },
   testMatch: [
     // Matches tests in any subfolder of 'src' or into 'test/jest/__tests__'
     // Matches all files with extension 'js', 'jsx', 'ts' and 'tsx'
     '<rootDir>/test/jest/__tests__/**/*.(spec|test).+(ts|js)?(x)',
-    '<rootDir>/src/**/*.jest.(spec|test).+(ts|js)?(x)',
+    '<rootDir>/src/**/*.jest.(spec|test).+(ts|js)?(x)'
   ],
   // Extension-less imports of components are resolved to .ts files by TS,
   //  grating correct type-checking in test files.
@@ -74,8 +74,8 @@ module.exports = {
     // https://github.com/tleunen/find-babel-config/issues/33
     '.*\\.vue$': 'vue-jest',
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$':
-      'jest-transform-stub',
+      'jest-transform-stub'
   },
   transformIgnorePatterns: [`node_modules/(?!(${esModules}))`],
-  snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
+  snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue']
 };
