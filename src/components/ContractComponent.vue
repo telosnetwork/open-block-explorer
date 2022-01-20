@@ -1,9 +1,9 @@
 <template lang="pug">
 div
-    p Contract
-    span.contract-field(v-for="(value, i) in contract" :key='i') 
-        .label {{ i }}: {{ value }} 
-    q-btn( label='Go Home (calling router instance with named path)' @click="goHome")
+  p Contract
+  span.contract-field(v-for="(value, i) in contract" :key='i') 
+      .label {{ i }}: {{ value }} 
+  router-link(to="/") Home
 </template>
 
 <script lang="ts">
@@ -19,6 +19,7 @@ export default defineComponent({
     }
   },
   methods: {
+    //example using a method to push route
     goHome() {
       this.$router.push({ name: 'home' }).catch((err: string) => {
         throw new Error(`ROUTER ERROR: ${err}.`);

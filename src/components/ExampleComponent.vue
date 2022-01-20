@@ -17,7 +17,7 @@ import { defineComponent, PropType } from 'vue';
 import { Todo, Meta } from 'src/types';
 
 export default defineComponent({
-  name: 'OptionsComponent',
+  name: 'ExampleComponent',
   props: {
     title: {
       type: String,

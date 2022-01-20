@@ -7,12 +7,11 @@ q-page.row.items-center.justify-evenly
     :meta="meta"
   )
   router-link(to="/contract") View Contract Page (router-link)
-  q-btn( label='View Contract Page (router link)' @click="$router.push({ name: 'contract' })")
 </template>
 
 <script lang="ts">
 import { Todo, Meta } from 'src/types';
-import ExampleComponent from 'components/OptionsComponent.vue';
+import ExampleComponent from 'components/ExampleComponent.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -49,3 +48,7 @@ export default defineComponent({
   }
 });
 </script>
+<sytle lang="sass">
+.min-page-height
+  min-height: 20rem
+</sytle>
