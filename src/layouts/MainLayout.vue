@@ -4,7 +4,16 @@ q-layout( view="hHh lpR fFf")
     q-toolbar
       q-toolbar-title
         img.telos-logo( src="~assets/telos_logo.svg" )
-        q-input.search-bar( outlined square v-model="searchText" label="" )
+        q-input.search-bar(
+          outlined 
+          square  
+          v-model="searchText" 
+          debounce=600  
+          :input-style="{ color: 'white' }"
+          placholder="Search"
+        )
+          template(v-slot:prepend)
+            q-icon.rotate-90.input-icon( name="search" color="white" size='25px' 	)
     q-tabs( align="center" )
       q-route-tab( to="/" label="Network" )
       q-route-tab( to="/" label="Vote" )
@@ -82,4 +91,7 @@ export default defineComponent({
   max-width: 55rem
   height: 36px
   padding:1.5rem 5rem 3.8rem 10rem
+.input-icon
+  padding-bottom: 0
+  padding-right: 1.25rem
 </style>
