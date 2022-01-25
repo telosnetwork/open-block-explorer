@@ -18,6 +18,4 @@ export default defineComponent({
   align-items: center
   height: 20rem
   margin-top: 2rem
-
-.producer-map-label
 </style>

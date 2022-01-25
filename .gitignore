@@ -4,24 +4,12 @@ node_modules
 
 # Environment vars
 .env
+.quasar.env.json
 
 # Quasar core related directories
 .quasar
 /dist
 
-# Cordova related directories and files
-/src-cordova/node_modules
-/src-cordova/platforms
-/src-cordova/plugins
-/src-cordova/www
-
-# Capacitor related directories and files
-/src-capacitor/www
-/src-capacitor/node_modules
-
-# BEX related directories and files
-/src-bex/www
-/src-bex/js/core
 
 # Log files
 npm-debug.log*
@@ -34,5 +22,3 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
-
-.quasar.env.json
