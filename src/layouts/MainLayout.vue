@@ -14,6 +14,7 @@ q-layout( view="hHh lpR fFf")
         )
           template(v-slot:prepend)
             q-icon.rotate-90.input-icon( name="search" color="white" size='25px' 	)
+        q-btn.connect-button( label="Connect" )
     q-tabs( align="center" )
       q-route-tab( to="/" label="Network" )
       q-route-tab( to="/" label="Vote" )
@@ -83,10 +84,15 @@ export default defineComponent({
   bottom: 50%
   mix-blend-mode: lighten
 .search-bar
-  max-width: 55rem
+  display: inline-flex
+  max-width: 58.5rem
   height: 36px
-  padding:1.5rem 5rem 3.8rem 10rem
+  padding:1.5rem 0 3.8rem 10rem
 .input-icon
   padding-bottom: 0
   padding-right: 1.25rem
+.connect-button
+  display: inline-flex
+  text-transform: unset
+  background-color: $primary
 </style>
