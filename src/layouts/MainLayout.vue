@@ -4,7 +4,7 @@ q-layout( view="hHh lpR fFf")
     q-toolbar
       q-toolbar-title
         q-avatar
-          img( src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg")
+          img( src="~assets/telos_logo.svg")
     q-tabs( align="center" )
       q-route-tab( to="/" label="Network" )
       q-route-tab( to="/" label="Vote" )
