@@ -7,4 +7,9 @@
       "/src/types"
     ]
   },
+  "exclude": [
+    "node_modules",
+    "public",
+    "config"
+  ]
 }
