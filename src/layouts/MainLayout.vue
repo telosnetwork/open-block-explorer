@@ -35,16 +35,11 @@ q-layout( view="hHh lpR fFf")
 </template>
 
 <script lang="ts">
-import ProducerMap from 'components/ProducerMap.vue';
 import { defineComponent } from 'vue';
 import { openURL } from 'quasar';
 
 export default defineComponent({
   name: 'MainLayout',
-
-  components: {
-    ProducerMap
-  },
 
   data() {
     return {
