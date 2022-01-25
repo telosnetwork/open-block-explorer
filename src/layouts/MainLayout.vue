@@ -58,7 +58,7 @@ export default defineComponent({
 });
 </script>
 <style lang="sass" scoped>
-.q-page-container
+.q-page
   height: 39.5rem
   background: $gradient-1
 .q-header
