@@ -3,8 +3,7 @@ q-layout( view="hHh lpR fFf")
   q-header( reveal elevated class="bg-primary text-white" height-hint="98")
     q-toolbar
       q-toolbar-title
-        q-avatar
-          img( src="~assets/telos_logo.svg")
+        img.telos-logo( src="~assets/telos_logo.svg" )
     q-tabs( align="center" )
       q-route-tab( to="/" label="Network" )
       q-route-tab( to="/" label="Vote" )
@@ -56,6 +55,15 @@ export default defineComponent({
   background: $primary-dark !important
   border-bottom-style: inset
   border-bottom-color: $gray
+.telos-logo
+  position: absolute
+  height: 2.5rem
+  width: 6rem
+  left: 4%
+  right: 90%
+  top: 20%
+  bottom: 50%
+  mix-blend-mode: lighten
 .q-tabs
   padding-top: 2.25rem
 .q-tab
