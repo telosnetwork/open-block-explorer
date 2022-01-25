@@ -57,6 +57,8 @@ export default defineComponent({
 .q-page
   height: 39.5rem
   background: $gradient-1
+.q-toolbar
+  height: 5.3125rem
 .q-header
   height: 8.375rem
   background: $primary-dark !important
@@ -84,15 +86,20 @@ export default defineComponent({
   bottom: 50%
   mix-blend-mode: lighten
 .search-bar
-  display: inline-flex
-  max-width: 58.5rem
-  height: 36px
-  padding:1.5rem 0 3.8rem 10rem
+  position: absolute
+  left: 15%
+  right: 15%
+  top: 25%
+  bottom: 50%
 .input-icon
   padding-bottom: 0
   padding-right: 1.25rem
 .connect-button
-  display: inline-flex
   text-transform: unset
   background-color: $primary
+  position: absolute
+  left: 88%
+  right: 6%
+  top: 25%
+  bottom: 50%
 </style>
