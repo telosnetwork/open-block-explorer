@@ -4,6 +4,7 @@ q-layout( view="hHh lpR fFf")
     q-toolbar
       q-toolbar-title
         img.telos-logo( src="~assets/telos_logo.svg" )
+        q-input.search-bar( outlined square v-model="searchText" label="" )
     q-tabs( align="center" )
       q-route-tab( to="/" label="Network" )
       q-route-tab( to="/" label="Vote" )
@@ -11,7 +12,6 @@ q-layout( view="hHh lpR fFf")
       q-route-tab( to="/" label="Explore" )
   q-page-container
     router-view
-
   q-footer( reveal elevated class="text-white")
     q-list( no-border sparse seperator )
       q-item(clickable to='/terms' ) Terms
@@ -38,7 +38,9 @@ export default defineComponent({
   },
 
   data() {
-    return {};
+    return {
+      searchText: ''
+    };
   },
 
   methods: {
@@ -55,17 +57,6 @@ export default defineComponent({
   background: $primary-dark !important
   border-bottom-style: inset
   border-bottom-color: $gray
-.telos-logo
-  position: absolute
-  height: 2.5rem
-  width: 6rem
-  left: 4%
-  right: 90%
-  top: 20%
-  bottom: 50%
-  mix-blend-mode: lighten
-.q-tabs
-  padding-top: 2.25rem
 .q-tab
   text-transform: unset
 .q-footer
@@ -78,4 +69,17 @@ export default defineComponent({
 .q-item
   display: inline-flex
   width: 6rem
+.telos-logo
+  position: absolute
+  height: 2.5rem
+  width: 6rem
+  left: 4%
+  right: 90%
+  top: 20%
+  bottom: 50%
+  mix-blend-mode: lighten
+.search-bar
+  max-width: 55rem
+  height: 36px
+  padding:1.5rem 5rem 3.8rem 10rem
 </style>
