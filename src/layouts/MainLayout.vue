@@ -1,5 +1,5 @@
 <template lang="pug">
-q-layout( view="hHh lpR fFf")
+q-layout( view="hHh lpR fff")
   q-header
     Header
     q-separator.separator
