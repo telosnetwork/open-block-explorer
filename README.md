@@ -24,6 +24,11 @@ git clone https://github.com/telosnetwork/open-block-explorer
 cd open-block-explorer && yarn
 ```
 
+### Restore .env file & check that the correct endpoints are set
+```bash
+mv .env.example .env
+```
+
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 yarn dev
