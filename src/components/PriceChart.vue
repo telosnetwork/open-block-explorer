@@ -3,6 +3,7 @@ div.row.col-12.justify-center(align="center")
     div.row.col-11.price-box.flex
         div.col-xs-12.col-sx-12.col-md-8.col-lg-8.col-xs-8.q-pa-md
             p price chart will be here
+        //-  TODO:neetds to install vue-property-decorator //
         div.col-xs-12.col-sx-12.col-md-4.col-lg-4.col-xs-4.q-pa-md
             div.col-12.flex.row
                 div.col-6.chart-info
@@ -22,6 +23,13 @@ div.row.col-12.justify-center(align="center")
                     p.sub-title $322M
     
 </template>
+<script lang="ts">
+import { defineComponent } from 'vue';
+export default defineComponent({
+  name: 'PriceChart'
+});
+</script>
+
 <style lang="sass" scoped>
 $medium:1000px
 .chart-info
@@ -43,8 +51,6 @@ $medium:1000px
 .price-box
     background-color:#ffffff
     height: 260px
-    // margin top is temporary
-    margin-top:550px
     background: #FFFFFF
     box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
     border-radius: 10px
