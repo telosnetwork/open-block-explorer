@@ -13,6 +13,7 @@
     "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
   },
   "dependencies": {
+    "@greymass/eosio": "^0.5.4",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
