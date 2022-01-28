@@ -1,0 +1,26 @@
+<template lang="pug">
+div.row.footer-background.justify-center.col-12
+    ul.flex.footer-items
+        li.q-pa-md
+            router-link.router-link(:to="{name:'THERMS'}")
+                p THERMS
+        li.q-pa-md
+            router-link.router-link(:to="{name:'PRIVACY'}")
+                p PRIVACY 
+        li.q-pa-md
+            router-link.router-link(:to="{name:'REPOSITORY'}")
+                p REPOSITORY 
+
+</template>
+<style lang="sass" scoped>
+div
+    height:76px
+.router-link
+    text-decoration: none
+    color: #ffffff
+.footer-items
+    list-style-type: none
+.footer-background
+    background: linear-gradient(90deg, #071A5F 0%, #571AFF 100%)
+    backdrop-filter: blur(14px)
+</style>

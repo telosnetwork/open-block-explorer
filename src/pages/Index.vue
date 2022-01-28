@@ -6,6 +6,7 @@ q-page.row.items-center.justify-evenly
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'PageIndex'
+  name: 'PageIndex',
+  components: {}
 });
 </script>

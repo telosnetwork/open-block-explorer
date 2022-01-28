@@ -16,6 +16,7 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "highcharts-vue": "^1.4.0",
     "quasar": "^2.0.0",
     "vuex": "^4.0.1"
   },
