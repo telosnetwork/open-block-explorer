@@ -32,6 +32,8 @@ export default defineComponent({
 });
 </script>
 <style lang="sass" scoped>
+.q-header
+  font-family: 'Actor', sans-serif
 .q-page
   height: 39.5rem
   background: $gradient-1
