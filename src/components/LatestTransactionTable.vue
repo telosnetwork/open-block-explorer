@@ -21,6 +21,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         )
 </template>
 <script lang="ts">
+import { APIClient } from '@greymass/eosio';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'LatestTransactionTable',
@@ -81,6 +82,10 @@ export default defineComponent({
         }
       ]
     };
+  },
+  async mounted() {
+    debugger;
+    const data = await this.$eosio //.v1.history.get_actions('teamgreymass', 1, 1);
   }
 });
 </script>
