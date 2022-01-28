@@ -11,7 +11,7 @@ div.header-background
                         q-icon.search-icon(name="search" color="white" size="20px")
 
         div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-            q-btn.connect-btn(@click='clicked()' label="CONNECT")
+            q-btn.connect-btn(@click='clicked()' label="Connect")
 
     div.row.justify-center.col-12.q-pt-sm
         q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
@@ -61,6 +61,7 @@ export default defineComponent({
     background: #071A5F
 
 .search-input
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
     background: rgba(255, 255, 255, 0.05)
     border-radius: 4px
 

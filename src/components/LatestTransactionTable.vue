@@ -10,13 +10,15 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
         q-separator.row.col-12.q-mt-md.separator
-        q-table.q-mt-lg.col-12.row(:rows="rows"
+        q-table.q-mt-lg.col-12.row(
+            :rows="rows"
             :columns="columns"
             row-key="name"
             :flat="true"
             :bordered="true"
             :square="true"
-            table-header-class="table-header")
+            table-header-class="table-header"
+        )
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -89,7 +91,7 @@ body
     color: #000000 !important
     opacity: 0.5
 .table-title
-    font-family: Actor
+    font-family: Actor, sans-serif
     font-style: normal
     font-weight: normal
     font-size: 22.75px
