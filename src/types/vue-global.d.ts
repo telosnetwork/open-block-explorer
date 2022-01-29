@@ -5,6 +5,6 @@ declare module 'vue/types/vue' {
   interface Vue {
     $hyperion: AxiosInstance;
     $axios: AxiosInstance;
-    $eosio: APIClient;
+    $api: APIClient;
   }
 }

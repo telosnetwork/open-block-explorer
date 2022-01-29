@@ -2,14 +2,15 @@ import { boot } from 'quasar/wrappers';
 import { APIClient } from '@greymass/eosio';
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    $eosio: APIClient;
+    $api: APIClient;
   }
 }
 
-const eosio = new APIClient({
+const api = new APIClient({
   url: 'https://telos.caleos.io'
 });
 
 export default boot(({ app }) => {
-  app.config.globalProperties.$eosio = eosio;
+  app.config.globalProperties.$api = api;
+  debugger;
 });
