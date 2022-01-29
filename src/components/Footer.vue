@@ -21,6 +21,6 @@ div
 .footer-items
     list-style-type: none
 .footer-background
-    background: linear-gradient(90deg, #071A5F 0%, #571AFF 100%)
+    background: $primary-linier-gradient
     backdrop-filter: blur(14px)
 </style>
