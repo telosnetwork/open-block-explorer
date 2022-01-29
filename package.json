@@ -18,6 +18,7 @@
     "core-js": "^3.6.5",
     "highcharts-vue": "^1.4.0",
     "quasar": "^2.0.0",
+    "vue-class-component": "^7.2.6",
     "vuex": "^4.0.1"
   },
   "devDependencies": {
