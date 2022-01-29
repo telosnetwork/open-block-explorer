@@ -6,22 +6,35 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 p.table-title Latest Transactions
             q-space
             div.col-3.row.flex
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="actions()") Actions
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="date()") Date
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="token()") Token
         q-separator.row.col-12.q-mt-md.separator
         q-table.q-mt-lg.col-12.row(:rows="rows"
             :columns="columns"
             row-key="name"
-            :flat="true"
-            :bordered="true"
+            hide-bottom
+            flat
+            :bordered="false"
             :square="true"
             table-header-class="table-header")
+        div.row.col-12.q-mt-md.q-mb-xl
+          div.col-1(align="left")
+            q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="prev()") PREV
+          q-space
+          div.col-1(align="right")
+            q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="next()") NEXT
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'LatestTransactionTable',
+  props: {
+    account: {
+      type: Array,
+      required: false
+    }
+  },
   data() {
     return {
       columns: [
@@ -30,6 +43,7 @@ export default defineComponent({
           required: true,
           label: 'TRANSACTION',
           align: 'left',
+          field: 'transaction',
           sortable: true
         },
         {
@@ -37,7 +51,7 @@ export default defineComponent({
           required: true,
           align: 'left',
           label: 'TIMESTAMP',
-          field: 'calories',
+          field: 'timestamp',
           sortable: true
         },
         {
@@ -45,7 +59,7 @@ export default defineComponent({
           required: true,
           align: 'left',
           label: 'ACTION',
-          field: 'fat',
+          field: 'action',
           sortable: true
         },
         {
@@ -53,32 +67,59 @@ export default defineComponent({
           required: true,
           align: 'left',
           label: 'DATA',
-          field: 'carbs'
+          field: 'data'
         }
       ],
       rows: [
         {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          sodium: 87,
-          calcium: '14%',
-          iron: '1%'
+          transaction: '4b419F30',
+          timestamp: 'Dec 30, 2021 04:34:45 PM',
+          action: 'RECIVE',
+          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
         },
         {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          sodium: 129,
-          calcium: '8%',
-          iron: '1%'
+          transaction: '4b419F30',
+          timestamp: 'Dec 30, 2021 04:34:45 PM',
+          action: 'RECIVE',
+          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
+        },
+        {
+          transaction: '4b419F30',
+          timestamp: 'Dec 30, 2021 04:34:45 PM',
+          action: 'RECIVE',
+          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
+        },
+        {
+          transaction: '4b419F30',
+          timestamp: 'Dec 30, 2021 04:34:45 PM',
+          action: 'RECIVE',
+          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
+        },
+        {
+          transaction: '4b419F30',
+          timestamp: 'Dec 30, 2021 04:34:45 PM',
+          action: 'RECIVE',
+          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
         }
       ]
     };
+  },
+  methods: {
+    actions() {
+      console.log('actions');
+    },
+    date() {
+      console.log('date');
+    },
+    token() {
+      console.log('token');
+    },
+    prev() {
+      console.log('prev');
+    },
+    next() {
+      console.log('next');
+    }
   }
 });
 </script>
@@ -94,9 +135,4 @@ body
     font-weight: normal
     font-size: 22.75px
     line-height: 27px
-.separator
-    min-width: 100%
-    min-height: 2px
-    background: rgba(138, 101, 212, 0.3)
-    border-radius: 4px
 </style>
