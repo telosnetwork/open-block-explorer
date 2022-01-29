@@ -15,10 +15,10 @@ div.header-background
 
     div.row.justify-center.col-12.q-pt-sm
         q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
-          q-tab.deactive(name="Network" label="Network") 
-          q-tab.deactive(name="Vote" label="Vote") 
-          q-tab.deactive(name="Proposal"  label="Proposal") 
-          q-tab.deactive(name="Explore" label="Explore") 
+          q-tab.deactive(name="Network" label="Network" @click="menuClicked('Network')")
+          q-tab.deactive(name="Vote" label="Vote" @click="menuClicked('Vote')")
+          q-tab.deactive(name="Proposal"  label="Proposal" @click="menuClicked('Proposal')")
+          q-tab.deactive(name="Explore" label="Explore" @click="menuClicked('Explore')")
 
 </template>
 <script lang="ts">
@@ -34,6 +34,9 @@ export default defineComponent({
   methods: {
     clicked() {
       console.log('connect btn clicked');
+    },
+    async menuClicked(routeName: string) {
+      await this.$router.push({ name: `${routeName}` });
     }
   }
 });
