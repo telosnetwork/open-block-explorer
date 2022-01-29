@@ -11,7 +11,7 @@ div.header-background
                         q-icon.search-icon(name="search" color="white" size="20px")
 
         div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-            q-btn.connect-btn(@click='clicked()' label="CONNECT")
+            q-btn.button-primary(@click='clicked()' label="CONNECT")
 
     div.row.justify-center.col-12.q-pt-sm
         q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
@@ -66,11 +66,4 @@ export default defineComponent({
 
 .search-icon
     transform: rotate(90deg)
-
-.connect-btn
-    background: #571AFF
-    color:#ffffff
-    Width:82px
-    Height:36px
-    text-transform: unset
 </style>
