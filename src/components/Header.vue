@@ -58,10 +58,10 @@ export default defineComponent({
 
 
 .header-background
-    background: #071A5F
+    background: $primary-dark
 
 .search-input
-    background: rgba(255, 255, 255, 0.05)
+    background: $black-5
     border-radius: 4px
 
 .search-icon
