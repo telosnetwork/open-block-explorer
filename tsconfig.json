@@ -5,7 +5,17 @@
     "typeRoots": [
       "./node_modules/@types",
       "/src/types"
-    ]
+    ],
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
   },
   "exclude": [
     "node_modules",
