@@ -16,7 +16,10 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "highcharts": "^9.3.2",
+    "highcharts-vue": "^1.4.0",
     "quasar": "^2.0.0",
+    "vue-class-component": "^7.2.6",
     "vuex": "^4.0.1"
   },
   "devDependencies": {
@@ -34,7 +37,8 @@
     "eslint-plugin-vue": "^7.0.0",
     "prettier": "^2.5.1",
     "pug": "^3.0.2",
-    "pug-plain-loader": "^1.1.0"
+    "pug-plain-loader": "^1.1.0",
+    "vue-property-decorator": "^9.1.2"
   },
   "browserslist": [
     "last 10 Chrome versions",
