@@ -19,7 +19,7 @@ div.row.col-12.justify-center(align="center")
                     p.sub-title {{ rank  }} 
                 div.col-6.chart-info
                     p 24H VOLUME
-                    p.sub-title {{ volume }}
+                    p.sub-title {{ dayVolume }}
     
 </template>
 
@@ -30,10 +30,17 @@ import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
 import axios from 'axios';
 
+const ONE_MILLION = 1000000;
+const ONE_BILLION = 1000000000;
+
 interface PriceStats {
   data: {
     telos: {
+      last_updated_at: number;
       usd: number;
+      usd_24h_change: number;
+      usd_24h_vol: number;
+      usd_market_cap: number;
     };
   };
 }
@@ -108,10 +115,12 @@ export default defineComponent({
           }
         ]
       },
-      tokenPrice: 0,
-      marketCap: 0,
-      rank: 0,
-      volume: 0
+      lastUpdated: 0,
+      tokenPrice: '',
+      marketCap: '',
+      rank: '',
+      dayVolume: '',
+      dayChange: ''
     };
   },
   async mounted() {
@@ -121,9 +130,26 @@ export default defineComponent({
   methods: {
     async getPriceStats() {
       const priceStats: PriceStats = await axios.get(
-        'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=EOS,USD,BTC&include_market_cap=true'
+        'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true'
       );
-      this.tokenPrice = priceStats.data.telos.usd;
+      this.lastUpdated = priceStats.data.telos.last_updated_at;
+      this.tokenPrice = this.formatCurrencyValue(priceStats.data.telos.usd);
+      this.dayChange = this.formatCurrencyValue(
+        priceStats.data.telos.usd_24h_change
+      );
+      this.dayVolume = this.formatCurrencyValue(
+        priceStats.data.telos.usd_24h_vol
+      );
+      this.marketCap = this.formatCurrencyValue(
+        priceStats.data.telos.usd_market_cap
+      );
+    },
+    formatCurrencyValue(val: number): string {
+      return val < ONE_MILLION
+        ? `$${val.toFixed(2)}`
+        : val < ONE_BILLION
+        ? `$${(val / ONE_MILLION).toFixed(2)}M`
+        : `$${(val / ONE_BILLION).toFixed(2)}B`;
     }
   }
 });
