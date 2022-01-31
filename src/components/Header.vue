@@ -6,7 +6,14 @@ div.header-background
 
         div.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
             div.row.justify-center  
-                q-input.col-12.search-input.q-pl-md(borderless dense label-color="white"  color="white"  v-model="search" label="Search" )
+                q-input.col-12.search-input.q-pl-md(
+                  borderless 
+                  dense 
+                  label-color="white"  
+                  color="white" 
+                  :input-style="{ color: 'white' }"
+                  v-model="search" 
+                  label="Search" )
                     template(v-slot:prepend)
                         q-icon.search-icon(name="search" color="white" size="20px")
 
@@ -59,12 +66,10 @@ export default defineComponent({
     opacity: 0.3
     font-size: 18px
 
-
 .header-background
     background: $primary-dark
 
-.search-input //@TODO verify font is needed
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+.search-input
     background: rgba(255, 255, 255, 0.05)
     border-radius: 4px
 
