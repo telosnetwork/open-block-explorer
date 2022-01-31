@@ -7,19 +7,19 @@ div.row.col-12.justify-center(align="center")
             div.col-12.flex.row.q-mt-md
                 div.col-6.chart-info
                     p TOKEN PRICE
-                    p.sub-title $0.55
+                    p.sub-title {{ tokenPrice}}
                     p.border-line
                 div.col-6.chart-info
                     p MARKETCAP
-                    p.sub-title $240B
+                    p.sub-title {{ marketCap }}
                     p.border-line
             div.col-12.flex.row
                 div.col-6.chart-info
                     p RANK
-                    p.sub-title 52
+                    p.sub-title {{ rank  }} 
                 div.col-6.chart-info
                     p 24H VOLUME
-                    p.sub-title $322M
+                    p.sub-title {{ volume }}
     
 </template>
 
@@ -28,6 +28,7 @@ import { defineComponent } from 'vue';
 import { Chart } from 'highcharts-vue';
 import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
+import axios from 'axios';
 
 exportingInit(Highcharts);
 export default defineComponent({
@@ -98,11 +99,25 @@ export default defineComponent({
             ]
           }
         ]
-      }
+      },
+      tokenPrice: 0,
+      marketCap: 0,
+      rank: 0,
+      volume: 0
     };
   },
+  async mounted() {
+    await this.getPriceStats();
+  },
 
-  methods: {}
+  methods: {
+    async getPriceStats() {
+      const priceStats = await axios.get(
+        'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=EOS,USD,BTC'
+      );
+      this.tokenPrice = priceStats.data.telos.usd;
+    }
+  }
 });
 </script>
 
