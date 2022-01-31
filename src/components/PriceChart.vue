@@ -30,6 +30,14 @@ import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
 import axios from 'axios';
 
+interface PriceStats {
+  data: {
+    telos: {
+      usd: number;
+    };
+  };
+}
+
 exportingInit(Highcharts);
 export default defineComponent({
   name: 'PriceChart',
@@ -112,8 +120,8 @@ export default defineComponent({
 
   methods: {
     async getPriceStats() {
-      const priceStats = await axios.get(
-        'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=EOS,USD,BTC'
+      const priceStats: PriceStats = await axios.get(
+        'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=EOS,USD,BTC&include_market_cap=true'
       );
       this.tokenPrice = priceStats.data.telos.usd;
     }
