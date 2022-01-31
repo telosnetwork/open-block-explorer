@@ -131,7 +131,6 @@ $medium:1000px
     box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
     border-radius: 10px
 .title
-    font-family: Actor
     font-style: normal
     font-weight: normal
     font-size: 14px
@@ -139,7 +138,6 @@ $medium:1000px
     text-transform: uppercase
     color: #071A5F
 .sub-title
-    font-family: Actor
     font-style: normal
     font-weight: normal
     font-size: 22.75px

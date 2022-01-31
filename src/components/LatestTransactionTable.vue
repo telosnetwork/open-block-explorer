@@ -10,7 +10,8 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="date()") Date
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="token()") Token
         q-separator.row.col-12.q-mt-md.separator
-        q-table.q-mt-lg.col-12.row(:rows="rows"
+        q-table.q-mt-lg.col-12.row(
+            :rows="rows"
             :columns="columns"
             row-key="name"
             hide-bottom
@@ -130,7 +131,7 @@ body
     color: #000000 !important
     opacity: 0.5
 .table-title
-    font-family: Actor
+    font-family: Actor, sans-serif
     font-style: normal
     font-weight: normal
     font-size: 22.75px
