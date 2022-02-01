@@ -169,16 +169,7 @@ export default defineComponent({
       const priceHistory: PriceHistory = await axios.get(
         'https://api.coingecko.com/api/v3/coins/telos/market_chart?vs_currency=USD&days=1&interval=hourly'
       );
-      debugger;
       this.chartOptions.series[0].data = priceHistory.data.prices;
-      // );
-    },
-    epochToLocal(dataArray: DateTuple[]): DateTuple[] {
-      debugger;
-      return dataArray.map((x) => {
-        const readableDate = new Date((x[0] as number) * 1000).toLocaleString();
-        return [readableDate, x[1]] as DateTuple;
-      });
     }
   }
 });
