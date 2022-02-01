@@ -15,8 +15,8 @@ div.row.col-12.justify-center(align="center")
                     p.border-line
             div.col-12.flex.row
                 div.col-6.chart-info
-                    p RANK
-                    p.sub-title {{ rank  }} 
+                    p 24H CHANGE
+                    p.sub-title {{ dayChange  }} 
                 div.col-6.chart-info
                     p 24H VOLUME
                     p.sub-title {{ dayVolume }}
@@ -45,6 +45,14 @@ interface PriceStats {
   };
 }
 
+interface PriceHistory {
+  data: {
+    prices: DateTuple[];
+  };
+}
+
+type DateTuple = [number | string, number];
+
 exportingInit(Highcharts);
 export default defineComponent({
   name: 'PriceChart',
@@ -63,7 +71,11 @@ export default defineComponent({
           text: 'Past 24h'
         },
         xAxis: {
-          type: 'date'
+          dateTimeLabelFormats: {
+            day: '%A, %b %e, %l %p',
+            millisecond: '%A, %b %e, %l %p'
+          },
+          type: 'datetime'
         },
         yAxis: {
           title: {
@@ -107,13 +119,14 @@ export default defineComponent({
           {
             name: 'TLOS',
             color: '#571AFF',
-            data: [
-              1, 2, 3, 10, 40, 50, 60, 70, 60, 49, 70, 60, 70, 80, 90, 80, 51,
-              52, 63, 54, 40, 62, 70, 65, 49, 50, 55, 40, 64, 40, 45, 40, 30,
-              55, 65, 70, 80, 60, 50
-            ]
+            data: [] as DateTuple[]
           }
-        ]
+        ],
+        tooltip: {
+          dateTimeLabelFormats: {
+            hour: '%A, %b %e, %l %p'
+          }
+        }
       },
       lastUpdated: 0,
       tokenPrice: '',
@@ -124,11 +137,12 @@ export default defineComponent({
     };
   },
   async mounted() {
-    await this.getPriceStats();
+    await this.setExchangeStats();
+    await this.setPriceHistory();
   },
 
   methods: {
-    async getPriceStats() {
+    async setExchangeStats() {
       const priceStats: PriceStats = await axios.get(
         'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true'
       );
@@ -150,6 +164,21 @@ export default defineComponent({
         : val < ONE_BILLION
         ? `$${(val / ONE_MILLION).toFixed(2)}M`
         : `$${(val / ONE_BILLION).toFixed(2)}B`;
+    },
+    async setPriceHistory() {
+      const priceHistory: PriceHistory = await axios.get(
+        'https://api.coingecko.com/api/v3/coins/telos/market_chart?vs_currency=USD&days=1&interval=hourly'
+      );
+      debugger;
+      this.chartOptions.series[0].data = priceHistory.data.prices;
+      // );
+    },
+    epochToLocal(dataArray: DateTuple[]): DateTuple[] {
+      debugger;
+      return dataArray.map((x) => {
+        const readableDate = new Date((x[0] as number) * 1000).toLocaleString();
+        return [readableDate, x[1]] as DateTuple;
+      });
     }
   }
 });
