@@ -1,4 +1,3 @@
-import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
 
 declare module '@vue/runtime-core' {
@@ -9,6 +8,6 @@ declare module '@vue/runtime-core' {
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
-export default boot(({ app }) => {
-  app.config.globalProperties.$hyperion = hyperion;
-});
+export const getAccount = async function (address: string): Promise<any> {
+  return await hyperion.get(`/v2/state/get_account?account=${address}`);
+};
