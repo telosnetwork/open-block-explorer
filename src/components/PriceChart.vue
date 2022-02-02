@@ -2,24 +2,24 @@
 div.row.col-12.justify-center(align="center")
     div.row.col-11.price-box.flex
         div.col-xs-12.col-sx-12.col-md-8.col-lg-8.col-xs-8.q-pa-md
-            highcharts.highcharts-description.col-12(:options="chartOptions" style="height:250px" :highcharts="hcInstance" :color="colors")
+            highcharts.highcharts-description.col-12(:options="chartOptions" style="height:250px" :highcharts="hcInstance")
         div.col-xs-12.col-sx-12.col-md-4.col-lg-4.col-xs-4.q-pa-md
             div.col-12.flex.row.q-mt-md
                 div.col-6.chart-info
                     p TOKEN PRICE
-                    p.sub-title $0.55
+                    p.sub-title {{ tokenPrice}}
                     p.border-line
                 div.col-6.chart-info
                     p MARKETCAP
-                    p.sub-title $240B
+                    p.sub-title {{ marketCap }}
                     p.border-line
             div.col-12.flex.row
                 div.col-6.chart-info
-                    p RANK
-                    p.sub-title 52
+                    p 24H CHANGE
+                    p.sub-title {{ dayChange  }} 
                 div.col-6.chart-info
                     p 24H VOLUME
-                    p.sub-title $322M
+                    p.sub-title {{ dayVolume }}
     
 </template>
 
@@ -28,6 +28,16 @@ import { defineComponent } from 'vue';
 import { Chart } from 'highcharts-vue';
 import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
+import axios from 'axios';
+import { PriceStats, PriceHistory, DateTuple } from 'src/types';
+
+const ONE_MILLION = 1000000;
+const ONE_BILLION = 1000000000;
+
+const exchangeStatsUrl =
+  'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true';
+const priceHistoryUrl =
+  'https://api.coingecko.com/api/v3/coins/telos/market_chart?vs_currency=USD&days=1&interval=hourly';
 
 exportingInit(Highcharts);
 export default defineComponent({
@@ -47,7 +57,11 @@ export default defineComponent({
           text: 'Past 24h'
         },
         xAxis: {
-          type: 'date'
+          dateTimeLabelFormats: {
+            day: '%A, %b %e, %l %p',
+            millisecond: '%A, %b %e, %l %p'
+          },
+          type: 'datetime'
         },
         yAxis: {
           title: {
@@ -91,18 +105,55 @@ export default defineComponent({
           {
             name: 'TLOS',
             color: '#571AFF',
-            data: [
-              1, 2, 3, 10, 40, 50, 60, 70, 60, 49, 70, 60, 70, 80, 90, 80, 51,
-              52, 63, 54, 40, 62, 70, 65, 49, 50, 55, 40, 64, 40, 45, 40, 30,
-              55, 65, 70, 80, 60, 50
-            ]
+            data: [] as DateTuple[]
           }
-        ]
-      }
+        ],
+        tooltip: {
+          dateTimeLabelFormats: {
+            hour: '%A, %b %e, %l %p'
+          }
+        }
+      },
+      lastUpdated: 0,
+      tokenPrice: '',
+      marketCap: '',
+      rank: '',
+      dayVolume: '',
+      dayChange: ''
     };
   },
+  async mounted() {
+    await this.setExchangeStats();
+    await this.setPriceHistory();
+  },
 
-  methods: {}
+  methods: {
+    async setExchangeStats() {
+      const priceStats: PriceStats = await axios.get(exchangeStatsUrl);
+      this.lastUpdated = priceStats.data.telos.last_updated_at;
+      this.tokenPrice = this.formatCurrencyValue(priceStats.data.telos.usd);
+      this.dayChange = this.formatCurrencyValue(
+        priceStats.data.telos.usd_24h_change
+      );
+      this.dayVolume = this.formatCurrencyValue(
+        priceStats.data.telos.usd_24h_vol
+      );
+      this.marketCap = this.formatCurrencyValue(
+        priceStats.data.telos.usd_market_cap
+      );
+    },
+    formatCurrencyValue(val: number): string {
+      return val < ONE_MILLION
+        ? `$${val.toFixed(2)}`
+        : val < ONE_BILLION
+        ? `$${(val / ONE_MILLION).toFixed(2)}M`
+        : `$${(val / ONE_BILLION).toFixed(2)}B`;
+    },
+    async setPriceHistory() {
+      const priceHistory: PriceHistory = await axios.get(priceHistoryUrl);
+      this.chartOptions.series[0].data = priceHistory.data.prices;
+    }
+  }
 });
 </script>
 
