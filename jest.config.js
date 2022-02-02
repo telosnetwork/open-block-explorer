@@ -36,6 +36,11 @@ module.exports = {
       functions: 50,
       lines: 50,
       statements: 50
+    },
+    './src/components/': {
+      statements: 100,
+      branches: 100,
+      functions: 100
     }
   },
   testMatch: [
