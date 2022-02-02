@@ -9,7 +9,7 @@
     "dev": "quasar dev",
     "build": "quasar clean && quasar build",
     "lint": "eslint --ext .js,.ts,.vue ./",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
   },
   "dependencies": {
@@ -36,7 +36,6 @@
     "eslint-plugin-jest": "^25.2.2",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^7.0.0",
-    "flush-promises": "^1.0.2",
     "prettier": "^2.5.1",
     "pug": "^3.0.2",
     "pug-plain-loader": "^1.1.0",
