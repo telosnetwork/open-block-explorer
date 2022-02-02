@@ -18,7 +18,7 @@ module.exports = {
   // noStackTrace: true,
   // bail: true,
   // cache: false,
-  // verbose: true,
+  verbose: true,
   // watch: true,
   collectCoverage: false,
   coverageDirectory: '<rootDir>/test/jest/coverage',
@@ -32,10 +32,10 @@ module.exports = {
   coveragePathIgnorePatterns: ['/node_modules/', '.d.ts$'],
   coverageThreshold: {
     global: {
-      //  branches: 50,
-      //  functions: 50,
-      //  lines: 50,
-      //  statements: 50
+      branches: 50,
+      functions: 50,
+      lines: 50,
+      statements: 50
     }
   },
   testMatch: [
