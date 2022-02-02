@@ -14,13 +14,6 @@ import { shallowMount } from '@vue/test-utils';
 import PriceChart from 'src/components/PriceChart.vue';
 import { PriceStats, PriceHistory } from 'src/types';
 import axios from 'axios';
-import 'flush-promises';
-import flushPromises from 'flush-promises';
-
-const exchangeStatsUrl =
-  'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true';
-const priceHistoryUrl =
-  'https://api.coingecko.com/api/v3/coins/telos/market_chart?vs_currency=USD&days=1&interval=hourly';
 
 const mockExchangeStats: PriceStats = {
   data: {
@@ -68,7 +61,7 @@ describe('PriceChart', () => {
       });
     });
 
-    it('calls setPriceHistory', async () => {
+    it('calls setPriceHistory', () => {
       const methodSpy = jest.spyOn(
         PriceChart.methods as any,
         'setPriceHistory'
