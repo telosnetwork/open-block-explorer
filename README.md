@@ -50,6 +50,7 @@ yarn build
 cd dist/spa
 quasar serve
 ```
+app running at localhost:4000 
 
 ### Documentation
 [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js)  
