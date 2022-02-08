@@ -47,6 +47,8 @@ yarn lint
 ### Build the app for production
 ```bash
 yarn build
+cd dist/spa
+quasar serve
 ```
 
 ### Documentation
