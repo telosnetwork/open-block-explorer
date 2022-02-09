@@ -6,19 +6,26 @@ div.header-background
 
         div.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
             div.row.justify-center  
-                q-input.col-12.search-input.q-pl-md(borderless dense label-color="white"  color="white"  v-model="search" label="Search" )
+                q-input.col-12.search-input.q-pl-md(
+                  borderless 
+                  dense 
+                  label-color="white"  
+                  color="white" 
+                  :input-style="{ color: 'white' }"
+                  v-model="search" 
+                  label="Search" )
                     template(v-slot:prepend)
                         q-icon.search-icon(name="search" color="white" size="20px")
 
         div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-            q-btn.connect-btn(@click='clicked()' label="Connect")
+            q-btn.button-primary(@click='clicked()' label="Connect")
 
     div.row.justify-center.col-12.q-pt-sm
         q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
-          q-tab.deactive(name="Network" label="Network") 
-          q-tab.deactive(name="Vote" label="Vote") 
-          q-tab.deactive(name="Proposal"  label="Proposal") 
-          q-tab.deactive(name="Explore" label="Explore") 
+          q-tab.deactive(name="Network" label="Network" @click="menuClicked('Network')")
+          q-tab.deactive(name="Vote" label="Vote" @click="menuClicked('Vote')")
+          q-tab.deactive(name="Proposal"  label="Proposal" @click="menuClicked('Proposal')")
+          q-tab.deactive(name="Explore" label="Explore" @click="menuClicked('Explore')")
 
 </template>
 <script lang="ts">
@@ -34,6 +41,9 @@ export default defineComponent({
   methods: {
     clicked() {
       console.log('connect btn clicked');
+    },
+    async menuClicked(routeName: string) {
+      await this.$router.push({ name: `${routeName}` });
     }
   }
 });
@@ -56,22 +66,13 @@ export default defineComponent({
     opacity: 0.3
     font-size: 18px
 
-
 .header-background
-    background: #071A5F
+    background: $primary-dark
 
 .search-input
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
     background: rgba(255, 255, 255, 0.05)
     border-radius: 4px
 
 .search-icon
     transform: rotate(90deg)
-
-.connect-btn
-    background: #571AFF
-    color:#ffffff
-    Width:82px
-    Height:36px
-    text-transform: unset
 </style>
