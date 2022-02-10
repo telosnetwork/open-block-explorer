@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { boot } from 'quasar/wrappers';
 import { api } from 'src/api';
 
