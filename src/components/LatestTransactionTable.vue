@@ -27,6 +27,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="next()") NEXT
 </template>
 <script lang="ts">
+import { TransactionTableRow } from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'LatestTransactionTable',
@@ -102,16 +103,26 @@ export default defineComponent({
           action: 'RECIVE',
           data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
         }
-      ]
+      ] as TransactionTableRow[]
     };
   },
   async mounted() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    debugger;
-    const recentTransactions = await this.$api.getTransactions();
-    console.log(recentTransactions);
+    await this.loadTransactions();
   },
   methods: {
+    async loadTransactions(): Promise<void> {
+      const recentTransactions = await this.$api.getTransactions();
+      debugger;
+      this.rows = recentTransactions.map(
+        (tx) =>
+          ({
+            transaction: tx.trx_id,
+            timestamp: tx['@timestamp'],
+            action: tx.act.name,
+            data: tx.act.data
+          } as TransactionTableRow)
+      );
+    },
     actions() {
       console.log('actions');
     },

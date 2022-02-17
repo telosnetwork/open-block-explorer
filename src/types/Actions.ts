@@ -34,25 +34,11 @@ interface AccountRamDelta {
 interface Account {
   account: string;
   authorization: Authorization[];
-  data: {
-    account: string;
-    name: string;
-    authorization: Authorization[];
-    data: {
-      activity: Activity[];
-    };
-  };
+  data: unknown;
   name: string;
 }
 
 interface Authorization {
   actor: string;
   permission: string;
-}
-
-interface Activity {
-  game: string;
-  account: string;
-  timestamp: string;
-  check_balance_limit: string;
 }
