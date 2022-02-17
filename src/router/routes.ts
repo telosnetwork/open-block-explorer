@@ -32,10 +32,10 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/Explore.vue') }]
   },
   {
-    path: '/therms',
-    name: 'THERMS',
+    path: '/terms',
+    name: 'TERMS',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Therms.vue') }]
+    children: [{ path: '', component: () => import('pages/Terms.vue') }]
   },
   {
     path: '/privacy',

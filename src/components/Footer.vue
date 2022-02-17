@@ -2,8 +2,8 @@
 div.row.footer-background.justify-center.col-12
     ul.flex.footer-items
         li.q-pa-md
-            router-link.router-link(:to="{name:'THERMS'}")
-                p THERMS
+            router-link.router-link(:to="{name:'TERMS'}")
+                p TERMS
         li.q-pa-md
             router-link.router-link(:to="{name:'PRIVACY'}")
                 p PRIVACY 
