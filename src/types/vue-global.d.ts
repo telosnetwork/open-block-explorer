@@ -1,9 +1,9 @@
 import { AxiosInstance } from 'axios';
-import { APIClient } from '@greymass/eosio';
+import { ApiClient } from 'src/types/Api';
 
 declare module 'vue/types/vue' {
   interface Vue {
     $axios: AxiosInstance;
-    $api: APIClient;
+    $api: ApiClient;
   }
 }

@@ -26,3 +26,7 @@ export interface GetTableRowsParams {
   /** Lower lookup bound. */
   key_type: string;
 }
+
+export type ApiClient = {
+  getAccount: (address: string) => Promise<unknown>;
+};

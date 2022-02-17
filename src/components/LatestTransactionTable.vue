@@ -105,6 +105,12 @@ export default defineComponent({
       ]
     };
   },
+  async mounted() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    debugger;
+    let test = await this.$api.getAccount('eosio');
+    console.log(test);
+  },
   methods: {
     actions() {
       console.log('actions');
