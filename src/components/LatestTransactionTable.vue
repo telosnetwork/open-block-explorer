@@ -72,38 +72,7 @@ export default defineComponent({
           field: 'data'
         }
       ],
-      rows: [
-        {
-          transaction: '4b419F30',
-          timestamp: 'Dec 30, 2021 04:34:45 PM',
-          action: 'RECIVE',
-          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
-        },
-        {
-          transaction: '4b419F30',
-          timestamp: 'Dec 30, 2021 04:34:45 PM',
-          action: 'RECIVE',
-          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
-        },
-        {
-          transaction: '4b419F30',
-          timestamp: 'Dec 30, 2021 04:34:45 PM',
-          action: 'RECIVE',
-          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
-        },
-        {
-          transaction: '4b419F30',
-          timestamp: 'Dec 30, 2021 04:34:45 PM',
-          action: 'RECIVE',
-          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
-        },
-        {
-          transaction: '4b419F30',
-          timestamp: 'Dec 30, 2021 04:34:45 PM',
-          action: 'RECIVE',
-          data: 'nodenodeorg1 → ramijames123 2,516.5483 TLOS'
-        }
-      ] as TransactionTableRow[]
+      rows: [] as TransactionTableRow[]
     };
   },
   async mounted() {
