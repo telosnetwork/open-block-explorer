@@ -81,7 +81,6 @@ export default defineComponent({
   methods: {
     async loadTransactions(): Promise<void> {
       const recentTransactions = await this.$api.getTransactions();
-      debugger;
       this.rows = recentTransactions.map(
         (tx) =>
           ({
