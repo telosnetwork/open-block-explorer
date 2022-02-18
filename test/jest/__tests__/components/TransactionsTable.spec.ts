@@ -12,9 +12,6 @@ import {
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import { shallowMount } from '@vue/test-utils';
 import TransactionsTable from 'src/components/TransactionsTable.vue';
-import axios from 'axios';
-
-const mockRowData = {};
 
 installQuasarPlugin();
 
@@ -41,8 +38,6 @@ describe('TransactionsTable', () => {
   describe('methods', () => {
     let wrapper: { vm: any };
     beforeEach(() => {
-      // const mock = jest.spyOn(axios, 'get');
-      // mock.mockResolvedValueOnce(mockRowData);
       wrapper = shallowMount(TransactionsTable, {
         mocks: {
           $api: {
