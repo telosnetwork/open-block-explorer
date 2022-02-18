@@ -119,7 +119,7 @@ export default defineComponent({
             transaction: tx.trx_id,
             timestamp: tx['@timestamp'],
             action: tx.act.name,
-            data: tx.act.data
+            data: JSON.stringify(tx.act.data, null, 2)
           } as TransactionTableRow)
       );
     },
