@@ -6,9 +6,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 p.table-title Latest Transactions
             q-space
             div.col-3.row.flex
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="actions()") Actions
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="date()") Date
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="token()") Token
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
         q-separator.row.col-12.q-mt-md.separator
         q-table.q-mt-lg.col-12.row(
             :rows="rows"
@@ -21,16 +21,16 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             table-header-class="table-header")
         div.row.col-12.q-mt-md.q-mb-xl
           div.col-1(align="left")
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="prev()") PREV
+            q-btn.q-ml-xs.q-mr-xs.col.button-primary PREV
           q-space
           div.col-1(align="right")
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary(@click="next()") NEXT
+            q-btn.q-ml-xs.q-mr-xs.col.button-primary NEXT
 </template>
 <script lang="ts">
 import { TransactionTableRow } from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
-  name: 'LatestTransactionTable',
+  name: 'TransactionsTable',
   props: {
     account: {
       type: Array,
@@ -91,21 +91,6 @@ export default defineComponent({
             data: JSON.stringify(tx.act.data, null, 2)
           } as TransactionTableRow)
       );
-    },
-    actions() {
-      console.log('actions');
-    },
-    date() {
-      console.log('date');
-    },
-    token() {
-      console.log('token');
-    },
-    prev() {
-      console.log('prev');
-    },
-    next() {
-      console.log('next');
     }
   }
 });
