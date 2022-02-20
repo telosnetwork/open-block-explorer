@@ -82,5 +82,6 @@ module.exports = {
       'jest-transform-stub'
   },
   transformIgnorePatterns: [`node_modules/(?!(${esModules}))`],
+  setupFiles: ['<rootDir>/jest.init.js'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue']
 };
