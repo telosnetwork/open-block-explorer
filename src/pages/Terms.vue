@@ -1,4 +1,4 @@
 <template lang="pug">
 div
-    h1 Therms
+    h1 Terms
 </template>

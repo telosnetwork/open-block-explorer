@@ -8,6 +8,8 @@ import {
   UInt64
 } from '@greymass/eosio';
 
+import { Action } from './Actions';
+
 export type TableIndexType =
   | Name
   | UInt64
@@ -26,3 +28,8 @@ export interface GetTableRowsParams {
   /** Lower lookup bound. */
   key_type: string;
 }
+
+export type ApiClient = {
+  getAccount: (address: string) => Promise<unknown>;
+  getTransactions: (address?: string) => Promise<Action[]>;
+};
