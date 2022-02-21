@@ -33,7 +33,7 @@ export default defineComponent({
   name: 'TransactionsTable',
   props: {
     account: {
-      type: Array,
+      type: String,
       required: false
     }
   },
@@ -80,12 +80,19 @@ export default defineComponent({
   },
   methods: {
     async loadTransactions(): Promise<void> {
-      const recentTransactions = await this.$api.getTransactions();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const recentTransactions = await this.$api.getTransactions(this.account);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // eslint-disable @typescript-eslint/no-unsafe-member-access
+      // eslint-disable @typescript-eslint/no-unsafe-assignment
       this.rows = recentTransactions.map(
         (tx) =>
           ({
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             transaction: tx.trx_id,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             timestamp: tx['@timestamp'],
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             action: tx.act.name,
             data: JSON.stringify(tx.act.data, null, 2)
           } as TransactionTableRow)
