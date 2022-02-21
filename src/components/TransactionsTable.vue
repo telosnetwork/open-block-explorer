@@ -14,20 +14,29 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             :rows="rows"
             :columns="columns"
             row-key="name"
-            hide-bottom
             flat
             :bordered="false"
             :square="true"
-            table-header-class="table-header")
-        div.row.col-12.q-mt-md.q-mb-xl
-          div.col-1(align="left")
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary PREV
-          q-space
-          div.col-1(align="right")
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary NEXT
+            table-header-class="table-header"
+            v-model:pagination="pagination")
+          template( v-slot:pagination="scope" )
+            div.row.col-12.q-mt-md.q-mb-xl()
+            div.col-1(align="left")
+              q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                :disable="scope.isFirstPage"
+                @click="scope.prevPage") PREV
+            q-space
+            div.col-1(align="right")
+              q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                :disable="scope.isLastPage"
+                @click="scope.nextPage") NEXT
 </template>
 <script lang="ts">
-import { TransactionTableRow } from 'src/types';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
+import { PaginationSettings, TransactionTableRow } from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'TransactionsTable',
@@ -41,7 +50,7 @@ export default defineComponent({
     return {
       columns: [
         {
-          name: 'TRANSACTION',
+          name: 'transaction',
           required: true,
           label: 'TRANSACTION',
           align: 'left',
@@ -49,7 +58,7 @@ export default defineComponent({
           sortable: true
         },
         {
-          name: 'TIMESTAMP',
+          name: 'timestamp',
           required: true,
           align: 'left',
           label: 'TIMESTAMP',
@@ -57,7 +66,7 @@ export default defineComponent({
           sortable: true
         },
         {
-          name: 'ACTION',
+          name: 'action',
           required: true,
           align: 'left',
           label: 'ACTION',
@@ -65,14 +74,20 @@ export default defineComponent({
           sortable: true
         },
         {
-          name: 'DATA',
+          name: 'data',
           required: true,
           align: 'left',
           label: 'DATA',
           field: 'data'
         }
       ],
-      rows: [] as TransactionTableRow[]
+      rows: [] as TransactionTableRow[],
+      pagination: {
+        sortBy: 'timestamp',
+        descending: true,
+        page: 1,
+        rowsPerPage: 10
+      } as PaginationSettings
     };
   },
   async mounted() {
@@ -80,23 +95,20 @@ export default defineComponent({
   },
   methods: {
     async loadTransactions(): Promise<void> {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const recentTransactions = await this.$api.getTransactions(this.account);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      // eslint-disable @typescript-eslint/no-unsafe-member-access
-      // eslint-disable @typescript-eslint/no-unsafe-assignment
       this.rows = recentTransactions.map(
         (tx) =>
           ({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             transaction: tx.trx_id,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             timestamp: tx['@timestamp'],
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             action: tx.act.name,
             data: JSON.stringify(tx.act.data, null, 2)
           } as TransactionTableRow)
       );
+    },
+    navigate(row: unknown): void {
+      debugger;
+      console.log(row);
     }
   }
 });
