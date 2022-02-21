@@ -10,6 +10,12 @@ import TransactionsTable from 'components/TransactionsTable.vue';
 
 export default defineComponent({
   name: 'PageIndex',
+  props: {
+    account: {
+      type: String,
+      required: true
+    }
+  },
   components: {
     TransactionsTable
   }
