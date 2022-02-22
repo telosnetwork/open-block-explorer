@@ -1,16 +1,16 @@
 <template lang="pug">
 div.row.col-12
     div.row.col-12.gradient-box
-    TransactionsTable(:account='account')
+    TransactionsTable(:account='transaction')
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 
 export default defineComponent({
-  name: 'Account',
+  name: 'Transaction',
   props: {
-    account: {
+    transaction: {
       type: String,
       required: true
     }
