@@ -19,6 +19,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             :square="true"
             table-header-class="table-header"
             v-model:pagination="paginationSettings")
+          template( v-slot:body-cell-action="props")
+            q-td( :props="props" )
+              div(v-html="props.value")
           template( v-slot:body-cell-data="props")
             q-td( :props="props" )
               div(v-html="props.value")
@@ -40,7 +43,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import { PaginationSettings, TransactionTableRow } from 'src/types';
+import { Account, PaginationSettings, TransactionTableRow } from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'TransactionsTable',
@@ -74,8 +77,7 @@ export default defineComponent({
           required: true,
           align: 'left',
           label: 'ACTION',
-          field: 'action',
-          sortable: true
+          field: 'action'
         },
         {
           name: 'data',
@@ -100,15 +102,19 @@ export default defineComponent({
   methods: {
     async loadTransactions(): Promise<void> {
       const recentTransactions = await this.$api.getTransactions(this.account);
+      debugger;
       this.rows = recentTransactions.map(
         (tx) =>
           ({
             transaction: tx.trx_id,
             timestamp: tx['@timestamp'],
-            action: tx.act.name,
+            action: this.formatAction(tx.act),
             data: this.formatData(tx.act.data)
           } as TransactionTableRow)
       );
+    },
+    formatAction(txAct: Account): string {
+      return `<div><a href="/contract/${txAct.account}">${txAct.account}</a>&nbsp; → &nbsp;${txAct.name}</div>`;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatData(data: any): string {
@@ -148,4 +154,6 @@ body
     font-weight: normal
     font-size: 22.75px
     line-height: 27px
+a
+  text-decoration: none !important
 </style>
