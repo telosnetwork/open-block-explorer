@@ -8,44 +8,50 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/Network.vue') }]
   },
   {
+    path: '/account/:account',
+    name: 'account',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/Account.vue') }]
+  },
+  {
     path: '/network',
-    name: 'Network',
+    name: 'network',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Network.vue') }]
   },
   {
     path: '/vote',
-    name: 'Vote',
+    name: 'vote',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Vote.vue') }]
   },
   {
     path: '/proposal',
-    name: 'Proposal',
+    name: 'proposal',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Proposal.vue') }]
   },
   {
     path: '/explore',
-    name: 'Explore',
+    name: 'explore',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Explore.vue') }]
   },
   {
     path: '/terms',
-    name: 'TERMS',
+    name: 'terms',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Terms.vue') }]
   },
   {
     path: '/privacy',
-    name: 'PRIVACY',
+    name: 'privacy',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Privacy.vue') }]
   },
   {
     path: '/repository',
-    name: 'REPOSITORY',
+    name: 'repository',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Repository.vue') }]
   },
