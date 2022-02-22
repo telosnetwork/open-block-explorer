@@ -137,7 +137,7 @@ export default defineComponent({
         // if (data[key] instanceof Object) {
         //   this.formatData(data[key]);
         // } else {
-        formattedData.push(`<b>${key}</b>: ${data[key]}`);
+        formattedData.push(`<b>${key}</b>: ${data[key]} <br>`);
         // }
       }
       return formattedData.join('\n');
