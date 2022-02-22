@@ -132,10 +132,6 @@ export default defineComponent({
         formattedData.push(`<br><b>${key}</b>: ${data[key]}`);
       }
       return formattedData.join('\n');
-    },
-    navigate(row: unknown): void {
-      debugger;
-      console.log(row);
     }
   }
 });
