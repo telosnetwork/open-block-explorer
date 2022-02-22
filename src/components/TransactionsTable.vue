@@ -113,32 +113,23 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatData(data: any): string {
       const accountRegEx = /^(account|to|from|owner)$/;
-      let formattedData = [];
+      const formattedData = [];
       for (let key in data) {
         if (accountRegEx.exec(key)) {
           data[key] = `<a href="/account/${data[key]}">${data[key]}</a>`;
         }
-        if (key === 'quotes') {
-          let formattedQuotes = [];
-          for (let i = 0; i < data[key].length; i++) {
-            formattedQuotes.push(
-              `<b>${data[key][i].pair}</b>: ${data[key][i].value}`
-            );
+        if (data[key] instanceof Object) {
+          if (Array.isArray(data[key])) {
+            const keyValArray = [];
+            for (let i = 0; i < data[key].length; i++) {
+              keyValArray.push(this.formatData(data[key][i]));
+            }
+            data[key] = keyValArray.join('\n');
+          } else {
+            data[key] = this.formatData(data[key]);
           }
-          formattedQuotes.join('\n');
-          data[key] = formattedQuotes;
-        } else if (key === 'authorization') {
-          let test = [];
-          for (let i = 0; i < data[key].length; i++) {
-            test.push(this.formatData(data[key][i]));
-          }
-          data[key] = test.join('\n');
         }
-        // if (data[key] instanceof Object) {
-        //   this.formatData(data[key]);
-        // } else {
-        formattedData.push(`<b>${key}</b>: ${data[key]} <br>`);
-        // }
+        formattedData.push(`<br><b>${key}</b>: ${data[key]}`);
       }
       return formattedData.join('\n');
     },
