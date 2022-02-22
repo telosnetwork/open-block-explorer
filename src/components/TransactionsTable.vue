@@ -18,7 +18,10 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             :bordered="false"
             :square="true"
             table-header-class="table-header"
-            v-model:pagination="pagination")
+            v-model:pagination="paginationSettings")
+          template( v-slot:body-cell-data="props")
+            q-td( :props="props" )
+              div(v-html="props.value")
           template( v-slot:pagination="scope" )
             div.row.col-12.q-mt-md.q-mb-xl()
             div.col-1(align="left")
@@ -34,6 +37,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import { PaginationSettings, TransactionTableRow } from 'src/types';
@@ -82,7 +86,7 @@ export default defineComponent({
         }
       ],
       rows: [] as TransactionTableRow[],
-      pagination: {
+      paginationSettings: {
         sortBy: 'timestamp',
         descending: true,
         page: 1,
@@ -102,9 +106,39 @@ export default defineComponent({
             transaction: tx.trx_id,
             timestamp: tx['@timestamp'],
             action: tx.act.name,
-            data: JSON.stringify(tx.act.data, null, 2)
+            data: this.formatData(tx.act.data)
           } as TransactionTableRow)
       );
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    formatData(data: any): string {
+      const accountRegEx = /^(account|to|from|owner)$/;
+      let formattedData = [];
+      for (let key in data) {
+        if (accountRegEx.exec(key)) {
+          data[key] = `<a href="/account/${data[key]}">${data[key]}</a>`;
+        }
+        if (key === 'quotes') {
+          let formattedQuotes = [];
+          for (let i = 0; i < data[key].length; i++) {
+            formattedQuotes.push(
+              `<b>${data[key][i].pair}</b>: ${data[key][i].value}`
+            );
+          }
+          formattedQuotes.join('\n');
+          data[key] = formattedQuotes;
+        } else if (key === 'authorization') {
+          for (let i = 0; i < data[key].length; i++) {
+            debugger;
+          }
+        }
+        // if (data[key] instanceof Object) {
+        //   this.formatData(data[key]);
+        // } else {
+        formattedData.push(`<b>${key}</b>: ${data[key]}`);
+        // }
+      }
+      return formattedData.join('\n');
     },
     navigate(row: unknown): void {
       debugger;
