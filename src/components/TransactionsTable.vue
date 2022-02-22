@@ -102,7 +102,6 @@ export default defineComponent({
   methods: {
     async loadTransactions(): Promise<void> {
       const recentTransactions = await this.$api.getTransactions(this.account);
-      debugger;
       this.rows = recentTransactions.map(
         (tx) =>
           ({
@@ -114,7 +113,7 @@ export default defineComponent({
       );
     },
     formatAction(txAct: Account): string {
-      return `<div><a href="/contract/${txAct.account}">${txAct.account}</a>&nbsp; → &nbsp;${txAct.name}</div>`;
+      return `<div><a href="/contract/${txAct.account}" class="hover-dec">${txAct.account}</a>&nbsp; → &nbsp;${txAct.name}</div>`;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatData(data: any): string {
@@ -122,7 +121,9 @@ export default defineComponent({
       const formattedData = [];
       for (let key in data) {
         if (accountRegEx.exec(key)) {
-          data[key] = `<a href="/account/${data[key]}">${data[key]}</a>`;
+          data[
+            key
+          ] = `<a href="/account/${data[key]}" class="hover-dec">${data[key]}</a>`;
         }
         if (data[key] instanceof Object) {
           if (Array.isArray(data[key])) {
@@ -142,7 +143,7 @@ export default defineComponent({
   }
 });
 </script>
-<style lang="sass" scoped>
+<style lang="sass">
 body
     height:1000px
 .table-header
@@ -154,6 +155,8 @@ body
     font-weight: normal
     font-size: 22.75px
     line-height: 27px
-a
-  text-decoration: none !important
+.hover-dec
+  text-decoration: none
+  &:hover
+    text-decoration: underline
 </style>
