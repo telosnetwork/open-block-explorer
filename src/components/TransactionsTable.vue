@@ -19,6 +19,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             :square="true"
             table-header-class="table-header"
             v-model:pagination="paginationSettings")
+          template( v-slot:body-cell-transaction="props")
+            q-td( :props="props" )
+              div(v-html="props.value")
           template( v-slot:body-cell-action="props")
             q-td( :props="props" )
               div(v-html="props.value")
@@ -77,7 +80,8 @@ export default defineComponent({
           required: true,
           align: 'left',
           label: 'ACTION',
-          field: 'action'
+          field: 'action',
+          sortable: true
         },
         {
           name: 'data',
@@ -105,15 +109,18 @@ export default defineComponent({
       this.rows = recentTransactions.map(
         (tx) =>
           ({
-            transaction: tx.trx_id,
+            transaction: this.formatTransaction(tx.trx_id),
             timestamp: tx['@timestamp'],
             action: this.formatAction(tx.act),
             data: this.formatData(tx.act.data)
           } as TransactionTableRow)
       );
     },
+    formatTransaction(tx: string): string {
+      return `<a href="/transaction/${tx}" class="hover-dec">${tx}</a>`;
+    },
     formatAction(txAct: Account): string {
-      return `<div><a href="/contract/${txAct.account}" class="hover-dec">${txAct.account}</a>&nbsp; → &nbsp;${txAct.name}</div>`;
+      return `<a href="/contract/${txAct.account}" class="hover-dec">${txAct.account}</a>&nbsp; → &nbsp;${txAct.name}`;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatData(data: any): string {
