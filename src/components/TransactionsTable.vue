@@ -128,9 +128,11 @@ export default defineComponent({
           formattedQuotes.join('\n');
           data[key] = formattedQuotes;
         } else if (key === 'authorization') {
+          let test = [];
           for (let i = 0; i < data[key].length; i++) {
-            debugger;
+            test.push(this.formatData(data[key][i]));
           }
+          data[key] = test.join('\n');
         }
         // if (data[key] instanceof Object) {
         //   this.formatData(data[key]);
