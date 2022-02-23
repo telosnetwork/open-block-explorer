@@ -59,6 +59,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.loadAccountData();
+    this.creatingAccount = (await this.$api.getCreator(this.account)).creator;
   },
   methods: {
     async loadAccountData(): Promise<void> {
