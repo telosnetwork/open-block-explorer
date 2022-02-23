@@ -14,6 +14,13 @@ export const getAccount = async function (address: string): Promise<any> {
   return response.data.account;
 };
 
+export const getCreator = async function (address: string): Promise<any> {
+  const response = await hyperion.get('v2/history/get_creator', {
+    params: { account: address }
+  });
+  return response.data;
+};
+
 export const getTransactions = async function (
   address?: string
 ): Promise<Action[]> {
