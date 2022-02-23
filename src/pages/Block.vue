@@ -1,7 +1,7 @@
 <template lang="pug">
 div.row.col-12
     div.row.col-12.gradient-box
-    TransactionsTable(:account='contract')
+    TransactionsTable(:account='block')
 
 </template>
 <script lang="ts">
@@ -9,9 +9,9 @@ import { defineComponent } from 'vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 
 export default defineComponent({
-  name: 'Contract',
+  name: 'Block',
   props: {
-    contract: {
+    block: {
       type: String,
       required: true
     }

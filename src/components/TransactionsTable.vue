@@ -105,6 +105,7 @@ export default defineComponent({
   },
   methods: {
     async loadTransactions(): Promise<void> {
+      debugger;
       const recentTransactions = await this.$api.getTransactions(this.account);
       this.rows = recentTransactions.map(
         (tx) =>

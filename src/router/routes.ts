@@ -20,10 +20,10 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/Transaction.vue') }]
   },
   {
-    path: '/contract/:contract',
-    name: 'contract',
+    path: '/block/:block',
+    name: 'block',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Contract.vue') }]
+    children: [{ path: '', component: () => import('pages/Block.vue') }]
   },
   {
     path: '/network',
