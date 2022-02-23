@@ -84,6 +84,8 @@ export default defineComponent({
 });
 </script>
 <style lang="sass" scoped>
+$medium:1000px
+
 .account-card
   max-width: 100%
 .table-body
@@ -100,4 +102,18 @@ export default defineComponent({
   font-size: 20px
 .text-right
   font-weight: bold
+
+@media screen and (max-width: $medium) // screen < 1000px
+  .account-card
+    width: 100%
+    padding: unset
+    margin-top: unset
+    height: 100%
+    border-radius: unset
+  .q-markup-table
+    overflow: unset
+  .resources
+    float: unset
+  .resource
+    width: 100%
 </style>
