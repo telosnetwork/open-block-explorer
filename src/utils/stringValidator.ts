@@ -9,3 +9,7 @@ export function isValidHex(hexString: string): boolean {
   const regEx = /[0-9A-Fa-f]{6}/g;
   return regEx.exec(hexString) != null;
 }
+
+export function escapePeriods(account: string): string {
+  return account.replace(/\./g, '\\.');
+}

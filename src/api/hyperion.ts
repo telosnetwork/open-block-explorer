@@ -3,15 +3,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* Reference for Hyperion endpoints: https://rpc1.us.telos.net/v2/docs/static/index.html#/ */
 import axios from 'axios';
-import { ActionData, Action } from 'src/types';
+import { ActionData, Action, AccountDetails } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
-export const getAccount = async function (address: string): Promise<any> {
+export const getAccount = async function (
+  address: string
+): Promise<AccountDetails> {
   const response = await hyperion.get('v2/state/get_account', {
     params: { account: address }
   });
-  return response.data.account;
+  return response.data;
 };
 
 export const getCreator = async function (address: string): Promise<any> {

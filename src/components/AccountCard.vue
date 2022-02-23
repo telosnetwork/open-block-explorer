@@ -64,22 +64,25 @@ export default defineComponent({
   methods: {
     async loadAccountData(): Promise<void> {
       const data = await this.$api.getAccount(this.account);
-      this.total = data.core_liquid_balance;
-      this.refunding = data.refund_request ? data.refund_request : NONE;
-      this.staked = (data.voter_info.staked / TEN_THOUSAND).toFixed(4)
-        ? data.voter_info.staked
+      const account = data.account;
+      this.total = account.core_liquid_balance;
+      this.refunding = account.refund_request ? account.refund_request : NONE;
+      this.staked = account.voter_info
+        ? (account.voter_info.staked / TEN_THOUSAND).toFixed(4)
         : NONE;
-      this.rex = data.rex_info ? data.rex_info.vote_stake : NONE;
+      this.rex = account.rex_info ? account.rex_info.vote_stake : NONE;
       this.ram = (
-        (data.ram_usage / data.total_resources.ram_bytes) *
+        (account.ram_usage / account.total_resources.ram_bytes) *
         HUNDRED
       ).toFixed(4);
-      this.cpu = ((data.cpu_limit.used / data.cpu_limit.max) * HUNDRED).toFixed(
-        2
-      );
-      this.net = ((data.net_limit.used / data.net_limit.max) * HUNDRED).toFixed(
-        2
-      );
+      this.cpu = (
+        (account.cpu_limit.used / account.cpu_limit.max) *
+        HUNDRED
+      ).toFixed(2);
+      this.net = (
+        (account.net_limit.used / account.net_limit.max) *
+        HUNDRED
+      ).toFixed(2);
     }
   }
 });
