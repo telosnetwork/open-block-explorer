@@ -17,7 +17,7 @@
         tbody.table-body
           tr
             td.text-left TOTAL
-            td.text-right {{ total }}
+            td.text-right.total {{ total }}
           tr
             td.text-left REFUNDING
             td.text-right {{ refunding }} 
@@ -96,4 +96,8 @@ export default defineComponent({
   margin-top: 2.5rem
 .resource
   margin-right: 2rem
+.total
+  font-size: 20px
+.text-right
+  font-weight: bold
 </style>

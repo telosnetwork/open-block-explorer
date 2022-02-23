@@ -11,7 +11,6 @@ export const getAccount = async function (address: string): Promise<any> {
   const response = await hyperion.get('v2/state/get_account', {
     params: { account: address }
   });
-  debugger;
   return response.data.account;
 };
 
