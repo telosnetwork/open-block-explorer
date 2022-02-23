@@ -4,8 +4,7 @@
     q-card-section
       .text-h6 {{ account }}
       .text-subtitle2 created by 
-        router-link( :to="{ path: 'account', params: { account: creatingAccount}}") 
-          {{ creatingAccount }}
+        router-link( :to="{ path: 'account', params: { account: creatingAccount}}") {{ creatingAccount }}
     q-markup-table
       thead
         tr

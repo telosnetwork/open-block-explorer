@@ -2,7 +2,7 @@
 q-layout( view="hHh lpR fff")
   q-header
     Header
-    q-separator.separator
+    //- q-separator.separator
   q-page-container
     router-view
     q-separator
