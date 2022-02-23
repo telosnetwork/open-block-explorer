@@ -110,18 +110,22 @@ export default defineComponent({
       this.rows = recentTransactions.map(
         (tx) =>
           ({
-            transaction: this.formatTransaction(tx.trx_id),
+            transaction: this.formatAccount(tx.trx_id, 'transaction'),
             timestamp: tx['@timestamp'],
             action: this.formatAction(tx.act),
             data: this.formatData(tx.act.data)
           } as TransactionTableRow)
       );
     },
-    formatTransaction(tx: string): string {
-      return `<a href="/transaction/${tx}" class="hover-dec">${tx}</a>`;
+    formatAccount(
+      name: string,
+      type: 'account' | 'transaction' | 'block'
+    ): string {
+      return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
     },
     formatAction(txAct: Account): string {
-      return `<a href="/contract/${txAct.account}" class="hover-dec">${txAct.account}</a>&nbsp; → &nbsp;${txAct.name}`;
+      const accountString = this.formatAccount(txAct.account, 'account');
+      return `${accountString}&nbsp; → &nbsp;${txAct.name}`;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatData(data: any): string {
@@ -129,9 +133,7 @@ export default defineComponent({
       const formattedData = [];
       for (let key in data) {
         if (accountRegEx.exec(key)) {
-          data[
-            key
-          ] = `<a href="/account/${data[key]}" class="hover-dec">${data[key]}</a>`;
+          data[key] = this.formatAccount(data[key], 'account');
         }
         if (data[key] instanceof Object) {
           if (Array.isArray(data[key])) {
