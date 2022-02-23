@@ -31,10 +31,12 @@
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import { defineComponent } from 'vue';
 
 const HUNDRED = 100.0;
+const NONE = '0 TLOS';
 export default defineComponent({
   name: 'AccountCard',
   props: {
@@ -61,26 +63,22 @@ export default defineComponent({
   methods: {
     async loadAccountData(): Promise<void> {
       const data = await this.$api.getAccount(this.account);
-      this.total = data.account.core_liquid_balance;
-      this.refunding = data.account.refund_request
-        ? data.account.refund_request
-        : '0 TLOS';
-      this.staked = data.account.voter_info.staked
-        ? data.account.voter_info.staked
-        : '0 TLOS';
-      this.rex = data.account.rex_info ? data.account.rex_info : '0 TLOS';
+      this.total = data.core_liquid_balance;
+      this.refunding = data.refund_request ? data.refund_request : NONE;
+      this.staked = data.voter_info.staked.toFixed(2)
+        ? data.voter_info.staked
+        : NONE;
+      this.rex = data.rex_info ? data.rex_info.vote_stake : NONE;
       this.ram = (
-        (data.account.ram_usage / data.account.total_resources.ram_bytes) *
+        (data.ram_usage / data.total_resources.ram_bytes) *
         HUNDRED
-      ).toFixed(2);
-      this.cpu = (
-        (data.account.cpu_limit.used / data.account.cpu_limit.max) *
-        HUNDRED
-      ).toFixed(2);
-      this.net = (
-        (data.account.net_limit.used / data.account.net_limit.max) *
-        HUNDRED
-      ).toFixed(2);
+      ).toFixed(4);
+      this.cpu = ((data.cpu_limit.used / data.cpu_limit.max) * HUNDRED).toFixed(
+        4
+      );
+      this.net = ((data.net_limit.used / data.net_limit.max) * HUNDRED).toFixed(
+        4
+      );
     }
   }
 });
@@ -96,7 +94,6 @@ export default defineComponent({
 .resources
   float: right
   margin-top: 2.5rem
-  margin-right: 3rem
 .resource
   margin-right: 2rem
 </style>
