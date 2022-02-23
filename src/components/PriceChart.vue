@@ -177,10 +177,10 @@ $medium:1000px
         width: 19px
 .price-box
     background-color:#ffffff
-    height: 280px
     background: #FFFFFF
     box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
     border-radius: 10px
+
 .title
     font-style: normal
     font-weight: normal

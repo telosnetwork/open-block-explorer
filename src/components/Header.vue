@@ -2,6 +2,7 @@
 div.header-background
     div.row.text-center.q-pt-sm
         div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
+          a( href="/")
            img.logo( src="~assets/telos_logo.svg")
 
         div.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
