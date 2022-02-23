@@ -48,6 +48,7 @@ export default defineComponent({
     },
     async menuClicked(routeName: string) {
       await this.$router.push({ name: `${routeName}` });
+      this.$router.go(0);
     },
     /* temp search check if possible tx or account, replace with results list rendering */
     async executeSearch(input: KeyboardEvent): Promise<void> {
@@ -62,12 +63,14 @@ export default defineComponent({
             name: 'transaction',
             params: { transaction: value }
           });
+          this.$router.go(0);
         } else {
           if (isValidAccount(value)) {
             await this.$router.push({
               name: 'account',
               params: { account: value }
             });
+            this.$router.go(0);
           } else {
             Notify.create('invalid transacation id or account name');
           }
