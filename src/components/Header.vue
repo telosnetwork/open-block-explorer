@@ -13,7 +13,9 @@ div.header-background
                   color="white" 
                   :input-style="{ color: 'white' }"
                   v-model="search" 
-                  label="Search" )
+                  label="Search"
+                  @keyup.enter="parseSearch" 
+                  )
                     template(v-slot:prepend)
                         q-icon.search-icon(name="search" color="white" size="20px")
 
@@ -44,6 +46,23 @@ export default defineComponent({
     },
     async menuClicked(routeName: string) {
       await this.$router.push({ name: `${routeName}` });
+    },
+    /* temp search check if tx or account, does not validate, replace with results list rendering */
+    async parseSearch(input: KeyboardEvent): Promise<void> {
+      if (input != null) {
+        const value = (input.currentTarget as HTMLInputElement).value;
+        if (value) {
+          await this.$router.push({
+            name: 'transaction',
+            params: { transaction: value }
+          });
+        } else {
+          await this.$router.push({
+            name: 'account',
+            params: { account: value }
+          });
+        }
+      }
     }
   }
 });
