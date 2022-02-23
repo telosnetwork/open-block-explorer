@@ -4,12 +4,13 @@
  *  - for new method,  export and import here, add to api export
  *  - for existing method enpoint, export from service file and update the import statement here
  */
-import { getAccount, getTransactions } from './hyperion'; //  e.g. './new-service' method name stays the same
+import { getAccount, getTransactions, getTransaction } from './hyperion'; //  e.g. './new-service' method name stays the same
 import { getTableRows, getTokenBalances } from './eosio_core';
 
 export const api = {
   getAccount,
   getTransactions,
+  getTransaction,
   getTableRows,
   getTokenBalances
 };

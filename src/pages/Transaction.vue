@@ -9,11 +9,10 @@ import TransactionsTable from 'components/TransactionsTable.vue';
 
 export default defineComponent({
   name: 'Transaction',
-  props: {
-    transaction: {
-      type: String,
-      required: true
-    }
+  data() {
+    return {
+      transaction: this.$route.params.transaction
+    };
   },
   components: {
     TransactionsTable

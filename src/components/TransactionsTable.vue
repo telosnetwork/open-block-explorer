@@ -3,7 +3,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
     div.row.col-11
         div.row.col-12.q-mt-lg
             div.col-3
-                p.table-title Latest Transactions
+                p.table-title {{ tableTitle }} 
             q-space
             div.col-3.row.flex
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
@@ -46,14 +46,20 @@ div.row.col-12.q-mt-xs.justify-center.text-left
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import { Account, PaginationSettings, TransactionTableRow } from 'src/types';
+import {
+  Account,
+  Action,
+  PaginationSettings,
+  TransactionTableRow
+} from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'TransactionsTable',
   props: {
     account: {
       type: String,
-      required: true
+      required: false,
+      default: null
     }
   },
   data() {
@@ -101,12 +107,28 @@ export default defineComponent({
     };
   },
   async mounted() {
-    await this.loadTransactions();
+    await this.loadTableData();
+  },
+  computed: {
+    isTransaction(): boolean {
+      return this.account != null && this.account.length > 12;
+    },
+    tableTitle(): string {
+      return this.isTransaction ? 'Actions' : 'Latest Transactions';
+    }
   },
   methods: {
-    async loadTransactions(): Promise<void> {
-      const recentTransactions = await this.$api.getTransactions(this.account);
-      this.rows = recentTransactions.map(
+    async loadTableData(): Promise<void> {
+      let tableData: Action[];
+      if (this.isTransaction) {
+        tableData = await this.$api.getTransaction(this.account);
+      } else {
+        tableData =
+          this.account == null
+            ? await this.$api.getTransactions()
+            : await this.$api.getTransactions(this.account);
+      }
+      this.rows = tableData.map(
         (tx) =>
           ({
             transaction: this.formatAccount(tx.trx_id, 'transaction'),
