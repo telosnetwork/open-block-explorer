@@ -84,7 +84,7 @@ export default defineComponent({
 });
 </script>
 <style lang="sass" scoped>
-$medium:1000px
+$medium:750px
 
 .account-card
   max-width: 100%
@@ -103,7 +103,7 @@ $medium:1000px
 .text-right
   font-weight: bold
 
-@media screen and (max-width: $medium) // screen < 1000px
+@media screen and (max-width: $medium) // screen < $medium
   .account-card
     width: 100%
     padding: unset
@@ -114,6 +114,6 @@ $medium:1000px
     overflow: unset
   .resources
     float: unset
-  .resource
+  .inline-section
     width: 100%
 </style>
