@@ -14,7 +14,7 @@ div.header-background
                   :input-style="{ color: 'white' }"
                   v-model="search" 
                   label="Search"
-                  @keyup.enter="parseSearch" 
+                  @keyup.enter="executeSearch" 
                   )
                     template(v-slot:prepend)
                         q-icon.search-icon(name="search" color="white" size="20px")
@@ -32,6 +32,7 @@ div.header-background
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
 export default defineComponent({
   name: 'Header',
   data() {
@@ -48,19 +49,27 @@ export default defineComponent({
       await this.$router.push({ name: `${routeName}` });
     },
     /* temp search check if tx or account, does not validate, replace with results list rendering */
-    async parseSearch(input: KeyboardEvent): Promise<void> {
+    async executeSearch(input: KeyboardEvent): Promise<void> {
       if (input != null) {
         const value = (input.currentTarget as HTMLInputElement).value;
-        if (value) {
+        if (value === '') {
+          console.log('no search term input');
+          return;
+        }
+        if (isValidHex(value) && value.length == 64) {
           await this.$router.push({
             name: 'transaction',
             params: { transaction: value }
           });
         } else {
-          await this.$router.push({
-            name: 'account',
-            params: { account: value }
-          });
+          if (isValidAccount(value)) {
+            await this.$router.push({
+              name: 'account',
+              params: { account: value }
+            });
+          } else {
+            console.log('invalid account name');
+          }
         }
       }
     }
