@@ -1,5 +1,13 @@
 # 'OBE' (open-block-explorer)
 
+## Currently in development  
+
+Telos Mainnet: [https://explorer.telos.net](https://explorer.telos.net)  
+Telos Testnet: [https://explorer-test.telos.net](https://explorer-test.telos.net)  
+
+
+## Installation 
+
 ### Install yarn package manager
 Follow the installation instructions at:
 https://classic.yarnpkg.com/en/
