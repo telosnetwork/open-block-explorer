@@ -21,3 +21,16 @@ export const getTransactions = async function (
   });
   return response.data.actions;
 };
+
+export const getTransaction = async function (
+  address?: string
+): Promise<Action[]> {
+  const response = await hyperion.get<ActionData>(
+    'v2/history/get_transaction',
+    {
+      params: { id: address }
+    }
+  );
+  debugger;
+  return response.data.actions;
+};

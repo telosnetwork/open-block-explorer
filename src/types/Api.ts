@@ -32,4 +32,5 @@ export interface GetTableRowsParams {
 export type ApiClient = {
   getAccount: (address: string) => Promise<unknown>;
   getTransactions: (address?: string) => Promise<Action[]>;
+  getTransaction: (address: string) => Promise<Action[]>;
 };
