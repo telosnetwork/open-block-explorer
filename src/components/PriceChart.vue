@@ -158,22 +158,22 @@ export default defineComponent({
 </script>
 
 <style lang="sass" scoped>
-$medium:1000px
+$medium:750px
 .chart-info
-    @media screen and (max-width: $medium) // screen < 1000px
+    @media screen and (max-width: $medium) // screen < $medium
         text-align: center !important
-    @media screen and (min-width: $medium) //screen > 1000px
+    @media screen and (min-width: $medium) //screen > $medium
         text-align: left !important
 .border-line
     width: 19px
     height: 2px
     background: $primary
     border-radius: 4px
-    @media screen and (max-width: $medium) // screen < 1000px
+    @media screen and (max-width: $medium) // screen < $medium
         width: 156px !important
         margin: auto
         margin-buttom: 22px
-    @media screen and (min-width: $medium) //screen > 1000px
+    @media screen and (min-width: $medium) //screen > $medium
         width: 19px
 .price-box
     background-color:#ffffff

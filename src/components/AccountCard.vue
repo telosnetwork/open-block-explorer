@@ -4,7 +4,7 @@
     q-card-section
       .inline-section
         .text-h6 {{ account }}
-        .text-subtitle2 created by 
+        .text-subtitle created by 
           router-link( :to="{ path: 'account', params: { account: creatingAccount}}") {{ creatingAccount }}
       .resources.inline-section
         .resource.inline-section CPU {{ cpu }}% used
@@ -16,7 +16,7 @@
           th.text-left BALANCE
         tbody.table-body
           tr
-            td.text-left TOTAL
+            td.text-left TOTAL   
             td.text-right.total {{ total }}
           tr
             td.text-left REFUNDING
@@ -59,6 +59,7 @@ export default defineComponent({
   },
   async mounted() {
     await this.loadAccountData();
+    this.creatingAccount = (await this.$api.getCreator(this.account)).creator;
   },
   methods: {
     async loadAccountData(): Promise<void> {
@@ -84,7 +85,7 @@ export default defineComponent({
 });
 </script>
 <style lang="sass" scoped>
-$medium:1000px
+$medium:750px
 
 .account-card
   max-width: 100%
@@ -102,8 +103,15 @@ $medium:1000px
   font-size: 20px
 .text-right
   font-weight: bold
+.text-subtitle
+  font-size: 12px
+  a
+    text-decoration: none
+    &:hover
+      text-decoration: underline
 
-@media screen and (max-width: $medium) // screen < 1000px
+
+@media screen and (max-width: $medium) // screen < $medium
   .account-card
     width: 100%
     padding: unset
@@ -114,6 +122,6 @@ $medium:1000px
     overflow: unset
   .resources
     float: unset
-  .resource
+  .inline-section
     width: 100%
 </style>

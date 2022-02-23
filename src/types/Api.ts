@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Checksum160,
   Checksum256,
@@ -30,8 +31,8 @@ export interface GetTableRowsParams {
 }
 
 export type ApiClient = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getAccount: (address: string) => Promise<any>;
+  getCreator: (address: string) => Promise<any>;
   getTransactions: (address?: string) => Promise<Action[]>;
   getTransaction: (address: string) => Promise<Action[]>;
 };

@@ -175,7 +175,7 @@ export default defineComponent({
 });
 </script>
 <style lang="sass">
-$medium:1000px
+$medium:750px
 
 body
     height:1000px
@@ -193,7 +193,7 @@ body
   &:hover
     text-decoration: underline
 
-@media screen and (max-width: $medium) // screen < 1000px
+@media screen and (max-width: $medium) // screen < $medium
   .filter-buttons
     width: 100% !important
 </style>
