@@ -32,6 +32,7 @@ div.header-background
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Notify } from 'quasar';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
 export default defineComponent({
   name: 'Header',
@@ -48,12 +49,12 @@ export default defineComponent({
     async menuClicked(routeName: string) {
       await this.$router.push({ name: `${routeName}` });
     },
-    /* temp search check if tx or account, does not validate, replace with results list rendering */
+    /* temp search check if possible tx or account, replace with results list rendering */
     async executeSearch(input: KeyboardEvent): Promise<void> {
       if (input != null) {
         const value = (input.currentTarget as HTMLInputElement).value;
         if (value === '') {
-          console.log('no search term input');
+          Notify.create('no search term input');
           return;
         }
         if (isValidHex(value) && value.length == 64) {
@@ -68,7 +69,7 @@ export default defineComponent({
               params: { account: value }
             });
           } else {
-            console.log('invalid account name');
+            Notify.create('invalid transacation id or account name');
           }
         }
       }
