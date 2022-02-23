@@ -31,6 +31,5 @@ export const getTransaction = async function (
       params: { id: address }
     }
   );
-  debugger;
   return response.data.actions;
 };

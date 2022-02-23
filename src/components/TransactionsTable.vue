@@ -119,7 +119,6 @@ export default defineComponent({
   },
   methods: {
     async loadTableData(): Promise<void> {
-      debugger;
       let tableData: Action[];
       if (this.isTransaction) {
         tableData = await this.$api.getTransaction(this.account);
