@@ -30,7 +30,8 @@ export interface GetTableRowsParams {
 }
 
 export type ApiClient = {
-  getAccount: (address: string) => Promise<unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getAccount: (address: string) => Promise<any>;
   getTransactions: (address?: string) => Promise<Action[]>;
   getTransaction: (address: string) => Promise<Action[]>;
 };

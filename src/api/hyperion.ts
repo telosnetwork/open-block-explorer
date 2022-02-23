@@ -8,9 +8,10 @@ import { ActionData, Action } from 'src/types';
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
 export const getAccount = async function (address: string): Promise<any> {
-  return await hyperion.get('v2/state/get_account', {
+  const response = await hyperion.get('v2/state/get_account', {
     params: { account: address }
   });
+  return response.data.account;
 };
 
 export const getTransactions = async function (
