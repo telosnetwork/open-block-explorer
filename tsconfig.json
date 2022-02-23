@@ -8,7 +8,8 @@
     ],
     "types": [
       "jest"
-    ]
+    ],
+    "strictNullChecks": false
   },
   "exclude": [
     "node_modules",

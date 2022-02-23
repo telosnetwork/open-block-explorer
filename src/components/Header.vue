@@ -13,7 +13,9 @@ div.header-background
                   color="white" 
                   :input-style="{ color: 'white' }"
                   v-model="search" 
-                  label="Search" )
+                  label="Search"
+                  @keyup.enter="executeSearch" 
+                  )
                     template(v-slot:prepend)
                         q-icon.search-icon(name="search" color="white" size="20px")
 
@@ -30,6 +32,8 @@ div.header-background
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Notify } from 'quasar';
+import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
 export default defineComponent({
   name: 'Header',
   data() {
@@ -44,6 +48,31 @@ export default defineComponent({
     },
     async menuClicked(routeName: string) {
       await this.$router.push({ name: `${routeName}` });
+    },
+    /* temp search check if possible tx or account, replace with results list rendering */
+    async executeSearch(input: KeyboardEvent): Promise<void> {
+      if (input != null) {
+        const value = (input.currentTarget as HTMLInputElement).value;
+        if (value === '') {
+          Notify.create('no search term input');
+          return;
+        }
+        if (isValidHex(value) && value.length == 64) {
+          await this.$router.push({
+            name: 'transaction',
+            params: { transaction: value }
+          });
+        } else {
+          if (isValidAccount(value)) {
+            await this.$router.push({
+              name: 'account',
+              params: { account: value }
+            });
+          } else {
+            Notify.create('invalid transacation id or account name');
+          }
+        }
+      }
     }
   }
 });
