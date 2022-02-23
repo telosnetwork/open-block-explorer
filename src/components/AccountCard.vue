@@ -34,8 +34,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import { defineComponent } from 'vue';
-
 const HUNDRED = 100.0;
+const TEN_THOUSAND = 10000.0;
 const NONE = '0 TLOS';
 export default defineComponent({
   name: 'AccountCard',
@@ -66,7 +66,7 @@ export default defineComponent({
       const data = await this.$api.getAccount(this.account);
       this.total = data.core_liquid_balance;
       this.refunding = data.refund_request ? data.refund_request : NONE;
-      this.staked = data.voter_info.staked.toFixed(2)
+      this.staked = (data.voter_info.staked / TEN_THOUSAND).toFixed(4)
         ? data.voter_info.staked
         : NONE;
       this.rex = data.rex_info ? data.rex_info.vote_stake : NONE;
@@ -75,10 +75,10 @@ export default defineComponent({
         HUNDRED
       ).toFixed(4);
       this.cpu = ((data.cpu_limit.used / data.cpu_limit.max) * HUNDRED).toFixed(
-        4
+        2
       );
       this.net = ((data.net_limit.used / data.net_limit.max) * HUNDRED).toFixed(
-        4
+        2
       );
     }
   }
