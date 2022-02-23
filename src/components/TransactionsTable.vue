@@ -19,6 +19,12 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             :square="true"
             table-header-class="table-header"
             v-model:pagination="paginationSettings")
+          template( v-slot:body-cell-transaction="props")
+            q-td( :props="props" )
+              div(v-html="props.value")
+          template( v-slot:body-cell-action="props")
+            q-td( :props="props" )
+              div(v-html="props.value")
           template( v-slot:body-cell-data="props")
             q-td( :props="props" )
               div(v-html="props.value")
@@ -40,7 +46,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import { PaginationSettings, TransactionTableRow } from 'src/types';
+import { Account, PaginationSettings, TransactionTableRow } from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'TransactionsTable',
@@ -103,12 +109,18 @@ export default defineComponent({
       this.rows = recentTransactions.map(
         (tx) =>
           ({
-            transaction: tx.trx_id,
+            transaction: this.formatTransaction(tx.trx_id),
             timestamp: tx['@timestamp'],
-            action: tx.act.name,
+            action: this.formatAction(tx.act),
             data: this.formatData(tx.act.data)
           } as TransactionTableRow)
       );
+    },
+    formatTransaction(tx: string): string {
+      return `<a href="/transaction/${tx}" class="hover-dec">${tx}</a>`;
+    },
+    formatAction(txAct: Account): string {
+      return `<a href="/contract/${txAct.account}" class="hover-dec">${txAct.account}</a>&nbsp; → &nbsp;${txAct.name}`;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatData(data: any): string {
@@ -116,7 +128,9 @@ export default defineComponent({
       const formattedData = [];
       for (let key in data) {
         if (accountRegEx.exec(key)) {
-          data[key] = `<a href="/account/${data[key]}">${data[key]}</a>`;
+          data[
+            key
+          ] = `<a href="/account/${data[key]}" class="hover-dec">${data[key]}</a>`;
         }
         if (data[key] instanceof Object) {
           if (Array.isArray(data[key])) {
@@ -136,7 +150,7 @@ export default defineComponent({
   }
 });
 </script>
-<style lang="sass" scoped>
+<style lang="sass">
 body
     height:1000px
 .table-header
@@ -148,4 +162,8 @@ body
     font-weight: normal
     font-size: 22.75px
     line-height: 27px
+.hover-dec
+  text-decoration: none
+  &:hover
+    text-decoration: underline
 </style>

@@ -31,7 +31,7 @@ interface AccountRamDelta {
   delta: number;
 }
 
-interface Account {
+export interface Account {
   account: string;
   authorization: Authorization[];
   data: unknown;
