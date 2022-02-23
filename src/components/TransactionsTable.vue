@@ -5,7 +5,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             div.col-3
                 p.table-title {{ tableTitle }} 
             q-space
-            div.col-3.row.flex
+            div.col-3.row.flex.filter-buttons
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
@@ -175,6 +175,8 @@ export default defineComponent({
 });
 </script>
 <style lang="sass">
+$medium:1000px
+
 body
     height:1000px
 .table-header
@@ -190,4 +192,8 @@ body
   text-decoration: none
   &:hover
     text-decoration: underline
+
+@media screen and (max-width: $medium) // screen < 1000px
+  .filter-buttons
+    width: 100% !important
 </style>
