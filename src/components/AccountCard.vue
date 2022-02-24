@@ -71,20 +71,17 @@ export default defineComponent({
   methods: {
     ...mapMutations({ setToken: 'chain/setToken' }),
     async loadAccountData(): Promise<void> {
-      debugger;
       try {
         const data = await this.$api.getAccount(this.account);
         const account = data.account;
         this.total = account.core_liquid_balance;
         this.refunding = account.refund_request ? account.refund_request : NONE;
-        debugger;
         if (this.token.symbol === '') {
           const tokenList = await this.$api.getTokens(SYSTEM_TOKEN);
           const token = tokenList.find(
             (token: Token) => token.contract === SYSTEM_TOKEN
           );
           this.setToken(token);
-          debugger;
         }
         this.staked = account.voter_info
           ? (
