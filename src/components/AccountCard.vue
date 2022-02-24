@@ -38,7 +38,6 @@ import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 
 const HUNDRED = 100.0;
-const TEN_THOUSAND = 10000.0;
 const NONE = '0 TLOS';
 const SYSTEM_TOKEN = 'eosio.token';
 export default defineComponent({
