@@ -85,7 +85,7 @@ export default defineComponent({
         this.staked = account.voter_info
           ? (
               account.voter_info.staked / Math.pow(10, this.token.precision)
-            ).toFixed(4)
+            ).toFixed(2)
           : NONE;
         this.rex = account.rex_info ? account.rex_info.vote_stake : NONE;
         this.ram = (
