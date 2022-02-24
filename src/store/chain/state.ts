@@ -5,7 +5,7 @@ export interface ChainStateInterface {
   };
 }
 
-function state(): ChainStateInterface {
+export function state(): ChainStateInterface {
   return {
     token: {
       symbol: '',
@@ -13,5 +13,3 @@ function state(): ChainStateInterface {
     }
   };
 }
-
-export default state;

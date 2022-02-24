@@ -34,6 +34,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import { defineComponent } from 'vue';
+import { mapGetters, mapMutations } from 'vuex';
+
 const HUNDRED = 100.0;
 const TEN_THOUSAND = 10000.0;
 const NONE = '0 TLOS';
@@ -61,12 +63,26 @@ export default defineComponent({
     await this.loadAccountData();
     this.creatingAccount = (await this.$api.getCreator(this.account)).creator;
   },
+  computed: {
+    ...mapGetters(['getToken'])
+  },
   methods: {
+    ...mapMutations(['setToken']),
     async loadAccountData(): Promise<void> {
+      let precision;
       const data = await this.$api.getAccount(this.account);
       const account = data.account;
       this.total = account.core_liquid_balance;
       this.refunding = account.refund_request ? account.refund_request : NONE;
+      debugger;
+      if (this.getToken) {
+        precision = this.getToken.precision;
+      } else {
+        const token = await this.$api.getAccount('system.token');
+        this.setToken(token);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        precision = token;
+      }
       this.staked = account.voter_info
         ? (account.voter_info.staked / TEN_THOUSAND).toFixed(4)
         : NONE;
@@ -74,7 +90,7 @@ export default defineComponent({
       this.ram = (
         (account.ram_usage / account.total_resources.ram_bytes) *
         HUNDRED
-      ).toFixed(4);
+      ).toFixed(2);
       this.cpu = (
         (account.cpu_limit.used / account.cpu_limit.max) *
         HUNDRED

@@ -2,7 +2,7 @@ import { BaseToken } from 'src/types';
 import { MutationTree } from 'vuex';
 import { ChainStateInterface } from './state';
 
-const mutations: MutationTree<ChainStateInterface> = {
+export const mutations: MutationTree<ChainStateInterface> = {
   setToken(state: ChainStateInterface, token: BaseToken) {
     state.token = token;
   },
@@ -13,5 +13,3 @@ const mutations: MutationTree<ChainStateInterface> = {
     state.token.precision = precision;
   }
 };
-
-export default mutations;
