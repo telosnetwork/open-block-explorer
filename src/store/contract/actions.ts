@@ -2,7 +2,7 @@ import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ContractStateInterface } from './state';
 
-const actions: ActionTree<ContractStateInterface, StateInterface> = {
+export const actions: ActionTree<ContractStateInterface, StateInterface> = {
   async setContract({ dispatch, commit }, contractAddress) {
     commit('setContract', contractAddress);
     await dispatch('getContractInfo', contractAddress);
@@ -14,5 +14,3 @@ const actions: ActionTree<ContractStateInterface, StateInterface> = {
     commit('setCreator', response.creator);
   }
 };
-
-export default actions;

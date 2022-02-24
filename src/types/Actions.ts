@@ -42,3 +42,48 @@ interface Authorization {
   actor: string;
   permission: string;
 }
+
+interface Resource {
+  used: number;
+  available: number;
+  max: number;
+}
+
+export interface AccountDetails {
+  account: {
+    account_name: string;
+    core_liquid_balance: string;
+    cpu_limit: Resource;
+    cpu_weight: number;
+    created: string;
+    net_limit: Resource;
+    net_weight: number;
+    privileged: boolean;
+    ram_quota: number;
+    ram_usage: number;
+    refund_request: null | string;
+    rex_info: null | { vote_stake: string };
+    subjective_cpu_bill_limit: Resource;
+    total_resources: {
+      owner: string;
+      net_weight: string;
+      cpu_weight: string;
+      ram_bytes: number;
+    };
+    voter_info: null | { staked: number };
+  };
+  actions: Action[];
+  links: string[];
+  query_time_ms: number;
+  tokens: Token[];
+  total_actions: number;
+}
+
+export interface BaseToken {
+  symbol: string;
+  precision: number;
+}
+export type Token = BaseToken & {
+  amount: number;
+  contract: string;
+};

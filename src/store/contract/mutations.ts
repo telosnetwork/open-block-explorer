@@ -1,7 +1,7 @@
 import { MutationTree } from 'vuex';
 import { ContractStateInterface } from './state';
 
-const mutations: MutationTree<ContractStateInterface> = {
+export const mutations: MutationTree<ContractStateInterface> = {
   setContract(state: ContractStateInterface, contractAddress: string) {
     state.address = contractAddress;
   },
@@ -9,5 +9,3 @@ const mutations: MutationTree<ContractStateInterface> = {
     state.creator = creatorAddress;
   }
 };
-
-export default mutations;

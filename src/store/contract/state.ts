@@ -3,11 +3,9 @@ export interface ContractStateInterface {
   creator: string;
 }
 
-function state(): ContractStateInterface {
+export function state(): ContractStateInterface {
   return {
     address: '',
     creator: ''
   };
 }
-
-export default state;

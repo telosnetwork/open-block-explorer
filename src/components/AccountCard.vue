@@ -33,10 +33,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
+import { Token } from 'src/types';
 import { defineComponent } from 'vue';
+import { mapGetters, mapMutations } from 'vuex';
 
 const HUNDRED = 100.0;
 const NONE = '0 TLOS';
+const SYSTEM_TOKEN = 'eosio.token';
 export default defineComponent({
   name: 'AccountCard',
   props: {
@@ -61,25 +64,45 @@ export default defineComponent({
     await this.loadAccountData();
     this.creatingAccount = (await this.$api.getCreator(this.account)).creator;
   },
+  computed: {
+    ...mapGetters({ token: 'chain/getToken' })
+  },
   methods: {
+    ...mapMutations({ setToken: 'chain/setToken' }),
     async loadAccountData(): Promise<void> {
-      const data = await this.$api.getAccount(this.account);
-      this.total = data.core_liquid_balance;
-      this.refunding = data.refund_request ? data.refund_request : NONE;
-      this.staked = data.voter_info.staked.toFixed(2)
-        ? data.voter_info.staked
-        : NONE;
-      this.rex = data.rex_info ? data.rex_info.vote_stake : NONE;
-      this.ram = (
-        (data.ram_usage / data.total_resources.ram_bytes) *
-        HUNDRED
-      ).toFixed(4);
-      this.cpu = ((data.cpu_limit.used / data.cpu_limit.max) * HUNDRED).toFixed(
-        4
-      );
-      this.net = ((data.net_limit.used / data.net_limit.max) * HUNDRED).toFixed(
-        4
-      );
+      try {
+        const data = await this.$api.getAccount(this.account);
+        const account = data.account;
+        this.total = account.core_liquid_balance;
+        this.refunding = account.refund_request ? account.refund_request : NONE;
+        if (this.token.symbol === '') {
+          const tokenList = await this.$api.getTokens(SYSTEM_TOKEN);
+          const token = tokenList.find(
+            (token: Token) => token.contract === SYSTEM_TOKEN
+          );
+          this.setToken(token);
+        }
+        this.staked = account.voter_info
+          ? (
+              account.voter_info.staked / Math.pow(10, this.token.precision)
+            ).toFixed(2)
+          : NONE;
+        this.rex = account.rex_info ? account.rex_info.vote_stake : NONE;
+        this.ram = (
+          (account.ram_usage / account.total_resources.ram_bytes) *
+          HUNDRED
+        ).toFixed(2);
+        this.cpu = (
+          (account.cpu_limit.used / account.cpu_limit.max) *
+          HUNDRED
+        ).toFixed(2);
+        this.net = (
+          (account.net_limit.used / account.net_limit.max) *
+          HUNDRED
+        ).toFixed(2);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 });
