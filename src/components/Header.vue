@@ -34,6 +34,8 @@ div.header-background
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
+import { encodeAccount, decodeAccount } from 'src/utils/encodeAccount';
+
 export default defineComponent({
   name: 'Header',
   data() {
@@ -68,11 +70,13 @@ export default defineComponent({
         } else {
           if (isValidAccount(value)) {
             try {
-              await this.$api.getAccount(value);
+              const decodedAccount = decodeAccount(value);
+              await this.$api.getAccount(decodedAccount);
+              const encodedAddress = encodeAccount(decodedAccount);
               await this.$router.push({
                 name: 'account',
                 params: {
-                  account: value
+                  account: encodedAddress
                 }
               });
               this.$router.go(0);
