@@ -4,8 +4,9 @@
     q-card-section
       .inline-section
         .text-h6 {{ account }}
-        .text-subtitle created by 
-          router-link( :to="{ path: 'account', params: { account: creatingAccount}}") {{ creatingAccount }}
+        .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
+          a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
+        q-space
       .resources.inline-section
         .resource.inline-section CPU {{ cpu }}% used
         .resource.inline-section NET {{ net }}% used
@@ -126,13 +127,23 @@ export default defineComponent({
     },
     formatResourcePercent(used: number, total: number): string {
       return ((used / total) * HUNDRED).toFixed(2);
+    },
+    async loadCreatorAccount(): Promise<void> {
+      await this.$router.push({
+        name: 'account',
+        params: {
+          account: this.creatingAccount
+        }
+      });
+      this.$router.go(0);
     }
   }
 });
 </script>
 <style lang="sass" scoped>
 $medium:750px
-
+.q-markup-table
+  width: 100%
 .account-card
   max-width: 100%
 .table-body
@@ -152,10 +163,10 @@ $medium:750px
 .text-subtitle
   font-size: 12px
   a
+    cursor: pointer
     text-decoration: none
     &:hover
       text-decoration: underline
-
 
 @media screen and (max-width: $medium) // screen < $medium
   .account-card
