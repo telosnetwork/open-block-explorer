@@ -23,7 +23,7 @@
             td.text-left REFUNDING
             td.text-right {{ refunding }} 
           tr
-            td.text-left SPLIT IN STAKED TYPES
+            td.text-left TOTAL STAKED
             td.text-right {{ staked }}
           tr
             td.text-left REX
