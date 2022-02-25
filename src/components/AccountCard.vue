@@ -7,7 +7,7 @@
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
           a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
         q-space
-      .resources.inline-section
+      .resources.inline-section(v-if="account !== system_account")
         .resource.inline-section CPU {{ cpu }}% used
         .resource.inline-section NET {{ net }}% used
         .resource.inline-section RAM {{ ram }}% used
@@ -38,10 +38,6 @@ import { AccountDetails, Token } from 'src/types';
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 
-const HUNDRED = 100.0;
-const ZERO = '0.00';
-const SYSTEM_ACCOUNT = 'eosio';
-
 export default defineComponent({
   name: 'AccountCard',
   props: {
@@ -60,12 +56,14 @@ export default defineComponent({
       ram: '',
       cpu: '',
       net: '',
-      none: ''
+      none: '',
+      system_account: 'eosio',
+      zero: '0.00'
     };
   },
   async mounted() {
     await this.loadSystemToken();
-    this.none = `${ZERO} ${(this.token as Token).symbol}`;
+    this.none = `${this.zero} ${(this.token as Token).symbol}`;
     await this.loadAccountData();
   },
   computed: {
@@ -78,7 +76,7 @@ export default defineComponent({
       try {
         data = await this.$api.getAccount(this.account);
       } catch (e) {
-        this.ram = this.cpu = this.net = ZERO;
+        this.ram = this.cpu = this.net = this.zero;
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;
@@ -97,24 +95,27 @@ export default defineComponent({
         ? this.formatStaked(account.voter_info.staked)
         : this.none;
       this.rex = account.rex_info ? account.rex_info.vote_stake : this.none;
-      this.ram = this.formatResourcePercent(
-        account.ram_usage,
-        account.total_resources.ram_bytes
-      );
-      this.cpu = this.formatResourcePercent(
-        account.cpu_limit.used,
-        account.cpu_limit.max
-      );
-      this.net = this.formatResourcePercent(
-        account.net_limit.used,
-        account.net_limit.max
-      );
+      debugger;
+      if (this.account !== this.system_account) {
+        this.ram = this.formatResourcePercent(
+          account.ram_usage,
+          account.total_resources.ram_bytes
+        );
+        this.cpu = this.formatResourcePercent(
+          account.cpu_limit.used,
+          account.cpu_limit.max
+        );
+        this.net = this.formatResourcePercent(
+          account.net_limit.used,
+          account.net_limit.max
+        );
+      }
     },
     async loadSystemToken(): Promise<void> {
       if (this.token.symbol === '') {
-        const tokenList = await this.$api.getTokens(SYSTEM_ACCOUNT);
+        const tokenList = await this.$api.getTokens(this.system_account);
         const token = tokenList.find(
-          (token: Token) => token.contract === `${SYSTEM_ACCOUNT}.token`
+          (token: Token) => token.contract === `${this.system_account}.token`
         );
         this.setToken(token);
       }
@@ -126,7 +127,7 @@ export default defineComponent({
       return (staked / Math.pow(10, this.token.precision)).toFixed(2);
     },
     formatResourcePercent(used: number, total: number): string {
-      return ((used / total) * HUNDRED).toFixed(2);
+      return ((used / total) * 100.0).toFixed(2);
     },
     async loadCreatorAccount(): Promise<void> {
       await this.$router.push({
