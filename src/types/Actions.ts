@@ -49,7 +49,7 @@ interface Resource {
   max: number;
 }
 
-export interface AccountDetails {
+export type AccountDetails = {
   account: {
     account_name: string;
     core_liquid_balance: string;
@@ -77,7 +77,7 @@ export interface AccountDetails {
   query_time_ms: number;
   tokens: Token[];
   total_actions: number;
-}
+};
 export interface Token {
   symbol: string;
   precision: number;

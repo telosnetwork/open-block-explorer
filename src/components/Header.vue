@@ -66,11 +66,18 @@ export default defineComponent({
           this.$router.go(0);
         } else {
           if (isValidAccount(value)) {
-            await this.$router.push({
-              name: 'account',
-              params: { account: value }
-            });
-            this.$router.go(0);
+            try {
+              await this.$api.getAccount(value);
+              await this.$router.push({
+                name: 'account',
+                params: {
+                  account: value
+                }
+              });
+              this.$router.go(0);
+            } catch (e) {
+              this.$q.notify(`account ${value} not found!`);
+            }
           } else {
             this.$q.notify('invalid transacation id or account name');
           }
