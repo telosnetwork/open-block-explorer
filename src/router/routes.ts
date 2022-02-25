@@ -9,10 +9,16 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/account/:account',
-    name: 'account',
+    name: '',
     props: true,
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Account.vue') }]
+    children: [
+      {
+        name: 'account',
+        path: '',
+        component: () => import('pages/Account.vue')
+      }
+    ]
   },
   {
     path: '/transaction/:transaction',

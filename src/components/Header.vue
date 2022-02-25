@@ -47,7 +47,7 @@ export default defineComponent({
       console.log('connect btn clicked');
     },
     async menuClicked(routeName: string) {
-      await this.$router.push({ name: `${routeName}` });
+      await this.$router.push({ name: routeName.toLowerCase() });
       this.$router.go(0);
     },
     /* temp search check if possible tx or account, replace with results list rendering */
