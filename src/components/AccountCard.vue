@@ -17,13 +17,13 @@
           th.text-left BALANCE
         tbody.table-body
           tr
-            td.text-left TOTAL   
+            td.text-left AVAILABLE   
             td.text-right.total {{ total }}
           tr
             td.text-left REFUNDING
             td.text-right {{ refunding }} 
           tr
-            td.text-left STAKED BY OTHERS
+            td.text-left SPLIT IN STAKED TYPES
             td.text-right {{ staked }}
           tr
             td.text-left REX
