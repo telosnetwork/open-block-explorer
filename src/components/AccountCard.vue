@@ -38,7 +38,7 @@ import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 
 const HUNDRED = 100.0;
-const NONE = '0 TLOS';
+const NONE = '0';
 const SYSTEM_ACCOUNT = 'eosio';
 
 export default defineComponent({
@@ -85,11 +85,14 @@ export default defineComponent({
           );
           this.setToken(token);
         }
-        this.staked = account.voter_info
-          ? (
-              account.voter_info.staked / Math.pow(10, this.token.precision)
-            ).toFixed(2)
-          : NONE;
+        if (account.voter_info) {
+          const stakedAmount = (
+            account.voter_info.staked / Math.pow(10, this.token.precision)
+          ).toFixed(2);
+          this.staked = `${stakedAmount} ${(this.token as Token).symbol}`;
+        } else {
+          this.staked = NONE;
+        }
         this.rex = account.rex_info ? account.rex_info.vote_stake : NONE;
         this.ram = (
           (account.ram_usage / account.total_resources.ram_bytes) *
