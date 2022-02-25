@@ -38,7 +38,7 @@ import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 
 const HUNDRED = 100.0;
-const ZERO = '0.0';
+const ZERO = '0.00';
 const SYSTEM_ACCOUNT = 'eosio';
 
 export default defineComponent({
