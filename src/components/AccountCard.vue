@@ -95,7 +95,6 @@ export default defineComponent({
         ? this.formatStaked(account.voter_info.staked)
         : this.none;
       this.rex = account.rex_info ? account.rex_info.vote_stake : this.none;
-      debugger;
       if (this.account !== this.system_account) {
         this.ram = this.formatResourcePercent(
           account.ram_usage,
