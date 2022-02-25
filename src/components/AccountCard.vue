@@ -39,7 +39,8 @@ import { mapGetters, mapMutations } from 'vuex';
 
 const HUNDRED = 100.0;
 const NONE = '0 TLOS';
-const SYSTEM_TOKEN = 'eosio.token';
+const SYSTEM_ACCOUNT = 'eosio';
+
 export default defineComponent({
   name: 'AccountCard',
   props: {
@@ -73,12 +74,14 @@ export default defineComponent({
       try {
         const data = await this.$api.getAccount(this.account);
         const account = data.account;
-        this.total = account.core_liquid_balance;
+        this.total = account.core_liquid_balance
+          ? account.core_liquid_balance
+          : NONE;
         this.refunding = account.refund_request ? account.refund_request : NONE;
         if (this.token.symbol === '') {
-          const tokenList = await this.$api.getTokens(SYSTEM_TOKEN);
+          const tokenList = await this.$api.getTokens(SYSTEM_ACCOUNT);
           const token = tokenList.find(
-            (token: Token) => token.contract === SYSTEM_TOKEN
+            (token: Token) => token.contract === `${SYSTEM_ACCOUNT}.token`
           );
           this.setToken(token);
         }

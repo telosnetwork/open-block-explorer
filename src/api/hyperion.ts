@@ -1,7 +1,12 @@
+/**
+ * Reference for Hyperion endpoints:
+ * https://rpc1.us.telos.net/v2/docs/static/index.html#/ (main net)
+ * https://testnet.telos.net/v2/docs/static/index.html#/ (testnet)
+ */
+
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* Reference for Hyperion endpoints: https://rpc1.us.telos.net/v2/docs/static/index.html#/ */
 import axios from 'axios';
 import { ActionData, Action, AccountDetails, Token } from 'src/types';
 
