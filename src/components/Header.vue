@@ -47,6 +47,7 @@ export default defineComponent({
       console.log('connect btn clicked');
     },
     async menuClicked(routeName: string) {
+      return; //temp disable navigation
       await this.$router.push({ name: routeName.toLowerCase() });
       this.$router.go(0);
     },
