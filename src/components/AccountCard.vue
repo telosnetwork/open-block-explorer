@@ -79,7 +79,7 @@ export default defineComponent({
       } catch (e) {
         this.ram = this.cpu = this.net = ZERO;
         this.total = this.refunding = this.staked = this.rex = this.none;
-        console.log('account not found');
+        this.$q.notify(`account ${this.account} not found!`);
         return;
       }
       try {
@@ -87,7 +87,7 @@ export default defineComponent({
           await this.$api.getCreator(this.account)
         ).creator;
       } catch (e) {
-        console.log('no creating account found');
+        this.$q.notify(`creator account for ${this.account} not found!`);
       }
       const account = data.account;
       this.total = this.getAmount(account.core_liquid_balance);
