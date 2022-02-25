@@ -33,7 +33,6 @@ div.header-background
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Notify } from 'quasar';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
 export default defineComponent({
   name: 'Header',
@@ -56,7 +55,7 @@ export default defineComponent({
       if (input != null) {
         const value = (input.currentTarget as HTMLInputElement).value;
         if (value === '') {
-          Notify.create('no search term input');
+          this.$q.notify('no search term input');
           return;
         }
         if (isValidHex(value) && value.length == 64) {
@@ -73,7 +72,7 @@ export default defineComponent({
             });
             this.$router.go(0);
           } else {
-            Notify.create('invalid transacation id or account name');
+            this.$q.notify('invalid transacation id or account name');
           }
         }
       }
