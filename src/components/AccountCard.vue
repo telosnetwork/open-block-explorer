@@ -33,12 +33,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import { Token } from 'src/types';
+import { AccountDetails, Token } from 'src/types';
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 
 const HUNDRED = 100.0;
-const NONE = '0.0';
+const ZERO = '0.0';
 const SYSTEM_ACCOUNT = 'eosio';
 
 export default defineComponent({
@@ -58,13 +58,14 @@ export default defineComponent({
       rex: '',
       ram: '',
       cpu: '',
-      net: ''
+      net: '',
+      none: ''
     };
   },
   async mounted() {
     await this.loadSystemToken();
+    this.none = `${ZERO} ${(this.token as Token).symbol}`;
     await this.loadAccountData();
-    this.creatingAccount = (await this.$api.getCreator(this.account)).creator;
   },
   computed: {
     ...mapGetters({ token: 'chain/getToken' })
@@ -72,36 +73,41 @@ export default defineComponent({
   methods: {
     ...mapMutations({ setToken: 'chain/setToken' }),
     async loadAccountData(): Promise<void> {
-      const data = await this.$api.getAccount(this.account);
-      const account = data.account;
-      this.total = account.core_liquid_balance
-        ? account.core_liquid_balance
-        : NONE;
-      this.refunding = account.refund_request
-        ? account.refund_request
-        : `${NONE} ${(this.token as Token).symbol}`;
-
-      if (account.voter_info) {
-        const stakedAmount = (
-          account.voter_info.staked / Math.pow(10, this.token.precision)
-        ).toFixed(2);
-        this.staked = `${stakedAmount} ${(this.token as Token).symbol}`;
-      } else {
-        this.staked = NONE;
+      let data: AccountDetails;
+      try {
+        data = await this.$api.getAccount(this.account);
+      } catch (e) {
+        this.ram = this.cpu = this.net = ZERO;
+        this.total = this.refunding = this.staked = this.rex = this.none;
+        console.log('account not found');
+        return;
       }
-      this.rex = account.rex_info ? account.rex_info.vote_stake : NONE;
-      this.ram = (
-        (account.ram_usage / account.total_resources.ram_bytes) *
-        HUNDRED
-      ).toFixed(2);
-      this.cpu = (
-        (account.cpu_limit.used / account.cpu_limit.max) *
-        HUNDRED
-      ).toFixed(2);
-      this.net = (
-        (account.net_limit.used / account.net_limit.max) *
-        HUNDRED
-      ).toFixed(2);
+      try {
+        this.creatingAccount = (
+          await this.$api.getCreator(this.account)
+        ).creator;
+      } catch (e) {
+        console.log('no creating account found');
+      }
+      const account = data.account;
+      this.total = this.getAmount(account.core_liquid_balance);
+      this.refunding = this.getAmount(account.refund_request);
+      this.staked = account.voter_info
+        ? this.formatStaked(account.voter_info.staked)
+        : this.none;
+      this.rex = account.rex_info ? account.rex_info.vote_stake : this.none;
+      this.ram = this.formatResourcePercent(
+        account.ram_usage,
+        account.total_resources.ram_bytes
+      );
+      this.cpu = this.formatResourcePercent(
+        account.cpu_limit.used,
+        account.cpu_limit.max
+      );
+      this.net = this.formatResourcePercent(
+        account.net_limit.used,
+        account.net_limit.max
+      );
     },
     async loadSystemToken(): Promise<void> {
       if (this.token.symbol === '') {
@@ -111,6 +117,15 @@ export default defineComponent({
         );
         this.setToken(token);
       }
+    },
+    getAmount(property: undefined | string): string {
+      return property ? property : `${this.none}`;
+    },
+    formatStaked(staked: number): string {
+      return (staked / Math.pow(10, this.token.precision)).toFixed(2);
+    },
+    formatResourcePercent(used: number, total: number): string {
+      return ((used / total) * HUNDRED).toFixed(2);
     }
   }
 });
