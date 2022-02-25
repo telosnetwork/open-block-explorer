@@ -78,12 +78,9 @@ export interface AccountDetails {
   tokens: Token[];
   total_actions: number;
 }
-
-export interface BaseToken {
+export interface Token {
   symbol: string;
   precision: number;
-}
-export type Token = BaseToken & {
   amount: number;
   contract: string;
-};
+}

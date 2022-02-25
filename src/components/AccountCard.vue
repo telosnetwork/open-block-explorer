@@ -38,7 +38,7 @@ import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 
 const HUNDRED = 100.0;
-const NONE = '0';
+const NONE = '0.0';
 const SYSTEM_ACCOUNT = 'eosio';
 
 export default defineComponent({
@@ -62,6 +62,7 @@ export default defineComponent({
     };
   },
   async mounted() {
+    await this.loadSystemToken();
     await this.loadAccountData();
     this.creatingAccount = (await this.$api.getCreator(this.account)).creator;
   },
@@ -71,43 +72,44 @@ export default defineComponent({
   methods: {
     ...mapMutations({ setToken: 'chain/setToken' }),
     async loadAccountData(): Promise<void> {
-      try {
-        const data = await this.$api.getAccount(this.account);
-        const account = data.account;
-        this.total = account.core_liquid_balance
-          ? account.core_liquid_balance
-          : NONE;
-        this.refunding = account.refund_request ? account.refund_request : NONE;
-        if (this.token.symbol === '') {
-          const tokenList = await this.$api.getTokens(SYSTEM_ACCOUNT);
-          const token = tokenList.find(
-            (token: Token) => token.contract === `${SYSTEM_ACCOUNT}.token`
-          );
-          this.setToken(token);
-        }
-        if (account.voter_info) {
-          const stakedAmount = (
-            account.voter_info.staked / Math.pow(10, this.token.precision)
-          ).toFixed(2);
-          this.staked = `${stakedAmount} ${(this.token as Token).symbol}`;
-        } else {
-          this.staked = NONE;
-        }
-        this.rex = account.rex_info ? account.rex_info.vote_stake : NONE;
-        this.ram = (
-          (account.ram_usage / account.total_resources.ram_bytes) *
-          HUNDRED
+      const data = await this.$api.getAccount(this.account);
+      const account = data.account;
+      this.total = account.core_liquid_balance
+        ? account.core_liquid_balance
+        : NONE;
+      this.refunding = account.refund_request
+        ? account.refund_request
+        : `${NONE} ${(this.token as Token).symbol}`;
+
+      if (account.voter_info) {
+        const stakedAmount = (
+          account.voter_info.staked / Math.pow(10, this.token.precision)
         ).toFixed(2);
-        this.cpu = (
-          (account.cpu_limit.used / account.cpu_limit.max) *
-          HUNDRED
-        ).toFixed(2);
-        this.net = (
-          (account.net_limit.used / account.net_limit.max) *
-          HUNDRED
-        ).toFixed(2);
-      } catch (e) {
-        console.log(e);
+        this.staked = `${stakedAmount} ${(this.token as Token).symbol}`;
+      } else {
+        this.staked = NONE;
+      }
+      this.rex = account.rex_info ? account.rex_info.vote_stake : NONE;
+      this.ram = (
+        (account.ram_usage / account.total_resources.ram_bytes) *
+        HUNDRED
+      ).toFixed(2);
+      this.cpu = (
+        (account.cpu_limit.used / account.cpu_limit.max) *
+        HUNDRED
+      ).toFixed(2);
+      this.net = (
+        (account.net_limit.used / account.net_limit.max) *
+        HUNDRED
+      ).toFixed(2);
+    },
+    async loadSystemToken(): Promise<void> {
+      if (this.token.symbol === '') {
+        const tokenList = await this.$api.getTokens(SYSTEM_ACCOUNT);
+        const token = tokenList.find(
+          (token: Token) => token.contract === `${SYSTEM_ACCOUNT}.token`
+        );
+        this.setToken(token);
       }
     }
   }
