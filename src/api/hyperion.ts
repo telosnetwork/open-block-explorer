@@ -1,17 +1,24 @@
+/**
+ * Reference for Hyperion endpoints:
+ * https://rpc1.us.telos.net/v2/docs/static/index.html#/ (main net)
+ * https://testnet.telos.net/v2/docs/static/index.html#/ (testnet)
+ */
+
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* Reference for Hyperion endpoints: https://rpc1.us.telos.net/v2/docs/static/index.html#/ */
 import axios from 'axios';
-import { ActionData, Action } from 'src/types';
+import { ActionData, Action, AccountDetails, Token } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
-export const getAccount = async function (address: string): Promise<any> {
+export const getAccount = async function (
+  address: string
+): Promise<AccountDetails> {
   const response = await hyperion.get('v2/state/get_account', {
     params: { account: address }
   });
-  return response.data.account;
+  return response.data;
 };
 
 export const getCreator = async function (address: string): Promise<any> {
@@ -19,6 +26,13 @@ export const getCreator = async function (address: string): Promise<any> {
     params: { account: address }
   });
   return response.data;
+};
+
+export const getTokens = async function (address: string): Promise<Token[]> {
+  const response = await hyperion.get('v2/state/get_tokens', {
+    params: { account: address }
+  });
+  return response.data.tokens;
 };
 
 export const getTransactions = async function (

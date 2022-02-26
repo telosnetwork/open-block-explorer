@@ -1,13 +1,11 @@
 import { Module } from 'vuex';
 import { StateInterface } from '../index';
-import { state, ContractStateInterface } from './state';
-import { actions } from './actions';
+import { state, ChainStateInterface } from './state';
 import { getters } from './getters';
 import { mutations } from './mutations';
 
-export const contract: Module<ContractStateInterface, StateInterface> = {
+export const chain: Module<ChainStateInterface, StateInterface> = {
   namespaced: true,
-  actions,
   getters,
   mutations,
   state

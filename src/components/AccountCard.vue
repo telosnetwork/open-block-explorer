@@ -4,9 +4,10 @@
     q-card-section
       .inline-section
         .text-h6 {{ account }}
-        .text-subtitle created by 
-          router-link( :to="{ path: 'account', params: { account: creatingAccount}}") {{ creatingAccount }}
-      .resources.inline-section
+        .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
+          a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
+        q-space
+      .resources.inline-section(v-if="account !== system_account")
         .resource.inline-section CPU {{ cpu }}% used
         .resource.inline-section NET {{ net }}% used
         .resource.inline-section RAM {{ ram }}% used
@@ -16,13 +17,13 @@
           th.text-left BALANCE
         tbody.table-body
           tr
-            td.text-left TOTAL   
+            td.text-left AVAILABLE   
             td.text-right.total {{ total }}
           tr
             td.text-left REFUNDING
             td.text-right {{ refunding }} 
           tr
-            td.text-left STAKED BY OTHERS
+            td.text-left TOTAL STAKED
             td.text-right {{ staked }}
           tr
             td.text-left REX
@@ -33,10 +34,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
+import { AccountDetails, Token } from 'src/types';
 import { defineComponent } from 'vue';
+import { mapGetters, mapMutations } from 'vuex';
 
-const HUNDRED = 100.0;
-const NONE = '0 TLOS';
 export default defineComponent({
   name: 'AccountCard',
   props: {
@@ -54,39 +55,95 @@ export default defineComponent({
       rex: '',
       ram: '',
       cpu: '',
-      net: ''
+      net: '',
+      none: '',
+      system_account: 'eosio',
+      zero: '0.00'
     };
   },
   async mounted() {
+    await this.loadSystemToken();
+    this.none = `${this.zero} ${(this.token as Token).symbol}`;
     await this.loadAccountData();
-    this.creatingAccount = (await this.$api.getCreator(this.account)).creator;
+  },
+  computed: {
+    ...mapGetters({ token: 'chain/getToken' })
   },
   methods: {
+    ...mapMutations({ setToken: 'chain/setToken' }),
     async loadAccountData(): Promise<void> {
-      const data = await this.$api.getAccount(this.account);
-      this.total = data.core_liquid_balance;
-      this.refunding = data.refund_request ? data.refund_request : NONE;
-      this.staked = data.voter_info.staked.toFixed(2)
-        ? data.voter_info.staked
-        : NONE;
-      this.rex = data.rex_info ? data.rex_info.vote_stake : NONE;
-      this.ram = (
-        (data.ram_usage / data.total_resources.ram_bytes) *
-        HUNDRED
-      ).toFixed(4);
-      this.cpu = ((data.cpu_limit.used / data.cpu_limit.max) * HUNDRED).toFixed(
-        4
-      );
-      this.net = ((data.net_limit.used / data.net_limit.max) * HUNDRED).toFixed(
-        4
-      );
+      let data: AccountDetails;
+      try {
+        data = await this.$api.getAccount(this.account);
+      } catch (e) {
+        this.ram = this.cpu = this.net = this.zero;
+        this.total = this.refunding = this.staked = this.rex = this.none;
+        this.$q.notify(`account ${this.account} not found!`);
+        return;
+      }
+      try {
+        this.creatingAccount = (
+          await this.$api.getCreator(this.account)
+        ).creator;
+      } catch (e) {
+        this.$q.notify(`creator account for ${this.account} not found!`);
+      }
+      const account = data.account;
+      this.total = this.getAmount(account.core_liquid_balance);
+      this.refunding = this.getAmount(account.refund_request);
+      this.staked = account.voter_info
+        ? this.formatStaked(account.voter_info.staked)
+        : this.none;
+      this.rex = account.rex_info ? account.rex_info.vote_stake : this.none;
+      if (this.account !== this.system_account) {
+        this.ram = this.formatResourcePercent(
+          account.ram_usage,
+          account.total_resources.ram_bytes
+        );
+        this.cpu = this.formatResourcePercent(
+          account.cpu_limit.used,
+          account.cpu_limit.max
+        );
+        this.net = this.formatResourcePercent(
+          account.net_limit.used,
+          account.net_limit.max
+        );
+      }
+    },
+    async loadSystemToken(): Promise<void> {
+      if (this.token.symbol === '') {
+        const tokenList = await this.$api.getTokens(this.system_account);
+        const token = tokenList.find(
+          (token: Token) => token.contract === `${this.system_account}.token`
+        );
+        this.setToken(token);
+      }
+    },
+    getAmount(property: undefined | string): string {
+      return property ? property : `${this.none}`;
+    },
+    formatStaked(staked: number): string {
+      return (staked / Math.pow(10, this.token.precision)).toFixed(2);
+    },
+    formatResourcePercent(used: number, total: number): string {
+      return ((used / total) * 100.0).toFixed(2);
+    },
+    async loadCreatorAccount(): Promise<void> {
+      await this.$router.push({
+        name: 'account',
+        params: {
+          account: this.creatingAccount
+        }
+      });
+      this.$router.go(0);
     }
   }
 });
 </script>
 <style lang="sass" scoped>
 $medium:750px
-
+.q-markup-table
+  width: 100%
 .account-card
   max-width: 100%
 .table-body
@@ -106,10 +163,10 @@ $medium:750px
 .text-subtitle
   font-size: 12px
   a
+    cursor: pointer
     text-decoration: none
     &:hover
       text-decoration: underline
-
 
 @media screen and (max-width: $medium) // screen < $medium
   .account-card
