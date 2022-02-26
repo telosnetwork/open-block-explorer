@@ -1,9 +1,9 @@
-import { BaseToken } from 'src/types';
+import { Token } from 'src/types';
 import { MutationTree } from 'vuex';
 import { ChainStateInterface } from './state';
 
 export const mutations: MutationTree<ChainStateInterface> = {
-  setToken(state: ChainStateInterface, token: BaseToken) {
+  setToken(state: ChainStateInterface, token: Token) {
     state.token = token;
   },
   setSymbol(state: ChainStateInterface, symbol: string) {
