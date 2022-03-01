@@ -18,7 +18,8 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             :bordered="false"
             :square="true"
             table-header-class="table-header"
-            v-model:pagination="paginationSettings")
+            v-model:pagination="paginationSettings"
+            :hide-pagination="!hasPages")
           template( v-slot:body-cell-transaction="props")
             q-td( :props="props" )
               div(v-html="props.value")
@@ -28,7 +29,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           template( v-slot:body-cell-data="props")
             q-td( :props="props" )
               div(v-html="props.value")
-          template( v-slot:pagination="scope" )
+          template( v-slot:pagination="scope")
             div.row.col-12.q-mt-md.q-mb-xl()
             div.col-1(align="left")
               q-btn.q-ml-xs.q-mr-xs.col.button-primary(
@@ -115,6 +116,9 @@ export default defineComponent({
     },
     tableTitle(): string {
       return this.isTransaction ? 'Actions' : 'Latest Transactions';
+    },
+    hasPages(): boolean {
+      return this.rows.length > this.paginationSettings.rowsPerPage;
     }
   },
   methods: {
