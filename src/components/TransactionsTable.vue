@@ -5,7 +5,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             div.col-3
                 p.table-title {{ tableTitle }} 
             q-space
-            div.col-3.row.flex.filter-buttons
+            div.col-3.row.flex.filter-buttons.temp-hide
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
