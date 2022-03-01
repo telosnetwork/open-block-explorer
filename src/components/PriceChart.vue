@@ -132,7 +132,7 @@ export default defineComponent({
       const priceStats: PriceStats = await axios.get(exchangeStatsUrl);
       this.lastUpdated = priceStats.data.telos.last_updated_at;
       this.tokenPrice = this.formatCurrencyValue(priceStats.data.telos.usd);
-      this.dayChange = this.formatCurrencyValue(
+      this.dayChange = this.formatPercentage(
         priceStats.data.telos.usd_24h_change
       );
       this.dayVolume = this.formatCurrencyValue(
@@ -141,6 +141,9 @@ export default defineComponent({
       this.marketCap = this.formatCurrencyValue(
         priceStats.data.telos.usd_market_cap
       );
+    },
+    formatPercentage(val: number): string {
+      return `${val.toFixed(2)} %`;
     },
     formatCurrencyValue(val: number): string {
       return val < ONE_MILLION
