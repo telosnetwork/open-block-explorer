@@ -10,7 +10,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
         q-separator.row.col-12.q-mt-md.separator
-        q-table.q-mt-lg.col-12.row(
+        q-table.q-mt-lg.col-12.row.fixed-layout(
             :rows="rows"
             :columns="columns"
             row-key="name"
@@ -20,13 +20,13 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             table-header-class="table-header"
             v-model:pagination="paginationSettings")
           template( v-slot:body-cell-transaction="props")
-            q-td( :props="props" )
+            q-td( :props="props" :auto-width='false')
               div(v-html="props.value")
           template( v-slot:body-cell-action="props")
-            q-td( :props="props" )
+            q-td( :props="props" :auto-width='false')
               div(v-html="props.value")
           template( v-slot:body-cell-data="props")
-            q-td( :props="props" )
+            q-td( :props="props" :auto-width='false')
               div(v-html="props.value")
           template( v-slot:pagination="scope" )
             div.row.col-12.q-mt-md.q-mb-xl()
@@ -177,6 +177,13 @@ export default defineComponent({
 <style lang="sass">
 $medium:750px
 
+.fixed-layout
+  .q-table
+    table-layout: fixed
+    tbody td:first-child
+      word-break: break-all
+.q-table--no-wrap td
+  white-space: unset
 body
     height:1000px
 .table-header
