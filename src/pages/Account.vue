@@ -24,7 +24,7 @@ export default defineComponent({
 </script>
 <style lang="sass">
 .gradient-box
-  min-height: 632px
+  min-height: 232px
   width: 100%
   background: linear-gradient(180deg, #071A5F 0%, #571AFF 175.31%)
 .price-box-position
