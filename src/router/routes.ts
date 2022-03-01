@@ -56,18 +56,6 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/Explore.vue') }]
   },
   {
-    path: '/terms',
-    name: 'terms',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Terms.vue') }]
-  },
-  {
-    path: '/privacy',
-    name: 'privacy',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/Privacy.vue') }]
-  },
-  {
     path: '/repository',
     name: 'repository',
     component: () => import('layouts/MainLayout.vue'),
