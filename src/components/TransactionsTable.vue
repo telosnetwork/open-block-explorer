@@ -182,6 +182,14 @@ $medium:750px
     table-layout: fixed
     tbody td:first-child
       word-break: break-all
+    th:first-child
+      width: 35%
+    th:nth-child(2)
+      width: 15%
+    th:nth-child(3)
+      width: 20%
+    th:nth-child(4)
+      width: 25%
 .q-table--no-wrap td
   white-space: unset
 body
