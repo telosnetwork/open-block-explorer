@@ -62,11 +62,16 @@ export default defineComponent({
           return;
         }
         if (isValidHex(value) && value.length == 64) {
-          await this.$router.push({
-            name: 'transaction',
-            params: { transaction: value }
-          });
-          this.$router.go(0);
+          const check = await this.$api.getTransaction(value);
+          if (check) {
+            await this.$router.push({
+              name: 'transaction',
+              params: { transaction: value }
+            });
+            this.$router.go(0);
+          } else {
+            this.$q.notify(`transaction ${value} not found!`);
+          }
         } else {
           if (isValidAccount(value)) {
             try {

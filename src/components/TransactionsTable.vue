@@ -128,15 +128,17 @@ export default defineComponent({
             ? await this.$api.getTransactions()
             : await this.$api.getTransactions(this.account);
       }
-      this.rows = tableData.map(
-        (tx) =>
-          ({
-            transaction: this.formatAccount(tx.trx_id, 'transaction'),
-            timestamp: tx['@timestamp'],
-            action: this.formatAction(tx.act),
-            data: this.formatData(tx.act.data)
-          } as TransactionTableRow)
-      );
+      if (tableData) {
+        this.rows = tableData.map(
+          (tx) =>
+            ({
+              transaction: this.formatAccount(tx.trx_id, 'transaction'),
+              timestamp: tx['@timestamp'],
+              action: this.formatAction(tx.act),
+              data: this.formatData(tx.act.data)
+            } as TransactionTableRow)
+        );
+      }
     },
     formatAccount(
       name: string,
