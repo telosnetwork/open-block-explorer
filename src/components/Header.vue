@@ -34,6 +34,8 @@ div.header-background
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
+import { encodeAccount, decodeAccount } from 'src/utils/encodeAccount';
+
 export default defineComponent({
   name: 'Header',
   data() {
@@ -60,19 +62,26 @@ export default defineComponent({
           return;
         }
         if (isValidHex(value) && value.length == 64) {
-          await this.$router.push({
-            name: 'transaction',
-            params: { transaction: value }
-          });
-          this.$router.go(0);
+          const check = await this.$api.getTransaction(value);
+          if (check) {
+            await this.$router.push({
+              name: 'transaction',
+              params: { transaction: value }
+            });
+            this.$router.go(0);
+          } else {
+            this.$q.notify(`transaction ${value} not found!`);
+          }
         } else {
           if (isValidAccount(value)) {
             try {
-              await this.$api.getAccount(value);
+              const decodedAccount = decodeAccount(value);
+              await this.$api.getAccount(decodedAccount);
+              const encodedAddress = encodeAccount(decodedAccount);
               await this.$router.push({
                 name: 'account',
                 params: {
-                  account: value
+                  account: encodedAddress
                 }
               });
               this.$router.go(0);

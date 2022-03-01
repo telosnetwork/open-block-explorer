@@ -10,7 +10,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
         q-separator.row.col-12.q-mt-md.separator
-        q-table.q-mt-lg.col-12.row(
+        q-table.q-mt-lg.col-12.row.fixed-layout(
             :rows="rows"
             :columns="columns"
             row-key="name"
@@ -128,15 +128,17 @@ export default defineComponent({
             ? await this.$api.getTransactions()
             : await this.$api.getTransactions(this.account);
       }
-      this.rows = tableData.map(
-        (tx) =>
-          ({
-            transaction: this.formatAccount(tx.trx_id, 'transaction'),
-            timestamp: tx['@timestamp'],
-            action: this.formatAction(tx.act),
-            data: this.formatData(tx.act.data)
-          } as TransactionTableRow)
-      );
+      if (tableData) {
+        this.rows = tableData.map(
+          (tx) =>
+            ({
+              transaction: this.formatAccount(tx.trx_id, 'transaction'),
+              timestamp: tx['@timestamp'],
+              action: this.formatAction(tx.act),
+              data: this.formatData(tx.act.data)
+            } as TransactionTableRow)
+        );
+      }
     },
     formatAccount(
       name: string,
@@ -177,6 +179,21 @@ export default defineComponent({
 <style lang="sass">
 $medium:750px
 
+.fixed-layout
+  .q-table
+    table-layout: fixed
+    tbody td:first-child
+      word-break: break-all
+    th:first-child
+      width: 35%
+    th:nth-child(2)
+      width: 15%
+    th:nth-child(3)
+      width: 20%
+    th:nth-child(4)
+      width: 25%
+.q-table--no-wrap td
+  white-space: unset
 body
     height:1000px
 .table-header
