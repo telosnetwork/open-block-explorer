@@ -33,7 +33,7 @@
   NETWORK_EVM_CONTRACT = "eosio.evm"
   NETWORK_EVM_CHAIN_ID = "41"
   NETWORK_EXPLORER = "https://telos-test.bloks.io"
-  HYPERION_ENDPOINT = "https://testnet.telos.net"
+  HYPERION_ENDPOINT = "https://testnet.telosusa.io"
   
 [context.deploy-preview.environment]
   APP_NAME = "Open Block Explorer"
