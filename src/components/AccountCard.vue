@@ -37,7 +37,7 @@
 import { AccountDetails, Token } from 'src/types';
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
-import { decodeAccount } from 'src/utils/encodeAccount';
+import { decodeParam } from 'src/utils/encodeParam';
 
 export default defineComponent({
   name: 'AccountCard',
@@ -70,7 +70,7 @@ export default defineComponent({
   computed: {
     ...mapGetters({ token: 'chain/getToken' }),
     decodedAccount(): string {
-      return decodeAccount(this.account);
+      return decodeParam(this.account);
     }
   },
   methods: {
@@ -78,7 +78,7 @@ export default defineComponent({
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
-        data = await this.$api.getAccount(this.account);
+        data = await this.$api.getAccount(this.decodedAccount);
       } catch (e) {
         this.ram = this.cpu = this.net = this.zero;
         this.total = this.refunding = this.staked = this.rex = this.none;
@@ -87,7 +87,7 @@ export default defineComponent({
       }
       try {
         this.creatingAccount = (
-          await this.$api.getCreator(this.account)
+          await this.$api.getCreator(this.decodedAccount)
         ).creator;
       } catch (e) {
         this.$q.notify(`creator account for ${this.account} not found!`);
