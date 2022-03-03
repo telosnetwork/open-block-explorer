@@ -24,7 +24,7 @@ export default defineComponent({
 </script>
 <style lang="sass">
 .account-card
-  width: 35rem
+  width: 50rem
   border-radius: .5rem
   margin-top: 1rem
   margin-left: auto

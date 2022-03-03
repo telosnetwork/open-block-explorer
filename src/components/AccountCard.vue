@@ -3,11 +3,14 @@
   q-card.account-card
     q-card-section
       .inline-section
-        .text-h6 {{ decodedAccount }}
+        .text-title {{ decodedAccount }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
           a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
         q-space
       .resources.inline-section(v-if="account !== system_account")
+        PercentCircle(:percentage='cpu')
+        PercentCircle(:percentage='net')
+        PercentCircle(:percentage='ram')
         .resource.inline-section CPU {{ cpu }}% used
         .resource.inline-section NET {{ net }}% used
         .resource.inline-section RAM {{ ram }}% used
@@ -38,9 +41,13 @@ import { AccountDetails, Token } from 'src/types';
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 import { decodeAccount } from 'src/utils/encodeAccount';
+import PercentCircle from 'src/components/PercentCircle.vue';
 
 export default defineComponent({
   name: 'AccountCard',
+  components: {
+    PercentCircle
+  },
   props: {
     account: {
       type: String,
@@ -148,21 +155,24 @@ export default defineComponent({
 $medium:750px
 .q-markup-table
   width: 100%
+
 .account-card
+  color: white
+  font-size:36px
   max-width: 100%
   background: unset
-  color: white
   .q-table__card
     background: unset
-    color: white
+    color: rgba(255,255,255,.5)
   .q-table--horizontal-separator thead th
-    border-bottom-width: 0
+
 .table-body
   width: 100%
   display: table
   tr
     border-bottom-width: 0
 .inline-section
+  width:100%
   display: inline-block
 .resources
   float: right
@@ -173,7 +183,12 @@ $medium:750px
   font-size: 20px
 .text-right
   font-weight: bold
+.text-title
+  width:10rem
+  margin: auto
 .text-subtitle
+  width: 5rem
+  margin: auto
   font-size: 12px
   a
     cursor: pointer

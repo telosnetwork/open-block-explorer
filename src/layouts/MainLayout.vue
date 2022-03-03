@@ -34,7 +34,7 @@ export default defineComponent({
 <style lang="sass" scoped>
 .q-page
   height: 39.5rem
-  background: $gradient-1
+  background: $gradient-3
 .separator
   height:1px
 </style>
