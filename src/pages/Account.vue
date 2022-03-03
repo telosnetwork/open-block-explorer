@@ -1,8 +1,8 @@
 <template lang="pug">
 div.row.col-12
     div.row.col-12.gradient-box
-      AccountCard.account-card(:account='id' v-if='isAccountPage')
-    TransactionsTable(:account='id')
+      AccountCard.account-card(:account='account')
+    TransactionsTable(:account='account')
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -13,18 +13,12 @@ export default defineComponent({
   name: 'Account',
   data() {
     return {
-      id: this.$route.query.id
+      account: this.$route.params.account
     };
   },
   components: {
     TransactionsTable,
     AccountCard
-  },
-  computed: {
-    isAccountPage(): boolean {
-      debugger;
-      return this.$route.path === '/account';
-    }
   }
 });
 </script>

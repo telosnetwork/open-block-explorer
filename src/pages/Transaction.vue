@@ -11,7 +11,7 @@ export default defineComponent({
   name: 'Transaction',
   data() {
     return {
-      transaction: this.$route.query.id
+      transaction: this.$route.params.transaction
     };
   },
   components: {
