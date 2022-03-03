@@ -75,7 +75,7 @@ export default defineComponent({
           if (isValidAccount(value)) {
             let account: string;
             try {
-              const account = value.toLowerCase();
+              account = value.toLowerCase();
               await this.$api.getAccount(account);
               await this.$router.push({
                 name: 'account',
