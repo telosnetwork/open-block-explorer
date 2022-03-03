@@ -66,7 +66,7 @@ export default defineComponent({
           if (check) {
             await this.$router.push({
               name: 'transaction',
-              params: { transaction: value }
+              query: { id: value }
             });
             this.$router.go(0);
           } else {
@@ -81,8 +81,8 @@ export default defineComponent({
               const encodedAddress = encodeParam(decodedAddress);
               await this.$router.push({
                 name: 'account',
-                params: {
-                  account: encodedAddress
+                query: {
+                  id: encodedAddress
                 }
               });
               this.$router.go(0);

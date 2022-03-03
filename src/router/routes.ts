@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/Network.vue') }]
   },
   {
-    path: '/account/:account',
+    path: '/account',
     name: 'account',
     props: true,
     component: () => import('layouts/MainLayout.vue'),
@@ -20,7 +20,7 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/transaction/:transaction',
+    path: '/transaction',
     name: 'transaction',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Transaction.vue') }]

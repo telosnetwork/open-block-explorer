@@ -150,7 +150,8 @@ export default defineComponent({
       type: 'account' | 'transaction' | 'block'
     ): string {
       const encodedParam = encodeParam(name);
-      return `<a href="/${type}/${encodedParam}" class="hover-dec">${name}</a>`;
+      debugger;
+      return `<a href="${type}?id=${encodedParam}" class="hover-dec">${name}</a>`;
     },
     formatAction(txAct: Account): string {
       const accountString = this.formatAccount(txAct.account, 'account');

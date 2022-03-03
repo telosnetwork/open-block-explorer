@@ -41,14 +41,9 @@ import { decodeParam } from 'src/utils/encodeParam';
 
 export default defineComponent({
   name: 'AccountCard',
-  props: {
-    account: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
+      account: this.$route.query.id as string,
       creatingAccount: '',
       total: '',
       refunding: '',
@@ -136,7 +131,7 @@ export default defineComponent({
       await this.$router.push({
         name: 'account',
         params: {
-          account: this.creatingAccount
+          id: this.creatingAccount
         }
       });
       this.$router.go(0);
