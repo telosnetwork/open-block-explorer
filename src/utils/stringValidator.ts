@@ -2,7 +2,7 @@
 
 export function isValidAccount(account: string): boolean {
   const regEx = /(^[a-z1-5.]{1,11}[a-z1-5]$)|(^[a-z1-5.]{12}[a-j1-5]$)/;
-  return regEx.exec(account.toLocaleLowerCase()) != null;
+  return regEx.exec(account.toLowerCase()) != null;
 }
 
 export function isValidHex(hexString: string): boolean {

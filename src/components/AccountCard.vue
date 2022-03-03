@@ -3,7 +3,7 @@
   q-card.account-card
     q-card-section
       .inline-section
-        .text-h6 {{ decodedAccount }}
+        .text-h6 {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
           a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
         q-space
@@ -73,7 +73,7 @@ export default defineComponent({
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
-        data = await this.$api.getAccount(this.decodedAccount);
+        data = await this.$api.getAccount(this.account);
       } catch (e) {
         this.ram = this.cpu = this.net = this.zero;
         this.total = this.refunding = this.staked = this.rex = this.none;
@@ -82,7 +82,7 @@ export default defineComponent({
       }
       try {
         this.creatingAccount = (
-          await this.$api.getCreator(this.decodedAccount)
+          await this.$api.getCreator(this.account)
         ).creator;
       } catch (e) {
         this.$q.notify(`creator account for ${this.account} not found!`);

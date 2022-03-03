@@ -22,7 +22,6 @@ export default defineComponent({
   },
   computed: {
     isAccountPage(): boolean {
-      debugger;
       return this.$route.path === '/account';
     }
   }
