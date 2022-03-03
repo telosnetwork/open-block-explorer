@@ -150,9 +150,18 @@ $medium:750px
   width: 100%
 .account-card
   max-width: 100%
+  background: unset
+  color: white
+  .q-table__card
+    background: unset
+    color: white
+  .q-table--horizontal-separator thead th
+    border-bottom-width: 0
 .table-body
   width: 100%
   display: table
+  tr
+    border-bottom-width: 0
 .inline-section
   display: inline-block
 .resources

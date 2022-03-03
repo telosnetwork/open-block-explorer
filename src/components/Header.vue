@@ -23,12 +23,13 @@ div.header-background
         div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm.temp-hide
             q-btn.button-primary(@click='clicked()' label="Connect")
 
-    div.row.justify-center.col-12.q-pt-sm.temp-hide
+    div.row.justify-center.col-12.q-pt-sm
         q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
-          q-tab.deactive(name="Network" label="Network" @click="menuClicked('Network')")
-          q-tab.deactive(name="Vote" label="Vote" @click="menuClicked('Vote')")
-          q-tab.deactive(name="Proposal"  label="Proposal" @click="menuClicked('Proposal')")
-          q-tab.deactive(name="Explore" label="Explore" @click="menuClicked('Explore')")
+          q-route-tab.deactive.active-tab(name="network" label="Network" to='/')
+          q-route-tab.deactive(name="wallet" label="Wallet" to='/wallet')
+          q-route-tab.deactive(name="vote" label="Vote" to='/vote').temp-hide
+          q-route-tab.deactive(name="proposal"  label="Proposal" to='/proposal').temp-hide
+          q-route-tab.deactive(name="explore" label="Explore" to='/explore').temp-hide
 
 </template>
 <script lang="ts">
@@ -47,11 +48,6 @@ export default defineComponent({
   methods: {
     clicked() {
       console.log('connect btn clicked');
-    },
-    async menuClicked(routeName: string) {
-      return; //temp disable navigation
-      await this.$router.push({ name: routeName.toLowerCase() });
-      this.$router.go(0);
     },
     /* temp search check if possible tx or account, replace with results list rendering */
     async executeSearch(input: KeyboardEvent): Promise<void> {
@@ -98,6 +94,9 @@ export default defineComponent({
 });
 </script>
 <style lang="sass" scoped>
+.q-tab
+  text-transform: unset
+  font-size: 18px
 
 .logo
     width: 104px
