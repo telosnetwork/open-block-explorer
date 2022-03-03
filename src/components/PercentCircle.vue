@@ -6,7 +6,23 @@ svg.circular-chart( viewBox="0 0 92 92" )
     fill="none"
     :stroke="strokeColor"
     stroke-width="1"
-)
+    )
+  text( x="44" y="44" 
+    text-anchor="middle"
+    stroke-width="1px"
+    dominant-baseline="middle"
+    fill="white"
+    font-size="14px"
+    font-weight=700
+    ) {{ label }}
+
+  text( x="44" y="64" 
+    text-anchor="middle"
+    stroke-width="1px"
+    dominant-baseline="middle"
+    fill="white"
+    font-size="14px"
+    ) {{ percentage }}%
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -16,6 +32,10 @@ export default defineComponent({
   props: {
     percentage: {
       type: Number,
+      required: true
+    },
+    label: {
+      type: String,
       required: true
     }
   },
@@ -43,8 +63,7 @@ export default defineComponent({
 <style lang="sass" scoped>
 .circular-chart
   display: inline-block
-  margin: 10px auto
-  max-width: 80%
+  margin: 0 20px
   max-height: 92px
 
 .circle

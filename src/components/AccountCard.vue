@@ -7,26 +7,25 @@
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
           a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
         q-space
-      .resources.inline-section(v-if="account !== system_account")
-        PercentCircle(:percentage='cpu')
-        PercentCircle(:percentage='net')
-        PercentCircle(:percentage='ram')
-        .resource.inline-section CPU {{ cpu }}% used
-        .resource.inline-section NET {{ net }}% used
-        .resource.inline-section RAM {{ ram }}% used
+      .resources(v-if="account !== system_account")
+          PercentCircle(:percentage='parseFloat(cpu)' label='CPU')
+          PercentCircle(:percentage='parseFloat(net)' label='NET')
+          PercentCircle(:percentage='parseFloat(ram)' label='RAM')
     q-markup-table
       thead
         tr
           th.text-left BALANCE
         tbody.table-body
           tr
-            td.text-left AVAILABLE   
-            td.text-right.total {{ total }}
+            td.text-left.total-label TOTAL 
+            td.text-right.total-amount {{ total }} 
+          tr
+            td.text-right.total-value {{ totalValue }} 
           tr
             td.text-left REFUNDING
-            td.text-right {{ refunding }} 
+            td.text-right {{ refunding }}
           tr
-            td.text-left TOTAL STAKED
+            td.text-left STAKED BY OTHERS
             td.text-right {{ staked }}
           tr
             td.text-left REX
@@ -78,6 +77,9 @@ export default defineComponent({
     ...mapGetters({ token: 'chain/getToken' }),
     decodedAccount(): string {
       return decodeAccount(this.account);
+    },
+    totalValue(): string {
+      return '';
     }
   },
   methods: {
@@ -155,31 +157,41 @@ export default defineComponent({
 $medium:750px
 .q-markup-table
   width: 100%
-
+  th,td
+    padding: unset
 .account-card
   color: white
-  font-size:36px
+  font-size: 36px
   max-width: 100%
   background: unset
   .q-table__card
     background: unset
-    color: rgba(255,255,255,.5)
-  .q-table--horizontal-separator thead th
-
+    color: $black-5
+  .q-table--horizontal-separator
+    thead th
+      border-bottom: 1px solid $black-13
+    tbody tr:not(:last-child) td
+      border-bottom: none
 .table-body
   width: 100%
   display: table
   tr
-    border-bottom-width: 0
+    border-width: 0
 .inline-section
   width:100%
   display: inline-block
 .resources
-  float: right
-  margin-top: 2.5rem
+  text-align: center
+  width: 18rem
+  margin-top
+  margin: 2.5rem auto 0 auto
 .resource
   margin-right: 2rem
-.total
+.total-label, total-value
+  color: white
+  font-size: 14px
+.total-amount
+  color: white
   font-size: 20px
 .text-right
   font-weight: bold
