@@ -54,6 +54,7 @@ import {
   TransactionTableRow
 } from 'src/types';
 import { defineComponent } from 'vue';
+import { encodeParam } from 'src/utils/encodeParam';
 export default defineComponent({
   name: 'TransactionsTable',
   props: {
@@ -148,7 +149,8 @@ export default defineComponent({
       name: string,
       type: 'account' | 'transaction' | 'block'
     ): string {
-      return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
+      const encodedParam = encodeParam(name);
+      return `<a href="/${type}/${encodedParam}" class="hover-dec">${name}</a>`;
     },
     formatAction(txAct: Account): string {
       const accountString = this.formatAccount(txAct.account, 'account');

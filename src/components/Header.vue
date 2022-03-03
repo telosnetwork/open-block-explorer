@@ -34,7 +34,7 @@ div.header-background
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
-import { encodeAccount, decodeAccount } from 'src/utils/encodeAccount';
+import { encodeParam, decodeParam } from 'src/utils/encodeParam';
 
 export default defineComponent({
   name: 'Header',
@@ -74,10 +74,11 @@ export default defineComponent({
           }
         } else {
           if (isValidAccount(value)) {
+            let decodedAddress;
             try {
-              const decodedAccount = decodeAccount(value);
-              await this.$api.getAccount(decodedAccount);
-              const encodedAddress = encodeAccount(decodedAccount);
+              decodedAddress = decodeParam(value).toLowerCase();
+              await this.$api.getAccount(decodedAddress);
+              const encodedAddress = encodeParam(decodedAddress);
               await this.$router.push({
                 name: 'account',
                 params: {
@@ -86,7 +87,7 @@ export default defineComponent({
               });
               this.$router.go(0);
             } catch (e) {
-              this.$q.notify(`account ${value} not found!`);
+              this.$q.notify(`account ${decodedAddress} not found!`);
             }
           } else {
             this.$q.notify('invalid transacation id or account name');
