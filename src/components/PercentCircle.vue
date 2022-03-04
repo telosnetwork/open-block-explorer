@@ -1,6 +1,6 @@
 <template lang="pug">
 svg.circular-chart( viewBox="0 0 92 92" )
-  path.circle(
+  path.circle.data-circle(
     :stroke-dasharray="dashArray"
     d="M46 2 a 44 44 0 0 1 0 88 a 44 44 0 0 1 0 -88"
     fill="none"
@@ -77,7 +77,9 @@ export default defineComponent({
   fill: none
   stroke-width: 2.8
   stroke-linecap: round
-  animation: progress 1s ease-out forwards
+  &.data-circle
+    animation: progress 1s ease-out forwards
+
 
 @keyframes progress
   0%
