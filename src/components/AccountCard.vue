@@ -5,7 +5,7 @@
       .inline-section
         .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
-          a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
+          a( @click='loadCreatorAccount') {{ creatingAccount }} 
         q-space
       .resources(v-if="account !== system_account")
           PercentCircle(:percentage='parseFloat(cpu)' label='CPU')
@@ -187,7 +187,6 @@ $medium:750px
 .resources
   text-align: center
   width: 18rem
-  margin-top
   margin: 2.5rem auto 0 auto
 .resource
   margin-right: 2rem
@@ -203,7 +202,7 @@ $medium:750px
   width:10rem
   margin: auto
 .text-subtitle
-  width: 5rem
+  width: 6rem
   margin: auto
   font-size: 12px
   a
@@ -221,6 +220,9 @@ $medium:750px
     border-radius: unset
   .q-markup-table
     overflow: unset
+    width: unset
+    margin-right: .5rem
+    margin-left: .5rem
   .resources
     float: unset
   .inline-section
