@@ -25,8 +25,8 @@ div.header-background
 
     div.row.justify-center.col-12.q-pt-sm
         q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
-          q-route-tab.deactive.active-tab(name="network" label="Network" to='/')
-          q-route-tab.deactive(name="wallet" label="Wallet" to='/account')
+          q-route-tab.deactive.active-tab(name="network" label="Network" to='/').temp-hide
+          q-route-tab.deactive(name="wallet" label="Wallet" to="{ name: 'account', params: {account: /* store account getter */} }").temp-hide
           q-route-tab.deactive(name="vote" label="Vote" to='/vote').temp-hide
           q-route-tab.deactive(name="proposal"  label="Proposal" to='/proposal').temp-hide
           q-route-tab.deactive(name="explore" label="Explore" to='/explore').temp-hide

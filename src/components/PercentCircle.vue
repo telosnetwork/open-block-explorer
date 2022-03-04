@@ -5,14 +5,14 @@ svg.circular-chart( viewBox="0 0 92 92" )
     d="M46 2 a 44 44 0 0 1 0 88 a 44 44 0 0 1 0 -88"
     fill="none"
     :stroke="strokeColor"
-    stroke-width="1"
+    stroke-width="3"
     )
   path.circle(
     :stroke-dasharray="`${circumference}, ${circumference}`"
     d="M46 2 a 44 44 0 0 1 0 88 a 44 44 0 0 1 0 -88"
     fill="none"
     stroke="rgba(255,255,255,.13)"
-    stroke-width="1"
+    stroke-width="2"
     )
   text( x="44" y="44" 
     text-anchor="middle"
