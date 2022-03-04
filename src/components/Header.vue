@@ -1,11 +1,11 @@
 <template lang="pug">
 div.header-background
     div.row.text-center.q-pt-sm
-        div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
+        div.logo-container.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
           a( href="/")
            img.logo( src="~assets/telos_logo.svg")
 
-        div.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
+        div.search-container.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
             div.row.justify-center  
                 q-input.col-12.search-input.q-pl-md(
                   borderless 
@@ -93,13 +93,21 @@ export default defineComponent({
 });
 </script>
 <style lang="sass" scoped>
+$medium:750px
+
 .q-tab
   text-transform: unset
   font-size: 18px
 
+.logo-container
+  margin-left: .5rem
+
 .logo
     width: 104px
     height:54px
+
+.search-container
+  margin-left: 1rem
 
 .header-items
     list-style-type: none
@@ -122,4 +130,9 @@ export default defineComponent({
 
 .search-icon
     transform: rotate(90deg)
+
+@media screen and (max-width: $medium) // screen < $medium
+
+  .search-container
+    width: 60%
 </style>
