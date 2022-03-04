@@ -34,6 +34,8 @@ svg.circular-chart( viewBox="0 0 92 92" )
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+const PI = 3.1459;
+
 export default defineComponent({
   name: 'PercentCircle',
   props: {
@@ -58,7 +60,7 @@ export default defineComponent({
       return this.percentage > 90 ? 'red' : 'white';
     },
     circumference(): number {
-      return 2 * 3.1459 * this.radius;
+      return 2 * PI * this.radius;
     },
     dashArray(): string {
       const scaledPath = (this.percentage / 100) * this.circumference;
