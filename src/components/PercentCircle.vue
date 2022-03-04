@@ -57,7 +57,7 @@ export default defineComponent({
   },
   computed: {
     strokeColor(): string {
-      return this.percentage > 90 ? 'red' : 'white';
+      return this.percentage < 90 ? 'white' : 'red';
     },
     circumference(): number {
       return 2 * PI * this.radius;
