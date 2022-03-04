@@ -20,6 +20,7 @@
             td.text-left.total-label TOTAL 
             td.text-right.total-amount {{ total }} 
           tr
+            td
             td.text-right.total-value {{ totalValue }} 
           tr
             td.text-left REFUNDING
@@ -35,12 +36,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-
+import axios from 'axios';
 import { AccountDetails, Token } from 'src/types';
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 import { decodeAccount } from 'src/utils/encodeAccount';
 import PercentCircle from 'src/components/PercentCircle.vue';
+import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 
 export default defineComponent({
   name: 'AccountCard',
@@ -57,6 +59,7 @@ export default defineComponent({
     return {
       creatingAccount: '',
       total: '',
+      totalValue: '',
       refunding: '',
       staked: '',
       rex: '',
@@ -65,21 +68,20 @@ export default defineComponent({
       net: '',
       none: '',
       system_account: 'eosio',
-      zero: '0.00'
+      zero: '0.00',
+      tokenPrice: '0'
     };
   },
   async mounted() {
     await this.loadSystemToken();
     this.none = `${this.zero} ${(this.token as Token).symbol}`;
     await this.loadAccountData();
+    await this.loadPriceData();
   },
   computed: {
     ...mapGetters({ token: 'chain/getToken' }),
     decodedAccount(): string {
       return decodeAccount(this.account);
-    },
-    totalValue(): string {
-      return '';
     }
   },
   methods: {
@@ -149,6 +151,12 @@ export default defineComponent({
         }
       });
       this.$router.go(0);
+    },
+    async loadPriceData(): Promise<void> {
+      const telosPrice: number = (await axios.get(exchangeStatsUrl)).data.telos
+        .usd;
+      const dollarAmount = telosPrice * parseFloat(this.total);
+      this.totalValue = `$${dollarAmount.toFixed(2)} (@$${telosPrice}/TLOS)`;
     }
   }
 });
@@ -187,7 +195,7 @@ $medium:750px
   margin: 2.5rem auto 0 auto
 .resource
   margin-right: 2rem
-.total-label, total-value
+.total-label, .total-value
   color: white
   font-size: 14px
 .total-amount

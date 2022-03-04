@@ -34,7 +34,7 @@ import { PriceStats, PriceHistory, DateTuple } from 'src/types';
 const ONE_MILLION = 1000000;
 const ONE_BILLION = 1000000000;
 
-const exchangeStatsUrl =
+export const exchangeStatsUrl =
   'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true';
 const priceHistoryUrl =
   'https://api.coingecko.com/api/v3/coins/telos/market_chart?vs_currency=USD&days=1&interval=hourly';
