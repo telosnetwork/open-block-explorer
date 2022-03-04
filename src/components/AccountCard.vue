@@ -3,7 +3,7 @@
   q-card.account-card
     q-card-section
       .inline-section
-        .text-title {{ decodedAccount }}
+        .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
           a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
         q-space
@@ -40,7 +40,6 @@ import axios from 'axios';
 import { AccountDetails, Token } from 'src/types';
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
-import { decodeAccount } from 'src/utils/encodeAccount';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 
@@ -79,10 +78,7 @@ export default defineComponent({
     await this.loadPriceData();
   },
   computed: {
-    ...mapGetters({ token: 'chain/getToken' }),
-    decodedAccount(): string {
-      return decodeAccount(this.account);
-    }
+    ...mapGetters({ token: 'chain/getToken' })
   },
   methods: {
     ...mapMutations({ setToken: 'chain/setToken' }),
