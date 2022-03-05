@@ -14,7 +14,7 @@ svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`${-offset
     ) {{ label }}
   text.text.percentage( 
     x="20" 
-    :y="percentOffsetY" 
+    :y="radius + 14" 
     ) {{ percentage }}%
 </template>
 <script lang="ts">
@@ -47,21 +47,21 @@ export default defineComponent({
     diameter(): number {
       return 2 * this.radius;
     },
+    circumference(): number {
+      return 2 * PI * this.radius;
+    },
     containerWidth(): number {
       return this.diameter + 2 * this.offset;
     },
     strokeColor(): string {
       return this.percentage >= 90 ? 'red' : 'white';
     },
-    circumference(): number {
-      return 2 * PI * this.radius;
-    },
     dashArray(): string {
+      if (this.percentage < 1) {
+        return `0, ${this.circumference}`;
+      }
       const scaledPath = (this.percentage / 100) * this.circumference;
       return `${scaledPath}, ${this.circumference}`;
-    },
-    percentOffsetY(): number {
-      return this.radius + 14;
     }
   }
 });
@@ -80,11 +80,12 @@ export default defineComponent({
 .circle
   fill: none
   stroke-width: 5
-  stroke-linecap: round
+  stroke-linecap: square
+  animation: progress 1s ease-out backwards
 
 @keyframes progress
   0%
-    stroke-dasharray: 0 100
+    stroke-dasharray: 0 500
 
 .text
   text-anchor: middle
