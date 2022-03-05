@@ -70,7 +70,6 @@ export default defineComponent({
       none: '',
       system_account: 'eosio',
       zero: '0.00',
-      tokenPrice: '0',
       radius: 44
     };
   },

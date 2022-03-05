@@ -34,9 +34,6 @@ export default defineComponent({
 <style lang="sass" scoped>
 .q-header
   background-color: $primary-dark
-.q-page
-  height: 39.5rem
-  background: $gradient-3
 .separator
   height: 2px
   min-height: 2px

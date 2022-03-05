@@ -83,7 +83,6 @@ export default defineComponent({
   fill: none
   stroke-width: 5
   stroke-linecap: round
-
   animation: progress 1s ease-out forwards
 
 @keyframes progress
