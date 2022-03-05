@@ -7,12 +7,14 @@ svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`${-offset
     :stroke-dasharray="dashArray"
     :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
     :stroke='strokeColor'
+    :style="{ 'stroke-opacity' : Number.isNaN(percentage) ? 0 : 1 }"
     )
   text.text.label( 
     x="18"
     :y="radius - offset"
     ) {{ label }}
-  text.text.percentage( 
+  text.text.percentage(
+    v-if='!Number.isNaN(percentage)'
     x="20" 
     :y="radius + 14" 
     ) {{ percentage }}%
@@ -27,7 +29,7 @@ export default defineComponent({
   props: {
     percentage: {
       type: Number,
-      default: 0
+      required: true
     },
     label: {
       type: String,
@@ -35,7 +37,7 @@ export default defineComponent({
     },
     radius: {
       type: Number,
-      default: 0
+      required: true
     }
   },
   data() {
@@ -57,8 +59,9 @@ export default defineComponent({
       return this.percentage >= 90 ? 'red' : 'white';
     },
     dashArray(): string {
-      if (this.percentage < 1) {
-        return `0, ${this.circumference}`;
+      if (Number.isNaN(this.percentage)) {
+        debugger;
+        return '0';
       }
       const scaledPath = (this.percentage / 100) * this.circumference;
       return `${scaledPath}, ${this.circumference}`;
@@ -80,8 +83,9 @@ export default defineComponent({
 .circle
   fill: none
   stroke-width: 5
-  stroke-linecap: square
-  animation: progress 1s ease-out backwards
+  stroke-linecap: round
+
+  animation: progress 1s ease-out forwards
 
 @keyframes progress
   0%
