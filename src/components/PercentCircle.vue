@@ -1,5 +1,5 @@
 <template lang="pug">
-svg.circular-chart( :viewBox="`0 0 ${containerWidth} ${containerWidth}`" )
+svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`0 ${-space / 2} ${containerWidth} ${containerWidth}`" )
   path.circle.data-circle(
     :stroke-dasharray="dashArray"
     d="M46 2 a 44 44 0 0 1 0 88 a 44 44 0 0 1 0 -88"
@@ -50,12 +50,17 @@ export default defineComponent({
       required: true
     }
   },
+  data() {
+    return {
+      space: 10
+    };
+  },
   computed: {
     diameter(): number {
       return 2 * this.radius;
     },
     containerWidth(): number {
-      return this.diameter + 4;
+      return this.diameter + this.space;
     },
     strokeColor(): string {
       return this.percentage < 90 ? 'white' : 'red';
@@ -73,8 +78,7 @@ export default defineComponent({
 <style lang="sass" scoped>
 .circular-chart
   display: inline-block
-  margin: 0 10px
-  max-height: 92px
+  margin: 0 6px
 
 .circle
   fill: none
@@ -82,7 +86,7 @@ export default defineComponent({
   stroke-linecap: round
 
 .data-circle
-  stroke-width: 4px
+  stroke-width: 5px
   animation: progress 1s ease-out forwards
 
 @keyframes progress

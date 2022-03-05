@@ -16,7 +16,7 @@ const $router = {
 
 describe('PercentCircle', () => {
   beforeEach(() => {
-    wrapper = mount(PercentCircle, {
+    wrapper = mount(PercentCircle as unknown, {
       props: {
         percentage: 50,
         label: 'test2'
@@ -36,5 +36,16 @@ describe('PercentCircle', () => {
         expect((wrapper.vm as any).strokeColor).toBe('red');
       });
     });
+    // describe('circumference', () => {
+    //     it('returns circumference value', () => {
+    //       expect((wrapper.vm as any).strokeColor).toBe('white');
+    //     });
+    //     it('sets color to "red" if usage >= 90', async () => {
+    //       await wrapper.setProps({
+    //         percentage: 90
+    //       });
+    //       expect((wrapper.vm as any).strokeColor).toBe('red');
+    //     });
+    //   });
   });
 });
