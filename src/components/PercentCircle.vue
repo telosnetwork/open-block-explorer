@@ -60,7 +60,6 @@ export default defineComponent({
     },
     dashArray(): string {
       if (Number.isNaN(this.percentage)) {
-        debugger;
         return '0';
       }
       const scaledPath = (this.percentage / 100) * this.circumference;
