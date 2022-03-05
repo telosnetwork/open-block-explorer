@@ -8,9 +8,9 @@
           a( @click='loadCreatorAccount') {{ creatingAccount }} 
         q-space
       .resources(v-if="account !== system_account")
-          PercentCircle(:percentage='parseFloat(cpu)' label='CPU')
-          PercentCircle(:percentage='parseFloat(net)' label='NET')
-          PercentCircle(:percentage='parseFloat(ram)' label='RAM')
+          PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
+          PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
+          PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
     q-markup-table
       thead
         tr
@@ -68,7 +68,8 @@ export default defineComponent({
       none: '',
       system_account: 'eosio',
       zero: '0.00',
-      tokenPrice: '0'
+      tokenPrice: '0',
+      radius: 44
     };
   },
   async mounted() {
@@ -187,7 +188,7 @@ $medium:750px
 .resources
   text-align: center
   width: 18rem
-  margin: 2.5rem auto 0 auto
+  margin: 1rem auto 0 auto
 .resource
   margin-right: 2rem
 .total-label, .total-value
