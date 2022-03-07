@@ -206,6 +206,7 @@ $medium:750px
     th:nth-child(4)
       width: 25%
 .q-table--no-wrap td
+  word-break: break-all
   white-space: unset
 body
     height:1000px
