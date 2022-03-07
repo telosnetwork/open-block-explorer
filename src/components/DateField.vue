@@ -3,9 +3,10 @@ div {{ friendlyDate }}
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 import * as moment from 'moment';
 
-export default {
+export default defineComponent({
   name: 'DateField',
   props: {
     timestamp: {
@@ -26,7 +27,7 @@ export default {
       return `${actionTime.format('YYYY-MM-DD h:mm:ss')}`;
     }
   }
-};
+});
 </script>
 
 <style scoped></style>
