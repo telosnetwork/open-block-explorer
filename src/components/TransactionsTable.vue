@@ -224,6 +224,19 @@ body
     text-decoration: underline
 
 @media screen and (max-width: $medium) // screen < $medium
+  .fixed-layout
+    .q-table
+      table-layout: fixed
+      tbody td:first-child
+        word-break: break-all
+      th:first-child
+        width: 25%
+      th:nth-child(2)
+        width: 25%
+      th:nth-child(3)
+        width: 25%
+      th:nth-child(4)
+        width: 25%
   .filter-buttons
     width: 100% !important
 </style>
