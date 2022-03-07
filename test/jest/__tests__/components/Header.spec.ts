@@ -26,13 +26,5 @@ describe('Header', () => {
         expect(methodSpy).toHaveBeenCalledWith('connect btn clicked');
       });
     });
-
-    describe('menuClicked', () => {
-      it('logs string to console', async () => {
-        const mockRoute = 'test';
-        await (wrapper.vm as any).menuClicked(mockRoute);
-        expect(push).toHaveBeenCalledWith({ name: mockRoute });
-      });
-    });
   });
 });

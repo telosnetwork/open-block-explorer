@@ -20,7 +20,7 @@ describe('TransactionsTable', () => {
     it('calls loadTransactions', () => {
       const methodSpy = jest.spyOn(
         TransactionsTable.methods as any,
-        'loadTransactions'
+        'loadTableData'
       );
       const wrapper = shallowMount(TransactionsTable, {
         mocks: {
