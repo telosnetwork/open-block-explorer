@@ -32,7 +32,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           template( v-slot:body-cell-data="props")
             q-td( :props="props" @click="props.expand = !props.expand" )
               div(v-html="props.value" :class="{'row-expanded': props.expand  }")
-              q-icon.expand-icon(:name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
+              q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
           template( v-slot:pagination="scope")
             div.row.col-12.q-mt-md.q-mb-xl()
             div.col-1(align="left")
@@ -186,6 +186,9 @@ export default defineComponent({
         formattedData.push(`<br><b>${key}</b>: ${data[key]}`);
       }
       return formattedData.join('\n');
+    },
+    checkIsMultiLine(data: string): boolean {
+      return data.length > 0 && data.split('\n').length > 1;
     }
   }
 });
