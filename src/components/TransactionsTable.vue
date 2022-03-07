@@ -32,6 +32,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           template( v-slot:body-cell-data="props")
             q-td( :props="props" @click="props.expand = !props.expand" )
               div(v-html="props.value" :class="{'row-expanded': props.expand  }")
+              q-icon.expand-icon(:name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
           template( v-slot:pagination="scope")
             div.row.col-12.q-mt-md.q-mb-xl()
             div.col-1(align="left")
@@ -218,6 +219,10 @@ $medium:750px
   &.row-expanded
     max-height: 1000px
     transition: max-height 2s ease-out
+
+.expand-icon
+  padding-left: 2rem
+  cursor: pointer
 
 body
     height:1000px
