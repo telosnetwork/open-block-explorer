@@ -169,7 +169,7 @@ export default defineComponent({
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatData(data: any): string {
-      const accountRegEx = /^(account|to|from|owner)$/;
+      const accountRegEx = /^(account|to|from|owner|account_name|voter)$/;
       const formattedData = [];
       for (let key in data) {
         if (accountRegEx.exec(key)) {
