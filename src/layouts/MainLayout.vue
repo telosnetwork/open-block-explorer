@@ -32,9 +32,9 @@ export default defineComponent({
 });
 </script>
 <style lang="sass" scoped>
-.q-page
-  height: 39.5rem
-  background: $gradient-1
+.q-header
+  background-color: $primary-dark
 .separator
-  height:1px
+  height: 2px
+  min-height: 2px
 </style>
