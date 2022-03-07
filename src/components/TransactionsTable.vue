@@ -147,7 +147,7 @@ export default defineComponent({
               transaction: this.formatAccount(tx.trx_id, 'transaction'),
               timestamp: tx['@timestamp'],
               action: this.formatAction(tx.act),
-              data: this.formatData(tx.act.data)
+              data: this.formatData(tx.act.data).replace('<br>', '')
             } as TransactionTableRow)
         );
         debugger;
