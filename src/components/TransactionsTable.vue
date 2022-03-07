@@ -23,6 +23,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           template( v-slot:body-cell-transaction="props")
             q-td( :props="props" )
               div(v-html="props.value")
+          template( v-slot:body-cell-timestamp="props")
+            q-td( :props="props" )
+              DateField( :timestamp="props.value", showAge=true )
           template( v-slot:body-cell-action="props")
             q-td( :props="props" )
               div(v-html="props.value")
@@ -54,8 +57,12 @@ import {
   TransactionTableRow
 } from 'src/types';
 import { defineComponent } from 'vue';
+import DateField from 'src/components/DateField.vue';
 export default defineComponent({
   name: 'TransactionsTable',
+  components: {
+    DateField
+  },
   props: {
     account: {
       type: String,
@@ -131,6 +138,7 @@ export default defineComponent({
           this.account == null
             ? await this.$api.getTransactions()
             : await this.$api.getTransactions(this.account);
+        debugger;
       }
       if (tableData) {
         this.rows = tableData.map(
@@ -142,6 +150,7 @@ export default defineComponent({
               data: this.formatData(tx.act.data)
             } as TransactionTableRow)
         );
+        debugger;
       }
     },
     formatAccount(

@@ -1,15 +1,15 @@
 <template lang="pug">
-  div {{ friendlyDate }}
+div {{ friendlyDate }}
 </template>
 
-<script>
+<script lang="ts">
 import * as moment from 'moment';
 
 export default {
   name: 'DateField',
   props: {
-    epoch: {
-      type: Number,
+    timestamp: {
+      type: String,
       required: true
     },
     showAge: {
@@ -18,11 +18,12 @@ export default {
     }
   },
   computed: {
-    friendlyDate() {
+    friendlyDate(): string {
+      const actionTime = moment.utc(this.timestamp, 'YYYY-MM-DD HH:mm:ssZ');
       if (this.showAge) {
-        return moment.unix(this.epoch).fromNow();
+        return actionTime.fromNow();
       }
-      return `${moment.unix(this.epoch).format('YYYY-MM-DD h:mm:ss')}`;
+      return `${actionTime.format('YYYY-MM-DD h:mm:ss')}`;
     }
   }
 };
