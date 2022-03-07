@@ -30,8 +30,8 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             q-td( :props="props" )
               div(v-html="props.value")
           template( v-slot:body-cell-data="props")
-            q-td( :props="props" )
-              div(v-html="props.value")
+            q-td( :props="props" @click="props.expand = !props.expand" )
+              div(v-html="props.value" :class="{'row-expanded': props.expand  }")
           template( v-slot:pagination="scope")
             div.row.col-12.q-mt-md.q-mb-xl()
             div.col-1(align="left")
@@ -106,6 +106,7 @@ export default defineComponent({
         }
       ],
       rows: [] as TransactionTableRow[],
+      expanded: [],
       paginationSettings: {
         sortBy: 'timestamp',
         descending: true,
@@ -144,6 +145,7 @@ export default defineComponent({
         this.rows = tableData.map(
           (tx) =>
             ({
+              name: tx.trx_id,
               transaction: this.formatAccount(tx.trx_id, 'transaction'),
               timestamp: tx['@timestamp'],
               action: this.formatAction(tx.act),
@@ -205,20 +207,32 @@ $medium:750px
       width: 20%
     th:nth-child(4)
       width: 25%
+
 .q-table--no-wrap td
   word-break: break-all
   white-space: unset
+
+.q-table td div
+  height: 22px
+  overflow-y: hidden
+  &.row-expanded
+    height: unset
+    overflow-y: unset
+
 body
     height:1000px
+
 .table-header
     color: #000000 !important
     opacity: 0.5
+
 .table-title
     font-family: Actor, sans-serif
     font-style: normal
     font-weight: normal
     font-size: 22.75px
     line-height: 27px
+
 .hover-dec
   text-decoration: none
   &:hover
