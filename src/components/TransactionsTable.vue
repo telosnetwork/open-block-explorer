@@ -19,7 +19,10 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             :square="true"
             table-header-class="table-header"
             v-model:pagination="paginationSettings"
-            :hide-pagination="!hasPages")
+            v-model:expanded="expanded"
+            :hide-pagination="!hasPages"
+            @update:expanded='updateExpanded'
+            )
           template( v-slot:body-cell-transaction="props")
             q-td( :props="props" )
               div(v-html="props.value")
@@ -30,9 +33,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             q-td( :props="props" )
               div(v-html="props.value")
           template( v-slot:body-cell-data="props")
-            q-td( :props="props" @click="props.expand = !props.expand" )
+            q-td( :props="props"  )
               div(v-html="props.value" :class="{'row-expanded': props.expand  }")
-              q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
+              q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" @click="props.expand = !props.expand" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
           template( v-slot:pagination="scope")
             div.row.col-12.q-mt-md.q-mb-xl()
             div.col-1(align="left")
@@ -189,6 +192,11 @@ export default defineComponent({
     },
     checkIsMultiLine(data: string): boolean {
       return data.length > 0 && data.split('\n').length > 1;
+    },
+    updateExpanded(newExpanded: string[]) {
+      if (newExpanded.length > 1) {
+        newExpanded.shift();
+      }
     }
   }
 });
