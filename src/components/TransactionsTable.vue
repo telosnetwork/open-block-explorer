@@ -139,7 +139,6 @@ export default defineComponent({
           this.account == null
             ? await this.$api.getTransactions()
             : await this.$api.getTransactions(this.account);
-        debugger;
       }
       if (tableData) {
         this.rows = tableData.map(
@@ -152,7 +151,6 @@ export default defineComponent({
               data: this.formatData(tx.act.data).replace('<br>', '')
             } as TransactionTableRow)
         );
-        debugger;
       }
     },
     formatAccount(
@@ -213,11 +211,13 @@ $medium:750px
   white-space: unset
 
 .q-table td div
-  height: 22px
-  overflow-y: hidden
+  max-height: 22px
+  overflow-y: clip
+  transition: max-height 0.5s cubic-bezier(0, 1, 0, 1)
+
   &.row-expanded
-    height: unset
-    overflow-y: unset
+    max-height: 1000px
+    transition: max-height 2s ease-out
 
 body
     height:1000px
