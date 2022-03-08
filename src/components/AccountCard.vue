@@ -3,27 +3,32 @@
   q-card.account-card
     q-card-section
       .inline-section
-        .text-h6 {{ account }}
+        .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
-          a.creator-link( @click='loadCreatorAccount') {{ creatingAccount }} 
+          a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
         q-space
-      .resources.inline-section(v-if="account !== system_account")
-        .resource.inline-section CPU {{ cpu }}% used
-        .resource.inline-section NET {{ net }}% used
-        .resource.inline-section RAM {{ ram }}% used
+      .resources(v-if="account !== system_account")
+          PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
+          PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
+          PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
     q-markup-table
       thead
         tr
           th.text-left BALANCE
         tbody.table-body
           tr
-            td.text-left AVAILABLE   
-            td.text-right.total {{ total }}
+          tr
+            td.text-left.total-label TOTAL 
+            td.text-right.total-amount {{ total }} 
+          tr.total-row
+            td
+            td.text-right.total-value {{ totalValue }}
+          tr
           tr
             td.text-left REFUNDING
-            td.text-right {{ refunding }} 
+            td.text-right {{ refunding }}
           tr
-            td.text-left TOTAL STAKED
+            td.text-left STAKED BY OTHERS
             td.text-right {{ staked }}
           tr
             td.text-left REX
@@ -33,13 +38,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-
+import axios from 'axios';
 import { AccountDetails, Token } from 'src/types';
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
+import PercentCircle from 'src/components/PercentCircle.vue';
+import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 
 export default defineComponent({
   name: 'AccountCard',
+  components: {
+    PercentCircle
+  },
   props: {
     account: {
       type: String,
@@ -50,6 +60,7 @@ export default defineComponent({
     return {
       creatingAccount: '',
       total: '',
+      totalValue: '',
       refunding: '',
       staked: '',
       rex: '',
@@ -58,13 +69,15 @@ export default defineComponent({
       net: '',
       none: '',
       system_account: 'eosio',
-      zero: '0.00'
+      zero: '0.00',
+      radius: 44
     };
   },
   async mounted() {
     await this.loadSystemToken();
     this.none = `${this.zero} ${(this.token as Token).symbol}`;
     await this.loadAccountData();
+    await this.loadPriceData();
   },
   computed: {
     ...mapGetters({ token: 'chain/getToken' })
@@ -123,7 +136,10 @@ export default defineComponent({
       return property ? property : `${this.none}`;
     },
     formatStaked(staked: number): string {
-      return (staked / Math.pow(10, this.token.precision)).toFixed(2);
+      const stakedValue = (staked / Math.pow(10, this.token.precision)).toFixed(
+        2
+      );
+      return `${stakedValue} ${this.token.symbol as string}`;
     },
     formatResourcePercent(used: number, total: number): string {
       return ((used / total) * 100.0).toFixed(2);
@@ -136,37 +152,97 @@ export default defineComponent({
         }
       });
       this.$router.go(0);
+    },
+    async loadPriceData(): Promise<void> {
+      const telosPrice: number = (await axios.get(exchangeStatsUrl)).data.telos
+        .usd;
+      const dollarAmount = telosPrice * parseFloat(this.total);
+      this.totalValue = `$${dollarAmount.toFixed(2)} (@ $${telosPrice}/TLOS)`;
     }
   }
 });
 </script>
 <style lang="sass" scoped>
 $medium:750px
+
 .q-markup-table
   width: 100%
+  th,td
+    padding: unset
+
 .account-card
+  color: white
+  font-size: 36px
   max-width: 100%
+  background: unset
+
+  .q-table tbody td
+    font-size: 12px
+    &.total-label, &.total-value
+      color: white
+      font-size: 14px
+    &.total-amount
+      font-size: 20px
+
+  .q-table__card
+    background: unset
+    color: $black-5
+
+  .q-table--horizontal-separator
+    thead th
+      border-bottom: 1px solid $black-13
+    tbody tr:not(:last-child) td
+      border-bottom: none
+
+  .q-table thead tr, .q-table tbody td
+    height: 36px
+
+    &.total-row
+      height: 48px
+
 .table-body
   width: 100%
   display: table
+  tr
+    border-width: 0
+
 .inline-section
+  width:100%
   display: inline-block
+
 .resources
-  float: right
-  margin-top: 2.5rem
+  text-align: center
+  width: 18rem
+  margin: 1rem auto 0 auto
+
 .resource
   margin-right: 2rem
-.total
-  font-size: 20px
+
 .text-right
   font-weight: bold
+
+.text-title, .text-subtitle
+  display: flex
+  align-items: center
+  justify-content: center
+
 .text-subtitle
+  text-transform: uppercase
+  color: $black-5
   font-size: 12px
   a
     cursor: pointer
-    text-decoration: none
-    &:hover
-      text-decoration: underline
+    text-decoration: underline
+
+.total-amount
+  color: white
+  font-size: 20px
+  font-family: Silka
+  font-weight: normal
+
+.total-value
+  font-family: Silka
+  font-weight: normal
 
 @media screen and (max-width: $medium) // screen < $medium
   .account-card
@@ -175,10 +251,16 @@ $medium:750px
     margin-top: unset
     height: 100%
     border-radius: unset
+
   .q-markup-table
     overflow: unset
+    width: unset
+    margin-right: .5rem
+    margin-left: .5rem
+
   .resources
     float: unset
+
   .inline-section
     width: 100%
 </style>

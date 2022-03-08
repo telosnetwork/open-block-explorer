@@ -19,16 +19,23 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             :square="true"
             table-header-class="table-header"
             v-model:pagination="paginationSettings"
-            :hide-pagination="!hasPages")
+            v-model:expanded="expanded"
+            :hide-pagination="!hasPages"
+            @update:expanded='updateExpanded'
+            )
           template( v-slot:body-cell-transaction="props")
             q-td( :props="props" )
               div(v-html="props.value")
+          template( v-slot:body-cell-timestamp="props")
+            q-td( :props="props" )
+              DateField( :timestamp="props.value", showAge=true )
           template( v-slot:body-cell-action="props")
             q-td( :props="props" )
               div(v-html="props.value")
           template( v-slot:body-cell-data="props")
-            q-td( :props="props" )
-              div(v-html="props.value")
+            q-td( :props="props"  )
+              div(v-html="props.value" :class="{'row-expanded': props.expand  }")
+              q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" @click="props.expand = !props.expand" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
           template( v-slot:pagination="scope")
             div.row.col-12.q-mt-md.q-mb-xl()
             div.col-1(align="left")
@@ -54,8 +61,12 @@ import {
   TransactionTableRow
 } from 'src/types';
 import { defineComponent } from 'vue';
+import DateField from 'src/components/DateField.vue';
 export default defineComponent({
   name: 'TransactionsTable',
+  components: {
+    DateField
+  },
   props: {
     account: {
       type: String,
@@ -99,6 +110,7 @@ export default defineComponent({
         }
       ],
       rows: [] as TransactionTableRow[],
+      expanded: [],
       paginationSettings: {
         sortBy: 'timestamp',
         descending: true,
@@ -136,10 +148,11 @@ export default defineComponent({
         this.rows = tableData.map(
           (tx) =>
             ({
+              name: tx.trx_id,
               transaction: this.formatAccount(tx.trx_id, 'transaction'),
               timestamp: tx['@timestamp'],
               action: this.formatAction(tx.act),
-              data: this.formatData(tx.act.data)
+              data: this.formatData(tx.act.data).replace('<br>', '')
             } as TransactionTableRow)
         );
       }
@@ -156,7 +169,7 @@ export default defineComponent({
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatData(data: any): string {
-      const accountRegEx = /^(account|to|from|owner)$/;
+      const accountRegEx = /^(account|to|from|owner|account_name|voter)$/;
       const formattedData = [];
       for (let key in data) {
         if (accountRegEx.exec(key)) {
@@ -176,6 +189,14 @@ export default defineComponent({
         formattedData.push(`<br><b>${key}</b>: ${data[key]}`);
       }
       return formattedData.join('\n');
+    },
+    checkIsMultiLine(data: string): boolean {
+      return data.length > 0 && data.split('\n').length > 1;
+    },
+    updateExpanded(newExpanded: string[]) {
+      if (newExpanded.length > 1) {
+        newExpanded.shift();
+      }
     }
   }
 });
@@ -196,25 +217,57 @@ $medium:750px
       width: 20%
     th:nth-child(4)
       width: 25%
+
 .q-table--no-wrap td
+  word-break: break-all
   white-space: unset
+
+.q-table td div
+  max-height: 22px
+  overflow-y: clip
+  transition: max-height 0.5s cubic-bezier(0, 1, 0, 1)
+
+  &.row-expanded
+    max-height: 1000px
+    transition: max-height 2s ease-out
+
+.expand-icon
+  padding-left: 2rem
+  cursor: pointer
+
 body
     height:1000px
+
 .table-header
     color: #000000 !important
     opacity: 0.5
+
 .table-title
     font-family: Actor, sans-serif
     font-style: normal
     font-weight: normal
     font-size: 22.75px
     line-height: 27px
+
 .hover-dec
   text-decoration: none
   &:hover
     text-decoration: underline
 
 @media screen and (max-width: $medium) // screen < $medium
+  .fixed-layout
+    .q-table
+      table-layout: fixed
+      tbody td:first-child
+        word-break: break-all
+      th:first-child
+        width: 25%
+      th:nth-child(2)
+        width: 25%
+      th:nth-child(3)
+        width: 25%
+      th:nth-child(4)
+        width: 25%
   .filter-buttons
     width: 100% !important
 </style>
