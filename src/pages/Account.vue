@@ -1,8 +1,16 @@
 <template lang="pug">
 div.row.col-12
-    div.row.col-12.gradient-box
-      AccountCard.account-card(:account='account')
-    TransactionsTable(:account='account')
+    div.column.col-12.gradient-box
+      div.row
+        AccountCard.account-card(:account='account')
+      q-tabs(v-model="tab" no-caps).tabs
+        q-tab( name="transactions" label="Transactions" )
+        q-tab( name="tokens" label="Tokens" )
+        q-tab( name="keys" label="Keys" )
+        q-tab( name="children" label="Children" )
+    q-tab-panels(v-model="tab")
+      q-tab-panel(name="transactions")
+        TransactionsTable(:account='account' v-if="tab == 'transactions'")
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -13,7 +21,8 @@ export default defineComponent({
   name: 'Account',
   data() {
     return {
-      account: this.$route.params.account
+      account: this.$route.params.account,
+      tab: 'transactions'
     };
   },
   components: {
@@ -31,4 +40,6 @@ export default defineComponent({
   margin-right: auto
   margin-bottom: 2rem
   box-shadow: none
+.tabs
+  color: white
 </style>
