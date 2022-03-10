@@ -8,13 +8,16 @@ div.row.col-12
         q-tab( name="tokens" label="Tokens" )
         q-tab( name="keys" label="Keys" )
         q-tab( name="children" label="Children" )
-    q-tab-panels(v-model="tab")
+    q-tab-panels(v-model="tab").col-12
       q-tab-panel(name="transactions")
-        TransactionsTable(:account='account' v-if="tab == 'transactions'")
+        TransactionsTable(:account='account')
+      q-tab-panel(name="tokens")
+        TokensPanel(:account='account')
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
+import TokensPanel from 'components/TokensPanel.vue';
 import AccountCard from 'components/AccountCard.vue';
 
 export default defineComponent({
@@ -27,6 +30,7 @@ export default defineComponent({
   },
   components: {
     TransactionsTable,
+    TokensPanel,
     AccountCard
   }
 });
