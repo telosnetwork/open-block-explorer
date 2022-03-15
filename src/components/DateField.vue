@@ -1,7 +1,3 @@
-<template lang="pug">
-div {{ friendlyDate }}
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue';
 import * as moment from 'moment';
@@ -30,4 +26,6 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<template lang="pug">
+div {{ friendlyDate }}
+</template>
