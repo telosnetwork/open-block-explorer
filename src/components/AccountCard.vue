@@ -1,39 +1,3 @@
-<template lang="pug">
-.q-pa-md
-  q-card.account-card
-    q-card-section
-      .inline-section
-        .text-title {{ account }}
-        .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
-          a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
-        q-space
-      .resources(v-if="account !== system_account")
-          PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
-          PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
-          PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
-    q-markup-table
-      thead
-        tr
-          th.text-left BALANCE
-        tbody.table-body
-          tr
-          tr
-            td.text-left.total-label TOTAL 
-            td.text-right.total-amount {{ total }} 
-          tr.total-row
-            td
-            td.text-right.total-value {{ totalValue }}
-          tr
-          tr
-            td.text-left REFUNDING
-            td.text-right {{ refunding }}
-          tr
-            td.text-left STAKED BY OTHERS
-            td.text-right {{ staked }}
-          tr
-            td.text-left REX
-            td.text-right {{ rex }}
-</template>
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -162,6 +126,44 @@ export default defineComponent({
   }
 });
 </script>
+
+<template lang="pug">
+.q-pa-md
+  q-card.account-card
+    q-card-section
+      .inline-section
+        .text-title {{ account }}
+        .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
+          a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
+        q-space
+      .resources(v-if="account !== system_account")
+          PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
+          PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
+          PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
+    q-markup-table
+      thead
+        tr
+          th.text-left BALANCE
+        tbody.table-body
+          tr
+          tr
+            td.text-left.total-label TOTAL 
+            td.text-right.total-amount {{ total }} 
+          tr.total-row
+            td
+            td.text-right.total-value {{ totalValue }}
+          tr
+          tr
+            td.text-left REFUNDING
+            td.text-right {{ refunding }}
+          tr
+            td.text-left STAKED BY OTHERS
+            td.text-right {{ staked }}
+          tr
+            td.text-left REX
+            td.text-right {{ rex }}
+</template>
+
 <style lang="sass" scoped>
 $medium:750px
 
