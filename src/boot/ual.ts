@@ -6,6 +6,11 @@ import { Ledger } from 'ual-ledger';
 import { Scatter } from 'ual-scatter';
 import { Anchor } from 'ual-anchor';
 import { Wombat } from 'ual-wombat';
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $ual: UAL;
+  }
+}
 
 export default boot(({ app }) => {
   const mainChain = {
@@ -33,6 +38,7 @@ export default boot(({ app }) => {
     })
   ];
 
-  const ual = new UAL([mainChain], 'tet-ual', authenticators);
+  const ual = new UAL([mainChain], 'ual', authenticators);
+
   app.config.globalProperties.$ual = ual;
 });

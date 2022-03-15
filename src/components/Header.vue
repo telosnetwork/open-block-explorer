@@ -20,7 +20,7 @@ div.header-background
                     template(v-slot:prepend)
                         q-icon.search-icon(name="search" color="white" size="20px")
 
-        div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm.temp-hide
+        div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
             q-btn.button-primary(@click='clicked()' label="Connect")
 
     div.row.justify-center.col-12.q-pt-sm
@@ -35,9 +35,11 @@ div.header-background
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
+import LoginHandler from 'components/LoginHandler.vue';
 
 export default defineComponent({
   name: 'Header',
+  components: { LoginHandler },
   data() {
     return {
       tab: 'Network',
@@ -45,9 +47,6 @@ export default defineComponent({
     };
   },
   methods: {
-    clicked() {
-      console.log('connect btn clicked');
-    },
     /* temp search check if possible tx or account, replace with results list rendering */
     async executeSearch(input: KeyboardEvent): Promise<void> {
       if (input != null) {
@@ -107,6 +106,7 @@ $medium:750px
     height:54px
 
 .search-container
+  width: 60%
   margin-left: 1rem
 
 .header-items
