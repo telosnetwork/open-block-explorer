@@ -15,7 +15,6 @@
   "dependencies": {
     "@greymass/eosio": "^0.5.4",
     "@quasar/extras": "^1.0.0",
-    "@telosnetwork/ual-telos-keycat": "^1.11.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "highcharts": "^9.3.2",
@@ -23,9 +22,6 @@
     "moment": "^2.29.1",
     "quasar": "^2.0.0",
     "ual-anchor": "^1.1.5",
-    "ual-eosio-reference-authenticator": "^0.3.0",
-    "ual-ledger": "^0.3.0",
-    "ual-scatter": "^0.3.0",
     "ual-wombat": "^0.3.3",
     "universal-authenticator-library": "^0.3.0",
     "vue-class-component": "^7.2.6",

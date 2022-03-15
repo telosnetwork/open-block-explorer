@@ -20,7 +20,7 @@ export default defineComponent({
     q-dialog( v-model="showModal")
       q-list
         q-item(
-          v-for="(wallet, idx) in $uohal.authenticators"
+          v-for="(wallet, idx) in $ual.authenticators"
           :key="wallet.getStyle().text"
           v-ripple
           :style="{background: wallet.getStyle().background, color: wallet.getStyle().textColor}"
