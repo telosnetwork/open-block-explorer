@@ -1,24 +1,3 @@
-<template lang="pug">
-svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`${-offset * 6} ${-offset / 2} ${containerWidth} ${containerWidth}`" )
-  path.circle-bg( 
-    :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
-    )
-  path.circle( 
-    :stroke-dasharray="dashArray"
-    :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
-    :stroke='strokeColor'
-    :style="{ 'stroke-opacity' : Number.isNaN(percentage) ? 0 : 1 }"
-    )
-  text.text.label( 
-    x="18"
-    :y="radius - offset"
-    ) {{ label }}
-  text.text.percentage(
-    v-if='!Number.isNaN(percentage)'
-    x="20" 
-    :y="radius + 14" 
-    ) {{ percentage }}%
-</template>
 <script lang="ts">
 import { defineComponent } from 'vue';
 
@@ -68,6 +47,29 @@ export default defineComponent({
   }
 });
 </script>
+
+<template lang="pug">
+svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`${-offset * 6} ${-offset / 2} ${containerWidth} ${containerWidth}`" )
+  path.circle-bg( 
+    :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
+    )
+  path.circle( 
+    :stroke-dasharray="dashArray"
+    :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
+    :stroke='strokeColor'
+    :style="{ 'stroke-opacity' : Number.isNaN(percentage) ? 0 : 1 }"
+    )
+  text.text.label( 
+    x="18"
+    :y="radius - offset"
+    ) {{ label }}
+  text.text.percentage(
+    v-if='!Number.isNaN(percentage)'
+    x="20" 
+    :y="radius + 14" 
+    ) {{ percentage }}%
+</template>
+
 <style lang="sass" scoped>
 .circular-chart
   display: inline-block
