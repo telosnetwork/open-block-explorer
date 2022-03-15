@@ -1,15 +1,26 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 export default defineComponent({
-  name: 'Wallet'
+  name: 'Wallet',
+  props: ['showModal'],
+  data() {
+    return {
+      authenticators: {}
+    };
+  },
+  mounted() {
+    debugger;
+    // this.authenticators = this.$ual.getAuthenticators();
+    // debugger;
+  }
 });
 </script>
 <template lang="pug">
 .modal-container
-    q-dialog( v-model="showLogin")
+    q-dialog( v-model="showModal")
       q-list
         q-item(
-          v-for="(wallet, idx) in $ual.authenticators"
+          v-for="(wallet, idx) in $uohal.authenticators"
           :key="wallet.getStyle().text"
           v-ripple
           :style="{background: wallet.getStyle().background, color: wallet.getStyle().textColor}"
@@ -40,6 +51,5 @@ export default defineComponent({
           active-class="bg-red-1 text-grey-8"
         )
           q-item-section {{ error }}
-
 </template>
 <style lang="sass"></style>

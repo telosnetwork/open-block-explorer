@@ -41,4 +41,5 @@ export default boot(({ app }) => {
   const ual = new UAL([mainChain], 'ual', authenticators);
 
   app.config.globalProperties.$ual = ual;
+  debugger;
 });

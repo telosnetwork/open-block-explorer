@@ -9,12 +9,15 @@ export default defineComponent({
   components: { LoginHandlerDropdown, WalletModal },
   data() {
     return {
-      showDropdown: false
+      showDropdown: false,
+      showModal: false
     };
   },
   methods: {
     login(): void {
-      this.showDropdown = !this.showDropdown;
+      debugger;
+      this.showModal = !this.showModal;
+      // this.showDropdown = !this.showDropdown;
     }
   }
 });
@@ -24,5 +27,5 @@ export default defineComponent({
 div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
     q-btn.button-primary(@click='login()' label="Connect")
     LoginHandlerDropdown( v-if='showDropdown')
-    WalletModal( v-if='showWalletModal' )
+    WalletModal( :showModal='showModal' )
 </template>

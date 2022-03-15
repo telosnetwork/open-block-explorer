@@ -5,6 +5,6 @@ export default defineComponent({
 });
 </script>
 <template lang="pug">
-WalletModal(v-if='showWalletModal')
+WalletModal(:showModal='false')
 </template>
 <style lang="sass"></style>
