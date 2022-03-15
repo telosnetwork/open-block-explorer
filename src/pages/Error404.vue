@@ -1,3 +1,11 @@
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'Error404'
+});
+</script>
+
 <template lang="pug">
 div.fullscreen.bg-blue.text-white.text-center.q-pa-md.flex.flex-center
   div
@@ -12,11 +20,3 @@ div.fullscreen.bg-blue.text-white.text-center.q-pa-md.flex.flex-center
       no-caps
     )
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  name: 'Error404'
-});
-</script>

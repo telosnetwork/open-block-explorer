@@ -1,15 +1,3 @@
-<template lang="pug">
-q-layout( view="hHh lpR fff")
-  q-header
-    Header
-    q-separator.separator
-  q-page-container
-    router-view
-    q-separator
-  q-footer
-    Footer
-</template>
-
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { openURL } from 'quasar';
@@ -31,6 +19,19 @@ export default defineComponent({
   }
 });
 </script>
+
+<template lang="pug">
+q-layout( view="hHh lpR fff")
+  q-header
+    Header
+    q-separator.separator
+  q-page-container
+    router-view
+    q-separator
+  q-footer
+    Footer
+</template>
+
 <style lang="sass" scoped>
 .q-header
   background-color: $primary-dark
