@@ -1,53 +1,3 @@
-<template lang="pug">
-div.row.col-12.q-mt-xs.justify-center.text-left
-    div.row.col-11
-        div.row.col-12.q-mt-lg
-            div.col-3
-                p.table-title {{ tableTitle }} 
-            q-space
-            div.col-3.row.flex.filter-buttons.temp-hide
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
-        q-separator.row.col-12.q-mt-md.separator
-        q-table.q-mt-lg.col-12.row.fixed-layout(
-            :rows="rows"
-            :columns="columns"
-            row-key="name"
-            flat
-            :bordered="false"
-            :square="true"
-            table-header-class="table-header"
-            v-model:pagination="paginationSettings"
-            v-model:expanded="expanded"
-            :hide-pagination="!hasPages"
-            @update:expanded='updateExpanded'
-            )
-          template( v-slot:body-cell-transaction="props")
-            q-td( :props="props" )
-              div(v-html="props.value")
-          template( v-slot:body-cell-timestamp="props")
-            q-td( :props="props" )
-              DateField( :timestamp="props.value", showAge=true )
-          template( v-slot:body-cell-action="props")
-            q-td( :props="props" )
-              div(v-html="props.value")
-          template( v-slot:body-cell-data="props")
-            q-td( :props="props"  )
-              div(v-html="props.value" :class="{'row-expanded': props.expand  }")
-              q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" @click="props.expand = !props.expand" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
-          template( v-slot:pagination="scope")
-            div.row.col-12.q-mt-md.q-mb-xl()
-            div.col-1(align="left")
-              q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-                :disable="scope.isFirstPage"
-                @click="scope.prevPage") PREV
-            q-space
-            div.col-1(align="right")
-              q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-                :disable="scope.isLastPage"
-                @click="scope.nextPage") NEXT
-</template>
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -201,6 +151,58 @@ export default defineComponent({
   }
 });
 </script>
+
+<template lang="pug">
+div.row.col-12.q-mt-xs.justify-center.text-left
+    div.row.col-11
+        div.row.col-12.q-mt-lg
+            div.col-3
+                p.table-title {{ tableTitle }} 
+            q-space
+            div.col-3.row.flex.filter-buttons.temp-hide
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
+        q-separator.row.col-12.q-mt-md.separator
+        q-table.q-mt-lg.col-12.row.fixed-layout(
+            :rows="rows"
+            :columns="columns"
+            row-key="name"
+            flat
+            :bordered="false"
+            :square="true"
+            table-header-class="table-header"
+            v-model:pagination="paginationSettings"
+            v-model:expanded="expanded"
+            :hide-pagination="!hasPages"
+            @update:expanded='updateExpanded'
+            )
+          template( v-slot:body-cell-transaction="props")
+            q-td( :props="props" )
+              div(v-html="props.value")
+          template( v-slot:body-cell-timestamp="props")
+            q-td( :props="props" )
+              DateField( :timestamp="props.value", showAge=true )
+          template( v-slot:body-cell-action="props")
+            q-td( :props="props" )
+              div(v-html="props.value")
+          template( v-slot:body-cell-data="props")
+            q-td( :props="props"  )
+              div(v-html="props.value" :class="{'row-expanded': props.expand  }")
+              q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" @click="props.expand = !props.expand" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
+          template( v-slot:pagination="scope")
+            div.row.col-12.q-mt-md.q-mb-xl()
+            div.col-1(align="left")
+              q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                :disable="scope.isFirstPage"
+                @click="scope.prevPage") PREV
+            q-space
+            div.col-1(align="right")
+              q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                :disable="scope.isLastPage"
+                @click="scope.nextPage") NEXT
+</template>
+
 <style lang="sass">
 $medium:750px
 
