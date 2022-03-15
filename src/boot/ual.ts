@@ -23,7 +23,7 @@ export default boot(({ app }) => {
 
   const authenticators = [
     new Anchor([mainChain], { appName: process.env.APP_NAME }),
-    new Wombat([mainChain], { appName: process.env.APP_NAME }),
+    new Wombat([mainChain], { appName: process.env.APP_NAME })
   ];
 
   const ual = new UAL([mainChain], 'ual', authenticators);

@@ -81,6 +81,8 @@ module.exports = configure(function (ctx) {
           .use('pug-plain-loader')
           .loader('pug-plain-loader')
           .end();
+        const nodePolyfillWebpackPlugin = require('node-polyfill-webpack-plugin')
+        config.plugin('node-polyfill').use(nodePolyfillWebpackPlugin)
       }
     },
 
