@@ -1,4 +1,9 @@
-<script lang="ts"></script>
+<script lang="ts">
+import { defineComponent } from 'vue';
+export default defineComponent({
+  name: 'Wallet'
+});
+</script>
 <template lang="pug">
 .modal-container
     q-dialog( v-model="showLogin")
@@ -7,15 +12,11 @@
           v-for="(wallet, idx) in $ual.authenticators"
           :key="wallet.getStyle().text"
           v-ripple
-          :style="{
-            background: wallet.getStyle().background,
-            color: wallet.getStyle().textColor
-          }"
+          :style="{background: wallet.getStyle().background, color: wallet.getStyle().textColor}"
         )
           q-item-section( class="cursor-pointer" avatar @click="onLogin(idx)")
             img( :src="wallet.getStyle().icon" width="30")
-          q-item-section( class="cursor-pointer" @click="onLogin(idx)")
-            {{ wallet.getStyle().text }}
+          q-item-section( class="cursor-pointer" @click="onLogin(idx)") {{ wallet.getStyle().text }}
           q-item-section( class="flex" avatar)
             q-spinner(
               v-if="loading === wallet.getStyle().text"
@@ -38,8 +39,7 @@
           :active="!!error"
           active-class="bg-red-1 text-grey-8"
         )
-          q-item-section
-            {{ error }}
+          q-item-section {{ error }}
 
 </template>
 <style lang="sass"></style>

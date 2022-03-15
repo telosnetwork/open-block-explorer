@@ -80,7 +80,7 @@ div.header-background
                     template(v-slot:prepend)
                         q-icon.search-icon(name="search" color="white" size="20px")
 
-        div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm.temp-hide
+        div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
             q-btn.button-primary(@click='clicked()' label="Connect")
 
     div.row.justify-center.col-12.q-pt-sm
