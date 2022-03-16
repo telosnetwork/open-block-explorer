@@ -10,7 +10,7 @@ import { contract } from './contract';
 import { ContractStateInterface } from './contract/state';
 import { chain } from './chain';
 import { ChainStateInterface } from './chain/state';
-import { appAccount } from './account';
+import { account } from './account';
 import { AccountStateInterface } from './account/state';
 
 /*
@@ -45,7 +45,7 @@ export default store(function () {
     modules: {
       contract,
       chain,
-      appAccount
+      account
     },
 
     // enable strict mode (adds overhead!)

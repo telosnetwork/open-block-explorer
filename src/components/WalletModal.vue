@@ -13,7 +13,7 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapActions('account', ['login']),
+    ...mapActions({ login: 'account/login' }),
     async onLogin(idx: number) {
       const authenticator =
         this.$ual.getAuthenticators().availableAuthenticators[idx];
