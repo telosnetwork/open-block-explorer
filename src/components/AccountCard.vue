@@ -42,9 +42,6 @@ export default defineComponent({
     this.none = `${this.zero} ${(this.token as Token).symbol}`;
     await this.loadAccountData();
     await this.loadPriceData();
-    debugger;
-    const test = this.$ual;
-    console.log(test);
   },
   computed: {
     ...mapGetters({ token: 'chain/getToken' })

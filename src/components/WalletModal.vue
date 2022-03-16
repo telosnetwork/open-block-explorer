@@ -1,17 +1,30 @@
 <script lang="ts">
+import { mapActions } from 'vuex';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'Wallet',
   props: ['showModal'],
   data() {
     return {
-      authenticators: {}
+      authenticators: {},
+      showLogin: false,
+      error: null,
+      loading: {}
     };
   },
-  mounted() {
-    debugger;
-    // this.authenticators = this.$ual.getAuthenticators();
-    // debugger;
+  methods: {
+    ...mapActions('account', ['login']),
+    async onLogin(idx: number) {
+      const authenticator =
+        this.$ual.getAuthenticators().availableAuthenticators[idx];
+      this.error = null;
+      try {
+        await this.login({ authenticator });
+        this.showLogin = false;
+      } catch (e) {
+        this.error = e;
+      }
+    }
   }
 });
 </script>

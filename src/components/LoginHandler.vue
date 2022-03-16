@@ -15,7 +15,6 @@ export default defineComponent({
   },
   methods: {
     login(): void {
-      debugger;
       this.showModal = !this.showModal;
       // this.showDropdown = !this.showDropdown;
     }
