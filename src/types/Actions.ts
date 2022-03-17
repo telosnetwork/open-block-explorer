@@ -58,6 +58,7 @@ export type AccountDetails = {
     created: string;
     net_limit: Resource;
     net_weight: number;
+    permissions: Permission[];
     privileged: boolean;
     ram_quota: number;
     ram_usage: number;
@@ -83,4 +84,27 @@ export interface Token {
   precision: number;
   amount: number;
   contract: string;
+}
+
+interface Key {
+  key: string;
+  weight: number;
+}
+
+interface ActorPermission {
+  permission: { actor: string; permission: 'eosio.code' };
+  weight: number;
+}
+interface RequiredAuth {
+  accounts: ActorPermission[];
+  keys: Key[];
+  threshold: number;
+  waits: [];
+}
+
+export interface Permission {
+  parent: string;
+  perm_name: string;
+  required_auth: RequiredAuth;
+  children: Permission[];
 }

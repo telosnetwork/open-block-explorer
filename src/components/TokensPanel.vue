@@ -27,12 +27,10 @@ div.row.col-12.q-my-xs.justify-center.text-left
 
 import { Token } from 'src/types';
 import { defineComponent } from 'vue';
-import DateField from 'src/components/DateField.vue';
 export default defineComponent({
   name: 'TokensPanel',
-  components: {
-    DateField
-  },
+  // components: {
+  // },
   props: {
     account: {
       type: String,
