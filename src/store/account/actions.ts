@@ -8,6 +8,7 @@ import { AccountStateInterface } from './state';
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ dispatch, commit }, { account, authenticator, returnUrl }) {
+    debugger;
     commit('setLoadingWallet', authenticator.getStyle().text);
     await authenticator.init();
     if (!account) {
@@ -29,10 +30,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setLoadingWallet');
     }
   },
-  getContractInfo({ commit }, contractAddress) {
-    //await getContract  via api
-    console.log(contractAddress); //unused var otherwise
-    const response: { creator: string } = { creator: 'bob' }; //mock
-    commit('setCreator', response.creator);
+  logout({ commit }) {
+    commit('setAccountName');
+    localStorage.removeItem('autoLogin');
   }
 };

@@ -11,6 +11,7 @@ export const getters: GetterTree<AccountStateInterface, StateInterface> = {
     return appAccount.isAuthenticated;
   },
   accountName({ appAccount }): string {
+    debugger;
     return appAccount.name;
   }
 };

@@ -6,6 +6,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
     state.loading = wallet;
   },
   setAccountName(state: AccountStateInterface, accountName: string) {
+    debugger;
     state.accountName = accountName;
   },
   setAutoLogin(state: AccountStateInterface, status: unknown) {

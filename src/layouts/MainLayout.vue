@@ -3,6 +3,7 @@ import { defineComponent } from 'vue';
 import { openURL } from 'quasar';
 import Footer from 'components/Footer.vue';
 import Header from 'components/Header.vue';
+import { mapMutations } from 'vuex';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -11,11 +12,21 @@ export default defineComponent({
     Footer
   },
   data() {
-    return {};
+    return {
+      accountName: ''
+    };
   },
 
   methods: {
+    ...mapMutations({ setAccountName: 'account/setAccountName' }),
     openURL
+  },
+  mounted() {
+    debugger;
+    this.accountName = localStorage.getItem('account');
+    if (this.accountName) {
+      this.setAccountName(this.accountName);
+    }
   }
 });
 </script>
@@ -23,7 +34,7 @@ export default defineComponent({
 <template lang="pug">
 q-layout( view="hHh lpR fff")
   q-header
-    Header
+    Header(:accountName='accountName')
     q-separator.separator
   q-page-container
     router-view

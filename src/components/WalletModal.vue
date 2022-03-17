@@ -9,7 +9,8 @@ export default defineComponent({
       authenticators: {},
       showLogin: false,
       error: null,
-      loading: {}
+      loading: {},
+      showWalletModal: false
     };
   },
   methods: {
@@ -20,17 +21,22 @@ export default defineComponent({
       this.error = null;
       try {
         await this.login({ authenticator });
-        this.showLogin = false;
+        this.showWalletModal = false;
       } catch (e) {
         this.error = e;
       }
+    }
+  },
+  watch: {
+    showModal(val: boolean) {
+      this.showWalletModal = val;
     }
   }
 });
 </script>
 <template lang="pug">
 .modal-container
-    q-dialog( v-model="showModal")
+    q-dialog( v-model="showWalletModal")
       q-list
         q-item(
           v-for="(wallet, idx) in $ual.authenticators"
