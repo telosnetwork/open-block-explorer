@@ -8,7 +8,6 @@ import { AccountStateInterface } from './state';
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ dispatch, commit }, { account, authenticator, returnUrl }) {
-    debugger;
     commit('setLoadingWallet', authenticator.getStyle().text);
     await authenticator.init();
     if (!account) {
