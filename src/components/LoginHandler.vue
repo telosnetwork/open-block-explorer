@@ -34,10 +34,7 @@ export default defineComponent({
       const idx = availAuthenticators.findIndex(
         (auth) => auth.constructor.name === wallet
       );
-      return {
-        authenticator: availAuthenticators[idx],
-        idx
-      };
+      return availAuthenticators[idx];
     },
     login(): void {
       if (this.accountName) {
@@ -47,15 +44,13 @@ export default defineComponent({
       }
     },
     async logout(): Promise<void> {
-      debugger;
-      const { authenticator } = this.getAuthenticator();
+      const authenticator = this.getAuthenticator();
       try {
         authenticator && (await authenticator.logout());
       } catch (error) {
         console.log('Authenticator logout error', error);
       }
       this.setAccountName('');
-      debugger;
       localStorage.removeItem('autoLogin');
       localStorage.removeItem('account');
       localStorage.removeItem('anchor-link--list');
