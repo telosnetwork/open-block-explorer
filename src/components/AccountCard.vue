@@ -4,15 +4,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import axios from 'axios';
 import { AccountDetails, Token } from 'src/types';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { mapGetters, mapMutations } from 'vuex';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
+import SendDialog from 'src/components/SendDialog.vue';
 
 export default defineComponent({
   name: 'AccountCard',
   components: {
-    PercentCircle
+    PercentCircle,
+    SendDialog
   },
   props: {
     account: {
@@ -34,7 +36,13 @@ export default defineComponent({
       none: '',
       system_account: 'eosio',
       zero: '0.00',
-      radius: 44
+      radius: 44,
+      availableTokens: <Token[]>[]
+    };
+  },
+  setup() {
+    return {
+      openSendDialog: ref<boolean>(false)
     };
   },
   async mounted() {
@@ -65,6 +73,8 @@ export default defineComponent({
       } catch (e) {
         this.$q.notify(`creator account for ${this.account} not found!`);
       }
+      console.log(data);
+      this.availableTokens = data.tokens;
       const account = data.account;
       this.total = this.getAmount(account.core_liquid_balance);
       this.refunding = this.getAmount(account.refund_request);
@@ -122,6 +132,9 @@ export default defineComponent({
         .usd;
       const dollarAmount = telosPrice * parseFloat(this.total);
       this.totalValue = `$${dollarAmount.toFixed(2)} (@ $${telosPrice}/TLOS)`;
+    },
+    toggleSendDialog() {
+      this.openSendDialog = !this.openSendDialog;
     }
   }
 });
@@ -150,7 +163,8 @@ export default defineComponent({
             td.text-left.total-label TOTAL 
             td.text-right.total-amount {{ total }} 
           tr.total-row
-            td
+            td.text-left 
+              a( @click="openSendDialog = true") Send
             td.text-right.total-value {{ totalValue }}
           tr
           tr
@@ -162,6 +176,7 @@ export default defineComponent({
           tr
             td.text-left REX
             td.text-right {{ rex }}
+    sendDialog(:openSendDialog = "openSendDialog" :callback= "toggleSendDialog" :availableTokens="availableTokens")
 </template>
 
 <style lang="sass" scoped>
@@ -265,4 +280,13 @@ $medium:750px
 
   .inline-section
     width: 100%
+
+.total-row
+  a
+    cursor: pointer
+    text-decoration: underline
+    color: white
+    font-size: 16px
+    font-family: Silka
+    font-weight: normal
 </style>
