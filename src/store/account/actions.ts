@@ -13,7 +13,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (!account) {
       const requestAccount = await authenticator.shouldRequestAccountName();
       if (requestAccount) {
-        // await dispatch('fetchAvailableAccounts', idx);
         commit('setRequestAccount', true);
         return;
       }
@@ -28,9 +27,5 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       localStorage.setItem('returning', 'true');
       commit('setLoadingWallet');
     }
-  },
-  logout({ commit }) {
-    commit('setAccountName');
-    localStorage.removeItem('autoLogin');
   }
 };
