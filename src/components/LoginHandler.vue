@@ -10,18 +10,19 @@ export default defineComponent({
   data() {
     return {
       showDropdown: false,
-      showModal: false,
-      accountName: ''
+      showModal: false
     };
   },
   mounted() {
-    this.accountName = localStorage.getItem('account') || '';
-    if (this.accountName.length > 0) {
-      this.setAccountName(this.accountName);
+    const storedAccount = localStorage.getItem('account');
+    if (storedAccount) {
+      this.setAccountName(storedAccount);
     }
   },
+  computed: {
+    ...mapGetters({ account: 'account/accountName' })
+  },
   methods: {
-    ...mapGetters({ account: 'account/accountName' }),
     ...mapMutations({ setAccountName: 'account/setAccountName' }),
     ...mapActions({ logout: 'account/logout' }),
     getAuthenticator() {
@@ -34,7 +35,7 @@ export default defineComponent({
       return availAuthenticators[idx];
     },
     showLogin(): void {
-      if (this.accountName) {
+      if (this.account) {
         this.showDropdown = !this.showDropdown;
       } else {
         this.showModal = !this.showModal;
@@ -47,7 +48,6 @@ export default defineComponent({
       } catch (error) {
         console.log('Authenticator logout error', error);
       }
-      this.accountName = '';
       this.setAccountName('');
       this.clearLocalStorage();
       if (this.$route.path !== '/') {
@@ -66,8 +66,8 @@ export default defineComponent({
 
 <template lang="pug">
 div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-    q-btn.button-primary(v-if="!accountName" @click='showLogin()' label='Connect')
-    q-btn.button-primary.connect-button(v-else @click='onLogout()' :label='accountName')
+    q-btn.button-primary.connect-button(v-if='account' @click='onLogout()' :label='account')
+    q-btn.button-primary(v-else @click='showLogin()' label='Connect')
     LoginHandlerDropdown( v-if='showDropdown')
     WalletModal( :showModal='showModal' )
 </template>

@@ -1,16 +1,15 @@
-import { AppAccount } from 'src/types';
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AccountStateInterface } from './state';
 
 export const getters: GetterTree<AccountStateInterface, StateInterface> = {
-  account({ appAccount }): AppAccount {
-    return appAccount;
+  account(state): AccountStateInterface {
+    return state;
   },
-  isAuthenticated({ appAccount }): boolean {
-    return appAccount.isAuthenticated;
+  isAuthenticated(state): boolean {
+    return state.isAuthenticated;
   },
-  accountName({ appAccount }): string {
-    return appAccount.name;
+  accountName(state): string {
+    return state.accountName;
   }
 };
