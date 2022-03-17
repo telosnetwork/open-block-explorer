@@ -1,8 +1,4 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { defineComponent } from 'vue';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import LoginHandlerDropdown from './LoginHandlerDropdown.vue';
