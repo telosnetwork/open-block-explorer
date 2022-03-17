@@ -34,13 +34,6 @@ export default defineComponent({
       );
       return availAuthenticators[idx];
     },
-    showLogin(): void {
-      if (this.account) {
-        this.showDropdown = !this.showDropdown;
-      } else {
-        this.showModal = !this.showModal;
-      }
-    },
     async onLogout(): Promise<void> {
       const authenticator = this.getAuthenticator();
       try {
@@ -66,13 +59,7 @@ export default defineComponent({
 
 <template lang="pug">
 div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-    q-btn.button-primary.connect-button(v-if='account' @click='onLogout()' :label='account')
-    q-btn.button-primary(v-else @click='showLogin()' label='Connect')
-    LoginHandlerDropdown( v-if='showDropdown')
+    LoginHandlerDropdown(v-if='account' :account='account')
+    q-btn.button-primary(v-else @click='showModal = !showModal' label='Connect')
     WalletModal( :showModal='showModal' )
 </template>
-
-<style lang="sass">
-.connect-button
-  text-transform: lowercase
-</style>
