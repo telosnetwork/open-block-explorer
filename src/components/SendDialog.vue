@@ -1,41 +1,44 @@
 <template lang="pug">
-q-dialog( v-model="openSendDialog")
+q-dialog( v-model="openSendDialog" no-backdrop-dismiss)
   q-card.sendCard
     .row.justify-center.items-center.full-height.full-width
+      .absolute-top-right
+        q-btn(size="20px" flat dense round icon="clear" v-close-popup @click="callback")
       .col-xs-12.col-sm-8.col-md-7.col-lg-6
         .row
           q-card-section 
-            q-icon.send-icon.rotate-315.q-py-sm(name="send" color="white" size="40px" )
-            .text-h5.inline-block Send Tokens
+            img.send-img.q-pr-md( src="~assets/send.svg")
+            .text-h4.q-pb-md.inline-block.color-grey-3 Send Tokens
         q-separator(dark)
         q-card-section 
           .row
             .col-12
-              .row.justify-between.q-px-md.q-pb-sm.q-gutter-x-sm Recieving Account
+              .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECIEVING ACCOUNT
               q-input.full-width(standout dense dark v-model="recievingAccount"  )
           .row.q-py-md
             .col-4
-              .row.justify-between.q-px-md.q-pb-sm.q-gutter-x-sm Token
+              .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
               .row.items-center.no-wrap.selectorContainer.q-py-sm(@click="toggleCoinDialog")
-                .col-8.text-h6.q-mx-sm {{ sendToken.symbol}}
+                .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken.symbol}}
                 .col-4
                   .row.justify-end.items-center.arrowButton
                     q-icon.fas.fa-chevron-down.q-pr-lg(size="17px")
 
             .col-8.q-pl-md
-              .row.justify-between.q-px-md.q-pb-sm.q-gutter-x-sm 
-                div Ammount
+              .row.justify-between.q-pb-sm.q-gutter-x-sm 
+                div AMOUNT
                 q-space
-                div {{sendToken.amount}} Available
-              q-input.full-width(standout="bg-deep-purple-2 text-white" v-model.number="sendAmmount" type="number" dense dark)
+                .color-grey-3 {{sendToken.amount}} AVAILABLE
+              q-input.full-width(standout="bg-deep-purple-2 text-white" v-model.number="sendAmount" type="number" dense dark)
           .row
             .col-12
-              .row.justify-between.q-px-md.q-pb-sm.q-gutter-x-sm Optional memo
-              q-input.full-width.send-input(standout="bg-deep-purple-2 text-white" v-model="memo" dark type="textarea")
+              .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
+              .row
+                q-input.full-width.send-input(standout="bg-deep-purple-2 text-white" v-model="memo" dark type="textarea")
           .row
             .col-12.q-pt-md
-              .row.justify-between.q-px-md.q-pb-lg.q-gutter-x-sm Your wallet must be open to allow authorization of this transaction.
-              q-btn.full-width.button-accent(label="Confirm" v-close-popup @click="callback" )
+              .row.justify-between.q-px-sm.q-pb-lg.q-gutter-x-sm Your wallet must be open to allow authorization of this transaction.
+              q-btn.full-width.button-accent(label="Confirm" flat v-close-popup @click="callback" )
     CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" :openCoinDialog="openCoinDialog" :callback="toggleCoinDialog" :availableTokens="availableTokens")
 
 </template>
@@ -78,7 +81,7 @@ export default defineComponent({
     return {
       openCoinDialog: ref<boolean>(false),
       recievingAccount: ref<string>(''),
-      sendAmmount: ref<number>(0),
+      sendAmount: ref<number>(0),
       memo: ref<string>('')
     };
   },
@@ -214,14 +217,16 @@ $medium:750px
   max-width: 80vw !important
   height: 800px !important
   max-height: 80vh !important
-  color: $grey-4
+  color: $grey-6
   background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
   .send-icon
     padding-bottom: 30px
   .button-accent
     background: rgba(108, 35, 255, 1)
     border-radius: 4px
-    color: $grey-1
+    color: $grey-4
+  .color-grey-3
+    color: $grey-3
 
 .sarrowButton
   background: rgba($grey-9, 0.1)
@@ -237,10 +242,14 @@ $medium:750px
     border-color: $grey-1
     border-radius: 4px
   .arrowButton
-    color: $grey-1
+    color: $grey-4
 
   .text-h6
-    color: $grey-1
+    color: $grey-4
     font-weight: 600
     font-size: 1.1rem
+  .subtitle
+    color: $grey-4
+.send-img
+  height: 35px !important
 </style>
