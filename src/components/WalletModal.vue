@@ -23,7 +23,10 @@ export default defineComponent({
         this.$ual.getAuthenticators().availableAuthenticators[idx];
       this.error = null;
       try {
-        await this.login({ account: this.account as string, authenticator });
+        await this.login({
+          account: this.account as string,
+          authenticator
+        });
         this.showWalletModal = false;
       } catch (e) {
         this.error = e;

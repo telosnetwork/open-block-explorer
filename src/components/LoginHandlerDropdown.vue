@@ -19,7 +19,6 @@ export default defineComponent({
     ...mapMutations({ setAccountName: 'account/setAccountName' }),
     ...mapActions({ logout: 'account/logout' }),
     getAuthenticator() {
-      debugger;
       const wallet = localStorage.getItem('autoLogin');
       const availAuthenticators =
         this.$ual.getAuthenticators().availableAuthenticators;
@@ -31,14 +30,11 @@ export default defineComponent({
     async onLogout(): Promise<void> {
       const authenticator = this.getAuthenticator();
       try {
-        debugger;
         authenticator && (await authenticator.logout());
         this.clearAccount();
       } catch (error) {
-        debugger;
         console.log('Authenticator logout error', error);
         this.clearAccount();
-        debugger;
       }
 
       if (this.$route.path !== '/') {
@@ -54,10 +50,7 @@ export default defineComponent({
 </script>
 <template lang="pug">
 q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="{ backgroundColor: '#172c6c' }")
-  q-list
-    q-item(v-for='account in accounts' :label='account')
   .buttons-container
-    q-btn.account-button(@click="$emit('attach-account')" color='primary' label='Attach an account')
     q-btn.account-button(@click='onLogout' color='primary' :label='disconnectLabel')
 </template>
 <style lang="sass" scoped>
@@ -67,8 +60,9 @@ q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="
 .q-list
   width: 12rem
 .account-button
-  width: calc(100% - 30px)
-  margin: 0 15px 15px 15px
+  width: 110px;
+  margin: 15px
 .connect-button
+  width: 140px
   text-transform: lowercase
 </style>

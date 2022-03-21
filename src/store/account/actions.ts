@@ -5,7 +5,6 @@ import { AccountStateInterface } from './state';
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {
-    debugger;
     commit(
       'setLoadingWallet',
       (authenticator as Authenticator).getStyle().text
@@ -20,7 +19,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         return;
       }
     }
-    const users = await (authenticator as Authenticator).login(account);
+    const users = await (authenticator as Authenticator).login();
     if (users.length) {
       const account = users[0];
       const accountName = await account.getAccountName();
