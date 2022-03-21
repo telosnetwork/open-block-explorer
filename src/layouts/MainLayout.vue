@@ -11,7 +11,9 @@ export default defineComponent({
     Footer
   },
   data() {
-    return {};
+    return {
+      accountName: ''
+    };
   },
 
   methods: {
