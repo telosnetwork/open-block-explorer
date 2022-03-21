@@ -1,5 +1,4 @@
 <script lang="ts">
-// import { User } from 'universal-authenticator-library';
 import { defineComponent } from 'vue';
 import { mapActions, mapMutations } from 'vuex';
 export default defineComponent({
@@ -7,7 +6,8 @@ export default defineComponent({
   props: ['account'],
   data() {
     return {
-      accounts: [this.account]
+      accounts: [this.account],
+      showModal: false
     };
   },
   computed: {
@@ -30,21 +30,27 @@ export default defineComponent({
     async onLogout(): Promise<void> {
       const authenticator = this.getAuthenticator();
       try {
+        debugger;
         authenticator && (await authenticator.logout());
+        this.clearAccount();
       } catch (error) {
+        debugger;
         console.log('Authenticator logout error', error);
+        this.clearAccount();
+        debugger;
       }
-      this.setAccountName('');
-      this.clearLocalStorage();
+
       if (this.$route.path !== '/') {
         await this.$router.push({ path: '/' });
       }
     },
-    clearLocalStorage(): void {
-      localStorage.removeItem('autoLogin');
+    clearAccount(): void {
       localStorage.removeItem('account');
-      localStorage.removeItem('anchor-link--list');
-      localStorage.removeItem('autoLogin');
+      // this.setAccountName('');
+
+      // localStorage.removeItem('autoLogin');
+      // localStorage.removeItem('anchor-link--list');
+      // localStorage.removeItem('autoLogin');
     }
   }
 });
@@ -54,9 +60,8 @@ q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="
   q-list
     q-item(v-for='account in accounts' :label='account')
   .buttons-container
-    q-btn.account-button(@click='attachAccount' color='primary' label='Attach an account')
+    q-btn.account-button(@click="$emit('attach-account')" color='primary' label='Attach an account')
     q-btn.account-button(@click='onLogout' color='primary' :label='disconnectLabel')
-WalletModal(:showModal='false')
 </template>
 <style lang="sass" scoped>
 .q-menu
