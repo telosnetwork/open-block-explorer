@@ -24,7 +24,6 @@
     "quasar": "^2.0.0",
     "stream": "^0.0.2",
     "ual-anchor": "1.0.0",
-    "ual-wombat": "^0.3.3",
     "universal-authenticator-library": "^0.3.0",
     "vue-class-component": "^7.2.6",
     "vuex": "^4.0.1"

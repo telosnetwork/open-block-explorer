@@ -19,6 +19,7 @@ export default defineComponent({
     ...mapMutations({ setAccountName: 'account/setAccountName' }),
     ...mapActions({ logout: 'account/logout' }),
     getAuthenticator() {
+      debugger;
       const wallet = localStorage.getItem('autoLogin');
       const availAuthenticators =
         this.$ual.getAuthenticators().availableAuthenticators;
@@ -46,11 +47,7 @@ export default defineComponent({
     },
     clearAccount(): void {
       localStorage.removeItem('account');
-      // this.setAccountName('');
-
-      // localStorage.removeItem('autoLogin');
-      // localStorage.removeItem('anchor-link--list');
-      // localStorage.removeItem('autoLogin');
+      this.setAccountName('');
     }
   }
 });

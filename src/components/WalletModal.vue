@@ -1,5 +1,5 @@
 <script lang="ts">
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'Wallet',
@@ -13,6 +13,9 @@ export default defineComponent({
       showWalletModal: false
     };
   },
+  computed: {
+    ...mapGetters({ account: 'account/accountName' })
+  },
   methods: {
     ...mapActions({ login: 'account/login' }),
     async onLogin(idx: number) {
@@ -20,7 +23,7 @@ export default defineComponent({
         this.$ual.getAuthenticators().availableAuthenticators[idx];
       this.error = null;
       try {
-        await this.login({ authenticator });
+        await this.login({ account: this.account as string, authenticator });
         this.showWalletModal = false;
       } catch (e) {
         this.error = e;
