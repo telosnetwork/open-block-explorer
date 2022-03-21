@@ -37,3 +37,8 @@ div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg
     q-btn.button-primary(v-else @click='showWalletModal' label='Connect')
     WalletModal( :showModal='showModal')
 </template>
+
+<style lang="sass">
+.button-primary
+  width: 140px
+</style>

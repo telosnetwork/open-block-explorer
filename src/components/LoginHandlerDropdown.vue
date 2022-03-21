@@ -60,7 +60,7 @@ q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="
 .q-list
   width: 12rem
 .account-button
-  width: 110px;
+  width: 110px
   margin: 15px
 .connect-button
   width: 140px
