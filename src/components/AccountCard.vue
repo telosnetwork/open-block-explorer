@@ -85,7 +85,7 @@ export default defineComponent({
       if (this.account !== this.system_account) {
         this.ram = this.formatResourcePercent(
           account.ram_usage,
-          account.total_resources.ram_bytes
+          account.ram_quota
         );
         this.cpu = this.formatResourcePercent(
           account.cpu_limit.used,
