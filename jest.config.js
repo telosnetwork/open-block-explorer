@@ -41,6 +41,16 @@ module.exports = {
       statements: 100,
       branches: 100,
       functions: 100
+    },
+    './src/pages/': {
+      statements: 100,
+      branches: 100,
+      functions: 100
+    },
+    './src/layouts/': {
+      statements: 100,
+      branches: 100,
+      functions: 100
     }
   },
   testMatch: [
