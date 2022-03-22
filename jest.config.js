@@ -40,17 +40,20 @@ module.exports = {
     './src/components/': {
       statements: 100,
       branches: 100,
-      functions: 100
+      functions: 100,
+      lines: 100
     },
     './src/pages/': {
       statements: 100,
       branches: 100,
-      functions: 100
+      functions: 100,
+      lines: 100
     },
     './src/layouts/': {
       statements: 100,
       branches: 100,
-      functions: 100
+      functions: 100,
+      lines: 100
     }
   },
   testMatch: [
