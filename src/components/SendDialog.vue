@@ -47,6 +47,7 @@ q-dialog( v-model="openSendDialog" no-backdrop-dismiss)
 import { defineComponent, PropType, ref } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
+import { Authenticator } from 'universal-authenticator-library';
 
 export default defineComponent({
   name: 'SendDialog',
@@ -60,7 +61,8 @@ export default defineComponent({
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
-      } as Token
+      } as Token,
+      authenticator: this.$ual.getAuthenticators().autoLoginAuthenticator
     };
   },
   props: {
@@ -75,6 +77,10 @@ export default defineComponent({
     availableTokens: {
       required: true,
       type: Array as PropType<Token[]>
+    },
+    account: {
+      required: true,
+      type: String
     }
   },
   setup() {
@@ -96,6 +102,30 @@ export default defineComponent({
     },
     updateSelectedCoin(token: Token) {
       this.sendToken = token;
+    },
+    async sendTransaction(): Promise<unknown> {
+      const transaction = {
+        actions: [
+          {
+            account: 'eosio.token',
+            name: 'transfer',
+            authorization: [
+              {
+                actor: this.account,
+                permission: 'active'
+              }
+            ],
+            data: {
+              from: this.account,
+              to: this.recievingAccount,
+              quantity: this.sendAmount,
+              memo: this.memo
+            }
+          }
+        ]
+      };
+      const ualUser = await (this.authenticator as Authenticator).login();
+      return ualUser[0].signTransaction(transaction, {});
     }
   }
 });

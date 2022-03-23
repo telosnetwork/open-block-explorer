@@ -4,8 +4,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import axios from 'axios';
 import { AccountDetails, Token } from 'src/types';
-import { defineComponent, ref } from 'vue';
-import { mapGetters, mapMutations } from 'vuex';
+import { defineComponent, computed, ref } from 'vue';
+import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 import SendDialog from 'src/components/SendDialog.vue';
@@ -40,22 +40,27 @@ export default defineComponent({
       availableTokens: <Token[]>[]
     };
   },
-  setup() {
+  setup(props) {
+    const store = useStore();
+    console.log(store.state);
     return {
-      openSendDialog: ref<boolean>(false)
+      openSendDialog: ref<boolean>(false),
+      isAccount: computed((): boolean => {
+        return store.state.account.accountName === props.account;
+      }),
+      token: computed((): Token => store.state.chain.token),
+      setToken: (value: Token) => {
+        store.commit('chain/setToken', value);
+      }
     };
   },
   async mounted() {
     await this.loadSystemToken();
-    this.none = `${this.zero} ${(this.token as Token).symbol}`;
+    this.none = `${this.zero} ${this.token.symbol}`;
     await this.loadAccountData();
     await this.loadPriceData();
   },
-  computed: {
-    ...mapGetters({ token: 'chain/getToken' })
-  },
   methods: {
-    ...mapMutations({ setToken: 'chain/setToken' }),
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
@@ -113,7 +118,7 @@ export default defineComponent({
       const stakedValue = (staked / Math.pow(10, this.token.precision)).toFixed(
         2
       );
-      return `${stakedValue} ${this.token.symbol as string}`;
+      return `${stakedValue} ${this.token.symbol}`;
     },
     formatResourcePercent(used: number, total: number): string {
       return ((used / total) * 100.0).toFixed(2);
@@ -144,16 +149,16 @@ export default defineComponent({
 .q-pa-md
   q-card.account-card
     q-card-section
-      q-btn( @click="openSendDialog = true" color='primary' label='send')
+      q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount')
       .inline-section
         .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
           a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
         q-space
       .resources(v-if="account !== system_account")
-          PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
-          PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
-          PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
+        PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
+        PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
+        PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
     q-markup-table
       thead
         tr
