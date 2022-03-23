@@ -91,11 +91,14 @@ export default defineComponent({
     };
   },
   mounted() {
+    debugger;
     if (this.availableTokens.length > 0) {
-      this.sendToken = this.availableTokens.find((token) => {
-        debugger;
+      debugger;
+      const test = this.availableTokens.find((token) => {
         return token.symbol === this.sendToken.symbol;
       });
+      this.sendToken = test;
+      debugger;
     }
   },
   methods: {
@@ -128,7 +131,10 @@ export default defineComponent({
         ]
       };
       const ualUser = await (this.authenticator as Authenticator).login();
-      return ualUser[0].signTransaction(transaction, {});
+      return ualUser[0].signTransaction(transaction, {
+        blocksBehind: 3,
+        expireSeconds: 30
+      });
     }
   }
 });

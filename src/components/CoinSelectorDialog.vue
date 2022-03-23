@@ -57,7 +57,6 @@ export default defineComponent({
   },
   methods: {
     filterTokens() {
-      console.log('hello');
       if (this.search.length > 0) {
         this.filterByText(this.availableTokens);
       } else this.filteredTokens = this.availableTokens;
@@ -69,7 +68,6 @@ export default defineComponent({
           token.contract.toLowerCase().includes(this.search.toLowerCase())
         );
       });
-      console.log(this.filteredTokens);
     }
   }
 });
