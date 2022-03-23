@@ -38,7 +38,7 @@ q-dialog( v-model="openSendDialog" no-backdrop-dismiss)
           .row
             .col-12.q-pt-md
               .row.justify-between.q-px-sm.q-pb-lg.q-gutter-x-sm Your wallet must be open to allow authorization of this transaction.
-              q-btn.full-width.button-accent(label="Confirm" flat v-close-popup @click="callback" )
+              q-btn.full-width.button-accent(label="Confirm" flat v-close-popup @click="sendTransaction" )
     CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" :openCoinDialog="openCoinDialog" :callback="toggleCoinDialog" :availableTokens="availableTokens")
 
 </template>
@@ -48,6 +48,7 @@ import { defineComponent, PropType, ref } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
 import { Authenticator } from 'universal-authenticator-library';
+import { useStore } from '../store';
 
 export default defineComponent({
   name: 'SendDialog',
@@ -75,25 +76,25 @@ export default defineComponent({
       required: true
     },
     availableTokens: {
-      required: true,
-      type: Array as PropType<Token[]>
-    },
-    account: {
-      required: true,
-      type: String
+      type: Array as PropType<Token[]>,
+      required: true
     }
   },
   setup() {
+    const store = useStore();
     return {
       openCoinDialog: ref<boolean>(false),
       recievingAccount: ref<string>(''),
       sendAmount: ref<number>(0),
-      memo: ref<string>('')
+      memo: ref<string>(''),
+      account: store.state.account.accountName
     };
   },
   mounted() {
     if (this.availableTokens.length > 0) {
-      this.sendToken = this.availableTokens[0];
+      this.sendToken = this.availableTokens.find((token) => {
+        return (token.symbol = this.sendToken.symbol);
+      });
     }
   },
   methods: {
@@ -104,10 +105,11 @@ export default defineComponent({
       this.sendToken = token;
     },
     async sendTransaction(): Promise<unknown> {
+      debugger;
       const transaction = {
         actions: [
           {
-            account: 'eosio.token',
+            account: this.sendToken.contract,
             name: 'transfer',
             authorization: [
               {
@@ -119,6 +121,7 @@ export default defineComponent({
               from: this.account,
               to: this.recievingAccount,
               quantity: this.sendAmount,
+              symbol: this.sendToken.symbol,
               memo: this.memo
             }
           }
