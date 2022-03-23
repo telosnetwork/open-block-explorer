@@ -93,7 +93,7 @@ export default defineComponent({
   mounted() {
     if (this.availableTokens.length > 0) {
       this.sendToken = this.availableTokens.find((token) => {
-        return (token.symbol = this.sendToken.symbol);
+        return token.symbol === this.sendToken.symbol;
       });
     }
   },
