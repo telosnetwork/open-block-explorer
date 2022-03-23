@@ -93,6 +93,7 @@ export default defineComponent({
   mounted() {
     if (this.availableTokens.length > 0) {
       this.sendToken = this.availableTokens.find((token) => {
+        debugger;
         return token.symbol === this.sendToken.symbol;
       });
     }
@@ -120,8 +121,7 @@ export default defineComponent({
             data: {
               from: this.account,
               to: this.recievingAccount,
-              quantity: this.sendAmount,
-              symbol: this.sendToken.symbol,
+              quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
               memo: this.memo
             }
           }

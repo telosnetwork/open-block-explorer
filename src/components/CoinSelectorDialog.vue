@@ -9,7 +9,7 @@ q-dialog.dialogContainer( v-model="openCoinDialog")
       .row
         .col-12.q-pa-sm
           q-input( v-model="search" @input="filterTokens()" outlined dark round placeholder="Search contract name or symbol" )
-    q-seperator
+    q-separator
     q-list.dialogList
       q-item(v-for="token in availableTokens"
         :key="`${token.chain}-${token.contract}-${token.symbol}`"
