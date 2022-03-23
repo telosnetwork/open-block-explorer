@@ -91,14 +91,10 @@ export default defineComponent({
     };
   },
   mounted() {
-    debugger;
     if (this.availableTokens.length > 0) {
-      debugger;
-      const test = this.availableTokens.find((token) => {
+      this.sendToken = this.availableTokens.find((token) => {
         return token.symbol === this.sendToken.symbol;
       });
-      this.sendToken = test;
-      debugger;
     }
   },
   methods: {
@@ -109,7 +105,6 @@ export default defineComponent({
       this.sendToken = token;
     },
     async sendTransaction(): Promise<unknown> {
-      debugger;
       const transaction = {
         actions: [
           {
