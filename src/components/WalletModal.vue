@@ -29,7 +29,7 @@ export default defineComponent({
         });
         this.showWalletModal = false;
         await this.$router.push({
-          name: 'account',
+          path: '/account',
           params: { account: this.account as string }
         });
         this.$router.go(0);

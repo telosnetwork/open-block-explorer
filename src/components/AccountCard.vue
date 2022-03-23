@@ -144,6 +144,7 @@ export default defineComponent({
 .q-pa-md
   q-card.account-card
     q-card-section
+      q-btn( @click="openSendDialog = true" color='primary' label='send')
       .inline-section
         .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
@@ -164,7 +165,6 @@ export default defineComponent({
             td.text-right.total-amount {{ total }} 
           tr.total-row
             td.text-left 
-              a( @click="openSendDialog = true") Send
             td.text-right.total-value {{ totalValue }}
           tr
           tr
