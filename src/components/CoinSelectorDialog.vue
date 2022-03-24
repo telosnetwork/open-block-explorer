@@ -1,5 +1,5 @@
 <template lang="pug">
-q-dialog.dialogContainer( v-model="openCoinDialog")
+q-dialog.dialogContainer( v-model="openCoinDialog" @show='filterTokens')
   q-card.dialogCard
     .dialogHeader
       .row.justify-between.items-center.q-pt-sm-center
@@ -8,10 +8,10 @@ q-dialog.dialogContainer( v-model="openCoinDialog")
           q-btn(size="12px" flat dense round icon="clear" v-close-popup @click="callback")
       .row
         .col-12.q-pa-sm
-          q-input( v-model="search" @input="filterTokens()" outlined dark round placeholder="Search contract name or symbol" )
+          q-input( v-model="search" @update="filterTokens()" outlined dark round placeholder="Search contract name or symbol" )
     q-separator
     q-list.dialogList
-      q-item(v-for="token in availableTokens"
+      q-item(v-for="token in filteredTokens"
         :key="`${token.chain}-${token.contract}-${token.symbol}`"
         clickable
         v-close-popup
@@ -57,6 +57,7 @@ export default defineComponent({
   },
   methods: {
     filterTokens() {
+      debugger;
       if (this.search.length > 0) {
         this.filterByText(this.availableTokens);
       } else this.filteredTokens = this.availableTokens;
@@ -82,7 +83,6 @@ export default defineComponent({
   background: rgba($grey-4, 20%)
 
 .addToken
-  //   color: $primary;
   text-decoration: underline
   cursor: pointer
 
