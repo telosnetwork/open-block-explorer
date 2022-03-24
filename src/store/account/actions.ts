@@ -34,7 +34,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     }
   },
   async sendTransaction({}, { user, account, data }) {
-    debugger;
     let transaction = null;
     const actions = [
       {

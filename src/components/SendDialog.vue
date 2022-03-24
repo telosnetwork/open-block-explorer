@@ -95,7 +95,6 @@ export default defineComponent({
   methods: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async sendTransaction(): Promise<any> {
-      debugger;
       const actionAccount = this.sendToken.contract;
       const data = {
         from: this.account as string,
@@ -103,7 +102,6 @@ export default defineComponent({
         quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
         memo: this.memo
       };
-      debugger;
       const authenticators =
         this.$ual.getAuthenticators().availableAuthenticators;
       const users = await authenticators[0].login();
@@ -114,10 +112,8 @@ export default defineComponent({
       });
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       console.log(result.transactionId);
-      debugger;
     },
     setDefaults() {
-      debugger;
       if (this.availableTokens.length > 0) {
         this.sendToken = this.availableTokens.find((token) => {
           return token.symbol === this.sendToken.symbol;
