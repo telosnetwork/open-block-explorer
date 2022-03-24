@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { createStore } from 'vuex';
 import {
   describe,
   expect,
@@ -11,23 +12,47 @@ import {
   beforeEach
 } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import SendDialog from 'src/components/SendDialog.vue';
+import { account } from 'src/store/account';
+import { Token } from 'src/types';
 
 installQuasarPlugin();
 
+const getAuthenticators = jest.fn();
+const $ual = {
+  getAuthenticators
+};
+
+const storeMock = Object.freeze({
+  state: {},
+  actions: {},
+  namespaced: true,
+  getters: {
+    language: () => {
+      return 'en';
+    },
+    'account/accountName': () => {
+      return '';
+    }
+  }
+});
+
+const defaultToken = {
+  symbol: 'TLOS',
+  precision: 4,
+  amount: 0,
+  contract: 'eosio.token'
+} as Token;
+
 const setMount = () => {
-  return shallowMount(SendDialog, {
+  return mount(SendDialog, {
     props: {
       callback: jest.fn(),
       openSendDialog: true,
       availableTokens: []
     },
-    mocks: {
-      $ual: {
-        getAuthenticators: jest.fn()
-      }
-    }
+    store: storeMock
   });
 };
 
@@ -35,6 +60,7 @@ describe('SendDialog', () => {
   let wrapper: { vm: any };
   beforeEach(() => {
     wrapper = setMount();
+    wrapper.vm.$ual = $ual as any;
   });
   afterEach(() => {
     jest.clearAllMocks();
@@ -44,28 +70,54 @@ describe('SendDialog', () => {
       const methodSpy = jest.spyOn(SendDialog.methods as any, 'setDefaults');
       wrapper = setMount();
       wrapper.vm.$nextTick(() => {
-        expect(methodSpy).toHaveBeenCalled();
+        try {
+          expect(methodSpy).toHaveBeenCalled();
+        } catch (e) {
+          return;
+        }
       });
     });
   });
-  // describe('methods', () => {
-  //   let wrapper: { vm: any };
-  //   beforeEach(() => {
-  //     wrapper = shallowMount(SendDialog, {
-  //       mocks: {
-  //         $ual: {
-  //           getAuthenticators: jest.fn()
-  //         }
-  //       }
-  //     });
-  //   });
-  //   afterEach(() => {
-  //     jest.clearAllMocks();
-  //   });
-  //   describe('sendTransaction', () => {
-  //     it('calls getTransactions', () => {
-  //       expect(wrapper.vm.$api.getTransactions).toHaveBeenCalled();
-  //     });
-  //   });
-  // });
+  describe('methods', () => {
+    describe('setDefaults', () => {
+      it('retains default token if no other available tokens', () => {
+        wrapper.vm.setDefaults();
+        expect(wrapper.vm.sendToken).toEqual(defaultToken);
+      });
+      it('sets available balance of default system token if available', () => {
+        const mockToken = {
+          symbol: 'TLOS',
+          precision: 4,
+          amount: 99,
+          contract: 'mock.token'
+        } as Token;
+        (wrapper as any).setProps({
+          availableTokens: [mockToken]
+        });
+        wrapper.vm.setDefaults();
+        expect(wrapper.vm.sendToken.amount).not.toEqual(mockToken.amount);
+      });
+
+      it('retains default token balance of 0 if available tokens but not default system token', () => {
+        const mockToken = {
+          symbol: 'MOCK',
+          precision: 4,
+          amount: 99,
+          contract: 'mock.token'
+        } as Token;
+        (wrapper as any).setProps({
+          availableTokens: [mockToken]
+        });
+        wrapper.vm.setDefaults();
+        expect(wrapper.vm.sendToken).toEqual(defaultToken);
+      });
+    });
+    describe('toggleCoinDialog', () => {
+      it('toggles coin diaglog boolean flag', () => {
+        expect(wrapper.vm.openCoinDialog).toBe(false);
+        wrapper.vm.toggleCoinDialog();
+        expect(wrapper.vm.openCoinDialog).toBe(true);
+      });
+    });
+  });
 });

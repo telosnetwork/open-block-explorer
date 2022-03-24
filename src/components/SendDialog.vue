@@ -62,8 +62,7 @@ export default defineComponent({
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
-      } as Token,
-      authenticator: null
+      } as Token
     };
   },
   props: {
