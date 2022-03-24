@@ -45,6 +45,13 @@ const defaultToken = {
   contract: 'eosio.token'
 } as Token;
 
+const mockToken = {
+  symbol: 'MOCK',
+  precision: 4,
+  amount: 99,
+  contract: 'mock.token'
+} as Token;
+
 const setMount = () => {
   return mount(SendDialog, {
     props: {
@@ -99,12 +106,6 @@ describe('SendDialog', () => {
       });
 
       it('retains default token balance of 0 if available tokens but not default system token', () => {
-        const mockToken = {
-          symbol: 'MOCK',
-          precision: 4,
-          amount: 99,
-          contract: 'mock.token'
-        } as Token;
         (wrapper as any).setProps({
           availableTokens: [mockToken]
         });
@@ -117,6 +118,12 @@ describe('SendDialog', () => {
         expect(wrapper.vm.openCoinDialog).toBe(false);
         wrapper.vm.toggleCoinDialog();
         expect(wrapper.vm.openCoinDialog).toBe(true);
+      });
+    });
+    describe('updateSelectedCoin', () => {
+      it('sets current sendToken', () => {
+        wrapper.vm.updateSelectedCoin(mockToken);
+        expect(wrapper.vm.sendToken).toEqual(mockToken);
       });
     });
   });
