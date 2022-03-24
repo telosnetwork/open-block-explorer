@@ -13,14 +13,10 @@ export default defineComponent({
       showModal: false
     };
   },
-  async mounted() {
+  mounted() {
     const storedAccount = localStorage.getItem('account');
     if (storedAccount) {
       this.setAccountName(storedAccount);
-      const authenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const users = await authenticators[0].login();
-      this.setUser(users[0]);
     }
   },
   computed: {
@@ -28,8 +24,7 @@ export default defineComponent({
   },
   methods: {
     ...mapMutations({
-      setAccountName: 'account/setAccountName',
-      setUser: 'account/setUser'
+      setAccountName: 'account/setAccountName'
     }),
     showWalletModal(): void {
       this.showModal = !this.showModal;

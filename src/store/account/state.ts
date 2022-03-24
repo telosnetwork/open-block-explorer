@@ -1,5 +1,4 @@
 import { Authorization } from 'src/types';
-import { User } from 'universal-authenticator-library';
 
 export interface AccountStateInterface {
   loading: unknown;
@@ -9,7 +8,6 @@ export interface AccountStateInterface {
   linkedAccounts: Array<unknown>;
   data: unknown;
   authorization: Authorization[];
-  user: User;
 }
 
 export function state(): AccountStateInterface {
@@ -20,7 +18,6 @@ export function state(): AccountStateInterface {
     isAuthenticated: false,
     linkedAccounts: [],
     data: {},
-    authorization: [],
-    user: null
+    authorization: []
   };
 }

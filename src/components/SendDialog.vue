@@ -88,7 +88,6 @@ export default defineComponent({
       sendAmount: ref<number>(0),
       memo: ref<string>(''),
       account: store.state.account.accountName,
-      user: store.state.account.user,
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
   },
@@ -104,8 +103,15 @@ export default defineComponent({
         memo: this.memo
       };
       debugger;
+      const authenticators =
+        this.$ual.getAuthenticators().availableAuthenticators;
+      const users = await authenticators[0].login();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      let result = await this.signTransaction({ account: actionAccount, data });
+      let result = await this.signTransaction({
+        user: users[0],
+        account: actionAccount,
+        data
+      });
       console.log(result);
       debugger;
     },
