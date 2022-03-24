@@ -72,19 +72,16 @@ div.row.col-12.q-my-xs.justify-center.text-left
               p.panel-title Keys and Permissions 
           q-space
       q-separator.row.col-12.q-mt-md.separator
-      div.row.col-12.justify-center.q-my-lg
+      div.col-12.q-py-lg.permissions-container
         permission-card(:permission="permission" :depth="0").permissions
 
 </template>
-<style lang="sass">
-body
-  height:1000px
-
-.hover-dec
-  text-decoration: none
-  color: $dark
-  &:hover
-    text-decoration: underline
+<style lang="sass" scoped>
+.permissions-container
+  overflow-x: auto
+  @media screen and (min-width: 800px) //screen > medium
+    display: flex
+    justify-content: center
 
 .permissions
   min-width: 800px

@@ -64,6 +64,12 @@ div(v-if="permission" )
 </template>
 
 <style lang="sass" scoped>
+.hover-dec
+  text-decoration: none
+  color: $dark
+  &:hover
+    text-decoration: underline
+
 .permission-card-wrapper
     margin-left: 50px
 
