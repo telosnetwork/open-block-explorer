@@ -67,13 +67,13 @@ export default defineComponent({
 <template lang="pug">
 div.row.col-12.q-my-xs.justify-center.text-left
     div.row.col-11
-        div.row.col-12.q-mt-lg
-            div.col-3
-                p.table-title Keys and Permissions 
-            q-space
-        q-separator.row.col-12.q-mt-md.separator
-        div.row.col-12.justify-center.q-my-lg
-          permission-card(:permission="permission" :depth="0").permissions
+      div.row.col-12.q-mt-lg
+          div
+              p.panel-title Keys and Permissions 
+          q-space
+      q-separator.row.col-12.q-mt-md.separator
+      div.row.col-12.justify-center.q-my-lg
+        permission-card(:permission="permission" :depth="0").permissions
 
 </template>
 <style lang="sass">

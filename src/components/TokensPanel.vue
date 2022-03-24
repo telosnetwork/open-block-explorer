@@ -2,8 +2,8 @@
 div.row.col-12.q-my-xs.justify-center.text-left
     div.row.col-11
         div.row.col-12.q-mt-lg
-            div.col-3
-                p.table-title Tokens 
+            div
+                p.panel-title Tokens 
             q-space
         q-separator.row.col-12.q-mt-md.separator
         div.col-12.q-mt-md.tokens-container
@@ -73,10 +73,7 @@ export default defineComponent({
   }
 });
 </script>
-<style lang="sass">
-body
-  height:1000px
-
+<style lang="sass" scoped>
 .hover-dec
   text-decoration: none
   color: $dark

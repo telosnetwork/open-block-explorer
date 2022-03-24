@@ -157,7 +157,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
     div.row.col-11
         div.row.col-12.q-mt-lg
             div.col-3
-                p.table-title {{ tableTitle }} 
+                p.panel-title {{ tableTitle }} 
             q-space
             div.col-3.row.flex.filter-buttons.temp-hide
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
@@ -243,13 +243,6 @@ body
 .table-header
     color: #000000 !important
     opacity: 0.5
-
-.table-title
-    font-family: Actor, sans-serif
-    font-style: normal
-    font-weight: normal
-    font-size: 22.75px
-    line-height: 27px
 
 .hover-dec
   text-decoration: none
