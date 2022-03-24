@@ -47,8 +47,8 @@ q-dialog( v-model="openSendDialog" no-backdrop-dismiss @show='setDefaults')
 import { defineComponent, PropType, ref } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
-import { useStore } from '../store';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 export default defineComponent({
   name: 'SendDialog',
@@ -81,15 +81,16 @@ export default defineComponent({
     }
   },
   setup() {
-    const store = useStore();
     return {
       openCoinDialog: ref<boolean>(false),
       recievingAccount: ref<string>(''),
       sendAmount: ref<number>(0),
       memo: ref<string>(''),
-      account: store.state.account.accountName,
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
+  },
+  computed: {
+    ...mapGetters({ account: 'account/accountName' })
   },
   methods: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,7 +98,7 @@ export default defineComponent({
       debugger;
       const actionAccount = this.sendToken.contract;
       const data = {
-        from: this.account,
+        from: this.account as string,
         to: this.recievingAccount,
         quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
         memo: this.memo
@@ -106,13 +107,13 @@ export default defineComponent({
       const authenticators =
         this.$ual.getAuthenticators().availableAuthenticators;
       const users = await authenticators[0].login();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       let result = await this.signTransaction({
         user: users[0],
         account: actionAccount,
         data
       });
-      console.log(result);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      console.log(result.transactionId);
       debugger;
     },
     setDefaults() {
