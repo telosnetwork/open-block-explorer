@@ -8,7 +8,7 @@ q-dialog.dialogContainer( v-model="openCoinDialog" @show='filterTokens')
           q-btn(size="12px" flat dense round icon="clear" v-close-popup @click="callback")
       .row
         .col-12.q-pa-sm
-          q-input( v-model="search" @update="filterTokens()" outlined dark round placeholder="Search contract name or symbol" )
+          q-input( v-model="search" debounce='1000' outlined dark round placeholder="Search contract name or symbol" )
     q-separator
     q-list.dialogList
       q-item(v-for="token in filteredTokens"
@@ -55,9 +55,13 @@ export default defineComponent({
       filteredTokens: new Array<Token>()
     };
   },
+  watch: {
+    search() {
+      this.filterTokens();
+    }
+  },
   methods: {
     filterTokens() {
-      debugger;
       if (this.search.length > 0) {
         this.filterByText(this.availableTokens);
       } else this.filteredTokens = this.availableTokens;
