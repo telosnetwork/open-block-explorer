@@ -16,21 +16,25 @@ import SendDialog from 'src/components/SendDialog.vue';
 
 installQuasarPlugin();
 
+const setMount = () => {
+  return shallowMount(SendDialog, {
+    props: {
+      callback: jest.fn(),
+      openSendDialog: true,
+      availableTokens: []
+    },
+    mocks: {
+      $ual: {
+        getAuthenticators: jest.fn()
+      }
+    }
+  });
+};
+
 describe('SendDialog', () => {
   let wrapper: { vm: any };
   beforeEach(() => {
-    wrapper = shallowMount(SendDialog, {
-      props: {
-        callback: jest.fn(),
-        openSendDialog: true,
-        availableTokens: []
-      },
-      mocks: {
-        $ual: {
-          getAuthenticators: jest.fn()
-        }
-      }
-    });
+    wrapper = setMount();
   });
   afterEach(() => {
     jest.clearAllMocks();
@@ -38,18 +42,7 @@ describe('SendDialog', () => {
   describe('@show', () => {
     it('calls setDefaults', () => {
       const methodSpy = jest.spyOn(SendDialog.methods as any, 'setDefaults');
-      wrapper = shallowMount(SendDialog, {
-        props: {
-          callback: jest.fn(),
-          openSendDialog: true,
-          availableTokens: []
-        },
-        mocks: {
-          $ual: {
-            getAuthenticators: jest.fn()
-          }
-        }
-      });
+      wrapper = setMount();
       wrapper.vm.$nextTick(() => {
         expect(methodSpy).toHaveBeenCalled();
       });
