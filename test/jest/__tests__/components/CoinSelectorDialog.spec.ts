@@ -2,27 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import {
-  describe,
-  expect,
-  it,
-  jest,
-  afterEach,
-  beforeEach
-} from '@jest/globals';
+import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import { mount } from '@vue/test-utils';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
 
 installQuasarPlugin();
-
-const defaultToken = {
-  symbol: 'TLOS',
-  precision: 4,
-  amount: 0,
-  contract: 'eosio.token'
-} as Token;
 
 const mockToken = {
   symbol: 'MOCK',
