@@ -16,7 +16,10 @@ export default defineComponent({
     }
   },
   methods: {
-    ...mapMutations({ setAccountName: 'account/setAccountName' }),
+    ...mapMutations({
+      setAccountName: 'account/setAccountName',
+      setUser: 'account/setUser'
+    }),
     ...mapActions({ logout: 'account/logout' }),
     getAuthenticator() {
       const wallet = localStorage.getItem('autoLogin');
@@ -44,6 +47,7 @@ export default defineComponent({
     clearAccount(): void {
       localStorage.removeItem('account');
       this.setAccountName('');
+      this.setUser(null);
     }
   }
 });

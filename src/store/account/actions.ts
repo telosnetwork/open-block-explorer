@@ -22,6 +22,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const users = await (authenticator as Authenticator).login();
     if (users.length) {
       const account = users[0];
+      commit('setUser', account);
       const accountName = await account.getAccountName();
       commit('setAccountName', accountName);
       localStorage.setItem(
@@ -32,5 +33,37 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       localStorage.setItem('returning', 'true');
       commit('setLoadingWallet');
     }
+  },
+  async sendTransaction({}, { account, data }) {
+    debugger;
+    let transaction = null;
+    const actions = [
+      {
+        account: account as string,
+        name: 'transfer',
+        authorization: [
+          {
+            actor: this.state.account.accountName,
+            permission: 'active'
+          }
+        ],
+        data: data as unknown
+      }
+    ];
+    try {
+      transaction = await this.state.account.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30
+        }
+      );
+    } catch (e) {
+      console.log(actions, e);
+      throw e;
+    }
+    return transaction;
   }
 };

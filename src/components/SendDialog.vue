@@ -1,5 +1,5 @@
 <template lang="pug">
-q-dialog( v-model="openSendDialog" no-backdrop-dismiss)
+q-dialog( v-model="openSendDialog" no-backdrop-dismiss @show='setDefaults')
   q-card.sendCard
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
@@ -47,8 +47,8 @@ q-dialog( v-model="openSendDialog" no-backdrop-dismiss)
 import { defineComponent, PropType, ref } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
-import { Authenticator } from 'universal-authenticator-library';
 import { useStore } from '../store';
+import { mapActions } from 'vuex';
 
 export default defineComponent({
   name: 'SendDialog',
@@ -63,7 +63,7 @@ export default defineComponent({
         amount: 0,
         contract: 'eosio.token'
       } as Token,
-      authenticator: this.$ual.getAuthenticators().autoLoginAuthenticator
+      authenticator: null
     };
   },
   props: {
@@ -87,49 +87,41 @@ export default defineComponent({
       recievingAccount: ref<string>(''),
       sendAmount: ref<number>(0),
       memo: ref<string>(''),
-      account: store.state.account.accountName
+      account: store.state.account.accountName,
+      user: store.state.account.user,
+      ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
   },
-  mounted() {
-    if (this.availableTokens.length > 0) {
-      this.sendToken = this.availableTokens.find((token) => {
-        return token.symbol === this.sendToken.symbol;
-      });
-    }
-  },
   methods: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async sendTransaction(): Promise<any> {
+      debugger;
+      const actionAccount = this.sendToken.contract;
+      const data = {
+        from: this.account,
+        to: this.recievingAccount,
+        quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
+        memo: this.memo
+      };
+      debugger;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      let result = await this.signTransaction({ account: actionAccount, data });
+      console.log(result);
+      debugger;
+    },
+    setDefaults() {
+      debugger;
+      if (this.availableTokens.length > 0) {
+        this.sendToken = this.availableTokens.find((token) => {
+          return token.symbol === this.sendToken.symbol;
+        });
+      }
+    },
     toggleCoinDialog() {
       this.openCoinDialog = !this.openCoinDialog;
     },
     updateSelectedCoin(token: Token) {
       this.sendToken = token;
-    },
-    async sendTransaction(): Promise<unknown> {
-      const transaction = {
-        actions: [
-          {
-            account: this.sendToken.contract,
-            name: 'transfer',
-            authorization: [
-              {
-                actor: this.account,
-                permission: 'active'
-              }
-            ],
-            data: {
-              from: this.account,
-              to: this.recievingAccount,
-              quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
-              memo: this.memo
-            }
-          }
-        ]
-      };
-      const ualUser = await (this.authenticator as Authenticator).login();
-      return ualUser[0].signTransaction(transaction, {
-        blocksBehind: 3,
-        expireSeconds: 30
-      });
     }
   }
 });

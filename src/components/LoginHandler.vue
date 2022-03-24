@@ -13,17 +13,24 @@ export default defineComponent({
       showModal: false
     };
   },
-  mounted() {
+  async mounted() {
     const storedAccount = localStorage.getItem('account');
     if (storedAccount) {
       this.setAccountName(storedAccount);
+      const authenticators =
+        this.$ual.getAuthenticators().availableAuthenticators;
+      const users = await authenticators[0].login();
+      this.setUser(users[0]);
     }
   },
   computed: {
     ...mapGetters({ account: 'account/accountName' })
   },
   methods: {
-    ...mapMutations({ setAccountName: 'account/setAccountName' }),
+    ...mapMutations({
+      setAccountName: 'account/setAccountName',
+      setUser: 'account/setUser'
+    }),
     showWalletModal(): void {
       this.showModal = !this.showModal;
     }
