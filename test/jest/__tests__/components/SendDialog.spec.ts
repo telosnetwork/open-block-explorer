@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { createStore } from 'vuex';
 import {
   describe,
   expect,
@@ -14,7 +13,6 @@ import {
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import { mount } from '@vue/test-utils';
 import SendDialog from 'src/components/SendDialog.vue';
-import { account } from 'src/store/account';
 import { Token } from 'src/types';
 
 installQuasarPlugin();
