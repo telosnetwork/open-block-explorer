@@ -20,7 +20,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
             .row.q-py-md
               .col-4
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
-                .row.items-center.no-wrap.selector-container.q-py-sm(@click="toggleCoinDialog")
+                .row.items-center.no-wrap.selector-container.q-py-sm(@click="openCoinDialog = true" )
                   .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken.symbol}}
                   .col-4
                     .row.justify-end.items-center.arrowButton
@@ -52,7 +52,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
               .col-12 
                 .row Transaction Failed: {{ transactionError }}
           q-btn.close-dialog( v-close-popup label='Close')
-    CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" :openCoinDialog="openCoinDialog" :callback="toggleCoinDialog" :availableTokens="availableTokens")
+    CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" v-model="openCoinDialog" :availableTokens="availableTokens")
 
 </template>
 
@@ -140,9 +140,6 @@ export default defineComponent({
           return token.symbol === this.sendToken.symbol;
         });
       }
-    },
-    toggleCoinDialog(): void {
-      this.openCoinDialog = !this.openCoinDialog;
     },
     updateSelectedCoin(token: Token): void {
       this.sendToken = token;

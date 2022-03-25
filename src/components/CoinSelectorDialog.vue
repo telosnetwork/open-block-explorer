@@ -1,21 +1,21 @@
 <template lang="pug">
-q-dialog.dialogContainer( v-model="openCoinDialog" @show='filterTokens')
+q-dialog.dialogContainer(@show='filterTokens')
   q-card.dialogCard
     .dialogHeader
       .row.justify-between.items-center.q-pt-sm-center
         .text-h6.q-pl-md Select a token
         .q-pr-sm
-          q-btn(size="12px" flat dense round icon="clear" v-close-popup @click="callback")
+          q-btn(size="12px" flat dense round icon="clear" v-close-popup)
       .row
         .col-12.q-pa-sm
-          q-input( v-model="search" debounce='1000' outlined dark round placeholder="Search contract name or symbol" )
+          q-input( v-model="search" debounce='500' outlined dark round placeholder="Search contract name or symbol" )
     q-separator
     q-list.dialogList
       q-item(v-for="token in filteredTokens"
         :key="`${token.chain}-${token.contract}-${token.symbol}`"
         clickable
         v-close-popup
-        @click="updateSelectedCoin(token); callback();")
+        @click="updateSelectedCoin(token);")
         q-item-section
           q-item-label {{ token.symbol }}
           q-item-label {{ token.contract }}
@@ -32,14 +32,6 @@ import { Token } from 'src/types';
 export default defineComponent({
   name: 'SendDialog',
   props: {
-    openCoinDialog: {
-      type: Boolean,
-      required: true
-    },
-    callback: {
-      type: Function,
-      required: true
-    },
     availableTokens: {
       required: true,
       type: Array as PropType<Token[]>
