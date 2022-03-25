@@ -16,7 +16,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
             .row
               .col-12
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECIEVING ACCOUNT
-                q-input.full-width(standout dense dark v-model="recievingAccount"  )
+                q-input.full-width(standout dense dark v-model="recievingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
             .row.q-py-md
               .col-4
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
@@ -31,7 +31,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
                   div AMOUNT
                   q-space
                   .color-grey-3 {{sendToken.amount}} AVAILABLE
-                q-input.full-width(standout="bg-deep-purple-2 text-white" v-model.number="sendAmount" type="number" dense dark)
+                q-input.full-width(standout="bg-deep-purple-2 text-white" v-model.number="sendAmount" :lazy-rules='true' :rules="[ val => val <= sendToken.amount || 'Invalid amount.' ]" type="number" dense dark)
             .row
               .col-12
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
@@ -61,6 +61,7 @@ import { defineComponent, PropType, ref } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
+import { isValidAccount } from 'src/utils/stringValidator';
 
 export default defineComponent({
   name: 'SendDialog',
@@ -108,6 +109,7 @@ export default defineComponent({
     }
   },
   methods: {
+    isValidAccount,
     async sendTransaction(): Promise<void> {
       const actionAccount = this.sendToken.contract;
       const data = {
@@ -308,7 +310,7 @@ $medium:750px
   background: rgba($grey-9, 0.1)
 
 .selector-container
-  cursor: pointer;
+  cursor: pointer
   background: rgba(108, 35, 255, 1)
   border-radius: 4px
   height: 40px
