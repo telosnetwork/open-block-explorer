@@ -1,61 +1,3 @@
-<template lang="pug">
-q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
-  q-card.sendCard
-    .row.justify-center.items-center.full-height.full-width
-      .absolute-top-right
-        q-btn(size="20px" flat dense round icon="clear" v-close-popup)
-      .col-xs-12.col-sm-8.col-md-7.col-lg-6
-        .row
-          q-card-section 
-            img.send-img.q-pr-md( src="~assets/send.svg")
-            .text-h4.q-pb-md.inline-block.color-grey-3 Send Tokens
-
-        .transaction-form(v-if='transactionForm')
-          q-separator(dark v-if='transactionForm')
-          q-card-section(v-if='transactionForm')
-            .row
-              .col-12
-                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECIEVING ACCOUNT
-                q-input.full-width(standout dense dark v-model="recievingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
-            .row.q-py-md
-              .col-4
-                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
-                .row.items-center.no-wrap.selector-container.q-py-sm(@click="openCoinDialog = true" )
-                  .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken.symbol}}
-                  .col-4
-                    .row.justify-end.items-center.arrowButton
-                      q-icon.fas.fa-chevron-down.q-pr-lg(size="17px")
-
-              .col-8.q-pl-md
-                .row.justify-between.q-pb-sm.q-gutter-x-sm 
-                  div AMOUNT
-                  q-space
-                  .color-grey-3 {{sendToken.amount}} AVAILABLE
-                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sendAmount" :lazy-rules='true' :rules="[ val => val <= sendToken.amount || 'Invalid amount.' ]" type="text" dense dark)
-            .row
-              .col-12
-                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
-                .row
-                  q-input.full-width.send-input(standout="bg-deep-purple-2 text-white" v-model="memo" dark type="textarea")
-            .row
-              .col-12.q-pt-md
-                .row.justify-between.q-px-sm.q-pb-lg.q-gutter-x-sm Your wallet must be open to allow authorization of this transaction.
-                q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )
-        .transaction-result(v-else)
-          q-card-section(v-if='transactionId')
-            .row
-              .col-12 
-                .row You successfully sent {{ sendAmount }} {{ sendToken.symbol }} to {{ recievingAccount }}.
-                .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}            
-          q-card-section(v-else)
-            .row
-              .col-12 
-                .row Transaction Failed: {{ transactionError }}
-          q-btn.close-dialog( v-close-popup label='Close')
-    CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" v-model="openCoinDialog" :availableTokens="availableTokens")
-
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
@@ -165,6 +107,63 @@ export default defineComponent({
   }
 });
 </script>
+
+<template lang="pug">
+q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
+  q-card.sendCard
+    .row.justify-center.items-center.full-height.full-width
+      .absolute-top-right
+        q-btn(size="20px" flat dense round icon="clear" v-close-popup)
+      .col-xs-12.col-sm-8.col-md-7.col-lg-6
+        .row
+          q-card-section 
+            img.send-img.q-pr-md( src="~assets/send.svg")
+            .text-h4.q-pb-md.inline-block.color-grey-3 Send Tokens
+
+        .transaction-form(v-if='transactionForm')
+          q-separator(dark v-if='transactionForm')
+          q-card-section(v-if='transactionForm')
+            .row
+              .col-12
+                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECIEVING ACCOUNT
+                q-input.full-width(standout dense dark v-model="recievingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+            .row.q-py-md
+              .col-4
+                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
+                .row.items-center.no-wrap.selector-container.q-py-sm(@click="openCoinDialog = true" )
+                  .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken.symbol}}
+                  .col-4
+                    .row.justify-end.items-center.arrowButton
+                      q-icon.fas.fa-chevron-down.q-pr-lg(size="17px")
+
+              .col-8.q-pl-md
+                .row.justify-between.q-pb-sm.q-gutter-x-sm 
+                  div AMOUNT
+                  q-space
+                  .color-grey-3 {{sendToken.amount}} AVAILABLE
+                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sendAmount" :lazy-rules='true' :rules="[ val => val <= sendToken.amount || 'Invalid amount.' ]" type="text" dense dark)
+            .row
+              .col-12
+                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
+                .row
+                  q-input.full-width.send-input(standout="bg-deep-purple-2 text-white" v-model="memo" dark type="textarea")
+            .row
+              .col-12.q-pt-md
+                .row.justify-between.q-px-sm.q-pb-lg.q-gutter-x-sm Your wallet must be open to allow authorization of this transaction.
+                q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )
+        .transaction-result(v-else)
+          q-card-section(v-if='transactionId')
+            .row
+              .col-12 
+                .row You successfully sent {{ sendAmount }} {{ sendToken.symbol }} to {{ recievingAccount }}.
+                .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}            
+          q-card-section(v-else)
+            .row
+              .col-12 
+                .row Transaction Failed: {{ transactionError }}
+          q-btn.close-dialog( v-close-popup label='Close')
+    CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" v-model="openCoinDialog" :availableTokens="availableTokens")
+</template>
 
 <style lang="sass" scoped>
 $medium:750px

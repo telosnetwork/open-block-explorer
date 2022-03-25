@@ -1,30 +1,3 @@
-<template lang="pug">
-q-dialog.dialogContainer(@show='filterTokens')
-  q-card.dialogCard
-    .dialogHeader
-      .row.justify-between.items-center.q-pt-sm-center
-        .text-h6.q-pl-md Select a token
-        .q-pr-sm
-          q-btn(size="12px" flat dense round icon="clear" v-close-popup)
-      .row
-        .col-12.q-pa-sm
-          q-input( v-model="search" debounce='500' outlined dark round placeholder="Search contract name or symbol" )
-    q-separator
-    q-list.dialogList
-      q-item(v-for="token in filteredTokens"
-        :key="`${token.chain}-${token.contract}-${token.symbol}`"
-        clickable
-        v-close-popup
-        @click="updateSelectedCoin(token);")
-        q-item-section
-          q-item-label {{ token.symbol }}
-          q-item-label {{ token.contract }}
-        q-item-section
-          q-item-label {{ token.amount }}
-      q-item(v-if="availableTokens.length == 0") No tokens found
-
-</template>
-
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { Token } from 'src/types';
@@ -69,6 +42,32 @@ export default defineComponent({
   }
 });
 </script>
+
+<template lang="pug">
+q-dialog.dialogContainer(@show='filterTokens')
+  q-card.dialogCard
+    .dialogHeader
+      .row.justify-between.items-center.q-pt-sm-center
+        .text-h6.q-pl-md Select a token
+        .q-pr-sm
+          q-btn(size="12px" flat dense round icon="clear" v-close-popup)
+      .row
+        .col-12.q-pa-sm
+          q-input( v-model="search" debounce='500' outlined dark round placeholder="Search contract name or symbol" )
+    q-separator
+    q-list.dialogList
+      q-item(v-for="token in filteredTokens"
+        :key="`${token.chain}-${token.contract}-${token.symbol}`"
+        clickable
+        v-close-popup
+        @click="updateSelectedCoin(token);")
+        q-item-section
+          q-item-label {{ token.symbol }}
+          q-item-label {{ token.contract }}
+        q-item-section
+          q-item-label {{ token.amount }}
+      q-item(v-if="availableTokens.length == 0") No tokens found
+</template>
 
 <style lang="sass" scoped>
 .dialogCard
