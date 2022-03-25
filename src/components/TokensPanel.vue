@@ -96,4 +96,5 @@ export default defineComponent({
   border-radius: .2rem
   box-shadow: none
   padding: 0.5rem 0
+  max-width: 260px
 </style>
