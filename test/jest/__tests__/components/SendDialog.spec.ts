@@ -157,6 +157,13 @@ describe('SendDialog', () => {
         expect(wrapper.vm.$router.go).toHaveBeenLastCalledWith(0);
       });
     });
+    describe('formatDec', () => {
+      it('formats send amount to correct precision, padding zeros as necessary', () => {
+        wrapper.vm.sendAmount = '0.1';
+        wrapper.vm.formatDec();
+        expect(wrapper.vm.sendAmount).toBe('0.1000');
+      });
+    });
   });
   describe('computed', () => {
     describe('transactionForm', () => {
