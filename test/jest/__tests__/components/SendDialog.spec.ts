@@ -21,6 +21,12 @@ const getAuthenticators = jest.fn();
 const $ual = {
   getAuthenticators
 };
+const push = jest.fn();
+const go = jest.fn();
+const $router = {
+  push,
+  go
+};
 
 const storeMock = Object.freeze({
   state: {},
@@ -66,6 +72,7 @@ describe('SendDialog', () => {
   beforeEach(() => {
     wrapper = setMount();
     wrapper.vm.$ual = $ual as any;
+    wrapper.vm.$router = $router as any;
   });
   afterEach(() => {
     jest.clearAllMocks();
@@ -115,6 +122,58 @@ describe('SendDialog', () => {
       it('sets current sendToken', () => {
         wrapper.vm.updateSelectedCoin(mockToken);
         expect(wrapper.vm.sendToken).toEqual(mockToken);
+      });
+    });
+    describe('resetForm', () => {
+      it('sets transactionId to null', () => {
+        wrapper.vm.transactionId = '123';
+        wrapper.vm.resetForm();
+        expect(wrapper.vm.transactionId).toBeNull();
+      });
+      it('sets transactionError to null', () => {
+        wrapper.vm.transactionError = 'error';
+        wrapper.vm.resetForm();
+        expect(wrapper.vm.transactionError).toBeNull();
+      });
+      it('sets defaultToken values to null', () => {
+        wrapper.vm.sendToken = mockToken;
+        wrapper.vm.resetForm();
+        expect(wrapper.vm.sendToken).toEqual(defaultToken);
+      });
+    });
+    describe('navToTransaction', () => {
+      it('calls $router.push', () => {
+        wrapper.vm.transactionId = 'testing';
+        wrapper.vm.navToTransaction();
+        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({
+          name: 'transaction',
+          params: { transaction: wrapper.vm.transactionId }
+        });
+      });
+      it('calls $router.go', async () => {
+        wrapper.vm.transactionId = 'testing';
+        wrapper.vm.navToTransaction();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.go).toHaveBeenLastCalledWith(0);
+      });
+    });
+  });
+  describe('computed', () => {
+    describe('transactionForm', () => {
+      it('returns true if both transactionError & transactionId are null', () => {
+        wrapper.vm.transactionError = null;
+        wrapper.vm.transactionId = null;
+        expect(wrapper.vm.transactionForm).toBe(true);
+      });
+      it('returns false if transactionError', () => {
+        wrapper.vm.transactionError = 'error';
+        wrapper.vm.transactionId = null;
+        expect(wrapper.vm.transactionForm).toBe(false);
+      });
+      it('returns false if transactionId', () => {
+        wrapper.vm.transactionError = null;
+        wrapper.vm.transactionId = 'id';
+        expect(wrapper.vm.transactionForm).toBe(false);
       });
     });
   });

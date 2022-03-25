@@ -96,12 +96,6 @@ export default defineComponent({
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
   },
-  watch: {
-    openSendDialog(val: boolean) {
-      debugger;
-      this.sendDialog = val;
-    }
-  },
   computed: {
     ...mapGetters({ account: 'account/accountName' }),
     transactionForm(): boolean {
