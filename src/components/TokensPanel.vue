@@ -54,6 +54,7 @@ export default defineComponent({
     async loadTokens(): Promise<void> {
       // TODO Refactor redundant getTokens in AccountCard
       const tokenList = await this.$api.getTokens(this.account);
+      // console.log(tokenList);
       this.tokens = tokenList.map(
         (token) =>
           ({
@@ -63,6 +64,8 @@ export default defineComponent({
             contract: this.formatAccount(token.contract, 'account')
           } as Token)
       );
+      this.tokens = this.tokens.filter((token) => token.amount !== null);
+      // console.log(this.tokens);
     },
     // TODO Refactor duplicate function in TransactionsTable
     formatAccount(
