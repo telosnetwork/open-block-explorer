@@ -139,7 +139,6 @@ export default defineComponent({
       this.sendToken = token;
     },
     resetForm() {
-      debugger;
       this.transactionId = null;
       this.transactionError = null;
       this.sendToken = {

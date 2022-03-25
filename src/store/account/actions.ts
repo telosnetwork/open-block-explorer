@@ -59,7 +59,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         }
       );
     } catch (e) {
-      console.log(actions, e);
       throw e;
     }
     return transaction;

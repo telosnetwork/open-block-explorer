@@ -42,7 +42,6 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    console.log(store.state);
     return {
       openSendDialog: ref<boolean>(false),
       isAccount: computed((): boolean => {
@@ -59,12 +58,6 @@ export default defineComponent({
     this.none = `${this.zero} ${this.token.symbol}`;
     await this.loadAccountData();
     await this.loadPriceData();
-  },
-  watch: {
-    openSendDialog(val: boolean) {
-      console.log(val);
-      debugger;
-    }
   },
   methods: {
     async loadAccountData(): Promise<void> {
