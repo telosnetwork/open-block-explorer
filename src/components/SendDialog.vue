@@ -156,13 +156,11 @@ export default defineComponent({
       this.$router.go(0);
     },
     formatDec() {
-      debugger;
-      var formattedDec = Number(this.sendAmount).toLocaleString('en-US', {
+      this.sendAmount = Number(this.sendAmount).toLocaleString('en-US', {
         style: 'decimal',
         maximumFractionDigits: this.sendToken.precision,
         minimumFractionDigits: this.sendToken.precision
       });
-      this.sendAmount = formattedDec;
     }
   }
 });
