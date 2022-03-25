@@ -1,53 +1,57 @@
 <template lang="pug">
-q-dialog( v-model="openSendDialog" no-backdrop-dismiss @show='setDefaults' @hide='resetForm')
+q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
   q-card.sendCard
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
-        q-btn(size="20px" flat dense round icon="clear" v-close-popup @click="callback")
+        q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-8.col-md-7.col-lg-6
         .row
           q-card-section 
             img.send-img.q-pr-md( src="~assets/send.svg")
             .text-h4.q-pb-md.inline-block.color-grey-3 Send Tokens
-        q-card-section(v-if='transactionId')
-          .row
-            .col-12 
-              .row You successfully sent {{ sendAmount }} {{ sendToken.symbol }} to {{ recievingAccount }}.
-              .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}            
-        q-card-section(v-if='transactionError')
-          .row
-            .col-12 
-              .row Transaction Failed: {{ transactionError }}
-        q-separator(dark v-if='transactionForm')
-        q-card-section(v-if='transactionForm')
-          .row
-            .col-12
-              .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECIEVING ACCOUNT
-              q-input.full-width(standout dense dark v-model="recievingAccount"  )
-          .row.q-py-md
-            .col-4
-              .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
-              .row.items-center.no-wrap.selectorContainer.q-py-sm(@click="toggleCoinDialog")
-                .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken.symbol}}
-                .col-4
-                  .row.justify-end.items-center.arrowButton
-                    q-icon.fas.fa-chevron-down.q-pr-lg(size="17px")
 
-            .col-8.q-pl-md
-              .row.justify-between.q-pb-sm.q-gutter-x-sm 
-                div AMOUNT
-                q-space
-                .color-grey-3 {{sendToken.amount}} AVAILABLE
-              q-input.full-width(standout="bg-deep-purple-2 text-white" v-model.number="sendAmount" type="number" dense dark)
-          .row
-            .col-12
-              .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
-              .row
-                q-input.full-width.send-input(standout="bg-deep-purple-2 text-white" v-model="memo" dark type="textarea")
-          .row
-            .col-12.q-pt-md
-              .row.justify-between.q-px-sm.q-pb-lg.q-gutter-x-sm Your wallet must be open to allow authorization of this transaction.
-              q-btn.full-width.button-accent(label="Confirm" flat v-close-popup @click="sendTransaction" )
+        .transaction-form(v-if='transactionForm')
+          q-separator(dark v-if='transactionForm')
+          q-card-section(v-if='transactionForm')
+            .row
+              .col-12
+                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECIEVING ACCOUNT
+                q-input.full-width(standout dense dark v-model="recievingAccount"  )
+            .row.q-py-md
+              .col-4
+                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
+                .row.items-center.no-wrap.selector-container.q-py-sm(@click="toggleCoinDialog")
+                  .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken.symbol}}
+                  .col-4
+                    .row.justify-end.items-center.arrowButton
+                      q-icon.fas.fa-chevron-down.q-pr-lg(size="17px")
+
+              .col-8.q-pl-md
+                .row.justify-between.q-pb-sm.q-gutter-x-sm 
+                  div AMOUNT
+                  q-space
+                  .color-grey-3 {{sendToken.amount}} AVAILABLE
+                q-input.full-width(standout="bg-deep-purple-2 text-white" v-model.number="sendAmount" type="number" dense dark)
+            .row
+              .col-12
+                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
+                .row
+                  q-input.full-width.send-input(standout="bg-deep-purple-2 text-white" v-model="memo" dark type="textarea")
+            .row
+              .col-12.q-pt-md
+                .row.justify-between.q-px-sm.q-pb-lg.q-gutter-x-sm Your wallet must be open to allow authorization of this transaction.
+                q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )
+        .transaction-result(v-else)
+          q-card-section(v-if='transactionId')
+            .row
+              .col-12 
+                .row You successfully sent {{ sendAmount }} {{ sendToken.symbol }} to {{ recievingAccount }}.
+                .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}            
+          q-card-section(v-else)
+            .row
+              .col-12 
+                .row Transaction Failed: {{ transactionError }}
+          q-btn.close-dialog( v-close-popup label='Close')
     CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" :openCoinDialog="openCoinDialog" :callback="toggleCoinDialog" :availableTokens="availableTokens")
 
 </template>
@@ -72,18 +76,11 @@ export default defineComponent({
         contract: 'eosio.token'
       } as Token,
       transactionId: null,
-      transactionError: null
+      transactionError: null,
+      sendDialog: false
     };
   },
   props: {
-    openSendDialog: {
-      type: Boolean,
-      required: true
-    },
-    callback: {
-      type: Function,
-      required: true
-    },
     availableTokens: {
       type: Array as PropType<Token[]>,
       required: true
@@ -97,6 +94,12 @@ export default defineComponent({
       memo: ref<string>(''),
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
+  },
+  watch: {
+    openSendDialog(val: boolean) {
+      debugger;
+      this.sendDialog = val;
+    }
   },
   computed: {
     ...mapGetters({ account: 'account/accountName' }),
@@ -143,6 +146,7 @@ export default defineComponent({
       this.sendToken = token;
     },
     resetForm() {
+      debugger;
       this.transactionId = null;
       this.transactionError = null;
       this.sendToken = {
@@ -165,6 +169,9 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 $medium:750px
+
+.close-dialog
+  width: 100%
 
 .ellipsis-overflow
   cursor: pointer
@@ -300,7 +307,8 @@ $medium:750px
 .sarrowButton
   background: rgba($grey-9, 0.1)
 
-.selectorContainer
+.selector-container
+  cursor: pointer;
   background: rgba(108, 35, 255, 1)
   border-radius: 4px
   height: 40px

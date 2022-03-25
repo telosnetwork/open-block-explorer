@@ -60,6 +60,12 @@ export default defineComponent({
     await this.loadAccountData();
     await this.loadPriceData();
   },
+  watch: {
+    openSendDialog(val: boolean) {
+      console.log(val);
+      debugger;
+    }
+  },
   methods: {
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
@@ -78,7 +84,6 @@ export default defineComponent({
       } catch (e) {
         this.$q.notify(`creator account for ${this.account} not found!`);
       }
-      console.log(data);
       this.availableTokens = data.tokens;
       const account = data.account;
       this.total = this.getAmount(account.core_liquid_balance);
@@ -137,9 +142,6 @@ export default defineComponent({
         .usd;
       const dollarAmount = telosPrice * parseFloat(this.total);
       this.totalValue = `$${dollarAmount.toFixed(2)} (@ $${telosPrice}/TLOS)`;
-    },
-    toggleSendDialog() {
-      this.openSendDialog = !this.openSendDialog;
     }
   }
 });
@@ -181,7 +183,7 @@ export default defineComponent({
           tr
             td.text-left REX
             td.text-right {{ rex }}
-    sendDialog(:openSendDialog = "openSendDialog" :callback= "toggleSendDialog" :availableTokens="availableTokens")
+    sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
 </template>
 
 <style lang="sass" scoped>
