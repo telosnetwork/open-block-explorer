@@ -26,9 +26,6 @@ export default defineComponent({
     ...mapMutations({
       setAccountName: 'account/setAccountName'
     })
-    // showWalletModal(): void {
-    //   this.showModal = !this.showModal;
-    // }
   }
 });
 </script>
