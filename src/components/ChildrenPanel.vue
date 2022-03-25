@@ -58,6 +58,7 @@ div.row.col-12.q-my-xs.justify-center.text-left
           q-space
       q-separator.row.col-12.q-mt-md.separator
       div.col-12.q-py-lg.row
+        div(v-if="children.length == 0 ") No children found
         div( v-for="child in children" :key="child" v-html="child").child
 
 </template>
