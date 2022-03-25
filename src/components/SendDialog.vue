@@ -126,7 +126,6 @@ export default defineComponent({
           })
         ).transactionId as string;
       } catch (e) {
-        debugger;
         this.transactionError = e;
       }
     },
@@ -152,6 +151,13 @@ export default defineComponent({
         amount: 0,
         contract: 'eosio.token'
       };
+    },
+    async navToTransaction() {
+      await this.$router.push({
+        name: 'transaction',
+        params: { transaction: this.transactionId as string }
+      });
+      this.$router.go(0);
     }
   }
 });
