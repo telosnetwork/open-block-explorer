@@ -111,13 +111,6 @@ describe('SendDialog', () => {
         expect(wrapper.vm.sendToken).toEqual(defaultToken);
       });
     });
-    describe('toggleCoinDialog', () => {
-      it('toggles coin diaglog boolean flag', () => {
-        expect(wrapper.vm.openCoinDialog).toBe(false);
-        wrapper.vm.toggleCoinDialog();
-        expect(wrapper.vm.openCoinDialog).toBe(true);
-      });
-    });
     describe('updateSelectedCoin', () => {
       it('sets current sendToken', () => {
         wrapper.vm.updateSelectedCoin(mockToken);
