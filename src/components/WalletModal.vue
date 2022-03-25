@@ -3,14 +3,11 @@ import { mapActions, mapGetters, mapMutations } from 'vuex';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'Wallet',
-  props: ['showModal'],
   data() {
     return {
       authenticators: {},
-      showLogin: false,
       error: null,
-      loading: {},
-      showWalletModal: false
+      loading: {}
     };
   },
   computed: {
@@ -28,7 +25,6 @@ export default defineComponent({
           account: this.account as string,
           authenticator
         });
-        this.showWalletModal = false;
         await this.$router.push({
           name: 'account',
           params: { account: this.account as string }
@@ -38,16 +34,11 @@ export default defineComponent({
         this.error = e;
       }
     }
-  },
-  watch: {
-    showModal(val: boolean) {
-      this.showWalletModal = val;
-    }
   }
 });
 </script>
 <template lang="pug">
-q-dialog.modal-container( v-model="showWalletModal" )
+q-dialog.modal-container
 
   .modal-header-container
     q-icon( name='add_circle_outline' size='2.5rem' color="white") 
