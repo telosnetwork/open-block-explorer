@@ -3,6 +3,7 @@ import { defineComponent } from 'vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 import TokensPanel from 'components/TokensPanel.vue';
 import KeysPanel from 'components/KeysPanel.vue';
+import ChildrenPanel from 'components/ChildrenPanel.vue';
 import AccountCard from 'components/AccountCard.vue';
 
 export default defineComponent({
@@ -17,6 +18,7 @@ export default defineComponent({
     TransactionsTable,
     TokensPanel,
     KeysPanel,
+    ChildrenPanel,
     AccountCard
   }
 });
@@ -39,6 +41,8 @@ div.row.col-12
         TokensPanel(:account='account')
       q-tab-panel(name="keys")
         KeysPanel(:account='account')
+      q-tab-panel(name="children")
+        ChildrenPanel(:account='account')
 </template>
 
 <style lang="sass">

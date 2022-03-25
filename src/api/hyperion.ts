@@ -55,3 +55,17 @@ export const getTransaction = async function (
   );
   return response.data.actions;
 };
+
+export const getChildren = async function (
+  address?: string
+): Promise<Action[]> {
+  const response = await hyperion.get<ActionData>('v2/history/get_actions', {
+    params: {
+      limit: 100,
+      account: address,
+      filter: 'eosio:newaccount',
+      skip: 0
+    }
+  });
+  return response.data.actions;
+};

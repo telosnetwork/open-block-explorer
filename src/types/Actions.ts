@@ -108,3 +108,11 @@ export interface Permission {
   required_auth: RequiredAuth;
   children: Permission[];
 }
+
+export interface NewAccountData {
+  active: RequiredAuth;
+  creator: string;
+  newact: string;
+  owner: RequiredAuth;
+  name: string;
+}

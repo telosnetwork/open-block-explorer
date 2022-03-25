@@ -9,7 +9,8 @@ import {
   getCreator,
   getTokens,
   getTransactions,
-  getTransaction
+  getTransaction,
+  getChildren
 } from './hyperion'; //  e.g. './new-service' method name stays the same
 import { getTableRows, getTokenBalances } from './eosio_core';
 
@@ -19,6 +20,7 @@ export const api = {
   getTokens,
   getTransactions,
   getTransaction,
+  getChildren,
   getTableRows,
   getTokenBalances
 };

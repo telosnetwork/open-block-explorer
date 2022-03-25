@@ -36,4 +36,5 @@ export type ApiClient = {
   getTokens: (address: string) => Promise<Token[]>;
   getTransactions: (address?: string) => Promise<Action[]>;
   getTransaction: (address: string) => Promise<Action[]>;
+  getChildren: (address: string) => Promise<Action[]>;
 };
