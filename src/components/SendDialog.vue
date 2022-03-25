@@ -31,7 +31,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
                   div AMOUNT
                   q-space
                   .color-grey-3 {{sendToken.amount}} AVAILABLE
-                q-input.full-width(standout="bg-deep-purple-2 text-white" v-model.number="sendAmount" :lazy-rules='true' :rules="[ val => val <= sendToken.amount || 'Invalid amount.' ]" type="number" dense dark)
+                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sendAmount" :lazy-rules='true' :rules="[ val => val <= sendToken.amount || 'Invalid amount.' ]" type="text" dense dark)
             .row
               .col-12
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
@@ -91,7 +91,7 @@ export default defineComponent({
     return {
       openCoinDialog: ref<boolean>(false),
       recievingAccount: ref<string>(''),
-      sendAmount: ref<number>(0),
+      sendAmount: ref<string>('0.0000'),
       memo: ref<string>(''),
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
@@ -154,6 +154,15 @@ export default defineComponent({
         params: { transaction: this.transactionId as string }
       });
       this.$router.go(0);
+    },
+    formatDec() {
+      debugger;
+      var formattedDec = Number(this.sendAmount).toLocaleString('en-US', {
+        style: 'decimal',
+        maximumFractionDigits: this.sendToken.precision,
+        minimumFractionDigits: this.sendToken.precision
+      });
+      this.sendAmount = formattedDec;
     }
   }
 });
