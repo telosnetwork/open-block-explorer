@@ -38,7 +38,7 @@ export interface Account {
   name: string;
 }
 
-interface Authorization {
+export interface Authorization {
   actor: string;
   permission: string;
 }
