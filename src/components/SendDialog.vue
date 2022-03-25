@@ -1,5 +1,5 @@
 <template lang="pug">
-q-dialog( v-model="openSendDialog" no-backdrop-dismiss @show='setDefaults')
+q-dialog( v-model="openSendDialog" no-backdrop-dismiss @show='setDefaults' @hide='resetForm')
   q-card.sendCard
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
@@ -9,8 +9,17 @@ q-dialog( v-model="openSendDialog" no-backdrop-dismiss @show='setDefaults')
           q-card-section 
             img.send-img.q-pr-md( src="~assets/send.svg")
             .text-h4.q-pb-md.inline-block.color-grey-3 Send Tokens
-        q-separator(dark)
-        q-card-section 
+        q-card-section(v-if='transactionId')
+          .row
+            .col-12 
+              .row You successfully sent {{ sendAmount }} {{ sendToken.symbol }} to {{ recievingAccount }}.
+              .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}            
+        q-card-section(v-if='transactionError')
+          .row
+            .col-12 
+              .row Transaction Failed: {{ transactionError }}
+        q-separator(dark v-if='transactionForm')
+        q-card-section(v-if='transactionForm')
           .row
             .col-12
               .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECIEVING ACCOUNT
@@ -48,7 +57,6 @@ import { defineComponent, PropType, ref } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 export default defineComponent({
   name: 'SendDialog',
@@ -62,7 +70,9 @@ export default defineComponent({
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
-      } as Token
+      } as Token,
+      transactionId: null,
+      transactionError: null
     };
   },
   props: {
@@ -89,11 +99,13 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapGetters({ account: 'account/accountName' })
+    ...mapGetters({ account: 'account/accountName' }),
+    transactionForm(): boolean {
+      return !(this.transactionError || this.transactionId);
+    }
   },
   methods: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async sendTransaction(): Promise<any> {
+    async sendTransaction(): Promise<void> {
       const actionAccount = this.sendToken.contract;
       const data = {
         from: this.account as string,
@@ -104,13 +116,19 @@ export default defineComponent({
       const authenticators =
         this.$ual.getAuthenticators().availableAuthenticators;
       const users = await authenticators[0].login();
-      let result = await this.signTransaction({
-        user: users[0],
-        account: actionAccount,
-        data
-      });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      console.log(result.transactionId);
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.transactionId = (
+          await this.signTransaction({
+            user: users[0],
+            account: actionAccount,
+            data
+          })
+        ).transactionId as string;
+      } catch (e) {
+        debugger;
+        this.transactionError = e;
+      }
     },
     setDefaults() {
       if (this.availableTokens.length > 0) {
@@ -119,11 +137,21 @@ export default defineComponent({
         });
       }
     },
-    toggleCoinDialog() {
+    toggleCoinDialog(): void {
       this.openCoinDialog = !this.openCoinDialog;
     },
-    updateSelectedCoin(token: Token) {
+    updateSelectedCoin(token: Token): void {
       this.sendToken = token;
+    },
+    resetForm() {
+      this.transactionId = null;
+      this.transactionError = null;
+      this.sendToken = {
+        symbol: 'TLOS',
+        precision: 4,
+        amount: 0,
+        contract: 'eosio.token'
+      };
     }
   }
 });
@@ -131,6 +159,13 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 $medium:750px
+
+.ellipsis-overflow
+  cursor: pointer
+  white-space: nowrap
+  text-overflow: ellipsis
+  display: block
+  overflow: hidden
 
 .q-markup-table
   width: 100%
