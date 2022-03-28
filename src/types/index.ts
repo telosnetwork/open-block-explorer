@@ -9,7 +9,9 @@ export {
   Token,
   AccountDetails,
   Permission,
-  NewAccountData
+  NewAccountData,
+  PermissionLinksData,
+  PermissionLinks
 } from './Actions';
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';

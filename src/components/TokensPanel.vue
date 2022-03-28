@@ -96,5 +96,4 @@ div.row.col-12.q-my-xs.justify-center.text-left
   border-radius: .2rem
   box-shadow: none
   padding: 0.5rem 0
-  max-width: 260px
 </style>

@@ -8,7 +8,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { ActionData, Action, AccountDetails, Token } from 'src/types';
+import {
+  ActionData,
+  Action,
+  AccountDetails,
+  Token,
+  PermissionLinksData,
+  PermissionLinks
+} from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
@@ -68,4 +75,18 @@ export const getChildren = async function (
     }
   });
   return response.data.actions;
+};
+
+export const getPermissionLinks = async function (
+  address?: string
+): Promise<PermissionLinks[]> {
+  const response = await hyperion.get<PermissionLinksData>(
+    'v2/state/get_links',
+    {
+      params: {
+        account: address
+      }
+    }
+  );
+  return response.data.links;
 };

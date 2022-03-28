@@ -107,6 +107,7 @@ export interface Permission {
   perm_name: string;
   required_auth: RequiredAuth;
   children: Permission[];
+  permission_links: PermissionLinks[];
 }
 
 export interface NewAccountData {
@@ -115,4 +116,23 @@ export interface NewAccountData {
   newact: string;
   owner: RequiredAuth;
   name: string;
+}
+
+export interface PermissionLinksData {
+  cached: boolean;
+  links: PermissionLinks[];
+  query_time_ms: number;
+  total: {
+    value: number;
+    relation: string;
+  };
+}
+
+export interface PermissionLinks {
+  account: string;
+  action: string;
+  block_num: number;
+  code: string;
+  permission: string;
+  timestamp: string;
 }

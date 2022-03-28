@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import { AccountDetails, Permission } from 'src/types';
+import { AccountDetails, Permission, PermissionLinks } from 'src/types';
 import PermissionCard from 'components/PermissionCard.vue';
 import { defineComponent } from 'vue';
 export default defineComponent({
@@ -32,13 +32,27 @@ export default defineComponent({
       let data: AccountDetails;
       try {
         data = await this.$api.getAccount(this.account);
-        console.log(data);
+        // console.log(data);
       } catch (e) {
         this.$q.notify(`Keys for account ${this.account} not found!`);
         return;
       }
       const permissions = data.account.permissions;
       // console.log(permissions);
+      let links: PermissionLinks[];
+      try {
+        links = await this.$api.getPermissionLinks(this.account);
+      } catch (e) {
+        this.$q.notify(
+          `Permission links for account ${this.account} not found!`
+        );
+        return;
+      }
+      console.log(links);
+      for (let p of permissions) {
+        p.permission_links = links.filter((l) => l.permission == p.perm_name);
+      }
+
       this.permission = this.sortPermissions(permissions);
     },
     sortPermissions(permissions: Permission[]) {
@@ -79,10 +93,10 @@ div.row.col-12.q-my-xs.justify-center.text-left
 <style lang="sass" scoped>
 .permissions-container
   overflow-x: auto
-  @media screen and (min-width: 800px) //screen > medium
-    display: flex
+  display: flex
+  @media screen and (min-width: 900px) //screen > medium
     justify-content: center
 
 .permissions
-  min-width: 800px
+  flex-shrink: 0
 </style>
