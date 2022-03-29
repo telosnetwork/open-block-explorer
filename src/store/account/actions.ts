@@ -62,5 +62,65 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       throw e;
     }
     return transaction;
+  },
+  async stake({}, { user, data }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'delegatebw',
+        authorization: [
+          {
+            actor: this.state.account.accountName,
+            permission: 'active'
+          }
+        ],
+        data: data as unknown
+      }
+    ];
+    try {
+      transaction = await (user as User).signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30
+        }
+      );
+    } catch (e) {
+      throw e;
+    }
+    return transaction;
+  },
+  async unstake({}, { user, data }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'undelegatebw',
+        authorization: [
+          {
+            actor: this.state.account.accountName,
+            permission: 'active'
+          }
+        ],
+        data: data as unknown
+      }
+    ];
+    try {
+      transaction = await (user as User).signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30
+        }
+      );
+    } catch (e) {
+      throw e;
+    }
+    return transaction;
   }
 };

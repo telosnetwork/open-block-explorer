@@ -1,4 +1,4 @@
-import { Authorization } from 'src/types';
+import { Authorization, AccountDetails } from 'src/types';
 
 export interface AccountStateInterface {
   loading: unknown;
@@ -6,7 +6,7 @@ export interface AccountStateInterface {
   autoLogin: unknown;
   isAuthenticated: boolean;
   linkedAccounts: Array<unknown>;
-  data: unknown;
+  data: AccountDetails;
   authorization: Authorization[];
 }
 
@@ -17,7 +17,7 @@ export function state(): AccountStateInterface {
     autoLogin: null,
     isAuthenticated: false,
     linkedAccounts: [],
-    data: {},
+    data: null,
     authorization: []
   };
 }
