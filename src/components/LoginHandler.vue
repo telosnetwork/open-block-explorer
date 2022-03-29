@@ -1,0 +1,43 @@
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { mapGetters, mapMutations } from 'vuex';
+import LoginHandlerDropdown from './LoginHandlerDropdown.vue';
+import WalletModal from './WalletModal.vue';
+
+export default defineComponent({
+  name: 'LoginHandler',
+  components: { LoginHandlerDropdown, WalletModal },
+  data() {
+    return {
+      showDropdown: false,
+      showModal: false
+    };
+  },
+  mounted() {
+    const storedAccount = localStorage.getItem('account');
+    if (storedAccount) {
+      this.setAccountName(storedAccount);
+    }
+  },
+  computed: {
+    ...mapGetters({ account: 'account/accountName' })
+  },
+  methods: {
+    ...mapMutations({
+      setAccountName: 'account/setAccountName'
+    })
+  }
+});
+</script>
+
+<template lang="pug">
+div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
+    LoginHandlerDropdown(v-if='account' :account='account')
+    q-btn.button-primary(v-else @click='showModal = true' label='Connect')
+    WalletModal( v-model='showModal')
+</template>
+
+<style lang="sass">
+.button-primary
+  width: 140px
+</style>

@@ -4,15 +4,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import axios from 'axios';
 import { AccountDetails, Token } from 'src/types';
-import { defineComponent } from 'vue';
-import { mapGetters, mapMutations } from 'vuex';
+import { defineComponent, computed, ref } from 'vue';
+import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
+import SendDialog from 'src/components/SendDialog.vue';
 
 export default defineComponent({
   name: 'AccountCard',
   components: {
-    PercentCircle
+    PercentCircle,
+    SendDialog
   },
   props: {
     account: {
@@ -34,20 +36,30 @@ export default defineComponent({
       none: '',
       system_account: 'eosio',
       zero: '0.00',
-      radius: 44
+      radius: 44,
+      availableTokens: <Token[]>[]
+    };
+  },
+  setup(props) {
+    const store = useStore();
+    return {
+      openSendDialog: ref<boolean>(false),
+      isAccount: computed((): boolean => {
+        return store.state.account.accountName === props.account;
+      }),
+      token: computed((): Token => store.state.chain.token),
+      setToken: (value: Token) => {
+        store.commit('chain/setToken', value);
+      }
     };
   },
   async mounted() {
     await this.loadSystemToken();
-    this.none = `${this.zero} ${(this.token as Token).symbol}`;
+    this.none = `${this.zero} ${this.token.symbol}`;
     await this.loadAccountData();
     await this.loadPriceData();
   },
-  computed: {
-    ...mapGetters({ token: 'chain/getToken' })
-  },
   methods: {
-    ...mapMutations({ setToken: 'chain/setToken' }),
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
@@ -65,6 +77,7 @@ export default defineComponent({
       } catch (e) {
         this.$q.notify(`creator account for ${this.account} not found!`);
       }
+      this.availableTokens = data.tokens;
       const account = data.account;
       this.total = this.getAmount(account.core_liquid_balance);
       this.refunding = this.getAmount(account.refund_request);
@@ -103,7 +116,7 @@ export default defineComponent({
       const stakedValue = (staked / Math.pow(10, this.token.precision)).toFixed(
         2
       );
-      return `${stakedValue} ${this.token.symbol as string}`;
+      return `${stakedValue} ${this.token.symbol}`;
     },
     formatResourcePercent(used: number, total: number): string {
       return ((used / total) * 100.0).toFixed(2);
@@ -131,15 +144,16 @@ export default defineComponent({
 .q-pa-md
   q-card.account-card
     q-card-section
+      q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount')
       .inline-section
         .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
           a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
         q-space
       .resources(v-if="account !== system_account")
-          PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
-          PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
-          PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
+        PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
+        PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
+        PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
     q-markup-table
       thead
         tr
@@ -150,7 +164,7 @@ export default defineComponent({
             td.text-left.total-label TOTAL 
             td.text-right.total-amount {{ total }} 
           tr.total-row
-            td
+            td.text-left 
             td.text-right.total-value {{ totalValue }}
           tr
           tr
@@ -162,6 +176,7 @@ export default defineComponent({
           tr
             td.text-left REX
             td.text-right {{ rex }}
+    sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
 </template>
 
 <style lang="sass" scoped>
@@ -214,7 +229,7 @@ $medium:750px
 
 .resources
   text-align: center
-  width: 18rem
+  width: 27rem
   margin: 1rem auto 0 auto
 
 .resource
@@ -265,4 +280,13 @@ $medium:750px
 
   .inline-section
     width: 100%
+
+.total-row
+  a
+    cursor: pointer
+    text-decoration: underline
+    color: white
+    font-size: 16px
+    font-family: Silka
+    font-weight: normal
 </style>

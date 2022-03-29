@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -8,7 +9,7 @@ import PercentCircle from 'src/components/PercentCircle.vue';
 
 installQuasarPlugin();
 
-let wrapper: VueWrapper;
+let wrapper: VueWrapper<any>;
 const push = jest.fn();
 
 const $router = {
@@ -29,41 +30,39 @@ describe('PercentCircle', () => {
   describe('computed', () => {
     describe('diameter', () => {
       it('returns twice the radius', () => {
-        const expectedVal = 2 * (wrapper.vm as any).radius;
-        expect((wrapper.vm as any).diameter).toBe(expectedVal);
+        const expectedVal = 2 * wrapper.vm.radius;
+        expect(wrapper.vm.diameter).toBe(expectedVal);
       });
     });
     describe('conatinerWidth', () => {
       it('returns diameter + 10', () => {
-        const expectedVal = ((wrapper.vm as any).diameter as number) + 10;
-        expect((wrapper.vm as any).containerWidth).toBe(expectedVal);
+        const expectedVal = (wrapper.vm.diameter as number) + 10;
+        expect(wrapper.vm.containerWidth).toBe(expectedVal);
       });
     });
     describe('strokeColor', () => {
       it('sets color to "white" if usage < 90', () => {
-        expect((wrapper.vm as any).strokeColor).toBe('white');
+        expect(wrapper.vm.strokeColor).toBe('white');
       });
       it('sets color to "red" if usage >= 90', async () => {
         await wrapper.setProps({
           percentage: 90
         });
-        expect((wrapper.vm as any).strokeColor).toBe('red');
+        expect(wrapper.vm.strokeColor).toBe('red');
       });
     });
     describe('circumference', () => {
       it('returns circumference (2 * pi * r)', () => {
         const PI = 3.1459;
-        const expectedVal = 2 * PI * (wrapper.vm as any).radius; //* (wrapper.vm as any).radius;
-        expect((wrapper.vm as any).circumference).toBe(expectedVal);
+        const expectedVal = 2 * PI * wrapper.vm.radius; //* (wrapper.vm as any).radius;
+        expect(wrapper.vm.circumference).toBe(expectedVal);
       });
     });
     describe('dashArray', () => {
       it('returnsthe scaled path based on radius', () => {
-        const circ = (wrapper.vm as any).circumference;
-        const scaled = ((wrapper.vm as any).percentage / 100) * circ;
-        expect((wrapper.vm as any).dashArray).toBe(
-          `${scaled}, ${circ as string}`
-        );
+        const circ = wrapper.vm.circumference;
+        const scaled = (wrapper.vm.percentage / 100) * circ;
+        expect(wrapper.vm.dashArray).toBe(`${scaled}, ${circ as string}`);
       });
     });
   });

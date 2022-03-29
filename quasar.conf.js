@@ -30,7 +30,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: ['axios', 'api'],
+    boot: ['axios', 'api', 'ual'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.sass'],
@@ -39,7 +39,7 @@ module.exports = configure(function (ctx) {
     extras: [
       // 'ionicons-v4',
       // 'mdi-v5',
-      // 'fontawesome-v5',
+       'fontawesome-v5',
       // 'eva-icons',
       // 'themify',
       // 'line-awesome',
@@ -81,6 +81,8 @@ module.exports = configure(function (ctx) {
           .use('pug-plain-loader')
           .loader('pug-plain-loader')
           .end();
+        const nodePolyfillWebpackPlugin = require('node-polyfill-webpack-plugin')
+        config.plugin('node-polyfill').use(nodePolyfillWebpackPlugin)
       }
     },
 
