@@ -74,6 +74,7 @@ svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`${-offset
 .circular-chart
   display: inline-block
   margin: 0 6px
+  width: 8rem
 
 .circle-bg
   fill: none

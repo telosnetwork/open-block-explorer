@@ -229,7 +229,7 @@ $medium:750px
 
 .resources
   text-align: center
-  width: 18rem
+  width: 27rem
   margin: 1rem auto 0 auto
 
 .resource
