@@ -121,29 +121,31 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
-      .col-xs-12.col-sm-8.col-md-7.col-lg-6
+      .col-xs-12.col-sm-10.col-md-7.col-lg-7
         .row
           q-card-section 
             img.send-img.q-pr-md( src="~assets/send.svg")
             .text-h4.q-pb-md.inline-block.color-grey-3 Manage Staking
         .q-pa-sm
           stakingInfo
-          .q-pt-md
+          .q-pt-lg
             q-tabs(
               v-model="tab" 
               dense class="text-grey"
               indicator-color="grey-3"
+              active-color="grey-3"
               narrow-indicator
               align="left"
               :breakpoint="0"
               no-caps
-              class="text-grey-3 tab-text")
+              class="text-grey-5 tab-text")
+              
 
               q-tab(name="stake" label="Stake") 
               q-tab(name="unstake" label="Unstake")
               q-tab(name="refund" label="Refund")
 
-            q-separator(dark)
+            q-separator(color="grey-8")
 
             q-tab-panels(v-model="tab" class="tab-panel")
               q-tab-panel(name="stake")

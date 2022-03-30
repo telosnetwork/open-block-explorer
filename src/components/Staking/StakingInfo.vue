@@ -65,26 +65,26 @@ export default defineComponent({
 <template lang="pug">
 .container
   .row.full-width
-    .row.full-width.q-pt-lg.q-px-lg
-      .col-6.text-h6 Account Total
-      .col-6.text-h6.text-right {{accountData.account?.core_liquid_balance}}
+    .row.full-width.q-pt-md.q-px-lg
+      .col-6.text-h6.grey-3 ACCOUNT TOTAL
+      .col-6.text-h6.text-right.grey-3 {{accountData.account?.core_liquid_balance}}
     .row.full-width.q-py-md
-      q-seperator(dark)
+      hr
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 STAKED TO CPU
-          .col-5.text-right {{accountData.account?.total_resources?.cpu_weight}}
+          .col-5.text-right.grey-3 {{accountData.account?.total_resources?.cpu_weight}}
         .row.q-pt-sm
           .col-7 STAKED TO NET
-          .col-5.text-right {{accountData.account?.total_resources?.net_weight}}
+          .col-5.text-right.grey-3 {{accountData.account?.total_resources?.net_weight}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 STAKED BY OTHERS
-          .col-5.text-right {{formatStaked(accountData.account?.voter_info?.staked)}}
+          .col-5.text-right.grey-3 {{formatStaked(accountData.account?.voter_info?.staked)}}
         .row.q-pt-sm
           .col-7 REFUNDING
-          .col-5.text-right {{formatTotalRefund(accountData.account?.refund_request)}}
+          .col-5.text-right.grey-3 {{formatTotalRefund(accountData.account?.refund_request)}}
 
 </template>
 
@@ -92,4 +92,15 @@ export default defineComponent({
 .container
   border: 2px solid $grey-3
   border-radius: 13px
+.grey-3
+  color: $grey-3
+hr
+  content: ""
+  display: block
+  width: 100%
+  border-size: 0.5rem
+  border : 0px
+  border-bottom: 1px solid $grey-8
+  margin-left: 1rem
+  margin-right: 1rem
 </style>
