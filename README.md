@@ -4,11 +4,11 @@
 
 The Open Block Explorer (OBE) is the first OPEN SOURCE block explorer that is designed to support all EOSIO-based blockchains. This includes, amongst others, the following public and private chains: Telos, EOS, WAX, Ultra, Proton, UX and FIO.
 
-The currently most utilized Telos and EOSIO based block explorers are feature-rich but closed source, which incorporates a high risk in case services are discontinued or access is restricted due to other reasons.
+Currently, the most-utilized Telos and EOSIO based block explorers are feature-rich but closed source, which incorporates a high risk in case services are discontinued or access is restricted due to other reasons.
 
-Since Telos has been put into a simular situtation for the native blockchain, the chain decided to initiate the OBE-Project which was kickstarted with resources of the [Telos Core Development (TCD)](https://www.telos.net) and further resources of the Telos Block Providers [Persiantelos](https://persiantelos.com) and [nodenode](https://www.nodenode.org) (Lead by Rami James who is recognized for his UX/UI work for the EOS signer and wallet [Scatter](https://github.com/GetScatter)). 
+Because creating multiple versions of closed-source, feature-rich block explorers is a poor use of development resources for the EOSIO community, Telos has undertaken to create a open-source, highly featured block explorer that any EOSIO blockchain may deploy. The OBE-Project which was kickstarted with resources of the [Telos Core Developers (TCD)](https://www.telos.net) (Strategy/Architecture: Douglas Horn [GoodBlock](https://goodblock.io), Technical Design: Jesse Schulman [CalEOS](https://caleos.io) and Project Direction: Kersten Werth) and further resources of the Telos Block Providers [Persiantelos](https://persiantelos.com) and [nodenode](https://www.nodenode.org) (Lead by Rami James who is recognized for his UX/UI work for the EOS signer and wallet [Scatter](https://github.com/GetScatter)). Significant additional development by Don Peat, CalEOS. 
 
-While the first iterations are driven by the Telos project team, we are welcoming anybody who wishes to contribute and actively develop this open source solution for the EOSIO ecosystem!
+This project's aim is to contribute valuable code to the entire community. If you wist to use it, please engage with this group rather than forking if possible. We are eager to accept useful pull requests and it is quite likely that whatever future developers may add will benefit many users of this codebase. While the first iterations are driven by the Telos Core Developers team, we are welcoming anybody who wishes to contribute and actively develop this open source solution for the EOSIO ecosystem!
 
 The Open Block Explorer codebase will benefit all EOSIO developers and chain by open sourcing a critical part of the infrastructure.
 
@@ -36,6 +36,7 @@ Following, excelent products can be taken as reference points for further featur
 - [EOS Authority](https://eosauthority.com/)
 - [Blocks](https://bloks.io/)
 - [EOSX](https://telos.eosx.io/)
+- [AJOR](https://ajor.io/)
 
 
 ## Currently in development  
