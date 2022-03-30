@@ -69,7 +69,7 @@ export default defineComponent({
         q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= 20 || 'Invalid amount.' ]" type="text" dense dark)
 
       .col-6.q-pl-md
-        .row.justify-between.q-pb-sm.q-gutter-x-sm TOKENS TO UnSTAKE TO NET
+        .row.justify-between.q-pb-sm.q-gutter-x-sm TOKENS TO UNSTAKE TO NET
         q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= 20 || 'Invalid amount.' ]" type="text" dense dark)
     .row
       .col-12.q-pt-md

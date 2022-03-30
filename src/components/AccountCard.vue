@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import axios from 'axios';
-import { AccountDetails, Token } from 'src/types';
+import { AccountDetails, Token, Refund } from 'src/types';
 import { defineComponent, computed, ref } from 'vue';
 import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
@@ -85,7 +85,7 @@ export default defineComponent({
       this.availableTokens = data.tokens;
       const account = data.account;
       this.total = this.getAmount(account.core_liquid_balance);
-      this.refunding = this.getAmount(account.refund_request);
+      this.refunding = this.formatTotalRefund(account.refund_request);
       this.staked = account.voter_info
         ? this.formatStaked(account.voter_info.staked)
         : this.none;
@@ -140,6 +140,23 @@ export default defineComponent({
         .usd;
       const dollarAmount = telosPrice * parseFloat(this.total);
       this.totalValue = `$${dollarAmount.toFixed(2)} (@ $${telosPrice}/TLOS)`;
+    },
+    formatTotalRefund(refund: Refund): string {
+      const totalRefund = (
+        this.assetToAmount(refund.cpu_amount, this.token.precision) +
+        this.assetToAmount(refund.net_amount, this.token.precision)
+      ).toFixed(2);
+      return `${totalRefund} ${this.token.symbol}`;
+    },
+    assetToAmount(asset: string, decimals = -1): number {
+      try {
+        let qty: string = asset.split(' ')[0];
+        let val: number = parseFloat(qty);
+        if (decimals > -1) qty = val.toFixed(decimals);
+        return val;
+      } catch (error) {
+        return 0;
+      }
     }
   }
 });

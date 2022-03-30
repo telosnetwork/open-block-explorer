@@ -17,7 +17,7 @@ export function state(): AccountStateInterface {
     autoLogin: null,
     isAuthenticated: false,
     linkedAccounts: [],
-    data: null,
+    data: {} as AccountDetails,
     authorization: []
   };
 }

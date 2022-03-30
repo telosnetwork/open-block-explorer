@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token } from 'src/types';
+import { AccountDetails, Token, Refund } from 'src/types';
 
 export default defineComponent({
   name: 'StakingInfo',
@@ -27,6 +27,25 @@ export default defineComponent({
       return `${stakedValue} ${token.value.symbol}`;
     }
 
+    function formatTotalRefund(refund: Refund): string {
+      const totalRefund = (
+        assetToAmount(refund?.cpu_amount, token.value.precision) +
+        assetToAmount(refund?.net_amount, token.value.precision)
+      ).toFixed(2);
+      return `${totalRefund} ${token.value.symbol}`;
+    }
+
+    function assetToAmount(asset: string, decimals = -1): number {
+      try {
+        let qty: string = asset.split(' ')[0];
+        let val: number = parseFloat(qty);
+        if (decimals > -1) qty = val.toFixed(decimals);
+        return val;
+      } catch (error) {
+        return 0;
+      }
+    }
+
     return {
       store,
       openCoinDialog,
@@ -36,7 +55,8 @@ export default defineComponent({
       total,
       accountData,
       token,
-      formatStaked
+      formatStaked,
+      formatTotalRefund
     };
   }
 });
@@ -47,24 +67,24 @@ export default defineComponent({
   .row.full-width
     .row.full-width.q-pt-lg.q-px-lg
       .col-6.text-h6 Account Total
-      .col-6.text-h6.text-right {{accountData.account.core_liquid_balance}}
+      .col-6.text-h6.text-right {{accountData.account?.core_liquid_balance}}
     .row.full-width.q-py-md
       q-seperator(dark)
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 STAKED TO CPU
-          .col-5.text-right {{accountData.account.total_resources.cpu_weight}}
+          .col-5.text-right {{accountData.account?.total_resources?.cpu_weight}}
         .row.q-pt-sm
           .col-7 STAKED TO NET
-          .col-5.text-right {{accountData.account.total_resources.net_weight}}
+          .col-5.text-right {{accountData.account?.total_resources?.net_weight}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 STAKED BY OTHERS
-          .col-5.text-right {{formatStaked(accountData.account.voter_info?.staked)}}
+          .col-5.text-right {{formatStaked(accountData.account?.voter_info?.staked)}}
         .row.q-pt-sm
           .col-7 REFUNDING
-          .col-5.text-right 100TLOS
+          .col-5.text-right {{formatTotalRefund(accountData.account?.refund_request)}}
 
 </template>
 

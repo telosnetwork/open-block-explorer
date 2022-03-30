@@ -61,7 +61,7 @@ export type AccountDetails = {
     privileged: boolean;
     ram_quota: number;
     ram_usage: number;
-    refund_request: null | string;
+    refund_request: Refund;
     rex_info: null | { vote_stake: string };
     subjective_cpu_bill_limit: Resource;
     total_resources: {
@@ -83,4 +83,11 @@ export interface Token {
   precision: number;
   amount: number;
   contract: string;
+}
+
+export interface Refund {
+  cpu_amount: string;
+  net_amount: string;
+  owner: string;
+  request_time: string;
 }
