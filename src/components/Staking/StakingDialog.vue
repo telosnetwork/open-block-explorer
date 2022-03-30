@@ -122,10 +122,9 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
       .absolute-top-right
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7
-        .row
-          q-card-section 
-            img.send-img.q-pr-md( src="~assets/send.svg")
-            .text-h4.q-pb-md.inline-block.color-grey-3 Manage Staking
+        .row.q-pl-sm
+          img.send-img.q-pr-md( src="~assets/cpu.svg" style="height: 60px; max-width: 60px") 
+          .text-h4.q-pb-md.inline-block.color-grey-3.inline Manage Staking
         .q-pa-sm
           stakingInfo
           .q-pt-lg
