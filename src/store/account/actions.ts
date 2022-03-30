@@ -122,5 +122,35 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       throw e;
     }
     return transaction;
+  },
+  async refund({}, { user, data }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'refund',
+        authorization: [
+          {
+            actor: this.state.account.accountName,
+            permission: 'active'
+          }
+        ],
+        data: data as unknown
+      }
+    ];
+    try {
+      transaction = await (user as User).signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30
+        }
+      );
+    } catch (e) {
+      throw e;
+    }
+    return transaction;
   }
 };
