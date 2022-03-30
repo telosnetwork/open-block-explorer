@@ -54,7 +54,6 @@ export default defineComponent({
     };
   },
   async mounted() {
-    debugger;
     await this.loadSystemToken();
     this.none = `${this.zero} ${this.token.symbol}`;
     await this.loadAccountData();
@@ -64,10 +63,8 @@ export default defineComponent({
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
-        debugger;
         data = await this.$api.getAccount(this.account);
       } catch (e) {
-        debugger;
         this.ram = this.cpu = this.net = this.zero;
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
@@ -134,7 +131,6 @@ export default defineComponent({
       this.$router.go(0);
     },
     async loadPriceData(): Promise<void> {
-      debugger;
       const telosPrice: number = (await axios.get(exchangeStatsUrl)).data.telos
         .usd;
       const dollarAmount = telosPrice * parseFloat(this.total);
