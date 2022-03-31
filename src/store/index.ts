@@ -10,6 +10,8 @@ import { contract } from './contract';
 import { ContractStateInterface } from './contract/state';
 import { chain } from './chain';
 import { ChainStateInterface } from './chain/state';
+import { account } from './account';
+import { AccountStateInterface } from './account/state';
 
 /*
  * If not building with SSR mode, you can
@@ -24,6 +26,7 @@ export interface StateInterface {
   // Define your own store structure, using submodules if needed
   contract: ContractStateInterface;
   chain: ChainStateInterface;
+  account: AccountStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -41,7 +44,8 @@ export default store(function () {
   const Store = createStore<StateInterface>({
     modules: {
       contract,
-      chain
+      chain,
+      account
     },
 
     // enable strict mode (adds overhead!)

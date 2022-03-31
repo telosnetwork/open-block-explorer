@@ -4,15 +4,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import axios from 'axios';
 import { AccountDetails, Token } from 'src/types';
-import { defineComponent } from 'vue';
-import { mapGetters, mapMutations } from 'vuex';
+import { defineComponent, computed, ref } from 'vue';
+import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
+import SendDialog from 'src/components/SendDialog.vue';
 
 export default defineComponent({
   name: 'AccountCard',
   components: {
-    PercentCircle
+    PercentCircle,
+    SendDialog
   },
   props: {
     account: {
@@ -22,38 +24,55 @@ export default defineComponent({
   },
   data() {
     return {
+      MICRO_UNIT: Math.pow(10, -6),
+      KILO_UNIT: Math.pow(10, 3),
+      cpu_used: 0,
+      cpu_max: 0,
+      net_used: 0,
+      net_max: 0,
+      ram_used: 0,
+      ram_max: 0,
       creatingAccount: '',
+      liquid: '',
       total: '',
       totalValue: '',
       refunding: '',
       staked: '',
       rex: '',
-      ram: '',
-      cpu: '',
-      net: '',
       none: '',
       system_account: 'eosio',
-      zero: '0.00',
-      radius: 44
+      zero: 0.0,
+      radius: 44,
+      availableTokens: <Token[]>[]
+    };
+  },
+  setup(props) {
+    const store = useStore();
+    return {
+      openSendDialog: ref<boolean>(false),
+      isAccount: computed((): boolean => {
+        return store.state.account.accountName === props.account;
+      }),
+      token: computed((): Token => store.state.chain.token),
+      setToken: (value: Token) => {
+        store.commit('chain/setToken', value);
+      }
     };
   },
   async mounted() {
     await this.loadSystemToken();
-    this.none = `${this.zero} ${(this.token as Token).symbol}`;
+    this.none = `${this.zero.toFixed(this.token.precision)} ${
+      this.token.symbol
+    }`;
     await this.loadAccountData();
     await this.loadPriceData();
   },
-  computed: {
-    ...mapGetters({ token: 'chain/getToken' })
-  },
   methods: {
-    ...mapMutations({ setToken: 'chain/setToken' }),
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
         data = await this.$api.getAccount(this.account);
       } catch (e) {
-        this.ram = this.cpu = this.net = this.zero;
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;
@@ -65,27 +84,35 @@ export default defineComponent({
       } catch (e) {
         this.$q.notify(`creator account for ${this.account} not found!`);
       }
+      this.availableTokens = data.tokens;
       const account = data.account;
-      this.total = this.getAmount(account.core_liquid_balance);
+      this.ram_used = account.ram_usage / this.KILO_UNIT;
+      this.ram_max = account.ram_quota / this.KILO_UNIT;
+      this.cpu_used = parseFloat(
+        (account.cpu_limit.used * this.MICRO_UNIT).toFixed(6)
+      );
+      this.cpu_max = parseFloat(
+        (account.cpu_limit.max * this.MICRO_UNIT).toFixed(6)
+      );
+      this.net_used = account.net_limit.used / this.KILO_UNIT;
+      this.net_max = account.net_limit.max / this.KILO_UNIT;
+      this.liquid = this.getAmount(account.core_liquid_balance);
+      if (account.rex_info) {
+        const liqNum = account.core_liquid_balance.split(' ')[0];
+        const rexNum = account.rex_info.vote_stake.split(' ')[0];
+        const totalString = (parseFloat(liqNum) + parseFloat(rexNum)).toFixed(
+          this.token.precision
+        );
+        this.total = `${totalString} ${this.token.symbol}`;
+        this.rex = account.rex_info.vote_stake;
+      } else {
+        this.total = this.liquid;
+        this.rex = this.none;
+      }
       this.refunding = this.getAmount(account.refund_request);
       this.staked = account.voter_info
         ? this.formatStaked(account.voter_info.staked)
         : this.none;
-      this.rex = account.rex_info ? account.rex_info.vote_stake : this.none;
-      if (this.account !== this.system_account) {
-        this.ram = this.formatResourcePercent(
-          account.ram_usage,
-          account.ram_quota
-        );
-        this.cpu = this.formatResourcePercent(
-          account.cpu_limit.used,
-          account.cpu_limit.max
-        );
-        this.net = this.formatResourcePercent(
-          account.net_limit.used,
-          account.net_limit.max
-        );
-      }
     },
     async loadSystemToken(): Promise<void> {
       if (this.token.symbol === '') {
@@ -101,12 +128,9 @@ export default defineComponent({
     },
     formatStaked(staked: number): string {
       const stakedValue = (staked / Math.pow(10, this.token.precision)).toFixed(
-        2
+        this.token.precision
       );
-      return `${stakedValue} ${this.token.symbol as string}`;
-    },
-    formatResourcePercent(used: number, total: number): string {
-      return ((used / total) * 100.0).toFixed(2);
+      return `${stakedValue} ${this.token.symbol}`;
     },
     async loadCreatorAccount(): Promise<void> {
       await this.$router.push({
@@ -131,15 +155,16 @@ export default defineComponent({
 .q-pa-md
   q-card.account-card
     q-card-section
+      q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount')
       .inline-section
         .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
           a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
         q-space
       .resources(v-if="account !== system_account")
-          PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
-          PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
-          PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
+        PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='s')
+        PercentCircle(:radius='radius' :fraction='net_used' :total='net_max' label='NET' unit='kb')
+        PercentCircle(:radius='radius' :fraction='ram_used' :total='ram_max' label='RAM' unit='kb')
     q-markup-table
       thead
         tr
@@ -147,21 +172,25 @@ export default defineComponent({
         tbody.table-body
           tr
           tr
-            td.text-left.total-label TOTAL 
+            td.text-left.total-label TOTAL
             td.text-right.total-amount {{ total }} 
           tr.total-row
-            td
+            td.text-left 
             td.text-right.total-value {{ totalValue }}
           tr
           tr
             td.text-left REFUNDING
             td.text-right {{ refunding }}
           tr
+            td.text-left LIQUID
+            td.text-right {{ liquid }}
+          tr
             td.text-left STAKED BY OTHERS
             td.text-right {{ staked }}
           tr
             td.text-left REX
             td.text-right {{ rex }}
+    sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
 </template>
 
 <style lang="sass" scoped>
@@ -214,7 +243,7 @@ $medium:750px
 
 .resources
   text-align: center
-  width: 18rem
+  width: 100%
   margin: 1rem auto 0 auto
 
 .resource
@@ -265,4 +294,13 @@ $medium:750px
 
   .inline-section
     width: 100%
+
+.total-row
+  a
+    cursor: pointer
+    text-decoration: underline
+    color: white
+    font-size: 16px
+    font-family: Silka
+    font-weight: normal
 </style>

@@ -26,7 +26,7 @@ div.row.col-12
 
 <style lang="sass">
 .account-card
-  width: 648px
+  width: 550px
   border-radius: .5rem
   margin-top: 1rem
   margin-left: auto

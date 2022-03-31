@@ -10,7 +10,6 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/account/:account',
     name: 'account',
-    props: true,
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
