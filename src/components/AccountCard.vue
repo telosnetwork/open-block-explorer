@@ -33,6 +33,7 @@ export default defineComponent({
       ram_used: 0,
       ram_max: 0,
       creatingAccount: '',
+      liquid: '',
       total: '',
       totalValue: '',
       refunding: '',
@@ -40,7 +41,7 @@ export default defineComponent({
       rex: '',
       none: '',
       system_account: 'eosio',
-      zero: '0.00',
+      zero: 0.0,
       radius: 44,
       availableTokens: <Token[]>[]
     };
@@ -60,7 +61,9 @@ export default defineComponent({
   },
   async mounted() {
     await this.loadSystemToken();
-    this.none = `${this.zero} ${this.token.symbol}`;
+    this.none = `${this.zero.toFixed(this.token.precision)} ${
+      this.token.symbol
+    }`;
     await this.loadAccountData();
     await this.loadPriceData();
   },
@@ -85,16 +88,31 @@ export default defineComponent({
       const account = data.account;
       this.ram_used = account.ram_usage / this.KILO_UNIT;
       this.ram_max = account.ram_quota / this.KILO_UNIT;
-      this.cpu_used = account.cpu_limit.used * this.MICRO_UNIT;
-      this.cpu_max = account.cpu_limit.max * this.MICRO_UNIT;
+      this.cpu_used = parseFloat(
+        (account.cpu_limit.used * this.MICRO_UNIT).toFixed(6)
+      );
+      this.cpu_max = parseFloat(
+        (account.cpu_limit.max * this.MICRO_UNIT).toFixed(6)
+      );
       this.net_used = account.net_limit.used / this.KILO_UNIT;
       this.net_max = account.net_limit.max / this.KILO_UNIT;
-      this.total = this.getAmount(account.core_liquid_balance);
+      this.liquid = this.getAmount(account.core_liquid_balance);
+      if (account.rex_info) {
+        const liqNum = account.core_liquid_balance.split(' ')[0];
+        const rexNum = account.rex_info.vote_stake.split(' ')[0];
+        const totalString = (parseFloat(liqNum) + parseFloat(rexNum)).toFixed(
+          this.token.precision
+        );
+        this.total = `${totalString} ${this.token.symbol}`;
+        this.rex = account.rex_info.vote_stake;
+      } else {
+        this.total = this.liquid;
+        this.rex = this.none;
+      }
       this.refunding = this.getAmount(account.refund_request);
       this.staked = account.voter_info
         ? this.formatStaked(account.voter_info.staked)
         : this.none;
-      this.rex = account.rex_info ? account.rex_info.vote_stake : this.none;
     },
     async loadSystemToken(): Promise<void> {
       if (this.token.symbol === '') {
@@ -110,7 +128,7 @@ export default defineComponent({
     },
     formatStaked(staked: number): string {
       const stakedValue = (staked / Math.pow(10, this.token.precision)).toFixed(
-        2
+        this.token.precision
       );
       return `${stakedValue} ${this.token.symbol}`;
     },
@@ -154,7 +172,7 @@ export default defineComponent({
         tbody.table-body
           tr
           tr
-            td.text-left.total-label AVAILABLE
+            td.text-left.total-label TOTAL
             td.text-right.total-amount {{ total }} 
           tr.total-row
             td.text-left 
@@ -163,6 +181,9 @@ export default defineComponent({
           tr
             td.text-left REFUNDING
             td.text-right {{ refunding }}
+          tr
+            td.text-left LIQUID
+            td.text-right {{ liquid }}
           tr
             td.text-left STAKED BY OTHERS
             td.text-right {{ staked }}
