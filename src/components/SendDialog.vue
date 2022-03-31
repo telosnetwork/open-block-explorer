@@ -42,6 +42,11 @@ export default defineComponent({
     ...mapGetters({ account: 'account/accountName' }),
     transactionForm(): boolean {
       return !(this.transactionError || this.transactionId);
+    },
+    validated(): boolean {
+      return (
+        parseFloat(this.sendAmount) > 0 && this.recievingAccount.length > 0
+      );
     }
   },
   methods: {
@@ -98,11 +103,13 @@ export default defineComponent({
       this.$router.go(0);
     },
     formatDec() {
-      this.sendAmount = Number(this.sendAmount).toLocaleString('en-US', {
+      let amount = Number(this.sendAmount);
+      this.sendAmount = amount.toLocaleString('en-US', {
         style: 'decimal',
         maximumFractionDigits: this.sendToken.precision,
         minimumFractionDigits: this.sendToken.precision
       });
+      this.sendAmount = this.sendAmount.replace(/[^0-9.]/g, '');
     }
   }
 });
@@ -141,7 +148,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
                   div AMOUNT
                   q-space
                   .color-grey-3 {{sendToken.amount}} AVAILABLE
-                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sendAmount" :lazy-rules='true' :rules="[ val => val <= sendToken.amount || 'Invalid amount.' ]" type="text" dense dark)
+                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken.amount || "invalid amount" ]' type="text" dense dark)
             .row
               .col-12
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
@@ -150,7 +157,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
             .row
               .col-12.q-pt-md
                 .row.justify-between.q-px-sm.q-pb-lg.q-gutter-x-sm Your wallet must be open to allow authorization of this transaction.
-                q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )
+                q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" :disabled='!validated')
         .transaction-result(v-else)
           q-card-section(v-if='transactionId')
             .row
@@ -167,6 +174,11 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
 
 <style lang="sass" scoped>
 $medium:750px
+
+.button-accent
+  &:disabled
+    cursor: not-allowed
+    pointer-events: none
 
 .close-dialog
   width: 100%
