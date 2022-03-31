@@ -77,12 +77,12 @@ div.chart-container
     )
     text.text.label( 
       x="18"
-      :y="radius - 8"
+      :y="radius - offset"
     ) {{ label }} 
     text.text.percentage(
       v-if='!Number.isNaN(formatResourcePercent)'
       x="20"
-      :y="radius + 10" 
+      :y="radius + 12" 
     ) {{ formatResourcePercent }}%
   p.text.usage USED: {{ this.fraction }}{{ this.unit }}
   p.text.usage TOTAL: {{ this.total }}{{ this.unit }}

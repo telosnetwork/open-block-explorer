@@ -24,6 +24,8 @@ export default defineComponent({
   },
   data() {
     return {
+      MICRO_UNIT: Math.pow(10, -6),
+      KILO_UNIT: Math.pow(10, 3),
       cpu_used: 0,
       cpu_max: 0,
       net_used: 0,
@@ -81,12 +83,12 @@ export default defineComponent({
       }
       this.availableTokens = data.tokens;
       const account = data.account;
-      this.ram_used = account.ram_usage;
-      this.ram_max = account.ram_quota;
-      this.cpu_used = account.cpu_limit.used;
-      this.cpu_max = account.cpu_limit.max;
-      this.net_used = account.net_limit.used;
-      this.net_max = account.net_limit.max;
+      this.ram_used = account.ram_usage / this.KILO_UNIT;
+      this.ram_max = account.ram_quota / this.KILO_UNIT;
+      this.cpu_used = account.cpu_limit.used * this.MICRO_UNIT;
+      this.cpu_max = account.cpu_limit.max * this.MICRO_UNIT;
+      this.net_used = account.net_limit.used / this.KILO_UNIT;
+      this.net_max = account.net_limit.max / this.KILO_UNIT;
       this.total = this.getAmount(account.core_liquid_balance);
       this.refunding = this.getAmount(account.refund_request);
       this.staked = account.voter_info
@@ -142,9 +144,9 @@ export default defineComponent({
           a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
         q-space
       .resources(v-if="account !== system_account")
-        PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='μs')
-        PercentCircle(:radius='radius' :fraction='net_used' :total='net_max' label='NET' unit='b')
-        PercentCircle(:radius='radius' :fraction='ram_used' :total='ram_max' label='RAM' unit='b')
+        PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='s')
+        PercentCircle(:radius='radius' :fraction='net_used' :total='net_max' label='NET' unit='kb')
+        PercentCircle(:radius='radius' :fraction='ram_used' :total='ram_max' label='RAM' unit='kb')
     q-markup-table
       thead
         tr
@@ -152,7 +154,7 @@ export default defineComponent({
         tbody.table-body
           tr
           tr
-            td.text-left.total-label TOTAL 
+            td.text-left.total-label AVAILABLE
             td.text-right.total-amount {{ total }} 
           tr.total-row
             td.text-left 
