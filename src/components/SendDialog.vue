@@ -104,14 +104,12 @@ export default defineComponent({
     },
     formatDec() {
       let amount = Number(this.sendAmount);
-      // if (isNaN(amount) || amount < 0 || amount > this.sendToken.amount) {
-      //   amount = 0;
-      // }
       this.sendAmount = amount.toLocaleString('en-US', {
         style: 'decimal',
         maximumFractionDigits: this.sendToken.precision,
         minimumFractionDigits: this.sendToken.precision
       });
+      this.sendAmount = this.sendAmount.replace(/[^0-9.]/g, '');
     }
   }
 });
