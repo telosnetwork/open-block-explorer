@@ -73,9 +73,11 @@ export default defineComponent({
         ).transactionId as string;
       } catch (e) {
         this.transactionError = e;
+        this.resetForm();
       }
     },
     setDefaults() {
+      this.transactionError = null;
       if (this.availableTokens.length > 0) {
         this.sendToken = this.availableTokens.find((token) => {
           return token.symbol === this.sendToken.symbol;
@@ -87,7 +89,6 @@ export default defineComponent({
     },
     resetForm() {
       this.transactionId = null;
-      this.transactionError = null;
       this.sendToken = {
         symbol: 'TLOS',
         precision: 4,
