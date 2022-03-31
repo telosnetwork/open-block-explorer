@@ -232,12 +232,12 @@ $medium:750px
     border-width: 0
 
 .inline-section
-  width:100%
+  width: 100%
   display: inline-block
 
 .resources
   text-align: center
-  width: 18rem
+  width: 100%
   margin: 1rem auto 0 auto
 
 .resource

@@ -24,15 +24,18 @@ export default defineComponent({
   },
   data() {
     return {
+      cpu_used: 0,
+      cpu_max: 0,
+      net_used: 0,
+      net_max: 0,
+      ram_used: 0,
+      ram_max: 0,
       creatingAccount: '',
       total: '',
       totalValue: '',
       refunding: '',
       staked: '',
       rex: '',
-      ram: '',
-      cpu: '',
-      net: '',
       none: '',
       system_account: 'eosio',
       zero: '0.00',
@@ -65,7 +68,6 @@ export default defineComponent({
       try {
         data = await this.$api.getAccount(this.account);
       } catch (e) {
-        this.ram = this.cpu = this.net = this.zero;
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;
@@ -79,26 +81,18 @@ export default defineComponent({
       }
       this.availableTokens = data.tokens;
       const account = data.account;
+      this.ram_used = account.ram_usage;
+      this.ram_max = account.ram_quota;
+      this.cpu_used = account.cpu_limit.used;
+      this.cpu_max = account.cpu_limit.max;
+      this.net_used = account.net_limit.used;
+      this.net_max = account.net_limit.max;
       this.total = this.getAmount(account.core_liquid_balance);
       this.refunding = this.getAmount(account.refund_request);
       this.staked = account.voter_info
         ? this.formatStaked(account.voter_info.staked)
         : this.none;
       this.rex = account.rex_info ? account.rex_info.vote_stake : this.none;
-      if (this.account !== this.system_account) {
-        this.ram = this.formatResourcePercent(
-          account.ram_usage,
-          account.ram_quota
-        );
-        this.cpu = this.formatResourcePercent(
-          account.cpu_limit.used,
-          account.cpu_limit.max
-        );
-        this.net = this.formatResourcePercent(
-          account.net_limit.used,
-          account.net_limit.max
-        );
-      }
     },
     async loadSystemToken(): Promise<void> {
       if (this.token.symbol === '') {
@@ -117,9 +111,6 @@ export default defineComponent({
         2
       );
       return `${stakedValue} ${this.token.symbol}`;
-    },
-    formatResourcePercent(used: number, total: number): string {
-      return ((used / total) * 100.0).toFixed(2);
     },
     async loadCreatorAccount(): Promise<void> {
       await this.$router.push({
@@ -151,9 +142,9 @@ export default defineComponent({
           a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
         q-space
       .resources(v-if="account !== system_account")
-        PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
-        PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
-        PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
+        PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='μs')
+        PercentCircle(:radius='radius' :fraction='net_used' :total='net_max' label='NET' unit='b')
+        PercentCircle(:radius='radius' :fraction='ram_used' :total='ram_max' label='RAM' unit='b')
     q-markup-table
       thead
         tr
@@ -229,7 +220,7 @@ $medium:750px
 
 .resources
   text-align: center
-  width: 27rem
+  width: 100%
   margin: 1rem auto 0 auto
 
 .resource
