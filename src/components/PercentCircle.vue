@@ -84,9 +84,9 @@ div.chart-container
       x="20"
       :y="radius + 12" 
     ) {{ formatResourcePercent }}%
-  p.text.usage USED: {{ this.fraction }}{{ this.unit }}
-  p.text.usage TOTAL: {{ this.total }}{{ this.unit }}
-  p.text.usage AVAILABLE: {{ this.total - this.fraction }}{{ this.unit }}
+  p.text.usage USED: {{ this.fraction }} {{ this.unit }}
+  p.text.usage TOTAL: {{ this.total }} {{ this.unit }}
+  p.text.usage AVAILABLE: {{ this.total - this.fraction }} {{ this.unit }}
 </template>
 
 <style lang="sass" scoped>
