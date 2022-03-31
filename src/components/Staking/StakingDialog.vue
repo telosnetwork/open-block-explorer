@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue';
-import { Token } from 'src/types';
+import { Token, AccountDetails } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
 import StakingInfo from 'src/components/Staking/StakingInfo.vue';
@@ -110,7 +110,19 @@ export default defineComponent({
         maximumFractionDigits: this.sendToken.precision,
         minimumFractionDigits: this.sendToken.precision
       });
+    },
+    async loadAccountData(): Promise<void> {
+      let data: AccountDetails;
+      try {
+        data = await this.$api.getAccount(this.account);
+        this.$store.commit('account/setAccountData', data);
+      } catch (e) {
+        return;
+      }
     }
+  },
+  async mounted() {
+    await this.loadAccountData();
   }
 });
 </script>

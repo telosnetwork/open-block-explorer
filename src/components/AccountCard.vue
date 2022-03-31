@@ -143,8 +143,8 @@ export default defineComponent({
     },
     formatTotalRefund(refund: Refund): string {
       const totalRefund = (
-        this.assetToAmount(refund.cpu_amount, this.token.precision) +
-        this.assetToAmount(refund.net_amount, this.token.precision)
+        this.assetToAmount(refund?.cpu_amount, this.token.precision) +
+        this.assetToAmount(refund?.net_amount, this.token.precision)
       ).toFixed(2);
       return `${totalRefund} ${this.token.symbol}`;
     },

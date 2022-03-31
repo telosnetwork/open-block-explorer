@@ -3,11 +3,16 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { AccountDetails, Token, Refund } from 'src/types';
 import { mapActions } from 'vuex';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
 
 export default defineComponent({
   name: 'RefundTab',
+  components: {
+    ViewTransaction
+  },
   setup() {
     const store = useStore();
+    const openTransaction = ref<boolean>(false);
     const stakingAccount = ref<string>('');
     const total = ref<string>('0.0000');
     const progress = ref<number>(0.2);
@@ -46,7 +51,9 @@ export default defineComponent({
       let diff =
         Math.round(
           new Date(
-            accountData.value.account.refund_request.request_time
+            new Date(
+              accountData.value.account?.refund_request?.request_time + 'Z'
+            ).toUTCString()
           ).getTime() / 1000
         ) +
         259200 -
@@ -59,11 +66,13 @@ export default defineComponent({
       let diff =
         Math.round(
           new Date(
-            accountData.value.account.refund_request.request_time
+            new Date(
+              accountData.value.account?.refund_request?.request_time + 'Z'
+            )
           ).getTime() / 1000
         ) +
         259200 -
-        Math.round(new Date(new Date().toUTCString()).getTime() / 1000);
+        Math.round(new Date(new Date().toISOString()).getTime() / 1000);
       if (diff > 0) {
         var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
           hours = component(diff, 60 * 60) % 24; // hours
@@ -71,7 +80,7 @@ export default defineComponent({
         // seconds = component(diff, 1) % 60;// seconds
         return `${days} days, ${hours} hours remaining`;
       } else {
-        return 'No time remaning';
+        return 'No pending refund';
       }
     }
 
@@ -81,6 +90,7 @@ export default defineComponent({
 
     return {
       store,
+      openTransaction,
       stakingAccount,
       total,
       accountData,
@@ -97,6 +107,7 @@ export default defineComponent({
   },
   methods: {
     async sendTransaction(): Promise<void> {
+      this.transactionError = '';
       const data = {
         owner: this.accountData.account.account_name,
         transfer: false
@@ -114,6 +125,17 @@ export default defineComponent({
         ).transactionId as string;
       } catch (e) {
         this.transactionError = e;
+      }
+      await this.loadAccountData();
+      this.openTransaction = true;
+    },
+    async loadAccountData(): Promise<void> {
+      let data: AccountDetails;
+      try {
+        data = await this.$api.getAccount(this.stakingAccount);
+        this.$store.commit('account/setAccountData', data);
+      } catch (e) {
+        return;
       }
     }
   }
@@ -133,10 +155,10 @@ export default defineComponent({
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-6 CPU REFUND
-            .col-6.text-right.grey-3 {{accountData.account?.refund_request.cpu_amount}}
+            .col-6.text-right.grey-3 {{accountData.account?.refund_request?.cpu_amount || '0'}}
           .row.q-pt-md
             .col-6 NET REFUND
-            .col-6.text-right.grey-3 {{accountData.account?.refund_request.net_amount}}
+            .col-6.text-right.grey-3 {{accountData.account?.refund_request?.net_amount || '0'}}
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-7 {{refundCountdown()}}
@@ -149,6 +171,7 @@ export default defineComponent({
                   
             .col-5.text-right.grey-3
               q-btn.full-width.button-accent(label="Refund" flat @click="sendTransaction" )
+    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
 
