@@ -9,12 +9,15 @@ import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 import SendDialog from 'src/components/SendDialog.vue';
+import DateField from 'src/components/DateField.vue';
+import { date } from 'quasar';
 
 export default defineComponent({
   name: 'AccountCard',
   components: {
     PercentCircle,
-    SendDialog
+    SendDialog,
+    DateField
   },
   props: {
     account: {
@@ -48,7 +51,10 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
+    const createTime = ref<string>('2019-01-01T00:00:00.000');
     return {
+      createTime: createTime,
+      createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
       isAccount: computed((): boolean => {
         return store.state.account.accountName === props.account;
@@ -56,7 +62,10 @@ export default defineComponent({
       token: computed((): Token => store.state.chain.token),
       setToken: (value: Token) => {
         store.commit('chain/setToken', value);
-      }
+      },
+      createTimeFormat: computed((): string =>
+        date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
+      )
     };
   },
   async mounted() {
@@ -78,9 +87,10 @@ export default defineComponent({
         return;
       }
       try {
-        this.creatingAccount = (
-          await this.$api.getCreator(this.account)
-        ).creator;
+        const creatorData = await this.$api.getCreator(this.account);
+        this.creatingAccount = creatorData.creator;
+        this.createTime = creatorData.timestamp;
+        this.createTransaction = creatorData.trx_id;
       } catch (e) {
         this.$q.notify(`creator account for ${this.account} not found!`);
       }
@@ -140,6 +150,15 @@ export default defineComponent({
       });
       this.$router.go(0);
     },
+    async loadCreatorTransaction(): Promise<void> {
+      await this.$router.push({
+        name: 'transaction',
+        params: {
+          transaction: this.createTransaction
+        }
+      });
+      this.$router.go(0);
+    },
     async loadPriceData(): Promise<void> {
       const telosPrice: number = (await axios.get(exchangeStatsUrl)).data.telos
         .usd;
@@ -157,8 +176,15 @@ export default defineComponent({
       q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount')
       .inline-section
         .text-title {{ account }}
-        .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
-          a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
+        .text-subtitle(v-if="creatingAccount !== '__self__'") created by
+          span &nbsp;
+            a( @click='loadCreatorAccount') {{ creatingAccount }}
+          span &nbsp;
+          div
+            DateField( :timestamp="createTime", showAge ) &nbsp;
+            q-tooltip {{createTimeFormat}}
+          a(class="q-ml-xs" @click='loadCreatorTransaction').tx-link
+            q-icon( name="fas fa-link")
         q-space
       .resources(v-if="account !== system_account")
         PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='s')
@@ -306,4 +332,7 @@ $medium:750px
     font-size: 16px
     font-family: Silka
     font-weight: normal
+
+.tx-link
+  text-decoration: none !important
 </style>
