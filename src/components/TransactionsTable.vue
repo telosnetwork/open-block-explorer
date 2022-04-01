@@ -5,7 +5,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import {
-  Account,
   Action,
   PaginationSettings,
   TransactionTableRow,
@@ -208,50 +207,55 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
                 q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
         q-separator.row.col-12.q-mt-md.separator
-        q-table.q-mt-lg.col-12.row.fixed-layout(
-            :rows="rows"
-            :columns="columns"
-            row-key="name"
-            flat
-            :bordered="false"
-            :square="true"
-            table-header-class="table-header"
-            v-model:pagination="paginationSettings"
-            v-model:expanded="expanded"
-            :hide-pagination="!hasPages"
-            @update:expanded='updateExpanded'
-            )
-          template( v-slot:body-cell-transaction="props")
-            q-td( :props="props" )
-              div(v-html="props.value")
-          template( v-slot:body-cell-timestamp="props")
-            q-td( :props="props" )
-              DateField( :timestamp="props.value", showAge=true )
-          template( v-slot:body-cell-action="props")
-            q-td( :props="props" )
-              div(v-html="props.value").row.justify-left
-          template( v-slot:body-cell-data="props")
-            q-td( :props="props"  )
-              div(v-html="props.value" :class="{'row-expanded': props.expand  }")
-              //- q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" @click="props.expand = !props.expand" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
-          template( v-slot:pagination="scope")
-            div.row.col-12.q-mt-md.q-mb-xl()
-            div.col-1(align="left")
-              q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-                :disable="scope.isFirstPage"
-                @click="scope.prevPage") PREV
-            q-space
-            div.col-1(align="right")
-              q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-                :disable="scope.isLastPage"
-                @click="scope.nextPage") NEXT
+        div.row.col-12.table-container
+          q-table.q-mt-lg.row.fixed-layout(
+              :rows="rows"
+              :columns="columns"
+              row-key="name"
+              flat
+              :bordered="false"
+              :square="true"
+              table-header-class="table-header"
+              v-model:pagination="paginationSettings"
+              v-model:expanded="expanded"
+              :hide-pagination="!hasPages"
+              @update:expanded='updateExpanded'
+              )
+            template( v-slot:body-cell-transaction="props")
+              q-td( :props="props" )
+                div(v-html="props.value")
+            template( v-slot:body-cell-timestamp="props")
+              q-td( :props="props" )
+                DateField( :timestamp="props.value", showAge=true )
+            template( v-slot:body-cell-action="props")
+              q-td( :props="props" )
+                div(v-html="props.value").row.justify-left
+            template( v-slot:body-cell-data="props")
+              q-td( :props="props"  )
+                div(v-html="props.value" :class="{'row-expanded': props.expand  }")
+                //- q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" @click="props.expand = !props.expand" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
+            template( v-slot:pagination="scope")
+              div.row.col-12.q-mt-md.q-mb-xl()
+              div.col-1(align="left")
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                  :disable="scope.isFirstPage"
+                  @click="scope.prevPage") PREV
+              q-space
+              div.col-1(align="right")
+                q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                  :disable="scope.isLastPage"
+                  @click="scope.nextPage") NEXT
 </template>
 
 <style lang="sass">
 $medium:750px
 
+.table-container
+  overflow-x: auto
+
 .fixed-layout
   .q-table
+    min-width: 1000px
     table-layout: fixed
     tbody td
       vertical-align: text-top
@@ -319,22 +323,21 @@ body
     align-items: center
   .memo-card-memo
     padding: 0.5rem
-    word-break: normal
 
-@media screen and (max-width: $medium) // screen < $medium
-  .fixed-layout
-    .q-table
-      table-layout: fixed
-      tbody td:first-child
-        word-break: break-all
-      th:first-child
-        width: 25%
-      th:nth-child(2)
-        width: 25%
-      th:nth-child(3)
-        width: 25%
-      th:nth-child(4)
-        width: 25%
-  .filter-buttons
-    width: 100% !important
+// @media screen and (max-width: $medium) // screen < $medium
+//   .fixed-layout
+//     .q-table
+//       table-layout: fixed
+//       tbody td:first-child
+//         word-break: break-all
+//       th:first-child
+//         width: 25%
+//       th:nth-child(2)
+//         width: 25%
+//       th:nth-child(3)
+//         width: 25%
+//       th:nth-child(4)
+//         width: 25%
+//   .filter-buttons
+//     width: 100% !important
 </style>
