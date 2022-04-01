@@ -12,7 +12,8 @@ export {
   NewAccountData,
   PermissionLinksData,
   PermissionLinks,
-  Authorization
+  Authorization,
+  TransferData
 } from './Actions';
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';

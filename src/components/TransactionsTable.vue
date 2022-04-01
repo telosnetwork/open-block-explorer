@@ -8,7 +8,8 @@ import {
   Account,
   Action,
   PaginationSettings,
-  TransactionTableRow
+  TransactionTableRow,
+  TransferData
 } from 'src/types';
 import { defineComponent } from 'vue';
 import DateField from 'src/components/DateField.vue';
@@ -101,8 +102,11 @@ export default defineComponent({
               name: tx.trx_id,
               transaction: this.formatAccount(tx.trx_id, 'transaction'),
               timestamp: tx['@timestamp'],
-              action: this.formatAction(tx.act),
-              data: this.formatData(tx.act.data).replace('<br>', '')
+              action: this.formatAction(tx),
+              data: this.formatData(tx.act.data, tx.act.name).replace(
+                '<br>',
+                ''
+              )
             } as TransactionTableRow)
         );
       }
@@ -111,14 +115,54 @@ export default defineComponent({
       name: string,
       type: 'account' | 'transaction' | 'block'
     ): string {
-      return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
+      return `<a href="/${type}/${name}" class="hover-dec">${
+        type === 'transaction' ? name.slice(0, 8) : name
+      }</a>`;
     },
-    formatAction(txAct: Account): string {
-      const accountString = this.formatAccount(txAct.account, 'account');
-      return `${accountString}&nbsp; → &nbsp;${txAct.name}`;
+    formatAction(tx: Action): string {
+      let divClass = '';
+      let divContent = '';
+      if (tx.act.name === 'transfer') {
+        const data = tx.act.data as TransferData;
+        if (data.from === this.account) {
+          divContent = 'SEND';
+          divClass = 'action-send';
+        } else {
+          divContent = 'RECEIVE';
+          divClass = 'action-receive';
+        }
+      } else {
+        const accountString = this.formatAccount(tx.act.account, 'account');
+        divContent = `${accountString}&nbsp; → &nbsp;${tx.act.name}`;
+        divClass = 'action-general';
+      }
+      return `<div class="action ${divClass}">${divContent}</div>`;
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    formatData(data: any): string {
+    formatData(data: any, actionName: string): string {
+      if (actionName === 'transfer') {
+        const transferData = data as TransferData;
+        transferData.from = this.formatAccount(transferData.from, 'account');
+        transferData.to = this.formatAccount(transferData.to, 'account');
+        return `
+        <div class="row">
+          <div class="col-12">
+            <span class="text-bold">${transferData.from}</span>&nbsp; → &nbsp;
+            <span class="text-bold">${transferData.to}</span>&nbsp; ${transferData.quantity}
+          </div>
+          <div class="memo-card">
+            <div class="memo-card-title">
+              MEMO
+            </div>
+            <div class="memo-card-memo">
+              ${transferData.memo}
+            </div>
+          </div>
+        </div>
+        `;
+      } else return this.formatGeneralData(data);
+    },
+    formatGeneralData(data: any) {
       const accountRegEx = /^(account|to|from|owner|account_name|voter)$/;
       const formattedData = [];
       for (let key in data) {
@@ -129,11 +173,11 @@ export default defineComponent({
           if (Array.isArray(data[key])) {
             const keyValArray = [];
             for (let i = 0; i < data[key].length; i++) {
-              keyValArray.push(this.formatData(data[key][i]));
+              keyValArray.push(this.formatGeneralData(data[key][i]));
             }
             data[key] = keyValArray.join('\n');
           } else {
-            data[key] = this.formatData(data[key]);
+            data[key] = this.formatGeneralData(data[key]);
           }
         }
         formattedData.push(`<br><b>${key}</b>: ${data[key]}`);
@@ -185,11 +229,11 @@ div.row.col-12.q-mt-xs.justify-center.text-left
               DateField( :timestamp="props.value", showAge=true )
           template( v-slot:body-cell-action="props")
             q-td( :props="props" )
-              div(v-html="props.value")
+              div(v-html="props.value").row.justify-left
           template( v-slot:body-cell-data="props")
             q-td( :props="props"  )
               div(v-html="props.value" :class="{'row-expanded': props.expand  }")
-              q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" @click="props.expand = !props.expand" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
+              //- q-icon.expand-icon(v-if="checkIsMultiLine(props.value)" @click="props.expand = !props.expand" :name="props.expand ? 'expand_less' : 'expand_more'" size='.75rem')
           template( v-slot:pagination="scope")
             div.row.col-12.q-mt-md.q-mb-xl()
             div.col-1(align="left")
@@ -209,23 +253,25 @@ $medium:750px
 .fixed-layout
   .q-table
     table-layout: fixed
+    tbody td
+      vertical-align: text-top
     tbody td:first-child
       word-break: break-all
     th:first-child
-      width: 35%
+      width: 12%
     th:nth-child(2)
       width: 15%
     th:nth-child(3)
-      width: 20%
-    th:nth-child(4)
       width: 25%
+    th:nth-child(4)
+      width: 48%
 
 .q-table--no-wrap td
   word-break: break-all
   white-space: unset
 
 .q-table td div
-  max-height: 22px
+  // max-height: 22px
   overflow-y: clip
   transition: max-height 0.5s cubic-bezier(0, 1, 0, 1)
 
@@ -248,6 +294,32 @@ body
   text-decoration: none
   &:hover
     text-decoration: underline
+
+.action
+  // margin: 0.5rem 0
+  padding: 0 0.5rem
+  &.action-send,&.action-receive
+    background: rgba(196, 196, 196, 0.3)
+    font-weight: bold
+  &.action-general
+    border: 0.1rem solid rgba(196, 196, 196, 0.3)
+
+.memo-card
+  background: #8A65D41A
+
+  flex-grow: 1
+  display: flex
+  .memo-card-title
+    padding: 0.5rem
+    background: #8A65D41A
+    font-weight: bold
+    flex-shrink: 0
+    display: flex
+    justify-content: center
+    align-items: center
+  .memo-card-memo
+    padding: 0.5rem
+    word-break: normal
 
 @media screen and (max-width: $medium) // screen < $medium
   .fixed-layout

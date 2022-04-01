@@ -136,3 +136,12 @@ export interface PermissionLinks {
   permission: string;
   timestamp: string;
 }
+
+export interface TransferData {
+  from: string;
+  to: string;
+  amount: number;
+  symbol: string;
+  memo: string;
+  quantity: number;
+}
