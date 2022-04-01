@@ -86,16 +86,12 @@ export default defineComponent({
       }
       this.availableTokens = data.tokens;
       const account = data.account;
-      this.ram_used = account.ram_usage / this.KILO_UNIT;
-      this.ram_max = account.ram_quota / this.KILO_UNIT;
-      this.cpu_used = parseFloat(
-        (account.cpu_limit.used * this.MICRO_UNIT).toFixed(6)
-      );
-      this.cpu_max = parseFloat(
-        (account.cpu_limit.max * this.MICRO_UNIT).toFixed(6)
-      );
-      this.net_used = account.net_limit.used / this.KILO_UNIT;
-      this.net_max = account.net_limit.max / this.KILO_UNIT;
+      this.ram_used = this.fixDec(account.ram_usage / this.KILO_UNIT);
+      this.ram_max = this.fixDec(account.ram_quota / this.KILO_UNIT);
+      this.cpu_used = this.fixDec(account.cpu_limit.used * this.MICRO_UNIT);
+      this.cpu_max = this.fixDec(account.cpu_limit.max * this.MICRO_UNIT);
+      this.net_used = this.fixDec(account.net_limit.used / this.KILO_UNIT);
+      this.net_max = this.fixDec(account.net_limit.max / this.KILO_UNIT);
       this.liquid = this.getAmount(account.core_liquid_balance);
       if (account.rex_info) {
         const liqNum = account.core_liquid_balance.split(' ')[0];
@@ -123,14 +119,17 @@ export default defineComponent({
         this.setToken(token);
       }
     },
-    getAmount(property: undefined | string): string {
-      return property ? property : `${this.none}`;
+    fixDec(val: number): number {
+      return parseFloat(val.toFixed(3));
     },
     formatStaked(staked: number): string {
       const stakedValue = (staked / Math.pow(10, this.token.precision)).toFixed(
         this.token.precision
       );
       return `${stakedValue} ${this.token.symbol}`;
+    },
+    getAmount(property: undefined | string): string {
+      return property ? property : `${this.none}`;
     },
     async loadCreatorAccount(): Promise<void> {
       await this.$router.push({
@@ -154,7 +153,7 @@ export default defineComponent({
 <template lang="pug">
 .q-pa-md
   q-card.account-card
-    q-card-section
+    q-card-section.resources-container
       q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount')
       .inline-section
         .text-title {{ account }}
@@ -230,6 +229,10 @@ $medium:750px
 
     &.total-row
       height: 48px
+
+.resources-container
+  padding: 0
+  margin-bottom: 1rem
 
 .table-body
   width: 100%
