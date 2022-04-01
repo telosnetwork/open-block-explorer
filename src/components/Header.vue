@@ -1,9 +1,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
+import LoginHandler from 'components/LoginHandler.vue';
 
 export default defineComponent({
   name: 'Header',
+  components: { LoginHandler },
   data() {
     return {
       tab: 'Network',
@@ -11,9 +13,6 @@ export default defineComponent({
     };
   },
   methods: {
-    clicked() {
-      console.log('connect btn clicked');
-    },
     /* temp search check if possible tx or account, replace with results list rendering */
     async executeSearch(input: KeyboardEvent): Promise<void> {
       if (input != null) {
@@ -61,37 +60,32 @@ export default defineComponent({
 
 <template lang="pug">
 div.header-background
-    div.row.text-center.q-pt-sm
-        div.logo-container.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
-          a( href="/")
-           img.logo( src="~assets/telos_logo.svg")
-
-        div.search-container.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-            div.row.justify-center  
-                q-input.col-12.search-input.q-pl-md(
-                  borderless 
-                  dense 
-                  label-color="white"  
-                  color="white" 
-                  :input-style="{ color: 'white' }"
-                  v-model="search" 
-                  label="Search"
-                  @keyup.enter="executeSearch" 
-                  )
-                    template(v-slot:prepend)
-                        q-icon.search-icon(name="search" color="white" size="20px")
-
-        div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm.temp-hide
-            q-btn.button-primary(@click='clicked()' label="Connect")
-
-    div.row.justify-center.col-12.q-pt-sm
-        q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
-          q-route-tab.deactive.active-tab(name="network" label="Network" to='/').temp-hide
-          q-route-tab.deactive(name="wallet" label="Wallet" to="{ name: 'account', params: {account: /* store account getter */} }").temp-hide
-          q-route-tab.deactive(name="vote" label="Vote" to='/vote').temp-hide
-          q-route-tab.deactive(name="proposal"  label="Proposal" to='/proposal').temp-hide
-          q-route-tab.deactive(name="explore" label="Explore" to='/explore').temp-hide
-
+  div.row.text-center.q-pt-sm
+    div.logo-container.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
+      a( href="/")
+        img.logo( src="~assets/telos_logo.svg")
+    div.search-container.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
+      div.row.justify-center  
+        q-input.col-12.search-input.q-pl-md(
+          borderless 
+          dense 
+          label-color="white"  
+          color="white" 
+          :input-style="{ color: 'white' }"
+          v-model="search" 
+          label="Search"
+          @keyup.enter="executeSearch" 
+        )
+          template(v-slot:prepend)
+            q-icon.search-icon(name="search" color="white" size="20px")
+    LoginHandler
+  div.row.justify-center.col-12.q-pt-sm
+    q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
+      q-route-tab.deactive.active-tab(name="network" label="Network" to='/').temp-hide
+      q-route-tab.deactive(name="wallet" label="Wallet" to="{ name: 'account', params: {account: /* store account getter */} }").temp-hide
+      q-route-tab.deactive(name="vote" label="Vote" to='/vote').temp-hide
+      q-route-tab.deactive(name="proposal"  label="Proposal" to='/proposal').temp-hide
+      q-route-tab.deactive(name="explore" label="Explore" to='/explore').temp-hide
 </template>
 
 <style lang="sass" scoped>
@@ -109,6 +103,7 @@ $medium:750px
     height:54px
 
 .search-container
+  width: 60%
   margin-left: 1rem
 
 .header-items
