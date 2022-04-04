@@ -74,7 +74,7 @@ div.row.col-12.q-my-xs.justify-center.text-left
               q-item-section
                 div(v-html="token.contract")
                 div.text-bold {{`${token.amount} ${token.symbol}`}}
-                div ≈ $0.00  
+                //- div ≈ $0.00  
                 // TODO Get USD value from oracle
 </template>
 <style lang="sass" scoped>
