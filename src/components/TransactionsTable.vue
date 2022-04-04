@@ -161,6 +161,7 @@ export default defineComponent({
         `;
       } else return this.formatGeneralData(data);
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     formatGeneralData(data: any) {
       const accountRegEx = /^(account|to|from|owner|account_name|voter)$/;
       const formattedData = [];
