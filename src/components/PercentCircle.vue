@@ -58,6 +58,9 @@ export default defineComponent({
     },
     fractionUnits(): string {
       return `${this.fraction}${this.unit}/${this.total}${this.unit}`;
+    },
+    available(): string {
+      return (this.total - this.fraction).toFixed(3);
     }
   }
 });
@@ -86,7 +89,7 @@ div.chart-container
     ) {{ formatResourcePercent }}%
   p.text.usage USED: {{ this.fraction }} {{ this.unit }}
   p.text.usage TOTAL: {{ this.total }} {{ this.unit }}
-  p.text.usage AVAILABLE: {{ this.total - this.fraction }} {{ this.unit }}
+  p.text.usage AVAILABLE: {{ available }} {{ this.unit }}
 </template>
 
 <style lang="sass" scoped>
