@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { ActionData, Action, AccountDetails, Token } from 'src/types';
+import { ActionData, Action, AccountDetails, Token, Userres } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
@@ -54,4 +54,17 @@ export const getTransaction = async function (
     }
   );
   return response.data.actions;
+};
+
+export const getTableByScope = async function (
+  account: string
+): Promise<Userres[]> {
+  const response = await hyperion.post('v1/chain/get_table_by_scope', {
+    code: 'eosio',
+    limit: 5,
+    lower_bound: account,
+    table: 'userres',
+    upper_bound: account.padEnd(12, 'z')
+  });
+  return response.data.rows;
 };

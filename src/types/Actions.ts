@@ -84,3 +84,11 @@ export interface Token {
   amount: number;
   contract: string;
 }
+
+export interface Userres {
+  code: string;
+  scope: string;
+  table: string;
+  payer: string;
+  count: number;
+}

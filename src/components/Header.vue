@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
+import { ref } from 'vue';
 
 export default defineComponent({
   name: 'Header',
@@ -8,6 +9,25 @@ export default defineComponent({
     return {
       tab: 'Network',
       search: ''
+    };
+  },
+  setup() {
+    const selected = ref<string>(null);
+    const options = ref<string[]>([]);
+
+    return {
+      selected,
+      options,
+      setModel(val: string) {
+        selected.value = val;
+      },
+      /* eslint-disable  @typescript-eslint/ban-types */
+      filterFn(val: string, update: Function) {
+        update(() => {
+          console.log(val);
+        });
+      }
+      /* eslint-enable  @typescript-eslint/ban-types */
     };
   },
   methods: {
@@ -54,7 +74,28 @@ export default defineComponent({
           }
         }
       }
+    },
+    async getOptions(val: string): Promise<void> {
+      console.log(val);
+      this.selected = val;
+      if (this.selected != null) {
+        var account: string;
+        try {
+          account = this.selected.toLowerCase();
+          const value = await this.$api.getTableByScope(account);
+          this.options = [];
+          value.forEach((user) => {
+            this.options.push(user.payer);
+          });
+          console.log(this.options);
+        } catch (e) {
+          return;
+        }
+      }
     }
+  },
+  async mounted() {
+    await this.getOptions('');
   }
 });
 </script>
@@ -67,20 +108,30 @@ div.header-background
            img.logo( src="~assets/telos_logo.svg")
 
         div.search-container.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-            div.row.justify-center  
-                q-input.col-12.search-input.q-pl-md(
-                  borderless 
-                  dense 
-                  label-color="white"  
-                  color="white" 
-                  :input-style="{ color: 'white' }"
-                  v-model="search" 
-                  label="Search"
-                  @keyup.enter="executeSearch" 
-                  )
-                    template(v-slot:prepend)
-                        q-icon.search-icon(name="search" color="white" size="20px")
-
+          div.row.justify-center 
+            q-select.col-12.q-pl-md(
+              borderless 
+              dense 
+              color="white"
+              label-color="black"
+              filled
+              :model-value="selected"
+              use-input
+              hide-selected
+              fill-input
+              clearable
+              dark
+              input-debounce="0"
+              @filter="filterFn"
+              :options="options"
+              @update="executeSearch"
+              @keyup.enter="executeSearch" 
+              :input-style="{ color: 'white' }"
+              @click="executeSearch"
+              @input-value="getOptions")
+                template(v-slot:prepend)
+                q-icon.search-icon(name="search" color="white" size="20px")
+                  
         div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm.temp-hide
             q-btn.button-primary(@click='clicked()' label="Connect")
 
@@ -137,4 +188,5 @@ $medium:750px
 
   .search-container
     width: 60%
+    color: white
 </style>
