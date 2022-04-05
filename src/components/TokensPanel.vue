@@ -8,8 +8,6 @@ import { Token } from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'TokensPanel',
-  // components: {
-  // },
   props: {
     account: {
       type: String,
@@ -26,13 +24,10 @@ export default defineComponent({
   async mounted() {
     await this.loadTokens();
   },
-  // computed: {
-  // },
   methods: {
     async loadTokens(): Promise<void> {
       // TODO Refactor redundant getTokens in AccountCard
       const tokenList = await this.$api.getTokens(this.account);
-      // console.log(tokenList);
       this.tokens = tokenList.map(
         (token) =>
           ({
@@ -43,7 +38,6 @@ export default defineComponent({
           } as Token)
       );
       this.tokens = this.tokens.filter((token) => token.amount !== null);
-      // console.log(this.tokens);
     },
     // TODO Refactor duplicate function in TransactionsTable
     formatAccount(
@@ -74,7 +68,6 @@ div.row.col-12.q-my-xs.justify-center.text-left
               q-item-section
                 div(v-html="token.contract")
                 div.text-bold {{`${token.amount} ${token.symbol}`}}
-                //- div ≈ $0.00  
                 // TODO Get USD value from oracle
 </template>
 <style lang="sass" scoped>

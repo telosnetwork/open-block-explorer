@@ -27,13 +27,11 @@ export default defineComponent({
       let data: AccountDetails;
       try {
         data = await this.$api.getAccount(this.account);
-        // console.log(data);
       } catch (e) {
         this.$q.notify(`Keys for account ${this.account} not found!`);
         return;
       }
       const permissions = data.account.permissions;
-      // console.log(permissions);
       let links: PermissionLinks[];
       try {
         links = await this.$api.getPermissionLinks(this.account);
@@ -43,7 +41,6 @@ export default defineComponent({
         );
         return;
       }
-      console.log(links);
       for (let p of permissions) {
         p.permission_links = links.filter((l) => l.permission == p.perm_name);
       }
@@ -58,7 +55,6 @@ export default defineComponent({
       const getChildren = (parent: Permission, perms: Permission[]) => {
         // Get children
         let children = perms.filter((p) => p.parent === parent.perm_name);
-        // console.log(children);
         // Set children's children
         for (let child of children) {
           child.children = getChildren(child, perms);
@@ -67,7 +63,6 @@ export default defineComponent({
       };
 
       result.children = getChildren(result, permissions);
-      // console.log(result);
       return result;
     }
   }

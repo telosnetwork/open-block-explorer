@@ -24,7 +24,6 @@ export default defineComponent({
       let data: Action[];
       try {
         data = await this.$api.getChildren(this.account);
-        // console.log(data);
       } catch (e) {
         this.$q.notify(`Keys for account ${this.account} not found!`);
         return;
@@ -32,7 +31,6 @@ export default defineComponent({
       this.children = data.map((el) =>
         this.formatAccount((el.act.data as NewAccountData).newact, 'account')
       );
-      // console.log(this.children);
     },
     // TODO Refactor
     formatAccount(
@@ -45,16 +43,13 @@ export default defineComponent({
 });
 </script>
 <template lang="pug">
-div.row.col-12.q-my-xs.justify-center.text-left
-    div.row.col-11
-      div.row.col-12.q-mt-lg
-          div 
-              p.panel-title Children
-          q-space
-      q-separator.row.col-12.q-mt-md.separator
-      div.col-12.q-py-lg.row
-        div(v-if="children.length == 0 ") No children found
-        div( v-for="child in children" :key="child" v-html="child").child
+div.row.col-12.q-mt-lg.q-mb-xs.q-px-xl.justify-center.text-left
+  p.panel-title Children
+  q-space
+  q-separator.row.col-12.q-mt-md.separator
+  div.col-12.q-py-lg.row
+    div(v-if="children.length == 0 ") No children found
+    .child( v-for="child in children" :key="child" v-html="child")
 
 </template>
 
