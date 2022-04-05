@@ -1,9 +1,4 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { Token } from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
@@ -37,7 +32,9 @@ export default defineComponent({
             contract: this.formatAccount(token.contract, 'account')
           } as Token)
       );
-      this.tokens = this.tokens.filter((token) => token.amount !== null);
+      this.tokens = this.tokens.filter(
+        (token) => (token as Token).amount !== null
+      );
     },
     // TODO Refactor duplicate function in TransactionsTable
     formatAccount(
