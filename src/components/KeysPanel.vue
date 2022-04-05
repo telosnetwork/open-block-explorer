@@ -76,7 +76,7 @@ div.row.col-12.q-my-xs.justify-center.text-left
               p.panel-title Keys and Permissions 
           q-space
       q-separator.row.col-12.q-mt-md.separator
-      div.col-12.q-py-lg.permissions-container
+      .permissions-container.col-12.q-py-lg
         permission-card(:permission="permission" :depth="0").permissions
 
 </template>
