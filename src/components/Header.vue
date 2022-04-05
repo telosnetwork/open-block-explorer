@@ -109,18 +109,16 @@ div.header-background
 
         div.search-container.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
           div.row.justify-center 
-            q-select.col-12.q-pl-md(
+            q-select.col-12.search-input(
               borderless 
               dense 
-              color="white"
-              label-color="black"
               filled
               :model-value="selected"
+              label-color="white"  
+              color="black"
               use-input
               hide-selected
               fill-input
-              clearable
-              dark
               input-debounce="0"
               @filter="filterFn"
               :options="options"
@@ -130,7 +128,7 @@ div.header-background
               @click="executeSearch"
               @input-value="getOptions")
                 template(v-slot:prepend)
-                q-icon.search-icon(name="search" color="white" size="20px")
+                  q-icon.search-icon(name="search" color="white" size="20px")
                   
         div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm.temp-hide
             q-btn.button-primary(@click='clicked()' label="Connect")
