@@ -1,9 +1,4 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { Action, NewAccountData } from 'src/types';
 import { defineComponent } from 'vue';
 export default defineComponent({
