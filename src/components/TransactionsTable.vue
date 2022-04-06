@@ -125,10 +125,13 @@ export default defineComponent({
         const data = tx.act.data as TransferData;
         if (data.from === this.account) {
           divContent = 'SEND';
-          divClass = 'action-send';
-        } else {
+          divClass = 'action-transfer';
+        } else if (data.to === this.account) {
           divContent = 'RECEIVE';
-          divClass = 'action-receive';
+          divClass = 'action-transfer';
+        } else {
+          divContent = 'TRANSFER';
+          divClass = 'action-transfer';
         }
       } else {
         const accountString = this.formatAccount(tx.act.account, 'account');
@@ -303,7 +306,7 @@ body
 .action
   // margin: 0.5rem 0
   padding: 0 0.5rem
-  &.action-send,&.action-receive
+  &.action-transfer
     background: rgba(196, 196, 196, 0.3)
     font-weight: bold
   &.action-general
