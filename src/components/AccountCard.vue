@@ -18,7 +18,7 @@ export default defineComponent({
   components: {
     PercentCircle,
     SendDialog,
-    StakingDialog
+    StakingDialog,
     DateField
   },
   props: {
@@ -87,8 +87,6 @@ export default defineComponent({
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
         console.log(e);
-        this.ram = this.cpu = this.net = this.zero;
-
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;
