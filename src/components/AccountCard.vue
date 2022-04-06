@@ -10,6 +10,8 @@ import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import StakingDialog from 'src/components/Staking/StakingDialog.vue';
+import DateField from 'src/components/DateField.vue';
+import { date } from 'quasar';
 
 export default defineComponent({
   name: 'AccountCard',
@@ -17,6 +19,7 @@ export default defineComponent({
     PercentCircle,
     SendDialog,
     StakingDialog
+    DateField
   },
   props: {
     account: {
@@ -26,25 +29,34 @@ export default defineComponent({
   },
   data() {
     return {
+      MICRO_UNIT: Math.pow(10, -6),
+      KILO_UNIT: Math.pow(10, 3),
+      cpu_used: 0,
+      cpu_max: 0,
+      net_used: 0,
+      net_max: 0,
+      ram_used: 0,
+      ram_max: 0,
       creatingAccount: '',
+      liquid: '',
       total: '',
       totalValue: '',
       refunding: '',
       staked: '',
       rex: '',
-      ram: '',
-      cpu: '',
-      net: '',
       none: '',
       system_account: 'eosio',
-      zero: '0.00',
+      zero: 0.0,
       radius: 44,
       availableTokens: <Token[]>[]
     };
   },
   setup(props) {
     const store = useStore();
+    const createTime = ref<string>('2019-01-01T00:00:00.000');
     return {
+      createTime: createTime,
+      createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
       openStakingDialog: ref<boolean>(false),
       isAccount: computed((): boolean => {
@@ -53,12 +65,17 @@ export default defineComponent({
       token: computed((): Token => store.state.chain.token),
       setToken: (value: Token) => {
         store.commit('chain/setToken', value);
-      }
+      },
+      createTimeFormat: computed((): string =>
+        date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
+      )
     };
   },
   async mounted() {
     await this.loadSystemToken();
-    this.none = `${this.zero} ${this.token.symbol}`;
+    this.none = `${this.zero.toFixed(this.token.precision)} ${
+      this.token.symbol
+    }`;
     await this.loadAccountData();
     await this.loadPriceData();
   },
@@ -71,39 +88,44 @@ export default defineComponent({
       } catch (e) {
         console.log(e);
         this.ram = this.cpu = this.net = this.zero;
+
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;
       }
       try {
-        this.creatingAccount = (
-          await this.$api.getCreator(this.account)
-        ).creator;
+        const creatorData = await this.$api.getCreator(this.account);
+        this.creatingAccount = creatorData.creator;
+        this.createTime = creatorData.timestamp;
+        this.createTransaction = creatorData.trx_id;
       } catch (e) {
         this.$q.notify(`creator account for ${this.account} not found!`);
       }
       this.availableTokens = data.tokens;
       const account = data.account;
-      this.total = this.getAmount(account.core_liquid_balance);
+      this.ram_used = this.fixDec(account.ram_usage / this.KILO_UNIT);
+      this.ram_max = this.fixDec(account.ram_quota / this.KILO_UNIT);
+      this.cpu_used = this.fixDec(account.cpu_limit.used * this.MICRO_UNIT);
+      this.cpu_max = this.fixDec(account.cpu_limit.max * this.MICRO_UNIT);
+      this.net_used = this.fixDec(account.net_limit.used / this.KILO_UNIT);
+      this.net_max = this.fixDec(account.net_limit.max / this.KILO_UNIT);
+      this.liquid = this.getAmount(account.core_liquid_balance);
+      if (account.rex_info) {
+        const liqNum = account.core_liquid_balance.split(' ')[0];
+        const rexNum = account.rex_info.vote_stake.split(' ')[0];
+        const totalString = (parseFloat(liqNum) + parseFloat(rexNum)).toFixed(
+          this.token.precision
+        );
+        this.total = `${totalString} ${this.token.symbol}`;
+        this.rex = account.rex_info.vote_stake;
+      } else {
+        this.total = this.liquid;
+        this.rex = this.none;
+      }
       this.refunding = this.formatTotalRefund(account.refund_request);
       this.staked = account.voter_info
         ? this.formatStaked(account.voter_info.staked)
         : this.none;
-      this.rex = account.rex_info ? account.rex_info.vote_stake : this.none;
-      if (this.account !== this.system_account) {
-        this.ram = this.formatResourcePercent(
-          account.ram_usage,
-          account.ram_quota
-        );
-        this.cpu = this.formatResourcePercent(
-          account.cpu_limit.used,
-          account.cpu_limit.max
-        );
-        this.net = this.formatResourcePercent(
-          account.net_limit.used,
-          account.net_limit.max
-        );
-      }
     },
     async loadSystemToken(): Promise<void> {
       if (this.token.symbol === '') {
@@ -114,23 +136,32 @@ export default defineComponent({
         this.setToken(token);
       }
     },
-    getAmount(property: undefined | string): string {
-      return property ? property : `${this.none}`;
+    fixDec(val: number): number {
+      return parseFloat(val.toFixed(3));
     },
     formatStaked(staked: number): string {
       const stakedValue = (staked / Math.pow(10, this.token.precision)).toFixed(
-        2
+        this.token.precision
       );
       return `${stakedValue} ${this.token.symbol}`;
     },
-    formatResourcePercent(used: number, total: number): string {
-      return ((used / total) * 100.0).toFixed(2);
+    getAmount(property: undefined | string): string {
+      return property ? property : `${this.none}`;
     },
     async loadCreatorAccount(): Promise<void> {
       await this.$router.push({
         name: 'account',
         params: {
           account: this.creatingAccount
+        }
+      });
+      this.$router.go(0);
+    },
+    async loadCreatorTransaction(): Promise<void> {
+      await this.$router.push({
+        name: 'transaction',
+        params: {
+          transaction: this.createTransaction
         }
       });
       this.$router.go(0);
@@ -165,7 +196,7 @@ export default defineComponent({
 <template lang="pug">
 .q-pa-md
   q-card.account-card
-    q-card-section
+    q-card-section.resources-container
       .row
         .col-6.q-pr-md
           q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount' class="full-width")
@@ -173,13 +204,20 @@ export default defineComponent({
           q-btn( @click="openStakingDialog = true" color='primary' label='staking' v-if='isAccount' class="full-width")
       .inline-section
         .text-title {{ account }}
-        .text-subtitle(v-if="creatingAccount !== '__self__'") created by 
-          a( @click='loadCreatorAccount') &nbsp;{{ creatingAccount }} 
+        .text-subtitle(v-if="creatingAccount !== '__self__'") created by
+          span &nbsp;
+            a( @click='loadCreatorAccount') {{ creatingAccount }}
+          span &nbsp;
+          div
+            DateField( :timestamp="createTime", showAge ) &nbsp;
+            q-tooltip {{createTimeFormat}}
+          a(class="q-ml-xs" @click='loadCreatorTransaction').tx-link
+            q-icon( name="fas fa-link")
         q-space
       .resources(v-if="account !== system_account")
-        PercentCircle(:radius='radius' :percentage='parseFloat(cpu)' label='CPU')
-        PercentCircle(:radius='radius' :percentage='parseFloat(net)' label='NET')
-        PercentCircle(:radius='radius' :percentage='parseFloat(ram)' label='RAM')
+        PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='s')
+        PercentCircle(:radius='radius' :fraction='net_used' :total='net_max' label='NET' unit='kb')
+        PercentCircle(:radius='radius' :fraction='ram_used' :total='ram_max' label='RAM' unit='kb')
     q-markup-table
       thead
         tr
@@ -187,7 +225,7 @@ export default defineComponent({
         tbody.table-body
           tr
           tr
-            td.text-left.total-label TOTAL 
+            td.text-left.total-label TOTAL
             td.text-right.total-amount {{ total }} 
           tr.total-row
             td.text-left 
@@ -196,6 +234,9 @@ export default defineComponent({
           tr
             td.text-left REFUNDING
             td.text-right {{ refunding }}
+          tr
+            td.text-left LIQUID
+            td.text-right {{ liquid }}
           tr
             td.text-left STAKED BY OTHERS
             td.text-right {{ staked }}
@@ -244,6 +285,10 @@ $medium:750px
     &.total-row
       height: 48px
 
+.resources-container
+  padding: 0
+  margin-bottom: 1rem
+
 .table-body
   width: 100%
   display: table
@@ -256,7 +301,7 @@ $medium:750px
 
 .resources
   text-align: center
-  width: 18rem
+  width: 100%
   margin: 1rem auto 0 auto
 
 .resource
@@ -316,4 +361,7 @@ $medium:750px
     font-size: 16px
     font-family: Silka
     font-weight: normal
+
+.tx-link
+  text-decoration: none !important
 </style>
