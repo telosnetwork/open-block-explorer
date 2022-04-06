@@ -3,32 +3,22 @@ import { defineComponent } from 'vue';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
 import { ref } from 'vue';
 import LoginHandler from 'components/LoginHandler.vue';
+import { OptionsObj } from 'src/types';
 export default defineComponent({
   name: 'Header',
   components: { LoginHandler },
   data() {
     return {
-      tab: 'Network',
-      search: ''
+      tab: 'Network'
     };
   },
   setup() {
     const selected = ref<string>(null);
-    const options = ref<string[]>([]);
+    const options = ref<OptionsObj[]>([]);
 
     return {
       selected,
-      options,
-      setModel(val: string) {
-        selected.value = val;
-      },
-      /* eslint-disable  @typescript-eslint/ban-types */
-      filterFn(val: string, update: Function) {
-        update(() => {
-          console.log(val);
-        });
-      }
-      /* eslint-enable  @typescript-eslint/ban-types */
+      options
     };
   },
   methods: {
@@ -73,8 +63,45 @@ export default defineComponent({
         }
       }
     },
+    async suggestedSearch(): Promise<void> {
+      const value = this.selected;
+      if (value === '') {
+        this.$q.notify('no search term input');
+        return;
+      }
+      if (isValidHex(value) && value.length == 64) {
+        const check = await this.$api.getTransaction(value);
+        if (check) {
+          await this.$router.push({
+            name: 'transaction',
+            params: { transaction: value }
+          });
+          this.$router.go(0);
+        } else {
+          this.$q.notify(`transaction ${value} not found!`);
+        }
+      } else {
+        if (isValidAccount(value)) {
+          let account: string;
+          try {
+            account = value.toLowerCase();
+            await this.$api.getAccount(account);
+            await this.$router.push({
+              name: 'account',
+              params: {
+                account
+              }
+            });
+            this.$router.go(0);
+          } catch (e) {
+            this.$q.notify(`account ${account} not found!`);
+          }
+        } else {
+          this.$q.notify('invalid transacation id or account name');
+        }
+      }
+    },
     async getOptions(val: string): Promise<void> {
-      console.log(val);
       this.selected = val;
       if (this.selected != null) {
         var account: string;
@@ -82,10 +109,22 @@ export default defineComponent({
           account = this.selected.toLowerCase();
           const value = await this.$api.getTableByScope(account);
           this.options = [];
+          if (value.length > 0) {
+            this.options.push({
+              label: 'Accounts',
+              groupLabel: true,
+              group: 'account',
+              disabled: true
+            });
+          }
           value.forEach((user) => {
-            this.options.push(user.payer);
+            this.options.push({
+              label: user.payer,
+              groupLabel: false,
+              group: 'account',
+              disabled: false
+            });
           });
-          console.log(this.options);
         } catch (e) {
           return;
         }
@@ -118,13 +157,26 @@ div.header-background
           hide-selected
           fill-input
           input-debounce="0"
-          @filter="filterFn"
           :options="options"
           @update="executeSearch"
           @keyup.enter="executeSearch" 
           :input-style="{ color: 'white' }"
           @click="executeSearch"
           @input-value="getOptions")
+            template( v-slot:option="scope")
+              q-item(v-if="!scope.opt.groupLabel"
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents"
+                @click="suggestedSearch(scope.opt)"
+              )             
+                q-item-section
+                  q-item-label(v-html="scope.opt.label")
+              q-item(v-if="scope.opt.groupLabel"
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                  :disable="true"
+              )              
+                q-item-label(header) {{ scope.opt.label }}
             template(v-slot:prepend)
               q-icon.search-icon(name="search" color="white" size="20px")
                   

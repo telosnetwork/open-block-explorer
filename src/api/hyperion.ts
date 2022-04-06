@@ -8,9 +8,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { ActionData, Action, AccountDetails, Token, Userres } from 'src/types';
+import {
+  ActionData,
+  Action,
+  AccountDetails,
+  Token,
+  Userres,
+  Block
+} from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
+const controller = new AbortController();
 
 export const getAccount = async function (
   address: string
@@ -67,4 +75,13 @@ export const getTableByScope = async function (
     upper_bound: account.padEnd(12, 'z')
   });
   return response.data.rows;
+};
+
+export const getBlock = async function (block: string): Promise<Block> {
+  controller.abort();
+  const response = await hyperion.post('v1/chain/get_block', {
+    block_num_or_id: block,
+    signal: controller.signal
+  });
+  return response.data;
 };

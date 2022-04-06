@@ -9,8 +9,10 @@ export {
   Token,
   AccountDetails,
   Userres,
-  Authorization
+  Authorization,
+  Block
 } from './Actions';
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';
 export { GenericObj } from './GenericObj';
+export { OptionsObj } from './OptionsObj';

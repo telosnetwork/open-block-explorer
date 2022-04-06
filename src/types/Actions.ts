@@ -92,3 +92,19 @@ export interface Userres {
   payer: string;
   count: number;
 }
+
+export interface Block {
+  timestamp: string;
+  producer: string;
+  confirmed: number;
+  previous: string;
+  transaction_mroot: string;
+  action_mroot: string;
+  schedule_version: number;
+  new_producers: null | string;
+  producer_signature: string;
+  transactions: string[];
+  id: string;
+  block_num: number;
+  ref_block_prefix: number;
+}
