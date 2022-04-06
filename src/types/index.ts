@@ -8,7 +8,8 @@ export {
   Account,
   Token,
   AccountDetails,
-  Userres
+  Userres,
+  Authorization
 } from './Actions';
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';
