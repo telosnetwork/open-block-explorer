@@ -12,6 +12,11 @@ export default defineComponent({
       search: ''
     };
   },
+  computed: {
+    isSmall(): boolean {
+      return this.$q.screen.gt.sm;
+    }
+  },
   methods: {
     /* temp search check if possible tx or account, replace with results list rendering */
     async executeSearch(input: KeyboardEvent): Promise<void> {
@@ -60,12 +65,13 @@ export default defineComponent({
 
 <template lang="pug">
 div.header-background
-  div.row.text-center.q-pt-sm
-    div.logo-container.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
-      a( href="/")
-        img.logo( src="~assets/telos_logo.svg")
-    div.search-container.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-      div.row.justify-center  
+  div.row.text-center.q-pt-sm.justify-between
+    div.logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
+      a( href="/").float-left.q-ml-sm
+        img.logo( v-if="isSmall" src="~assets/telos_logo.svg")
+        img.logo-tlos( v-else src="~assets/tlos.png")
+    div.col-xs-6.col-sm-6.col-md-4.col-lg-6.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
+      div.row.justify-center.full-width 
         q-input.col-12.search-input.q-pl-md(
           borderless 
           dense 
@@ -101,9 +107,11 @@ $medium:750px
 .logo
     width: 104px
     height:54px
+.logo-tlos
+    width: 54px
+    height:54px
 
 .search-container
-  width: 60%
   margin-left: 1rem
 
 .header-items
@@ -127,9 +135,4 @@ $medium:750px
 
 .search-icon
     transform: rotate(90deg)
-
-@media screen and (max-width: $medium) // screen < $medium
-
-  .search-container
-    width: 60%
 </style>
