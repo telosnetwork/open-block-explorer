@@ -13,7 +13,8 @@ export {
   PermissionLinksData,
   PermissionLinks,
   Authorization,
-  TransferData
+  TransferData,
+  Refund
 } from './Actions';
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';

@@ -62,7 +62,7 @@ export type AccountDetails = {
     privileged: boolean;
     ram_quota: number;
     ram_usage: number;
-    refund_request: null | string;
+    refund_request: Refund;
     rex_info: null | { vote_stake: string };
     subjective_cpu_bill_limit: Resource;
     total_resources: {
@@ -144,4 +144,11 @@ export interface TransferData {
   symbol: string;
   memo: string;
   quantity: number;
+}
+
+export interface Refund {
+  cpu_amount: string;
+  net_amount: string;
+  owner: string;
+  request_time: string;
 }
