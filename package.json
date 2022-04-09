@@ -19,7 +19,7 @@
     "core-js": "^3.6.5",
     "highcharts": "^9.3.2",
     "highcharts-vue": "^1.4.0",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "quasar": "^2.6.2",
     "ual-anchor": "1.1.5",
     "universal-authenticator-library": "^0.3.0",
