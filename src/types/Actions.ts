@@ -58,10 +58,11 @@ export type AccountDetails = {
     created: string;
     net_limit: Resource;
     net_weight: number;
+    permissions: Permission[];
     privileged: boolean;
     ram_quota: number;
     ram_usage: number;
-    refund_request: null | string;
+    refund_request: Refund;
     rex_info: null | { vote_stake: string };
     subjective_cpu_bill_limit: Resource;
     total_resources: {
@@ -84,7 +85,72 @@ export interface Token {
   amount: number;
   contract: string;
 }
+interface Key {
+  key: string;
+  weight: number;
+}
 
+interface ActorPermission {
+  permission: { actor: string; permission: 'eosio.code' };
+  weight: number;
+}
+interface RequiredAuth {
+  accounts: ActorPermission[];
+  keys: Key[];
+  threshold: number;
+  waits: [];
+}
+
+export interface Permission {
+  parent: string;
+  perm_name: string;
+  required_auth: RequiredAuth;
+  children: Permission[];
+  permission_links: PermissionLinks[];
+}
+
+export interface NewAccountData {
+  active: RequiredAuth;
+  creator: string;
+  newact: string;
+  owner: RequiredAuth;
+  name: string;
+}
+
+export interface PermissionLinksData {
+  cached: boolean;
+  links: PermissionLinks[];
+  query_time_ms: number;
+  total: {
+    value: number;
+    relation: string;
+  };
+}
+
+export interface PermissionLinks {
+  account: string;
+  action: string;
+  block_num: number;
+  code: string;
+  permission: string;
+  timestamp: string;
+}
+
+export interface TransferData {
+  from: string;
+  to: string;
+  amount: number;
+  symbol: string;
+  memo: string;
+  quantity: number;
+}
+
+export interface Refund {
+  cpu_amount: string;
+  net_amount: string;
+  owner: string;
+  request_time: string;
+}
 export interface Userres {
   code: string;
   scope: string;

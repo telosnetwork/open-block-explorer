@@ -13,6 +13,8 @@ import {
   Action,
   AccountDetails,
   Token,
+  PermissionLinksData,
+  PermissionLinks,
   Userres,
   Block
 } from 'src/types';
@@ -62,6 +64,34 @@ export const getTransaction = async function (
     }
   );
   return response.data.actions;
+};
+
+export const getChildren = async function (
+  address?: string
+): Promise<Action[]> {
+  const response = await hyperion.get<ActionData>('v2/history/get_actions', {
+    params: {
+      limit: 100,
+      account: address,
+      filter: 'eosio:newaccount',
+      skip: 0
+    }
+  });
+  return response.data.actions;
+};
+
+export const getPermissionLinks = async function (
+  address?: string
+): Promise<PermissionLinks[]> {
+  const response = await hyperion.get<PermissionLinksData>(
+    'v2/state/get_links',
+    {
+      params: {
+        account: address
+      }
+    }
+  );
+  return response.data.links;
 };
 
 export const getTableByScope = async function (

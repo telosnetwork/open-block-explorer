@@ -10,6 +10,8 @@ import {
   getTokens,
   getTransactions,
   getTransaction,
+  getChildren,
+  getPermissionLinks,
   getTableByScope,
   getBlock
 } from './hyperion'; //  e.g. './new-service' method name stays the same
@@ -21,8 +23,10 @@ export const api = {
   getTokens,
   getTransactions,
   getTransaction,
+  getChildren,
   getTableRows,
   getTokenBalances,
+  getPermissionLinks,
   getTableByScope,
   getBlock
 };

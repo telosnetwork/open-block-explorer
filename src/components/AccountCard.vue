@@ -3,12 +3,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import axios from 'axios';
-import { AccountDetails, Token } from 'src/types';
+import { AccountDetails, Token, Refund } from 'src/types';
 import { defineComponent, computed, ref } from 'vue';
 import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 import SendDialog from 'src/components/SendDialog.vue';
+import StakingDialog from 'src/components/Staking/StakingDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { date } from 'quasar';
 
@@ -17,6 +18,7 @@ export default defineComponent({
   components: {
     PercentCircle,
     SendDialog,
+    StakingDialog,
     DateField
   },
   props: {
@@ -56,6 +58,7 @@ export default defineComponent({
       createTime: createTime,
       createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
+      openStakingDialog: ref<boolean>(false),
       isAccount: computed((): boolean => {
         return store.state.account.accountName === props.account;
       }),
@@ -81,7 +84,9 @@ export default defineComponent({
       let data: AccountDetails;
       try {
         data = await this.$api.getAccount(this.account);
+        this.$store.commit('account/setAccountData', data);
       } catch (e) {
+        console.log(e);
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;
@@ -115,7 +120,7 @@ export default defineComponent({
         this.total = this.liquid;
         this.rex = this.none;
       }
-      this.refunding = this.getAmount(account.refund_request);
+      this.refunding = this.formatTotalRefund(account.refund_request);
       this.staked = account.voter_info
         ? this.formatStaked(account.voter_info.staked)
         : this.none;
@@ -164,6 +169,23 @@ export default defineComponent({
         .usd;
       const dollarAmount = telosPrice * parseFloat(this.total);
       this.totalValue = `$${dollarAmount.toFixed(2)} (@ $${telosPrice}/TLOS)`;
+    },
+    formatTotalRefund(refund: Refund): string {
+      const totalRefund = (
+        this.assetToAmount(refund?.cpu_amount, this.token.precision) +
+        this.assetToAmount(refund?.net_amount, this.token.precision)
+      ).toFixed(2);
+      return `${totalRefund} ${this.token.symbol}`;
+    },
+    assetToAmount(asset: string, decimals = -1): number {
+      try {
+        let qty: string = asset.split(' ')[0];
+        let val: number = parseFloat(qty);
+        if (decimals > -1) qty = val.toFixed(decimals);
+        return val;
+      } catch (error) {
+        return 0;
+      }
     }
   }
 });
@@ -173,7 +195,11 @@ export default defineComponent({
 .q-pa-md
   q-card.account-card
     q-card-section.resources-container
-      q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount')
+      .row
+        .col-6.q-pr-md
+          q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount' class="full-width")
+        .col-6.q-pl-md
+          q-btn( @click="openStakingDialog = true" color='primary' label='staking' v-if='isAccount' class="full-width")
       .inline-section
         .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by
@@ -216,6 +242,7 @@ export default defineComponent({
             td.text-left REX
             td.text-right {{ rex }}
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
+    stakingDialog(v-model="openStakingDialog" :availableTokens="availableTokens")
 </template>
 
 <style lang="sass" scoped>
