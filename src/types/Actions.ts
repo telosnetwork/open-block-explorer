@@ -1,6 +1,7 @@
 export interface ActionData {
   actions: Action[];
   cached: boolean;
+  executed: boolean;
   lib: number;
   query_time_ms: number;
   total: {

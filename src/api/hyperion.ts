@@ -8,7 +8,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { ActionData, Action, AccountDetails, Token } from 'src/types';
+import {
+  ActionData,
+  Action,
+  AccountDetails,
+  Token,
+  Transaction
+} from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
 
@@ -46,12 +52,24 @@ export const getTransactions = async function (
 
 export const getTransaction = async function (
   address?: string
-): Promise<Action[]> {
+): Promise<ActionData> {
   const response = await hyperion.get<ActionData>(
     'v2/history/get_transaction',
     {
       params: { id: address }
     }
   );
-  return response.data.actions;
+  return response.data;
+};
+
+export const getTransactionV1 = async function (
+  id?: string
+): Promise<Transaction> {
+  const response = await hyperion.post<Transaction>(
+    'v1/history/get_transaction',
+    {
+      id: id
+    }
+  );
+  return response.data;
 };

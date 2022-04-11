@@ -87,7 +87,7 @@ export default defineComponent({
     async loadTableData(): Promise<void> {
       let tableData: Action[];
       if (this.isTransaction) {
-        tableData = await this.$api.getTransaction(this.account);
+        tableData = (await this.$api.getTransaction(this.account)).actions;
       } else {
         tableData =
           this.account == null

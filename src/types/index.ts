@@ -14,3 +14,4 @@ export {
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';
 export { GenericObj } from './GenericObj';
+export { Transaction } from './Transaction';
