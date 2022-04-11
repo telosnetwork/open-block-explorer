@@ -9,7 +9,7 @@ import {
   UInt64
 } from '@greymass/eosio';
 
-import { AccountDetails, Action, Token } from './Actions';
+import { AccountDetails, Action, Token, PermissionLinks } from './Actions';
 
 export type TableIndexType =
   | Name
@@ -36,4 +36,6 @@ export type ApiClient = {
   getTokens: (address: string) => Promise<Token[]>;
   getTransactions: (address?: string) => Promise<Action[]>;
   getTransaction: (address: string) => Promise<Action[]>;
+  getChildren: (address: string) => Promise<Action[]>;
+  getPermissionLinks: (address: string) => Promise<PermissionLinks[]>;
 };
