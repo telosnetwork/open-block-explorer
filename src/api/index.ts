@@ -11,7 +11,9 @@ import {
   getTransactions,
   getTransaction,
   getChildren,
-  getPermissionLinks
+  getPermissionLinks,
+  getTableByScope,
+  getBlock
 } from './hyperion'; //  e.g. './new-service' method name stays the same
 import { getTableRows, getTokenBalances } from './eosio_core';
 
@@ -24,5 +26,7 @@ export const api = {
   getChildren,
   getTableRows,
   getTokenBalances,
-  getPermissionLinks
+  getPermissionLinks,
+  getTableByScope,
+  getBlock
 };

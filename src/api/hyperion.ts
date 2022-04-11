@@ -14,10 +14,13 @@ import {
   AccountDetails,
   Token,
   PermissionLinksData,
-  PermissionLinks
+  PermissionLinks,
+  Userres,
+  Block
 } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
+const controller = new AbortController();
 
 export const getAccount = async function (
   address: string
@@ -89,4 +92,26 @@ export const getPermissionLinks = async function (
     }
   );
   return response.data.links;
+};
+
+export const getTableByScope = async function (
+  account: string
+): Promise<Userres[]> {
+  const response = await hyperion.post('v1/chain/get_table_by_scope', {
+    code: 'eosio',
+    limit: 5,
+    lower_bound: account,
+    table: 'userres',
+    upper_bound: account.padEnd(12, 'z')
+  });
+  return response.data.rows;
+};
+
+export const getBlock = async function (block: string): Promise<Block> {
+  controller.abort();
+  const response = await hyperion.post('v1/chain/get_block', {
+    block_num_or_id: block,
+    signal: controller.signal
+  });
+  return response.data;
 };
