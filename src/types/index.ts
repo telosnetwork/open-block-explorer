@@ -8,8 +8,11 @@ export {
   Account,
   Token,
   AccountDetails,
-  Authorization
+  Userres,
+  Authorization,
+  Block
 } from './Actions';
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';
 export { GenericObj } from './GenericObj';
+export { OptionsObj } from './OptionsObj';
