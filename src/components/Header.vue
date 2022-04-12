@@ -130,6 +130,10 @@ export default defineComponent({
               disabled: false
             });
           });
+          if (value.length === 1) {
+            this.selected = value[0].payer;
+            await this.suggestedSearch();
+          }
         } catch (e) {
           return;
         }
