@@ -41,4 +41,5 @@ div.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg
 .button-primary
   width: 60%
   min-width: 60px
+  max-width: 140px
 </style>

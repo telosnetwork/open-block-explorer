@@ -143,21 +143,21 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-div.header-background
-  div.row.text-center.q-pt-sm
-    div.logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
+.header-background
+  .row.text-center.q-pt-sm.justify-between
+    .logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
       a( href="/").float-left.q-ml-sm
         img.logo( v-if="isSmall" src="~assets/telos_logo.svg")
         img.logo-tlos( v-else src="~assets/tlos.png")
-    div.search-container.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-      div.row.justify-center 
-        q-select.col-12.search-input(
+    .col-xs-6.col-sm-6.col-md-4.col-lg-6.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
+      .row.justify-center.full-width
+        q-select.col-12.search-input.q-pl-md(
           borderless 
           dense 
           filled
           :model-value="selected"
           label-color="white"  
-          color="black"
+          color="primary"
           use-input
           hide-selected
           fill-input
@@ -186,7 +186,7 @@ div.header-background
               q-icon.search-icon(name="search" color="white" size="20px")
                   
     LoginHandler
-  div.row.justify-center.col-12.q-pt-sm
+  .row.justify-center.col-12.q-pt-sm
     q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
       q-route-tab.deactive.active-tab(name="network" label="Network" to='/').temp-hide
       q-route-tab.deactive(name="wallet" label="Wallet" to="{ name: 'account', params: {account: /* store account getter */} }").temp-hide
@@ -209,8 +209,8 @@ $medium:750px
     width: 104px
     height:54px
 .logo-tlos
-    width: 54px
-    height:54px
+    width: 48px
+    height:48px
 
 .search-container
   margin-left: 1rem

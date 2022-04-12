@@ -65,6 +65,8 @@ q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="
   width: 110px
   margin: 15px
 .connect-button
-  width: 140px
+  width: 60%
+  min-width: 120px
+  max-width: 140px
   text-transform: lowercase
 </style>
