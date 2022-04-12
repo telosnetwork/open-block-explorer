@@ -8,9 +8,16 @@ import {
   UInt128,
   UInt64
 } from '@greymass/eosio';
-
-import { AccountDetails, Action, Token, ActionData } from './Actions';
 import { Transaction } from './Transaction';
+import {
+  AccountDetails,
+  Action,
+  Token,
+  PermissionLinks,
+  Userres,
+  Block,
+  ActionData
+} from './Actions';
 
 export type TableIndexType =
   | Name
@@ -38,4 +45,8 @@ export type ApiClient = {
   getTransactions: (address?: string) => Promise<Action[]>;
   getTransaction: (address: string) => Promise<ActionData>;
   getTransactionV1: (id: string) => Promise<Transaction>;
+  getChildren: (address: string) => Promise<Action[]>;
+  getPermissionLinks: (address: string) => Promise<PermissionLinks[]>;
+  getTableByScope: (address: string) => Promise<Userres[]>;
+  getBlock: (block: string) => Promise<Block>;
 };

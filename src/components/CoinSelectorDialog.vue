@@ -28,8 +28,8 @@ export default defineComponent({
   methods: {
     filterTokens() {
       if (this.search.length > 0) {
-        this.filterByText(this.availableTokens);
-      } else this.filteredTokens = this.availableTokens;
+        this.filterByText(this.tokensWithBalance());
+      } else this.filteredTokens = this.tokensWithBalance();
     },
     filterByText(tokens: Token[]) {
       this.filteredTokens = tokens.filter((token) => {
@@ -37,6 +37,11 @@ export default defineComponent({
           token.symbol.toLowerCase().includes(this.search.toLowerCase()) ||
           token.contract.toLowerCase().includes(this.search.toLowerCase())
         );
+      });
+    },
+    tokensWithBalance() {
+      return this.availableTokens.filter((token) => {
+        return token.amount > 0;
       });
     }
   }

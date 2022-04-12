@@ -1,16 +1,30 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
+import { ref } from 'vue';
 import LoginHandler from 'components/LoginHandler.vue';
-
+import { OptionsObj } from 'src/types';
 export default defineComponent({
   name: 'Header',
   components: { LoginHandler },
   data() {
     return {
-      tab: 'Network',
-      search: ''
+      tab: 'Network'
     };
+  },
+  setup() {
+    const selected = ref<string>(null);
+    const options = ref<OptionsObj[]>([]);
+
+    return {
+      selected,
+      options
+    };
+  },
+  computed: {
+    isSmall(): boolean {
+      return this.$q.screen.gt.sm;
+    }
   },
   methods: {
     /* temp search check if possible tx or account, replace with results list rendering */
@@ -53,7 +67,77 @@ export default defineComponent({
           }
         }
       }
+    },
+    async suggestedSearch(): Promise<void> {
+      const value = this.selected;
+      if (value === '') {
+        this.$q.notify('no search term input');
+        return;
+      }
+      if (isValidHex(value) && value.length == 64) {
+        const check = await this.$api.getTransaction(value);
+        if (check) {
+          await this.$router.push({
+            name: 'transaction',
+            params: { transaction: value }
+          });
+          this.$router.go(0);
+        } else {
+          this.$q.notify(`transaction ${value} not found!`);
+        }
+      } else {
+        if (isValidAccount(value)) {
+          let account: string;
+          try {
+            account = value.toLowerCase();
+            await this.$api.getAccount(account);
+            await this.$router.push({
+              name: 'account',
+              params: {
+                account
+              }
+            });
+            this.$router.go(0);
+          } catch (e) {
+            this.$q.notify(`account ${account} not found!`);
+          }
+        } else {
+          this.$q.notify('invalid transacation id or account name');
+        }
+      }
+    },
+    async getOptions(val: string): Promise<void> {
+      this.selected = val;
+      if (this.selected != null) {
+        var account: string;
+        try {
+          account = this.selected.toLowerCase();
+          const value = await this.$api.getTableByScope(account);
+          this.options = [];
+          if (value.length > 0) {
+            this.options.push({
+              label: 'Accounts',
+              groupLabel: true,
+              group: 'account',
+              disabled: true
+            });
+          }
+          value.forEach((user) => {
+            this.options.push({
+              label: user.payer,
+              groupLabel: false,
+              group: 'account',
+              disabled: false
+            });
+          });
+        } catch (e) {
+          return;
+        }
+      }
     }
+  },
+  async mounted() {
+    await this.getOptions('');
   }
 });
 </script>
@@ -61,23 +145,46 @@ export default defineComponent({
 <template lang="pug">
 div.header-background
   div.row.text-center.q-pt-sm
-    div.logo-container.col-xs-3.col-sm-3.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
-      a( href="/")
-        img.logo( src="~assets/telos_logo.svg")
+    div.logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
+      a( href="/").float-left.q-ml-sm
+        img.logo( v-if="isSmall" src="~assets/telos_logo.svg")
+        img.logo-tlos( v-else src="~assets/tlos.png")
     div.search-container.col-xs-6.col-sm-6.col-md-8.col-lg-8.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-      div.row.justify-center  
-        q-input.col-12.search-input.q-pl-md(
+      div.row.justify-center 
+        q-select.col-12.search-input(
           borderless 
           dense 
+          filled
+          :model-value="selected"
           label-color="white"  
-          color="white" 
-          :input-style="{ color: 'white' }"
-          v-model="search" 
-          label="Search"
+          color="black"
+          use-input
+          hide-selected
+          fill-input
+          input-debounce="0"
+          :options="options"
+          @update="executeSearch"
           @keyup.enter="executeSearch" 
-        )
-          template(v-slot:prepend)
-            q-icon.search-icon(name="search" color="white" size="20px")
+          :input-style="{ color: 'white' }"
+          @click="executeSearch"
+          @input-value="getOptions")
+            template( v-slot:option="scope")
+              q-item(v-if="!scope.opt.groupLabel"
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents"
+                @click="suggestedSearch(scope.opt)"
+              )             
+                q-item-section
+                  q-item-label(v-html="scope.opt.label")
+              q-item(v-if="scope.opt.groupLabel"
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                  :disable="true"
+              )              
+                q-item-label(header) {{ scope.opt.label }}
+            template(v-slot:prepend)
+              q-icon.search-icon(name="search" color="white" size="20px")
+                  
     LoginHandler
   div.row.justify-center.col-12.q-pt-sm
     q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
@@ -101,9 +208,11 @@ $medium:750px
 .logo
     width: 104px
     height:54px
+.logo-tlos
+    width: 54px
+    height:54px
 
 .search-container
-  width: 60%
   margin-left: 1rem
 
 .header-items
@@ -132,4 +241,5 @@ $medium:750px
 
   .search-container
     width: 60%
+    color: white
 </style>

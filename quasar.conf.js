@@ -107,6 +107,9 @@ module.exports = configure(function (ctx) {
           type: info,
           color: 'primary',
           textColor: 'white'
+        },
+        screen: {
+          bodyClasses: true
         }
       },
       cssAddon: true,
