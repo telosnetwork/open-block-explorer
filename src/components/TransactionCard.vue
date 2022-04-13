@@ -27,9 +27,9 @@ export default defineComponent({
     };
   },
   async mounted() {
-    this.transactionData = await this.loadTransactionData();
     this.transactionDataV1 = await this.loadTransactionDatav1();
     console.log(this.transactionDataV1);
+    this.transactionData = await this.loadTransactionData();
     // if (this.transactionDataV1) {
     //   this.blockNum = this.transactionDataV1.block_num;
     //   this.timestamp = this.transactionDataV1.block_time;
@@ -52,13 +52,13 @@ export default defineComponent({
     }
   },
   methods: {
-    copyTransactionId() {
-      copyToClipboard(this.transaction)
+    copy(value: string) {
+      copyToClipboard(value)
         .then((): void => {
           this.$q.notify({
             color: 'green-4',
             textColor: 'white',
-            message: 'Copied transactionId to clipboard',
+            message: 'Copied to clipboard',
             timeout: 1000
           });
         })
@@ -107,9 +107,9 @@ export default defineComponent({
           .row.items-center
             .col-11.text-bold.ellipsis {{transaction}}
             .col-1
-              q-btn( @click="copyTransactionId" flat round color="black" icon="content_copy" size='sm')
-        q-card-section.q-pt-none
-          q-btn.button-primary( @click="copyTransactionId" flat label="MSIG Template")
+              q-btn( @click="copy(transactionId)" flat round color="black" icon="content_copy" size='sm')
+        //- q-card-section.q-pt-none
+        //-   q-btn.button-primary( @click="copyTransactionId" flat label="MSIG Template")
 
         q-card-section
           .text-grey-7 SUMMARY
@@ -119,6 +119,7 @@ export default defineComponent({
             .col-xs-12.col-sm-6
               .text-body1.text-weight-medium.text-uppercase Block number
             .col-xs-12.col-sm-6.text-right.text-bold {{numberWithCommas(blockNum)}}
+              q-btn( @click="copy(blockNum)" flat round color="black" icon="content_copy" size='sm')
         q-separator(inset).card-separator
         q-card-section
           .row
