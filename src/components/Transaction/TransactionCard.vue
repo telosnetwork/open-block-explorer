@@ -1,55 +1,24 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
-import { ActionData, Transaction } from 'src/types';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'TransactionsTable',
-  props: {
-    transactionId: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
+  setup() {
+    const store = useStore();
     return {
-      transaction: props.transactionId,
-      transactionData: ref<ActionData>(<ActionData>{}),
-      transactionDataV1: ref<Transaction>(<Transaction>{}),
-      blockNum: ref<number>(0),
-      timestamp: ref<string>(''),
-      executed: ref<boolean>(false),
-      irreversable: ref<boolean>(false),
-      cpuUsage: ref<number>(0),
-      netUsage: ref<number>(0),
+      transaction: computed(() => store.state.transaction.transactionId),
+      transactionData: computed(() => store.state.transaction.transaction),
+      blockNum: computed(() => store.state.transaction.blockNum),
+      timestamp: computed(() => store.state.transaction.timestamp),
+      executed: computed(() => store.state.transaction.executed),
+      irreversable: computed(() => store.state.transaction.irreversable),
+      cpuUsage: computed(() => store.state.transaction.cpuUsage),
+      netUsage: computed(() => store.state.transaction.netUsage),
       actionsTraces: ref<string>(''),
-      actionNum: ref<number>(0)
+      actionNum: computed(() => store.state.transaction.actionCount)
     };
-  },
-  async mounted() {
-    this.transactionDataV1 = await this.loadTransactionDatav1();
-    console.log(this.transactionDataV1);
-    this.transactionData = await this.loadTransactionData();
-    // if (this.transactionDataV1) {
-    //   this.blockNum = this.transactionDataV1.block_num;
-    //   this.timestamp = this.transactionDataV1.block_time;
-    //   this.executed = this.transactionDataV1.trx.receipt.status === 'executed';
-    //   this.cpuUsage = this.transactionDataV1.trx.receipt.cpu_usage_us;
-    //   this.netUsage = this.transactionDataV1.trx.receipt.net_usage_words;
-    //   this.irreversable =
-    //     this.transactionDataV1.last_irreversible_block >
-    //     this.transactionDataV1.block_num;
-    // }
-    if (this.transactionData) {
-      this.blockNum = this.transactionData.actions[0].block_num;
-      this.timestamp = this.transactionData.actions[0].timestamp;
-      this.executed = this.transactionData.executed;
-      this.cpuUsage = this.transactionData.actions[0].cpu_usage_us;
-      this.netUsage = this.transactionData.actions[0].net_usage_words * 2;
-      this.actionNum = this.transactionData.actions.length;
-      this.irreversable =
-        this.transactionData.lib > this.transactionData.actions[0].block_num;
-    }
   },
   methods: {
     copy(value: string) {
@@ -74,12 +43,6 @@ export default defineComponent({
     numberWithCommas(x: number) {
       if (!x) return 0;
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    },
-    async loadTransactionData(): Promise<ActionData> {
-      return await this.$api.getTransaction(this.transaction);
-    },
-    async loadTransactionDatav1(): Promise<Transaction> {
-      return await this.$api.getTransactionV1(this.transaction);
     },
     formatDate(date: string): string {
       return new Date(date).toLocaleDateString('en-US', {
@@ -107,7 +70,7 @@ export default defineComponent({
           .row.items-center
             .col-11.text-bold.ellipsis {{transaction}}
             .col-1
-              q-btn( @click="copy(transactionId)" flat round color="black" icon="content_copy" size='sm')
+              q-btn.float-right( @click="copy(transactionId)" flat round color="black" icon="content_copy" size='sm')
         //- q-card-section.q-pt-none
         //-   q-btn.button-primary( @click="copyTransactionId" flat label="MSIG Template")
 
