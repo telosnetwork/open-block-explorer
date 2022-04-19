@@ -54,7 +54,13 @@ div.row
                 .q-pl-xs(style="display: inline-block")
                   .bg-blur
                     q-badge(color="transparent") {{actionCount}}
-        q-tab(name="traces" label="Traces")
+        .row.full-height.items-center
+          .col-10
+            q-tab(name="traces")
+              .text-body Traces
+                .q-pl-xs(style="display: inline-block")
+                  .bg-blur
+                    q-badge(color="transparent") {{actionCount}}
         q-tab(name="raw" label="Raw")
 
       q-separator(color="grey-8")
