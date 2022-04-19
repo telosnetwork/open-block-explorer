@@ -25,6 +25,7 @@ export interface Action {
   signatures: string[];
   timestamp: string;
   trx_id: string;
+  receipts: Receipt[];
 }
 
 interface AccountRamDelta {
@@ -174,4 +175,16 @@ export interface Block {
   id: string;
   block_num: number;
   ref_block_prefix: number;
+}
+
+export interface Receipt {
+  auth_sequence: Auth_sequence[];
+  global_sequence: string;
+  receiver: string;
+  recv_sequence: string;
+}
+
+export interface Auth_sequence {
+  account: string;
+  sequence: string;
 }

@@ -113,8 +113,8 @@ export default defineComponent({
         q-card-section
           .row
             .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Actions
-            .col-xs-12.col-sm-6.text-right.text-bold {{actionNum}}
+              .text-body1.text-weight-medium.text-uppercase Actions?Traces
+            .col-xs-12.col-sm-6.text-right.text-bold {{actionNum+'/'+actionNum}}
 
 </template>
 

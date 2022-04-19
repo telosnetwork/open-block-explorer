@@ -23,3 +23,4 @@ export { PaginationSettings } from './PaginationSettings';
 export { GenericObj } from './GenericObj';
 export { Transaction } from './Transaction';
 export { OptionsObj } from './OptionsObj';
+export { TreeNode } from './TreeNode';

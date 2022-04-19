@@ -1,35 +1,34 @@
 <script lang="ts">
-/* eslint-disable */
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import TransactionsTable from 'src/components/TransactionsTable.vue';
 import TransactionCard from 'components/Transaction/TransactionCard.vue';
+import TraceTree from 'components/Transaction/TraceTree.vue';
 import JsonViewer from 'vue-json-viewer';
-import { ActionData } from 'src/types';
 import { useStore } from 'src/store';
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router';
 
+/* eslint-disable */
 export default defineComponent({
   name: 'Transaction',
   setup() {
-    const store = useStore()
-    const route = useRoute()
+    const store = useStore();
+    const route = useRoute();
     onMounted(() => {
       store.commit('transaction/setTransactionId', route.params.transaction);
       store.dispatch('transaction/updateTransaction');
-    })
+    });
     return {
       tab: ref('actions'),
       transaction: route.params.transaction,
       actionCount: computed(() => store.state.transaction.actionCount),
-      jsonTransaction: computed(() => store.state.transaction),
-      transactionData: ref<ActionData>(<ActionData>{}),
-      updateTransaction: () => store.dispatch('transaction/updateTransactionId',)
+      jsonTransaction: computed(() => store.state.transaction.transaction)
     };
   },
   components: {
     TransactionsTable,
     TransactionCard,
-    JsonViewer
+    JsonViewer,
+    TraceTree
   }
 });
 </script>
@@ -65,13 +64,14 @@ div.row
           TransactionsTable(:account='transaction')
 
         q-tab-panel(name="traces")
-          TransactionsTable(:account='transaction')
+          TraceTree
 
         q-tab-panel(name="raw")
           json-viewer(
             :value="jsonTransaction"
             :expand-depth=5
-            expanded
+            preview-mode
+            boxed
             copyable
             sort)
 </template>
