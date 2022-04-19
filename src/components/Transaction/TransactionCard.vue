@@ -70,7 +70,7 @@ export default defineComponent({
           .row.items-center
             .col-11.text-bold.ellipsis {{transaction}}
             .col-1
-              q-btn.float-right( @click="copy(transactionId)" flat round color="black" icon="content_copy" size='sm')
+              q-btn.float-right( @click="copy(transaction)" flat round color="black" icon="content_copy" size='sm')
         //- q-card-section.q-pt-none
         //-   q-btn.button-primary( @click="copyTransactionId" flat label="MSIG Template")
 
