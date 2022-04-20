@@ -15,7 +15,7 @@ export default defineComponent({
         var children = [] as TreeNode[];
         if (action.notified.length > 1) {
           children.push({
-            label: act.name + 'notification',
+            label: action.global_sequence.toString(),
             body: 'notification',
             name: act.name,
             header: 'notification',
@@ -27,7 +27,7 @@ export default defineComponent({
           });
         }
         obj = {
-          label: act.name,
+          label: action.global_sequence.toString() + 'notification',
           body: 'trace',
           name: act.name,
           header: 'trace',
