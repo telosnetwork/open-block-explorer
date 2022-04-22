@@ -148,47 +148,51 @@ export default defineComponent({
 
 <template lang="pug">
 .header-background
-  .row.text-center.q-pt-sm.justify-between
-    .logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md
-      a( href="/").float-left.q-ml-sm
-        img.logo( v-if="isSmall" src="~assets/telos_logo.svg")
-        img.logo-tlos( v-else src="~assets/tlos.png")
-    .col-xs-6.col-sm-6.col-md-4.col-lg-6.q-pa-xs-sm.q-pa-sm-xs.q-pa-md-md.q-pa-lg-md.q-pt-sm
-      .row.justify-center.full-width
-        q-select.col-12.search-input.q-pl-md(
-          borderless 
-          dense 
-          filled
-          :model-value="selected"
-          label-color="white"  
-          color="primary"
-          use-input
-          hide-selected
-          fill-input
-          input-debounce="0"
-          :options="options"
-          @update="executeSearch"
-          @keyup.enter="executeSearch" 
-          :input-style="{ color: 'white' }"
-          @click="executeSearch"
-          @input-value="getOptions")
-            template( v-slot:option="scope")
-              q-item(v-if="!scope.opt.groupLabel"
-                v-bind="scope.itemProps"
-                v-on="scope.itemEvents"
-                @click="suggestedSearch(scope.opt)"
-              )             
-                q-item-section
-                  q-item-label(v-html="scope.opt.label")
-              q-item(v-if="scope.opt.groupLabel"
+  .row.text-center.q-pt-sm.justify-between.q-pt-md
+    .logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2
+      .q-px-xs-xs.q-px-sm-xs.q-px-md-md.q-px-lg-md
+        a( href="/").float-left.q-ml-sm
+          img.logo( v-if="isSmall" src="~assets/telos_logo.svg")
+          img.logo-tlos( v-else src="~assets/tlos.png")
+    .col-xs-5.col-sm-6.col-md-4.col-lg-6
+      .q-px-xs-xs.q-px-sm-xs.q-px-md-md.q-px-lg-md
+        .row.justify-center.full-width
+          q-select.col-12.search-input(
+            borderless 
+            dense 
+            filled
+            :model-value="selected"
+            label-color="white"  
+            color="primary"
+            use-input
+            hide-selected
+            fill-input
+            input-debounce="0"
+            :options="options"
+            @update="executeSearch"
+            @keyup.enter="executeSearch" 
+            :input-style="{ color: 'white' }"
+            @click="executeSearch"
+            @input-value="getOptions")
+              template( v-slot:option="scope")
+                q-item(v-if="scope.opt.groupLabel"
+                    v-bind="scope.itemProps"
+                    v-on="scope.itemEvents"
+                    :disable="true"
+                )              
+                  q-item-label(header) {{ scope.opt.label }}
+                q-item(
+                  v-else
                   v-bind="scope.itemProps"
                   v-on="scope.itemEvents"
-                  :disable="true"
-              )              
-                q-item-label(header) {{ scope.opt.label }}
-            template(v-slot:prepend)
-              q-icon.search-icon(name="search" color="white" size="20px")
-                  
+                  @click="suggestedSearch(scope.opt)"
+                )             
+                  q-item-section
+                    q-item-label(v-html="scope.opt.label")
+
+              template(v-slot:prepend)
+                q-icon.search-icon(name="search" color="white" size="20px")
+                    
     LoginHandler
   .row.justify-center.col-12.q-pt-sm
     q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
@@ -206,15 +210,12 @@ $medium:750px
   text-transform: unset
   font-size: 18px
 
-.logo-container
-  margin-left: .5rem
-
 .logo
     width: 104px
-    height:54px
+    height:40px
 .logo-tlos
-    width: 48px
-    height:48px
+    width: 40px
+    height: 40px
 
 .search-container
   margin-left: 1rem

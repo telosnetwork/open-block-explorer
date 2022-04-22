@@ -25,6 +25,7 @@
     "universal-authenticator-library": "^0.3.0",
     "vue": "^3.0.0",
     "vue-class-component": "^7.2.6",
+    "vue-json-viewer": "3",
     "vue-router": "^4.0.0",
     "vuex": "^4.0.1"
   },
