@@ -175,19 +175,21 @@ export default defineComponent({
             @click="executeSearch"
             @input-value="getOptions")
               template( v-slot:option="scope")
-                q-item(v-if="!scope.opt.groupLabel"
-                  v-bind="scope.itemProps"
-                  v-on="scope.itemEvents"
-                  @click="suggestedSearch(scope.opt)"
-                )             
-                  q-item-section
-                    q-item-label(v-html="scope.opt.label")
                 q-item(v-if="scope.opt.groupLabel"
                     v-bind="scope.itemProps"
                     v-on="scope.itemEvents"
                     :disable="true"
                 )              
                   q-item-label(header) {{ scope.opt.label }}
+                q-item(
+                  v-else
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                  @click="suggestedSearch(scope.opt)"
+                )             
+                  q-item-section
+                    q-item-label(v-html="scope.opt.label")
+
               template(v-slot:prepend)
                 q-icon.search-icon(name="search" color="white" size="20px")
                     
