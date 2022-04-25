@@ -1,11 +1,7 @@
 <style lang="sass" scoped>
-div
-    height:76px
 .router-link
     text-decoration: none
     color: #ffffff
-.footer-items
-    list-style-type: none
 .footer-background
     background: $primary-linier-gradient
     backdrop-filter: blur(14px)
@@ -15,16 +11,12 @@ div
 </style>
 
 <template lang="pug">
-div.row.footer-background.justify-center.col-12
-    ul.flex.footer-items
-        li.q-pa-md
-            a.no-dec(href="https://telos.net/legal")
-                p LEGAL
-        li.q-pa-md
-            a.no-dec(href="https://telos.net/privacy-policy")
-                p PRIVACY 
-        li.q-pa-md
-            a.no-dec(href="https://github.com/telosnetwork/open-block-explorer")
-                p REPOSITORY 
+.row.footer-background.justify-center.text-center.q-py-md
+    .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
+        a.no-dec(href="https://telos.net/legal") LEGAL
+    .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
+        a.no-dec(href="https://telos.net/privacy-policy") PRIVACY 
+    .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
+        a.no-dec(href="https://github.com/telosnetwork/open-block-explorer") REPOSITORY 
 
 </template>

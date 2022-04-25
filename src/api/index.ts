@@ -10,6 +10,7 @@ import {
   getTokens,
   getTransactions,
   getTransaction,
+  getTransactionV1,
   getChildren,
   getPermissionLinks,
   getTableByScope,
@@ -26,6 +27,7 @@ export const api = {
   getChildren,
   getTableRows,
   getTokenBalances,
+  getTransactionV1,
   getPermissionLinks,
   getTableByScope,
   getBlock

@@ -195,7 +195,7 @@ export default defineComponent({
 .q-pa-md
   q-card.account-card
     q-card-section.resources-container
-      .row
+      .row.q-px-sm
         .col-6.q-pr-md
           q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount' class="full-width")
         .col-6.q-pl-md
