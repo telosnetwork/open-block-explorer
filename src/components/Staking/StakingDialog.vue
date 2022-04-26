@@ -128,8 +128,8 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
-  q-card.sendCard
+q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
+  q-card.stakeCard
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
@@ -172,11 +172,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
 
 <style lang="sass" scoped>
 
-.sendCard
-  width: 1000px !important
-  max-width: 80vw !important
-  height: 800px !important
-  max-height: 80vh !important
+.stakeCard
   color: $grey-6
   background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
   .send-icon
