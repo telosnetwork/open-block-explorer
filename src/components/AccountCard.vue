@@ -10,6 +10,7 @@ import PercentCircle from 'src/components/PercentCircle.vue';
 import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import StakingDialog from 'src/components/Staking/StakingDialog.vue';
+import RexDialog from 'src/components/Rex/RexDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { date } from 'quasar';
 
@@ -19,7 +20,8 @@ export default defineComponent({
     PercentCircle,
     SendDialog,
     StakingDialog,
-    DateField
+    DateField,
+    RexDialog
   },
   props: {
     account: {
@@ -59,6 +61,7 @@ export default defineComponent({
       createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
       openStakingDialog: ref<boolean>(false),
+      openRexDialog: ref<boolean>(false),
       isAccount: computed((): boolean => {
         return store.state.account.accountName === props.account;
       }),
@@ -195,11 +198,6 @@ export default defineComponent({
 .q-pa-md
   q-card.account-card
     q-card-section.resources-container
-      .row
-        .col-6.q-pr-md
-          q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount' class="full-width")
-        .col-6.q-pl-md
-          q-btn( @click="openStakingDialog = true" color='primary' label='staking' v-if='isAccount' class="full-width")
       .inline-section
         .text-title {{ account }}
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by
@@ -216,6 +214,14 @@ export default defineComponent({
         PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='s')
         PercentCircle(:radius='radius' :fraction='net_used' :total='net_max' label='NET' unit='kb')
         PercentCircle(:radius='radius' :fraction='ram_used' :total='ram_max' label='RAM' unit='kb')
+    q-card-section.resources-container
+      .row.justify-center.q-gutter-sm
+        .col-3
+          q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount' class="full-width")
+        .col-3
+          q-btn( @click="openStakingDialog = true" color='primary' label='staking' v-if='isAccount' class="full-width")
+        .col-3
+          q-btn( @click="openRexDialog = true" color='primary' label='rex' v-if='isAccount' class="full-width")
     q-markup-table
       thead
         tr
@@ -243,6 +249,7 @@ export default defineComponent({
             td.text-right {{ rex }}
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
     stakingDialog(v-model="openStakingDialog" :availableTokens="availableTokens")
+    RexDialog(v-model="openRexDialog" :availableTokens="availableTokens")
 </template>
 
 <style lang="sass" scoped>
