@@ -133,7 +133,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
-      .col-xs-12.col-sm-10.col-md-7.col-lg-7
+      .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
         .row.q-pl-sm
           img.send-img.q-pr-md( src="~assets/cpu.svg" style="height: 60px; max-width: 60px") 
           .text-h4.q-pb-md.inline-block.color-grey-3.inline Manage Staking

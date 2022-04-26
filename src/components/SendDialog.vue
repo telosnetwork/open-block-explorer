@@ -122,7 +122,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
-      .col-xs-12.col-sm-8.col-md-7.col-lg-6
+      .col-xs-12.col-sm-8.col-md-7.col-lg-6.maxSize
         .row
           q-card-section 
             img.send-img.q-pr-md( src="~assets/send.svg")
