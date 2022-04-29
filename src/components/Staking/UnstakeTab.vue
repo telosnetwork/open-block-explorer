@@ -54,7 +54,7 @@ export default defineComponent({
       stakingAccount,
       cpuTokens,
       netTokens,
-      ...mapActions({ unstake: 'account/unstake' }),
+      ...mapActions({ signTransaction: 'account/sendTransaction' }),
       transactionId: ref<string>(null),
       transactionError: null,
       formatDec,
@@ -83,7 +83,9 @@ export default defineComponent({
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
-          await this.unstake({
+          await this.signTransaction({
+            account: 'eosio',
+            name: 'undelegatebw',
             user: users[0],
             data
           })

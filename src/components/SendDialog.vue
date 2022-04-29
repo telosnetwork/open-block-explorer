@@ -68,7 +68,8 @@ export default defineComponent({
           await this.signTransaction({
             user: users[0],
             account: actionAccount,
-            data
+            data,
+            name: 'transfer'
           })
         ).transactionId as string;
       } catch (e) {

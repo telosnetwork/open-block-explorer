@@ -1,8 +1,7 @@
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
-import { Token, AccountDetails } from 'src/types';
-import { mapActions, mapGetters } from 'vuex';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { defineComponent, ref } from 'vue';
+import { AccountDetails } from 'src/types';
+import { mapGetters } from 'vuex';
 import StakingInfo from 'src/components/Staking/StakingInfo.vue';
 import StakingTab from 'src/components/Staking/StakeTab.vue';
 import UnstakingTab from 'src/components/Staking/UnstakeTab.vue';
@@ -16,101 +15,15 @@ export default defineComponent({
     UnstakingTab,
     RefundTab
   },
-  data() {
-    return {
-      sendToken: {
-        symbol: 'TLOS',
-        precision: 4,
-        amount: 0,
-        contract: 'eosio.token'
-      } as Token,
-      transactionId: null,
-      transactionError: null,
-      sendDialog: false
-    };
-  },
-  props: {
-    availableTokens: {
-      type: Array as PropType<Token[]>,
-      required: true
-    }
-  },
   setup() {
     return {
-      openCoinDialog: ref<boolean>(false),
-      recievingAccount: ref<string>(''),
-      sendAmount: ref<string>('0.0000'),
-      memo: ref<string>(''),
-      tab: ref('stake'),
-      ...mapActions({ signTransaction: 'account/sendTransaction' })
+      tab: ref('stake')
     };
   },
   computed: {
-    ...mapGetters({ account: 'account/accountName' }),
-    transactionForm(): boolean {
-      return !(this.transactionError || this.transactionId);
-    }
+    ...mapGetters({ account: 'account/accountName' })
   },
   methods: {
-    isValidAccount,
-    async sendTransaction(): Promise<void> {
-      const actionAccount = this.sendToken.contract;
-      const data = {
-        from: this.account as string,
-        to: this.recievingAccount,
-        quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
-        memo: this.memo
-      };
-      const authenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const users = await authenticators[0].login();
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.transactionId = (
-          await this.signTransaction({
-            user: users[0],
-            account: actionAccount,
-            data
-          })
-        ).transactionId as string;
-      } catch (e) {
-        this.transactionError = e;
-      }
-    },
-    setDefaults() {
-      if (this.availableTokens.length > 0) {
-        this.sendToken = this.availableTokens.find((token) => {
-          return token.symbol === this.sendToken.symbol;
-        });
-      }
-    },
-    updateSelectedCoin(token: Token): void {
-      this.sendToken = token;
-    },
-    resetForm() {
-      this.transactionId = null;
-      this.transactionError = null;
-      this.sendToken = {
-        symbol: 'TLOS',
-        precision: 4,
-        amount: 0,
-        contract: 'eosio.token'
-      };
-    },
-    async navToTransaction() {
-      await this.$router.push({
-        name: 'transaction',
-        params: { transaction: this.transactionId as string }
-      });
-      this.$router.go(0);
-    },
-    formatDec() {
-      this.sendAmount = Number(this.sendAmount).toLocaleString('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: this.sendToken.precision,
-        minimumFractionDigits: this.sendToken.precision
-      });
-    },
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
@@ -128,7 +41,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
+q-dialog( :persistent='true' maximized)
   q-card.stakeCard
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
