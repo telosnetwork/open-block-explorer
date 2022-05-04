@@ -14,7 +14,10 @@ export default defineComponent({
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);
     const accountData = computed((): AccountDetails => {
-      return store.state?.account.data;
+      return store.state.account.data;
+    });
+    const rexInfo = computed(() => {
+      return store.state?.account.data.account.rex_info;
     });
 
     function assetToAmount(asset: string, decimals = -1): number {
@@ -29,9 +32,12 @@ export default defineComponent({
     }
 
     function maturingRex(): string {
+      if (!rexInfo.value) {
+        return '0 TLOS';
+      }
       const mature =
-        assetToAmount(accountData.value?.account.rex_info?.vote_stake) -
-        assetToAmount(accountData.value?.account.rex_info?.matured_rex);
+        assetToAmount(rexInfo.value.vote_stake) -
+        assetToAmount(rexInfo.value.matured_rex);
       return mature.toString() + 'TLOS';
     }
 
@@ -41,7 +47,8 @@ export default defineComponent({
       total,
       accountData,
       token,
-      maturingRex
+      maturingRex,
+      rexInfo
     };
   }
 });
@@ -88,14 +95,14 @@ export default defineComponent({
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 TOTAL TLOS IN REX
-          .col-5.text-right.grey-3 {{accountData.account.rex_info?.vote_stake}}
+          .col-5.text-right.grey-3 {{rexInfo ? rexInfo.vote_stake : '0 TLOS'}}
         .row.q-pt-sm
           .col-7 REX BALANCE
-          .col-5.text-right.grey-3 {{accountData.account.rex_info?.rex_balance}}
+          .col-5.text-right.grey-3 {{rexInfo ? rexInfo.rex_balance : '0 TLOS'}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 MATURED REX
-          .col-5.text-right.grey-3 {{accountData.account.rex_info?.matured_rex}}
+          .col-5.text-right.grey-3 {{rexInfo ? rexInfo.matured_rex : '0 TLOS'}}
         .row.q-pt-sm
           .col-7 MATURING REX
           .col-5.text-right.grey-3 {{maturingRex()}}

@@ -68,7 +68,7 @@ export default defineComponent({
       const mature =
         assetToAmount(accountData.value.account.rex_info?.vote_stake) -
         assetToAmount(accountData.value.account.rex_info?.matured_rex);
-      return mature.toString() + 'TLOS';
+      return mature.toString() + ' TLOS';
     }
 
     function component(x: number, v: number) {
@@ -98,7 +98,7 @@ export default defineComponent({
       .col-xs-12.col-sm-6
         .row.q-pa-sm
           .col-6 Rex maturing
-          .col-6.text-right.grey-3 {{maturingRex() + ' TLOS'}}
+          .col-6.text-right.grey-3 {{maturingRex()}}
       .col-xs-12.col-sm-6
         .row.q-pa-sm
           .col-7 {{maturitiesCountdown()}}
