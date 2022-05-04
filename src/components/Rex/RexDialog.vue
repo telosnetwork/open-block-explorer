@@ -72,7 +72,8 @@ export default defineComponent({
           await this.signTransaction({
             user: users[0],
             account: actionAccount,
-            data
+            data,
+            name: 'transfer'
           })
         ).transactionId as string;
       } catch (e) {
@@ -106,13 +107,6 @@ export default defineComponent({
       });
       this.$router.go(0);
     },
-    formatDec() {
-      this.sendAmount = Number(this.sendAmount).toLocaleString('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: this.sendToken.precision,
-        minimumFractionDigits: this.sendToken.precision
-      });
-    },
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
@@ -137,7 +131,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
         .row.q-pl-sm
-          img.send-img.q-pr-md( src="~assets/cpu.svg" style="height: 60px; max-width: 60px") 
+          img.send-img.q-pr-md( src="~assets/rex.svg" style="height: 60px; max-width: 60px") 
           .text-h4.q-pb-md.inline-block.color-grey-3.inline Rex
         .q-pa-sm
           RexInfo

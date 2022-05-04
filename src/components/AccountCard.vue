@@ -12,6 +12,7 @@ import SendDialog from 'src/components/SendDialog.vue';
 import StakingDialog from 'src/components/Staking/StakingDialog.vue';
 import RexDialog from 'src/components/Rex/RexDialog.vue';
 import DateField from 'src/components/DateField.vue';
+import { mapActions } from 'vuex';
 import { date } from 'quasar';
 
 export default defineComponent({
@@ -80,9 +81,13 @@ export default defineComponent({
       this.token.symbol
     }`;
     await this.loadAccountData();
+    await this.updateRexData({
+      account: this.$store.state.account.accountName
+    });
     await this.loadPriceData();
   },
   methods: {
+    ...mapActions({ updateRexData: 'account/updateRexData' }),
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
@@ -248,7 +253,7 @@ export default defineComponent({
             td.text-left REX
             td.text-right {{ rex }}
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
-    stakingDialog(v-model="openStakingDialog" :availableTokens="availableTokens")
+    stakingDialog(v-model="openStakingDialog")
     RexDialog(v-model="openRexDialog" :availableTokens="availableTokens")
 </template>
 

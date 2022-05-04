@@ -16,34 +16,55 @@ export default defineComponent({
     const stakingAccount = computed(
       (): string => store.state.account.accountName
     );
-    const accountTotal = computed(
-      (): string => store.state.account.data.account?.core_liquid_balance
-    );
     const cpuTokens = ref<string>('0.0000');
     const netTokens = ref<string>('0.0000');
+    const cpuWithdraw = ref<string>('0.0000');
+    const netWithdraw = ref<string>('0.0000');
+    const transactionId = ref<string>(store.state.account.TransactionId);
+    const transactionError = ref<unknown>(store.state.account.TransactionError);
+    const accountData = computed((): AccountDetails => {
+      return store.state?.account.data;
+    });
 
     function formatDec() {
-      cpuTokens.value = Number(cpuTokens.value).toLocaleString('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: store.state.chain.token.precision,
-        minimumFractionDigits: store.state.chain.token.precision
-      });
-      netTokens.value = Number(netTokens.value).toLocaleString('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: store.state.chain.token.precision,
-        minimumFractionDigits: store.state.chain.token.precision
-      });
+      cpuTokens.value = Number(cpuTokens.value)
+        .toLocaleString('en-US', {
+          style: 'decimal',
+          maximumFractionDigits: store.state.chain.token.precision,
+          minimumFractionDigits: store.state.chain.token.precision
+        })
+        .replace(/[^0-9.]/g, '');
+      netTokens.value = Number(netTokens.value)
+        .toLocaleString('en-US', {
+          style: 'decimal',
+          maximumFractionDigits: store.state.chain.token.precision,
+          minimumFractionDigits: store.state.chain.token.precision
+        })
+        .replace(/[^0-9.]/g, '');
     }
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
+    async function stake() {
+      void store.dispatch('account/resetTransaction');
+      if (cpuTokens.value === '0.0000' && netTokens.value === '0.0000') {
+        return;
       }
+      await store.dispatch('account/stakeCpuNetRex', {
+        cpuAmount: cpuTokens.value,
+        netAmount: netTokens.value
+      });
+      openTransaction.value = true;
+    }
+
+    async function unstake() {
+      void store.dispatch('account/resetTransaction');
+      if (cpuWithdraw.value === '0.0000' && netWithdraw.value === '0.0000') {
+        return;
+      }
+      await store.dispatch('account/unstakeCpuNetRex', {
+        cpuAmount: cpuWithdraw.value,
+        netAmount: netWithdraw.value
+      });
+      openTransaction.value = true;
     }
 
     return {
@@ -51,54 +72,16 @@ export default defineComponent({
       stakingAccount,
       cpuTokens,
       netTokens,
-      ...mapActions({ stake: 'account/stake' }),
-      transactionId: ref<string>(null),
-      transactionError: null,
+      cpuWithdraw,
+      netWithdraw,
+      ...mapActions({ signTransaction: 'account/sendTransaction' }),
+      transactionId,
+      transactionError,
       formatDec,
-      accountTotal: assetToAmount(accountTotal.value)
+      stake,
+      unstake,
+      accountData
     };
-  },
-  methods: {
-    async sendTransaction(): Promise<void> {
-      this.transactionError = '';
-      if (this.cpuTokens === '0.0000' && this.netTokens === '0.0000') {
-        return;
-      }
-      const data = {
-        from: this.stakingAccount.toLowerCase(),
-        receiver: this.stakingAccount.toLowerCase(),
-        stake_cpu_quantity:
-          String(parseFloat(this.cpuTokens).toFixed(4)) + String(' TLOS'),
-        stake_net_quantity:
-          String(parseFloat(this.netTokens).toFixed(4)) + String(' TLOS'),
-        transfer: false
-      };
-      const authenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const users = await authenticators[0].login();
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.transactionId = (
-          await this.stake({
-            user: users[0],
-            data
-          })
-        ).transactionId as string;
-      } catch (e) {
-        this.transactionError = e;
-      }
-      await this.loadAccountData();
-      this.openTransaction = true;
-    },
-    async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
-      try {
-        data = await this.$api.getAccount(this.stakingAccount);
-        this.$store.commit('account/setAccountData', data);
-      } catch (e) {
-        return;
-      }
-    }
   }
 });
 </script>
@@ -111,35 +94,35 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-9 STAKED CPU TO LEND
-            .col-3.grey-3.text-right 33
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= cpuStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+            .col-3.grey-3.text-right {{accountData.account.total_resources.cpu_weight}}
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
           .row
           .row.q-pb-sm.full-width
             .col-9 STAKED NET TO LEND
-            .col-3.grey-3.text-right 33
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= cpuStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+            .col-3.grey-3.text-right {{accountData.account.total_resources.net_weight}}
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
         .row
-          q-btn.full-width.button-accent(label="Lend" flat @click="sendTransaction" )
+          q-btn.full-width.button-accent(label="Lend" flat @click="stake" )
       .col-xs-12.col-sm-12.col-md-6
         .row
           .row.q-pb-sm.full-width
             .col-9 STAKED CPU TO WITHDRAW
-            .col-3.grey-3.text-right 33
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= netStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+            .col-3.grey-3.text-right 0
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuWithdraw" :lazy-rules='true' :rules="[ val =>  val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
           .row
           .row.q-pb-sm.full-width
             .col-9 STAKED NET TO WITHDRAW
-            .col-3.grey-3.text-right 33
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= cpuStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+            .col-3.grey-3.text-right 0
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netWithdraw" :lazy-rules='true' :rules="[ val =>  val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
         .row
-          q-btn.full-width.button-accent(label="Withdraw" flat @click="sendTransaction" )
+          q-btn.full-width.button-accent(label="Withdraw" flat @click="unstake" )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
-    border-radius: 4px
-    color: $grey-4
+  background: rgba(108, 35, 255, 1)
+  border-radius: 4px
+  color: $grey-4
 </style>

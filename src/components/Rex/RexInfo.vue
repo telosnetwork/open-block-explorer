@@ -4,36 +4,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token, Refund } from 'src/types';
+import { AccountDetails, Token } from 'src/types';
 
 export default defineComponent({
   name: 'StakingInfo',
   setup() {
     const store = useStore();
-    const openCoinDialog = ref<boolean>(false);
     const stakingAccount = ref<string>('');
-    const cpuTokens = ref<string>('0.0000');
-    const netTokens = ref<string>('0.0000');
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);
     const accountData = computed((): AccountDetails => {
       return store.state?.account.data;
     });
-
-    function formatStaked(staked: number): string {
-      const stakedValue = (
-        staked / Math.pow(10, token.value.precision)
-      ).toFixed(2);
-      return `${stakedValue} ${token.value.symbol}`;
-    }
-
-    function formatTotalRefund(refund: Refund): string {
-      const totalRefund = (
-        assetToAmount(refund?.cpu_amount, token.value.precision) +
-        assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(2);
-      return `${totalRefund} ${token.value.symbol}`;
-    }
 
     function assetToAmount(asset: string, decimals = -1): number {
       try {
@@ -46,17 +28,20 @@ export default defineComponent({
       }
     }
 
+    function maturingRex(): string {
+      const mature =
+        assetToAmount(accountData.value?.account.rex_info?.vote_stake) -
+        assetToAmount(accountData.value?.account.rex_info?.matured_rex);
+      return mature.toString() + 'TLOS';
+    }
+
     return {
       store,
-      openCoinDialog,
       stakingAccount,
-      cpuTokens,
-      netTokens,
       total,
       accountData,
       token,
-      formatStaked,
-      formatTotalRefund
+      maturingRex
     };
   }
 });
@@ -70,7 +55,7 @@ export default defineComponent({
       .col-6.text-h6.text-right.grey-3 {{accountData.account?.core_liquid_balance}}
     .row.full-width.q-py-md.q-px-md
       hr
-    .row.full-width.q-col-gutter-lg.q-pb-md
+    //-.row.full-width.q-col-gutter-lg.q-pb-md
       .col-xs-12.col-sm-6
         div Your Cumulative Earnings
         .text-h6.grey-3 30.25 TLOS
@@ -97,23 +82,23 @@ export default defineComponent({
               q-item(clickable v-close-popup @click='onItemClick')
                 q-item-section
                   q-item-label 2 years
-
+    //
 
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7 STAKED TO CPU
-          .col-5.text-right.grey-3 {{accountData.account?.total_resources?.cpu_weight}}
+          .col-7 TOTAL TLOS IN REX
+          .col-5.text-right.grey-3 {{accountData.account.rex_info?.vote_stake}}
         .row.q-pt-sm
-          .col-7 STAKED TO NET
-          .col-5.text-right.grey-3 {{accountData.account?.total_resources?.net_weight}}
+          .col-7 REX BALANCE
+          .col-5.text-right.grey-3 {{accountData.account.rex_info?.rex_balance}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7 STAKED BY OTHERS
-          .col-5.text-right.grey-3 {{formatStaked(accountData.account?.voter_info?.staked)}}
+          .col-7 MATURED REX
+          .col-5.text-right.grey-3 {{accountData.account.rex_info?.matured_rex}}
         .row.q-pt-sm
-          .col-7 REFUNDING
-          .col-5.text-right.grey-3 {{formatTotalRefund(accountData.account?.refund_request)}}
+          .col-7 MATURING REX
+          .col-5.text-right.grey-3 {{maturingRex()}}
 
 </template>
 

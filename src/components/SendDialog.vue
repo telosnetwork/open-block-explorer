@@ -72,8 +72,10 @@ export default defineComponent({
             name: 'transfer'
           })
         ).transactionId as string;
+        this.$store.commit('account/setTransaction', this.transactionId);
       } catch (e) {
         this.transactionError = e;
+        this.$store.commit('account/setTransactionError', e);
         this.resetForm();
       }
     },
@@ -106,11 +108,13 @@ export default defineComponent({
     },
     formatDec() {
       let amount = Number(this.sendAmount);
-      this.sendAmount = amount.toLocaleString('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: this.sendToken.precision,
-        minimumFractionDigits: this.sendToken.precision
-      });
+      this.sendAmount = amount
+        .toLocaleString('en-US', {
+          style: 'decimal',
+          maximumFractionDigits: this.sendToken.precision,
+          minimumFractionDigits: this.sendToken.precision
+        })
+        .replace(/,/g, '');
       this.sendAmount = this.sendAmount.replace(/[^0-9.]/g, '');
     }
   }

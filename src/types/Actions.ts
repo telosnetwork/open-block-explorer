@@ -65,7 +65,12 @@ export type AccountDetails = {
     ram_quota: number;
     ram_usage: number;
     refund_request: Refund;
-    rex_info: null | { vote_stake: string };
+    rex_info: null | {
+      matured_rex: string;
+      vote_stake: string;
+      rex_balance: string;
+      rex_maturities: Maturities[];
+    };
     subjective_cpu_bill_limit: Resource;
     total_resources: {
       owner: string;
@@ -187,4 +192,13 @@ export interface Receipt {
 export interface Auth_sequence {
   account: string;
   sequence: string;
+}
+
+interface Maturities {
+  first: string;
+  second: number;
+}
+export interface Get_actions {
+  actions: Action[];
+  cached: boolean;
 }

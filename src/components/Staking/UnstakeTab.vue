@@ -26,16 +26,20 @@ export default defineComponent({
     );
 
     function formatDec() {
-      cpuTokens.value = Number(cpuTokens.value).toLocaleString('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: store.state.chain.token.precision,
-        minimumFractionDigits: store.state.chain.token.precision
-      });
-      netTokens.value = Number(netTokens.value).toLocaleString('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: store.state.chain.token.precision,
-        minimumFractionDigits: store.state.chain.token.precision
-      });
+      cpuTokens.value = Number(cpuTokens.value)
+        .toLocaleString('en-US', {
+          style: 'decimal',
+          maximumFractionDigits: store.state.chain.token.precision,
+          minimumFractionDigits: store.state.chain.token.precision
+        })
+        .replace(/[^0-9.]/g, '');
+      netTokens.value = Number(netTokens.value)
+        .toLocaleString('en-US', {
+          style: 'decimal',
+          maximumFractionDigits: store.state.chain.token.precision,
+          minimumFractionDigits: store.state.chain.token.precision
+        })
+        .replace(/[^0-9.]/g, '');
     }
 
     function assetToAmount(asset: string, decimals = -1): number {
@@ -90,8 +94,10 @@ export default defineComponent({
             data
           })
         ).transactionId as string;
+        this.$store.commit('account/setTransaction', this.transactionId);
       } catch (e) {
         this.transactionError = e;
+        this.$store.commit('account/setTransactionError', e);
       }
       await this.loadAccountData();
       this.openTransaction = true;

@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'SendDialog',
@@ -7,18 +8,13 @@ export default defineComponent({
     message: {
       type: String,
       required: true
-    },
-    transactionId: {
-      type: String
-    },
-    transactionError: {
-      type: String
     }
   },
   setup(props) {
+    const store = useStore();
     const msg = computed((): string => props.message);
-    const Id = computed((): string => props.transactionId);
-    const transactionE = computed((): string => props.transactionError);
+    const Id = computed(() => store.state.account.TransactionId);
+    const transactionE = computed(() => store.state.account.TransactionError);
 
     return {
       msg,
@@ -33,6 +29,10 @@ export default defineComponent({
         params: { transaction: this.Id }
       });
       this.$router.go(0);
+      void this.$store.dispatch('account/resetTransaction');
+    },
+    reset() {
+      void this.$store.dispatch('account/resetTransaction');
     }
   }
 });
@@ -41,7 +41,7 @@ export default defineComponent({
 <template lang="pug">
 q-dialog
   .Card
-    q-card-section(v-if='transactionId')
+    q-card-section(v-if='Id')
       .row
         .col-12 
           .row
@@ -52,8 +52,8 @@ q-dialog
         .col-12 
           .row Transaction Failed: {{ transactionE }}
     q-card-actions(align="right" class="text-primary")
-      q-btn(flat label="Close" v-close-popup text-color="grey-3")
-      q-btn(flat label="View Transaction" @click="this.navToTransaction" text-color="grey-3" v-if="transactionE === ''")
+      q-btn(flat label="Close" @click="reset" v-close-popup text-color="grey-3")
+      q-btn(flat label="View Transaction" @click="this.navToTransaction" text-color="grey-3" v-if="Id")
 
 </template>
 
