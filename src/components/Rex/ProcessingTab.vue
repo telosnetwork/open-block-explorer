@@ -60,7 +60,7 @@ export default defineComponent({
         // seconds = component(diff, 1) % 60;// seconds
         return `${days} days, ${hours} hours remaining`;
       } else {
-        return 'No pending refund';
+        return 'No maturing Rex';
       }
     }
 

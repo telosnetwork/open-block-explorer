@@ -23,6 +23,12 @@ export default defineComponent({
     const accountData = computed((): AccountDetails => {
       return store.state?.account.data;
     });
+    const rexInfo = computed(() => {
+      return store.state.account.data.account.rex_info;
+    });
+    const rexbal = computed(() => {
+      return store.state.account.rexbal;
+    });
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
@@ -44,7 +50,11 @@ export default defineComponent({
 
     async function stake() {
       void store.dispatch('account/resetTransaction');
-      if (lendTokens.value === '0.0000') {
+      if (
+        lendTokens.value === '0.0000' ||
+        Number(lendTokens.value) >=
+          Number(accountData.value.account.core_liquid_balance.split(' ')[0])
+      ) {
         return;
       }
       await store.dispatch('account/stakeRex', {
@@ -55,13 +65,29 @@ export default defineComponent({
 
     async function unstake() {
       void store.dispatch('account/resetTransaction');
-      if (withdrawTokens.value === '0.0000') {
+      if (
+        withdrawTokens.value === '0.0000' ||
+        !rexbal.value.vote_stake ||
+        Number(withdrawTokens.value) >=
+          Number(rexbal.value.vote_stake.split(' ')[0])
+      ) {
         return;
       }
       await store.dispatch('account/unstakeRex', {
         amount: withdrawTokens.value
       });
       openTransaction.value = true;
+    }
+
+    function assetToAmount(asset: string, decimals = -1): number {
+      try {
+        let qty: string = asset.split(' ')[0];
+        let val: number = parseFloat(qty);
+        if (decimals > -1) qty = val.toFixed(decimals);
+        return val;
+      } catch (error) {
+        return 0;
+      }
     }
 
     return {
@@ -73,7 +99,10 @@ export default defineComponent({
       formatDec,
       stake,
       unstake,
-      accountData
+      assetToAmount,
+      accountData,
+      rexInfo,
+      rexbal
     };
   }
 });
@@ -88,15 +117,15 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-9 LIQUID TLOS TO LEND
             .col-3.grey-3.text-right {{accountData.account.core_liquid_balance}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="lendTokens" :lazy-rules='true' :rules="[ val => val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="lendTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Lend" flat @click="stake" )
       .col-xs-12.col-sm-12.col-md-6
         .row
           .row.q-pb-sm.full-width
             .col-9 LIQUID TLOS TO WITHDRAW
-            .col-3.grey-3.text-right {{accountData.account.rex_info?.matured_rex + ' TLOS'}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="withdrawTokens" :lazy-rules='true' :rules="[ val => val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+            .col-3.grey-3.text-right {{rexbal.vote_stake ? rexbal.vote_stake : '0 TLOS'}}
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="withdrawTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(rexbal.vote_stake)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Withdraw" flat @click="unstake" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")

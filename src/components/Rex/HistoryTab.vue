@@ -39,8 +39,12 @@ export default defineComponent({
         .row.q-pa-sm
           .col-6 
           .col-6.grey-3 {{formatDate(action.timestamp)}}
-
       q-separator(color="grey-8" )
+
+    .row.full-width(v-if="rexActions.length === 0")
+      .col-12
+        .row.q-pa-sm No REX transaction history
+
 </template>
 
 <style lang="sass">

@@ -45,7 +45,13 @@ export default defineComponent({
 
     async function stake() {
       void store.dispatch('account/resetTransaction');
-      if (cpuTokens.value === '0.0000' && netTokens.value === '0.0000') {
+      if (
+        (cpuTokens.value === '0.0000' && netTokens.value === '0.0000') ||
+        Number(cpuTokens.value) >=
+          assetToAmount(accountData.value.account.total_resources.cpu_weight) ||
+        Number(netTokens.value) >=
+          assetToAmount(accountData.value.account.total_resources.net_weight)
+      ) {
         return;
       }
       await store.dispatch('account/stakeCpuNetRex', {
@@ -67,6 +73,17 @@ export default defineComponent({
       openTransaction.value = true;
     }
 
+    function assetToAmount(asset: string, decimals = -1): number {
+      try {
+        let qty: string = asset.split(' ')[0];
+        let val: number = parseFloat(qty);
+        if (decimals > -1) qty = val.toFixed(decimals);
+        return val;
+      } catch (error) {
+        return 0;
+      }
+    }
+
     return {
       openTransaction,
       stakingAccount,
@@ -80,6 +97,7 @@ export default defineComponent({
       formatDec,
       stake,
       unstake,
+      assetToAmount,
       accountData
     };
   }
@@ -95,12 +113,12 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-9 STAKED CPU TO LEND
             .col-3.grey-3.text-right {{accountData.account.total_resources.cpu_weight}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.total_resources.cpu_weight)  || 'Invalid amount.' ]" type="text" dense dark)
           .row
           .row.q-pb-sm.full-width
             .col-9 STAKED NET TO LEND
             .col-3.grey-3.text-right {{accountData.account.total_resources.net_weight}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(accountData.account.total_resources.net_weight) || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Lend" flat @click="stake" )
       .col-xs-12.col-sm-12.col-md-6
@@ -108,12 +126,12 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-9 STAKED CPU TO WITHDRAW
             .col-3.grey-3.text-right 0
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuWithdraw" :lazy-rules='true' :rules="[ val =>  val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuWithdraw" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(accountData.account.total_resources.cpu_weight) || 'Invalid amount.' ]" type="text" dense dark)
           .row
           .row.q-pb-sm.full-width
             .col-9 STAKED NET TO WITHDRAW
             .col-3.grey-3.text-right 0
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netWithdraw" :lazy-rules='true' :rules="[ val =>  val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netWithdraw" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(accountData.account.total_resources.net_weight) || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Withdraw" flat @click="unstake" )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
