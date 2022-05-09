@@ -108,7 +108,7 @@ export default defineComponent({
 .staking-form
   q-card-section
     .row.q-col-gutter-md
-      .col-xs-12.col-sm-12.col-md-6
+      .col-12
         .row
           .row.q-pb-sm.full-width
             .col-9 STAKED CPU TO LEND
@@ -121,7 +121,7 @@ export default defineComponent({
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(accountData.account.total_resources.net_weight) || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Lend" flat @click="stake" )
-      .col-xs-12.col-sm-12.col-md-6
+      .col-xs-12.col-sm-12.col-md-6.hidden
         .row
           .row.q-pb-sm.full-width
             .col-9 STAKED CPU TO WITHDRAW
