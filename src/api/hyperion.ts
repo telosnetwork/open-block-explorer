@@ -18,7 +18,10 @@ import {
   PermissionLinks,
   Userres,
   Block,
-  Get_actions
+  Get_actions,
+  GetProposalsProps,
+  GetProposals,
+  GetProducers
 } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
@@ -141,5 +144,35 @@ export const getActions = async function (
       filter
     }
   });
+  return response.data;
+};
+
+export const getProposals = async function ({
+  proposer,
+  proposal,
+  requested,
+  provided,
+  limit,
+  skip
+}: GetProposalsProps): Promise<GetProposals> {
+  const response = await hyperion.get('v2/state/get_proposals', {
+    params: {
+      proposer,
+      proposal,
+      requested,
+      provided,
+      limit,
+      skip
+    }
+  });
+  return response.data;
+};
+
+export const getProducers = async function (): Promise<GetProducers> {
+  const response = await hyperion.post('v1/chain/get_producers', {
+    json: true,
+    limit: 10000
+  });
+
   return response.data;
 };
