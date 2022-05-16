@@ -100,7 +100,7 @@ export default defineComponent({
       formatTotalRefund,
       refundProgress,
       refundCountdown,
-      ...mapActions({ refund: 'account/refund' }),
+      ...mapActions({ signTransaction: 'account/sendTransaction' }),
       transactionId: ref<string>(null),
       transactionError: null
     };
@@ -118,7 +118,9 @@ export default defineComponent({
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
-          await this.refund({
+          await this.signTransaction({
+            account: 'eosio',
+            name: 'refund',
             user: users[0],
             data
           })
