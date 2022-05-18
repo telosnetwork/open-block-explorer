@@ -15,8 +15,12 @@ import { fromLonLat, toLonLat } from 'ol/proj';
 import Feature from 'ol/Feature';
 import { easeOut } from 'ol/easing';
 import { getVectorContext } from 'ol/render';
+import { Interaction } from 'ol/Interaction';
 import { unByKey } from 'ol/Observable';
 import { toStringHDMS } from 'ol/coordinate';
+import { mapGetters, mapActions } from 'vuex';
+import { BP } from 'src/types';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'PageIndex',
@@ -25,15 +29,18 @@ export default defineComponent({
     View
   },
   setup() {
+    const store = useStore();
     const center = ref([40, 40]);
     const projection = ref('EPSG:4326');
     const zoom = ref(8);
     const rotation = ref(0);
+    const BPlist = ref<BP[]>(store.state.chain.bpList);
     return {
       center,
       projection,
       zoom,
-      rotation
+      rotation,
+      BPlist
     };
   },
   data() {
@@ -41,7 +48,11 @@ export default defineComponent({
       map: null
     };
   },
-  mounted() {
+  methods: {
+    ...mapActions('chain', ['updateBpList'])
+  },
+  async mounted() {
+    await this.updateBpList();
     const style = new Style({
       fill: new Fill({
         color: '#4325c2'
@@ -59,7 +70,29 @@ export default defineComponent({
           width: 3
         }),
         radius: 5
-      })
+      }),
+      zIndex: 200
+    });
+
+    const featureStyle = new Style({
+      fill: new Fill({
+        color: '#4325c2'
+      }),
+      stroke: new Stroke({
+        color: '#4325c2',
+        width: 1
+      }),
+      image: new CircleStyle({
+        fill: new Fill({
+          color: '#8276d2'
+        }),
+        stroke: new Stroke({
+          color: '#63C9EF',
+          width: 3
+        }),
+        radius: 5
+      }),
+      zIndex: 201
     });
 
     // const tileLayer = new TileLayer({
@@ -84,7 +117,6 @@ export default defineComponent({
       format: new GeoJSON()
     });
     const vector = new VectorLayer({
-      background: '#071a5f',
       source: source,
       style: style
     });
@@ -108,10 +140,10 @@ export default defineComponent({
     const overlay = new Overlay({
       element: container,
       autoPan: {
-        animation: {
-          duration: 250
-        }
-      }
+    animation: {
+      duration: 250,
+    },
+  },
     });
 
     closer.onclick = function () {
@@ -134,24 +166,76 @@ export default defineComponent({
 
     var extent = source.getExtent();
     //map.getView().fit(extent, map.getSize() as any);
-
+    let selected = null as any;
     map.on('singleclick', function (evt) {
       const coordinate = evt.coordinate;
       const hdms = toStringHDMS(toLonLat(coordinate));
+      if (selected !== null && selected.getProperties().type && selected.getProperties().type === 'bp') {
+        overlay.setPosition(undefined);
+        closer.blur();
+        content.innerHTML = '&nbsp;';
+        selected = null;
+      }
 
-      content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
-      overlay.setPosition(coordinate);
+      map.forEachFeatureAtPixel(evt.pixel, function (f) {
+        if(f.getProperties().type && f.getProperties().type === 'bp'){
+         selected = f; 
+        }
+      });
+
+      if (selected && selected.getProperties().type && selected.getProperties().type === 'bp') {
+        content.innerHTML =
+          '<div class="owner-text text-h5 text-center text-uppercase">' + selected.getId() + '</div>'+ 
+          '<div class=".country-text text-subtitle1 text-center">' + selected.getProperties().country + '</div>';
+        overlay.setPosition(selected.getGeometry().getCoordinates());
+      } else {
+        content.innerHTML = '&nbsp;';
+      }
     });
 
-    function addRandomFeature() {
-      const x = Math.random() * 360 - 180;
-      const y = Math.random() * 170 - 85;
-      const geom = new Point(fromLonLat([x, y]));
-      const feature = new Feature(geom);
-      source.addFeature(feature);
+    map.on('pointermove', function (e) {
+      if (selected !== null && selected.getProperties().type && selected.getProperties().type === 'bp') {
+        console.log(selected.getProperties().type);
+        overlay.setPosition(undefined);
+        closer.blur();
+        content.innerHTML = '&nbsp;';
+        selected = null;
+      }
+
+      map.forEachFeatureAtPixel(e.pixel, function (f) {
+        if(f.getProperties().type && f.getProperties().type === 'bp'){
+         selected = f; 
+        }
+      });
+
+      if (selected && selected.getProperties().type && selected.getProperties().type === 'bp') {
+        content.innerHTML =
+          '<div class="owner-text text-h5 text-center text-uppercase">' + selected.getId() + '</div>'+ 
+          '<div class=".country-text text-subtitle1 text-center">' + selected.getProperties().country + '</div>';
+
+
+        overlay.setPosition(selected.getGeometry().getCoordinates());
+      } else {
+        content.innerHTML = '&nbsp;';
+      }
+    });
+
+    function addBP(BPlist: BP[]) {
+      for (const bp of BPlist) {
+        if (bp.org && bp.org.location) {
+          const x = bp.org.location.longitude;
+          const y = bp.org.location.latitude;
+          const geom = new Point(fromLonLat([x, y]));
+          const feature = new Feature(geom);
+          feature.setStyle(featureStyle);
+          feature.setId(bp.owner);
+          feature.setProperties({ type: 'bp', country: bp.org.location.name });
+          source.addFeature(feature);
+        }
+      }
     }
 
-    const duration = 3000;
+    const duration = 2500;
     function flash(feature: any) {
       const start = Date.now();
       const flashGeom = feature.getGeometry().clone();
@@ -190,8 +274,12 @@ export default defineComponent({
     source.on('addfeature', function (e) {
       flash(e.feature);
     });
-
-    window.setInterval(addRandomFeature, 2000);
+    const list = this.BPlist;
+    
+    map.once('postrender', function(event) {
+      addBP(list);
+    });
+    //window.setInterval(addBP(list), 2000);
   }
 });
 </script>
@@ -202,7 +290,6 @@ export default defineComponent({
 div(id="popup" ref="popup" class="ol-popup")
   a(href="#" id="popup-closer" ref="popup-closer" class="ol-popup-closer")
   div(id="popup-content" ref="popup-content")
-    
 
 </template>
 
@@ -211,18 +298,17 @@ div(id="popup" ref="popup" class="ol-popup")
   width: 100%
   max-width: 90%
 .map-container
-  background-color: #213e5e
+  background-color: transparent
   background-repeat: no-repeat
   width: 100%
   height:80vh
 
 .ol-popup
   position: absolute
-  background-color: white
+  background: linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)
   box-shadow: 0 1px 4px rgba(0,0,0,0.2)
   padding: 15px
   border-radius: 10px
-  border: 1px solid #cccccc
   bottom: 12px
   left: -50px
   min-width: 280px
@@ -237,13 +323,13 @@ div(id="popup" ref="popup" class="ol-popup")
   pointer-events: none
 
 .ol-popup:after
-  border-top-color: white
+  border-top-color: #CBCAF5
   border-width: 10px
   left: 48px
   margin-left: -10px
 
 .ol-popup:before
-  border-top-color: #cccccc
+  border-top-color: #CBCAF5
   border-width: 11px
   left: 48px
   margin-left: -11px
@@ -256,4 +342,24 @@ div(id="popup" ref="popup" class="ol-popup")
 
 .ol-popup-closer:after
   content: "✖"
+
+.owner-text
+  color: #071A5F
+  font-family: Actor
+  font-size: 13px
+  font-weight: 400
+  line-height: 16px
+  letter-spacing: 0em
+  text-align: center
+
+.country-text
+  color: #071A5F
+  font-family: Roboto
+  font-size: 10px
+  font-weight: 400
+  line-height: 12px
+  letter-spacing: 0em
+  text-align: left
+
+
 </style>

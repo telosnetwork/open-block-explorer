@@ -25,4 +25,5 @@ export { GenericObj } from './GenericObj';
 export { Transaction } from './Transaction';
 export { OptionsObj } from './OptionsObj';
 export { TreeNode } from './TreeNode';
-export { RexbalRows, Rexbal } from './TableRows';
+export { RexbalRows, Rexbal, ProducerRows } from './TableRows';
+export { BP } from './BP';

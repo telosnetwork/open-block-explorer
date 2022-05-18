@@ -1,4 +1,4 @@
-import { Token } from 'src/types';
+import { Token, BP } from 'src/types';
 import { MutationTree } from 'vuex';
 import { ChainStateInterface } from './state';
 
@@ -11,5 +11,8 @@ export const mutations: MutationTree<ChainStateInterface> = {
   },
   setPrecision(state: ChainStateInterface, precision: number) {
     state.token.precision = precision;
+  },
+  setBpList(state: ChainStateInterface, bpList: BP[]) {
+    state.bpList = bpList;
   }
 };

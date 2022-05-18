@@ -1,6 +1,7 @@
-import { Token } from 'src/types';
+import { Token, BP } from 'src/types';
 export interface ChainStateInterface {
   token: Token;
+  bpList: BP[];
 }
 
 export function state(): ChainStateInterface {
@@ -10,6 +11,7 @@ export function state(): ChainStateInterface {
       precision: 0,
       amount: 0,
       contract: ''
-    }
+    },
+    bpList: []
   };
 }
