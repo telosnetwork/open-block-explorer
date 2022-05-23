@@ -27,3 +27,4 @@ export { OptionsObj } from './OptionsObj';
 export { TreeNode } from './TreeNode';
 export { RexbalRows, Rexbal, ProducerRows } from './TableRows';
 export { BP } from './BP';
+export { ChainInfo } from './ChainInfo';

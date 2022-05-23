@@ -3,9 +3,10 @@ import { StateInterface } from '../index';
 import { ChainStateInterface } from './state';
 import { BP } from 'src/types';
 import axios from 'axios';
+import { api } from 'src/api/index';
+
 export const actions: ActionTree<ChainStateInterface, StateInterface> = {
   async updateBpList({ commit }) {
-    console.log('updateBpList');
     // const producersParams = {
     //   code: 'eosio',
     //   limit: '1000',
@@ -35,6 +36,17 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
         await axios.get(`${process.env.PRODUCER_BUCKET_URL}/${lastKey}`)
       ).data as BP[];
       commit('setBpList', producerData);
+    } catch (err) {
+      console.log('Error', err);
+    }
+  },
+  async updateBlockData({ commit }) {
+    console.log('updateblockdata');
+    try {
+      const info = await api.getInfo();
+      commit('setHead_block_num', info.head_block_num);
+      commit('setLIB', info.last_irreversible_block_num);
+      commit('setHead_block_producer', info.head_block_producer);
     } catch (err) {
       console.log('Error', err);
     }

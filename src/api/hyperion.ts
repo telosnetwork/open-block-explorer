@@ -18,7 +18,8 @@ import {
   PermissionLinks,
   Userres,
   Block,
-  Get_actions
+  Get_actions,
+  ChainInfo
 } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
@@ -141,5 +142,11 @@ export const getActions = async function (
       filter
     }
   });
+  return response.data;
+};
+
+export const getInfo = async function (): Promise<ChainInfo> {
+  controller.abort();
+  const response = await hyperion.get('v1/chain/get_info');
   return response.data;
 };

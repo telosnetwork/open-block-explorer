@@ -14,5 +14,14 @@ export const mutations: MutationTree<ChainStateInterface> = {
   },
   setBpList(state: ChainStateInterface, bpList: BP[]) {
     state.bpList = bpList;
+  },
+  setHead_block_num(state: ChainStateInterface, hbn: number) {
+    state.head_block_num = hbn;
+  },
+  setLIB(state: ChainStateInterface, lib: number) {
+    state.last_irreversible_block_num = lib;
+  },
+  setHead_block_producer(state: ChainStateInterface, hbp: string) {
+    state.head_block_producer = hbp;
   }
 };

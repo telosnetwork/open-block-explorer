@@ -1,6 +1,6 @@
 <script lang="ts">
 /* eslint-disable */
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import 'vue3-openlayers/dist/vue3-openlayers.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -9,18 +9,54 @@ import Overlay from 'ol/Overlay';
 import 'ol/ol.css';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style';
-import { OSM, Vector as VectorSource } from 'ol/source';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
-import { fromLonLat, toLonLat } from 'ol/proj';
+import { Vector as VectorSource } from 'ol/source';
+import { Vector as VectorLayer } from 'ol/layer';
+import { fromLonLat } from 'ol/proj';
 import Feature from 'ol/Feature';
 import { easeOut } from 'ol/easing';
 import { getVectorContext } from 'ol/render';
-import { Interaction } from 'ol/Interaction';
 import { unByKey } from 'ol/Observable';
-import { toStringHDMS } from 'ol/coordinate';
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 import { BP } from 'src/types';
 import { useStore } from 'src/store';
+
+// Map core style
+const style = new Style({
+  fill: new Fill({
+    color: '#4325c2'
+  }),
+  stroke: new Stroke({
+    color: '#4325c2',
+    width: 1
+  }),
+  zIndex: 50
+});
+
+const featureStyle = new Style({
+  image: new CircleStyle({
+    fill: new Fill({
+      color: '#8276d2'
+    }),
+    stroke: new Stroke({
+      color: '#63C9EF',
+      width: 3
+    }),
+    radius: 5
+  }),
+  zIndex: 51
+});
+
+// Map source uses vectorLayer with vector source
+const source = new VectorSource({
+  wrapX: false,
+  url: 'https://openlayers.org/data/vector/ecoregions.json',
+  format: new GeoJSON()
+});
+
+const vector = new VectorLayer({
+  source: source,
+  style: style
+});
 
 export default defineComponent({
   name: 'PageIndex',
@@ -34,105 +70,37 @@ export default defineComponent({
     const projection = ref('EPSG:4326');
     const zoom = ref(8);
     const rotation = ref(0);
-    const BPlist = ref<BP[]>(store.state.chain.bpList);
+    const BPlist = computed((): BP[] => store.state.chain.bpList);
+    const HeadProducer = computed(
+      (): string => store.state.chain.head_block_producer
+    );
     return {
       center,
       projection,
       zoom,
       rotation,
-      BPlist
+      BPlist,
+      HeadProducer
     };
   },
   data() {
     return {
-      map: null
+      map: null,
+      flashGeom: null,
+      listenerKey: null,
+      duration: 2600,
+      MapSource: null
     };
   },
   methods: {
-    ...mapActions('chain', ['updateBpList'])
+    ...mapActions('chain', ['updateBpList']),
   },
   async mounted() {
     await this.updateBpList();
-    const style = new Style({
-      fill: new Fill({
-        color: '#4325c2'
-      }),
-      stroke: new Stroke({
-        color: '#4325c2',
-        width: 1
-      }),
-      image: new CircleStyle({
-        fill: new Fill({
-          color: '#8276d2'
-        }),
-        stroke: new Stroke({
-          color: '#63C9EF',
-          width: 3
-        }),
-        radius: 5
-      }),
-      zIndex: 200
-    });
 
-    const featureStyle = new Style({
-      fill: new Fill({
-        color: '#4325c2'
-      }),
-      stroke: new Stroke({
-        color: '#4325c2',
-        width: 1
-      }),
-      image: new CircleStyle({
-        fill: new Fill({
-          color: '#8276d2'
-        }),
-        stroke: new Stroke({
-          color: '#63C9EF',
-          width: 3
-        }),
-        radius: 5
-      }),
-      zIndex: 201
-    });
+    // BP location feature style with zIndex biggetr that map
 
-    // const tileLayer = new TileLayer({
-    //   source: new OSM({
-    //     wrapX: false
-    //   })
-    // });
-
-    // const source = new VectorSource({
-    //   wrapX: false,
-    //   url: 'https://openlayers.org/data/vector/ecoregions.json',
-    //   format: new GeoJSON()
-    // });
-    // const vector = new VectorLayer({
-    //   source: source,
-
-    // });
-
-    const source = new VectorSource({
-      wrapX: false,
-      url: 'https://openlayers.org/data/vector/ecoregions.json',
-      format: new GeoJSON()
-    });
-    const vector = new VectorLayer({
-      source: source,
-      style: style
-    });
-    console.log(vector);
-
-    const vectorLayer = new VectorLayer({
-      background: '#2b209c',
-      source: source,
-      style: function (feature) {
-        const color = '#4f2ccb';
-        style.getFill().setColor(color);
-        return style;
-      }
-    });
-
-    // Overlay
+    // ---- Overlay ----
     const container = this.$refs['popup'] as any;
     const content = this.$refs['popup-content'] as any;
     const closer = this.$refs['popup-closer'] as any;
@@ -140,10 +108,10 @@ export default defineComponent({
     const overlay = new Overlay({
       element: container,
       autoPan: {
-    animation: {
-      duration: 250,
-    },
-  },
+        animation: {
+          duration: 250
+        }
+      }
     });
 
     closer.onclick = function () {
@@ -151,9 +119,9 @@ export default defineComponent({
       closer.blur();
       return false;
     };
+    // ---- Overlay ----
 
-    //overlay
-
+    // ---- Map ----
     const map = new Map({
       layers: [vector],
       overlays: [overlay],
@@ -164,62 +132,93 @@ export default defineComponent({
       })
     });
 
-    var extent = source.getExtent();
-    //map.getView().fit(extent, map.getSize() as any);
     let selected = null as any;
+
+    // Track mouse click and detect collisions with BP features for mobile
     map.on('singleclick', function (evt) {
-      const coordinate = evt.coordinate;
-      const hdms = toStringHDMS(toLonLat(coordinate));
-      if (selected !== null && selected.getProperties().type && selected.getProperties().type === 'bp') {
+      // Clear overlay when no collision
+      if (
+        selected !== null &&
+        selected.getProperties().type &&
+        selected.getProperties().type === 'bp'
+      ) {
         overlay.setPosition(undefined);
         closer.blur();
         content.innerHTML = '&nbsp;';
         selected = null;
       }
 
+      // Assign selected when collision occurs
       map.forEachFeatureAtPixel(evt.pixel, function (f) {
-        if(f.getProperties().type && f.getProperties().type === 'bp'){
-         selected = f; 
+        if (f.getProperties().type && f.getProperties().type === 'bp') {
+          selected = f;
         }
       });
 
-      if (selected && selected.getProperties().type && selected.getProperties().type === 'bp') {
+      // Check if it is a BP collision, as countries are also features and have to be filtered.
+      if (
+        selected &&
+        selected.getProperties().type &&
+        selected.getProperties().type === 'bp'
+      ) {
         content.innerHTML =
-          '<div class="owner-text text-h5 text-center text-uppercase">' + selected.getId() + '</div>'+ 
-          '<div class=".country-text text-subtitle1 text-center">' + selected.getProperties().country + '</div>';
+          '<div class="owner-text text-h5 text-center text-uppercase">' +
+          selected.getId() +
+          '</div>' +
+          '<div class=".country-text text-subtitle1 text-center">' +
+          selected.getProperties().country +
+          '</div>';
         overlay.setPosition(selected.getGeometry().getCoordinates());
       } else {
+        // Clear overlay if is not BP collision
         content.innerHTML = '&nbsp;';
       }
     });
 
+    // Track mouse pointer and detect collisions with BP features
     map.on('pointermove', function (e) {
-      if (selected !== null && selected.getProperties().type && selected.getProperties().type === 'bp') {
-        console.log(selected.getProperties().type);
+      // Clear overlay when no collision
+      if (
+        selected !== null &&
+        selected.getProperties().type &&
+        selected.getProperties().type === 'bp'
+      ) {
         overlay.setPosition(undefined);
         closer.blur();
         content.innerHTML = '&nbsp;';
         selected = null;
       }
 
+      // Assign selected when collision occurs
       map.forEachFeatureAtPixel(e.pixel, function (f) {
-        if(f.getProperties().type && f.getProperties().type === 'bp'){
-         selected = f; 
+        if (f.getProperties().type && f.getProperties().type === 'bp') {
+          selected = f;
         }
       });
 
-      if (selected && selected.getProperties().type && selected.getProperties().type === 'bp') {
+      // Check if it is a BP collision, as countries are also features and have to be filtered.
+      if (
+        selected &&
+        selected.getProperties().type &&
+        selected.getProperties().type === 'bp'
+      ) {
         content.innerHTML =
-          '<div class="owner-text text-h5 text-center text-uppercase">' + selected.getId() + '</div>'+ 
-          '<div class=".country-text text-subtitle1 text-center">' + selected.getProperties().country + '</div>';
-
+          '<div class="owner-text text-h5 text-center text-uppercase">' +
+          selected.getId() +
+          '</div>' +
+          '<div class=".country-text text-subtitle1 text-center">' +
+          selected.getProperties().country +
+          '</div>';
 
         overlay.setPosition(selected.getGeometry().getCoordinates());
       } else {
+        // Clear overlay if is not BP collision
         content.innerHTML = '&nbsp;';
       }
     });
+    // ---- Map ----
 
+    // Add all the BP location features from s3 bucket to map
     function addBP(BPlist: BP[]) {
       for (const bp of BPlist) {
         if (bp.org && bp.org.location) {
@@ -235,7 +234,8 @@ export default defineComponent({
       }
     }
 
-    const duration = 2500;
+    const duration  = 2600;
+    // Draw the flash animation on the BP feature location
     function flash(feature: any) {
       const start = Date.now();
       const flashGeom = feature.getGeometry().clone();
@@ -275,11 +275,10 @@ export default defineComponent({
       flash(e.feature);
     });
     const list = this.BPlist;
-    
-    map.once('postrender', function(event) {
-      addBP(list);
-    });
-    //window.setInterval(addBP(list), 2000);
+
+    addBP(this.BPlist);
+    this.map = map;
+    this.MapSource = source;
   }
 });
 </script>
@@ -360,6 +359,4 @@ div(id="popup" ref="popup" class="ol-popup")
   line-height: 12px
   letter-spacing: 0em
   text-align: left
-
-
 </style>
