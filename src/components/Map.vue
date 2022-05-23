@@ -280,6 +280,7 @@ export default defineComponent({
 
     const list = this.BPlist;
 
+    // Checks to see if BP has changed and adds flash animation
     const addBPflash = () => {
       if (this.HeadProducer !== this.currentHeadProducer) {
         console.log(this.HeadProducer, this.currentHeadProducer);
@@ -294,10 +295,12 @@ export default defineComponent({
       }
     };
 
+    // on feature add do a flash animation
     source.on('addfeature', function (e) {
       flash(e.feature);
     });
 
+    // Check BP every half second for changes
     window.setInterval(() => {
       addBPflash();
     }, 500);
