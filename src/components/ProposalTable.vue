@@ -16,29 +16,34 @@ q-table(
   template(v-slot:top)
     div.q-table__control.full-width.justify-between
       div.q-table__title(v-text="title")
-      div(v-if="type === 'needsYourSignature'")
-        q-toggle(label="Already signed" v-model="isSigned")
-      div(v-if="type === 'allProposals'")
-        q-btn-dropdown(outlined flat :label="blockProducer ? blockProducer : 'Filter by Block Producer'" v-model="filterDropdown")
-          div.q-pa-md
-            span.block.q-mb-sm.text-body3 Filter by pending signature from:
-            q-select(
-              outlined
-              dense
-              v-model="blockProducer"
-              label="Block Producer"
-              hide-bottom-space
-              hide-selected
-              fill-input
-              :options="optionsBlockProducers"
-              use-input
-              input-debounce="0"
-              clearable
-              @filter="onFilterBlockProducer"
-            )
-              template(v-slot:no-option)
-                q-item
-                  q-item-section No results
+      div
+        q-btn-dropdown(outlined flat :color="hasSomeFilterActive ? 'primary': ''" :label="hasSomeFilterActive ? '• Filter by': 'Filter by'" v-model="filterDropdown")
+          div.q-pt-md.q-px-md
+            div(v-if="type === 'needsYourSignature'").q-pr-md.q-pb-md
+              q-toggle(label="Already signed" v-model="isSigned")
+
+            div(v-if="type === 'allProposals'").q-pb-md
+              span.block.q-mb-sm.text-body3 Pending signature from
+              q-select(
+                outlined
+                dense
+                v-model="blockProducer"
+                label="Block Producer"
+                hide-bottom-space
+                hide-selected
+                fill-input
+                :options="optionsBlockProducers"
+                use-input
+                input-debounce="0"
+                clearable
+                @filter="onFilterBlockProducer"
+              )
+                template(v-slot:no-option)
+                  q-item
+                    q-item-section No results
+
+            div.q-pr-md.q-pb-md
+              q-toggle(label="Already executed" v-model="isExecuted")
 
   template(v-slot:no-data)
     span.q-pa-md.full-width.text-center.text-body2.
@@ -57,7 +62,14 @@ q-table(
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch, PropType } from 'vue';
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  watch,
+  PropType,
+  computed
+} from 'vue';
 import { PaginationSettings } from 'src/types/PaginationSettings';
 import { GetProposals, ProposalTableRow } from 'src/types/Proposal';
 import { api } from 'src/api';
@@ -95,8 +107,13 @@ export default defineComponent({
     const rows = ref<ProposalTableRow[]>([]);
     const pagination = ref(initialStatePagination);
     const isSigned = ref(false);
+    const isExecuted = ref(false);
     const blockProducer = ref('');
     const filterDropdown = ref(false);
+
+    const hasSomeFilterActive = computed(
+      () => isSigned.value || isExecuted.value || blockProducer.value
+    );
 
     const columns = [
       {
@@ -149,6 +166,7 @@ export default defineComponent({
           proposer,
           requested,
           provided,
+          executed: isExecuted.value,
           limit: rowsPerPage,
           skip: (page - 1) * rowsPerPage
         });
@@ -186,16 +204,9 @@ export default defineComponent({
       });
     });
 
-    watch(isSigned, async () => {
-      pagination.value = initialStatePagination;
-      await onRequest({
-        pagination: pagination.value
-      });
-    });
-
-    watch(blockProducer, async () => {
-      pagination.value = initialStatePagination;
+    watch([isSigned, isExecuted, blockProducer], async () => {
       filterDropdown.value = false;
+      pagination.value = initialStatePagination;
       await onRequest({
         pagination: pagination.value
       });
@@ -226,7 +237,9 @@ export default defineComponent({
       rows,
       pagination,
       isSigned,
+      isExecuted,
       blockProducer,
+      hasSomeFilterActive,
       optionsBlockProducers,
       filterDropdown,
       onRequest,

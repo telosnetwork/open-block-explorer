@@ -3,6 +3,7 @@ export interface GetProposalsProps {
   proposal?: string;
   requested?: string;
   provided?: string;
+  executed?: boolean;
   limit?: number;
   skip?: number;
 }
@@ -60,15 +61,16 @@ export interface ProposalForm {
     actions: {
       account: string;
       name: string;
-      from: string;
-      to: string;
-      quantity: string;
-      memo: string;
       authorization: {
         actor: string;
         permission: string;
       }[];
-      data: string;
+      data: {
+        from: string;
+        to: string;
+        quantity: string;
+        memo: string;
+      };
     }[];
   };
 }

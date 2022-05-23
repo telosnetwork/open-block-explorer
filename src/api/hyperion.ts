@@ -152,6 +152,7 @@ export const getProposals = async function ({
   proposal,
   requested,
   provided,
+  executed,
   limit,
   skip
 }: GetProposalsProps): Promise<GetProposals> {
@@ -161,6 +162,7 @@ export const getProposals = async function ({
       proposal,
       requested,
       provided,
+      executed,
       limit,
       skip
     }

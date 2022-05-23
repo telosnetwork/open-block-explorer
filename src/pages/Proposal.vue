@@ -4,13 +4,13 @@ q-page(padding)
     h1.text-h5.q-ma-none Multisig Transactions
 
   q-tabs(v-model="tab" align="left" active-color="primary" content-class="text-grey-7"  no-caps)
-    q-tab(v-if="isLogged" name="myProposal" label="My proposals")
+    q-tab(v-if="isAuthenticated" name="myProposal" label="My proposals")
     q-tab(name="allProposal" label="All proposals")
 
   q-separator
 
   q-tab-panels(v-model="tab")
-    q-tab-panel(v-if="isLogged" name="myProposal").q-pa-none
+    q-tab-panel(v-if="isAuthenticated" name="myProposal").q-pa-none
       div.q-py-lg
         ProposalTable(
           title="Needs your signature"
@@ -34,10 +34,10 @@ q-page(padding)
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
-import { useStore } from '../store';
+import { defineComponent, ref, onMounted } from 'vue';
 import ProposalTable from 'src/components/ProposalTable.vue';
 import { api } from 'src/api';
+import { useAuthenticator } from 'src/composables/useAuthenticator';
 
 export default defineComponent({
   name: 'Proposal',
@@ -45,15 +45,13 @@ export default defineComponent({
     ProposalTable
   },
   setup() {
-    const store = useStore();
-    const isLogged = computed((): boolean => !!store.state.account.accountName);
-    const account = computed((): string => store.state.account.accountName);
     const blockProducers = ref<string[]>([]);
+    const { account, isAuthenticated } = useAuthenticator();
 
     const tab = ref<'myProposal' | 'allProposal'>('myProposal');
 
     onMounted(() => {
-      if (!isLogged.value) {
+      if (!isAuthenticated.value) {
         tab.value = 'allProposal';
       }
     });
@@ -75,7 +73,7 @@ export default defineComponent({
     return {
       tab,
       account,
-      isLogged,
+      isAuthenticated,
       blockProducers
     };
   }

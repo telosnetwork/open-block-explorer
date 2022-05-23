@@ -4,6 +4,8 @@ import { isValidHex, isValidAccount } from 'src/utils/stringValidator';
 import { ref } from 'vue';
 import LoginHandler from 'components/LoginHandler.vue';
 import { OptionsObj } from 'src/types';
+import { useAuthenticator } from 'src/composables/useAuthenticator';
+
 export default defineComponent({
   name: 'Header',
   components: { LoginHandler },
@@ -16,9 +18,12 @@ export default defineComponent({
     const selected = ref<string>(null);
     const options = ref<OptionsObj[]>([]);
 
+    const { account } = useAuthenticator();
+
     return {
       selected,
-      options
+      options,
+      account
     };
   },
   computed: {
@@ -158,11 +163,11 @@ export default defineComponent({
       .q-px-xs-xs.q-px-sm-xs.q-px-md-md.q-px-lg-md
         .row.justify-center.full-width
           q-select.col-12.search-input(
-            borderless 
-            dense 
+            borderless
+            dense
             filled
             :model-value="selected"
-            label-color="white"  
+            label-color="white"
             color="primary"
             use-input
             hide-selected
@@ -170,7 +175,7 @@ export default defineComponent({
             input-debounce="0"
             :options="options"
             @update="executeSearch"
-            @keyup.enter="executeSearch" 
+            @keyup.enter="executeSearch"
             :input-style="{ color: 'white' }"
             @click="executeSearch"
             @input-value="getOptions")
@@ -179,28 +184,28 @@ export default defineComponent({
                     v-bind="scope.itemProps"
                     v-on="scope.itemEvents"
                     :disable="true"
-                )              
+                )
                   q-item-label(header) {{ scope.opt.label }}
                 q-item(
                   v-else
                   v-bind="scope.itemProps"
                   v-on="scope.itemEvents"
                   @click="suggestedSearch(scope.opt)"
-                )             
+                )
                   q-item-section
                     q-item-label(v-html="scope.opt.label")
 
               template(v-slot:prepend)
                 q-icon.search-icon(name="search" color="white" size="20px")
-                    
+
     LoginHandler
   .row.justify-center.col-12.q-pt-sm
     q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
-      q-route-tab.deactive.active-tab(name="network" label="Network" to='/').temp-hide
-      q-route-tab.deactive(name="wallet" label="Wallet" to="{ name: 'account', params: {account: /* store account getter */} }").temp-hide
-      q-route-tab.deactive(name="vote" label="Vote" to='/vote').temp-hide
-      q-route-tab.deactive(name="proposal"  label="Proposal" to='/proposal').temp-hide
-      q-route-tab.deactive(name="explore" label="Explore" to='/explore').temp-hide
+      q-route-tab.deactive(name="network" label="Network" to='/')
+      q-route-tab.deactive(name="wallet" v-if="account" label="Wallet" :to="'/account/' + account")
+      //- q-route-tab.deactive(name="vote" label="Vote" to='/vote')
+      q-route-tab.deactive(name="proposal"  label="Proposal" to='/proposal')
+      //- q-route-tab.deactive(name="explore" label="Explore" to='/explore')
 </template>
 
 <style lang="sass" scoped>
