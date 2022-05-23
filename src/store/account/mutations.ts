@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex';
 import { AccountStateInterface } from './state';
-import { AccountDetails } from 'src/types';
+import { AccountDetails, Action, Rexbal } from 'src/types';
 
 export const mutations: MutationTree<AccountStateInterface> = {
   setLoadingWallet(state: AccountStateInterface, wallet: string) {
@@ -14,5 +14,17 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setAccountData(state: AccountStateInterface, AccountData: AccountDetails) {
     state.data = AccountData;
+  },
+  setTransaction(state: AccountStateInterface, TransactionId: string) {
+    state.TransactionId = TransactionId;
+  },
+  setTransactionError(state: AccountStateInterface, TransactionError: unknown) {
+    state.TransactionError = TransactionError;
+  },
+  setRexActions(state: AccountStateInterface, actions: Action[]) {
+    state.rexActions = actions;
+  },
+  setRexbal(state: AccountStateInterface, rexbal: Rexbal) {
+    state.rexbal = rexbal;
   }
 };

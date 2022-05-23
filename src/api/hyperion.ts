@@ -17,7 +17,8 @@ import {
   PermissionLinksData,
   PermissionLinks,
   Userres,
-  Block
+  Block,
+  Get_actions
 } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
@@ -125,6 +126,20 @@ export const getBlock = async function (block: string): Promise<Block> {
   const response = await hyperion.post('v1/chain/get_block', {
     block_num_or_id: block,
     signal: controller.signal
+  });
+  return response.data;
+};
+
+export const getActions = async function (
+  account: string,
+  filter: string
+): Promise<Get_actions> {
+  controller.abort();
+  const response = await hyperion.get('v2/history/get_actions', {
+    params: {
+      account,
+      filter
+    }
   });
   return response.data;
 };
