@@ -283,7 +283,6 @@ export default defineComponent({
     // Checks to see if BP has changed and adds flash animation
     const addBPflash = () => {
       if (this.HeadProducer !== this.currentHeadProducer) {
-        console.log(this.HeadProducer, this.currentHeadProducer);
         let feature = source.getFeatureById(this.HeadProducer);
         this.currentHeadProducer = this.HeadProducer;
         this.MapSource;
