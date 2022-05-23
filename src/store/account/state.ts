@@ -1,4 +1,4 @@
-import { Authorization, AccountDetails } from 'src/types';
+import { Authorization, AccountDetails, Action, Rexbal } from 'src/types';
 
 export interface AccountStateInterface {
   loading: unknown;
@@ -8,6 +8,10 @@ export interface AccountStateInterface {
   linkedAccounts: Array<unknown>;
   data: AccountDetails;
   authorization: Authorization[];
+  rexActions: Action[];
+  TransactionId: string;
+  TransactionError: unknown;
+  rexbal: Rexbal;
 }
 
 export function state(): AccountStateInterface {
@@ -18,6 +22,10 @@ export function state(): AccountStateInterface {
     isAuthenticated: false,
     linkedAccounts: [],
     data: {} as AccountDetails,
-    authorization: []
+    authorization: [],
+    rexActions: [],
+    TransactionId: '',
+    TransactionError: '',
+    rexbal: {} as Rexbal
   };
 }

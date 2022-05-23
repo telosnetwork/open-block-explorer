@@ -6,7 +6,8 @@ import {
   Name,
   NameType,
   UInt128,
-  UInt64
+  UInt64,
+  UInt32Type
 } from '@greymass/eosio';
 import { Transaction } from './Transaction';
 import {
@@ -16,7 +17,8 @@ import {
   PermissionLinks,
   Userres,
   Block,
-  ActionData
+  ActionData,
+  Get_actions
 } from './Actions';
 
 export type TableIndexType =
@@ -33,9 +35,36 @@ export interface GetTableRowsParams {
   /** Name of the table to query. */
   table: NameType;
   /** The account to which this data belongs, if omitted will be set to be same as `code`. */
-  scope: string | TableIndexType;
+  scope?: string | TableIndexType;
   /** Lower lookup bound. */
-  key_type: string;
+  lower_bound?: TableIndexType;
+  /** Upper lookup bound. */
+  upper_bound?: TableIndexType;
+  /** How many rows to fetch, defaults to 10 if unset. */
+  limit?: UInt32Type;
+  /** Whether to iterate records in reverse order. */
+  reverse?: boolean;
+  /** Position of the index used, defaults to primary. */
+  index_position?:
+    | 'primary'
+    | 'secondary'
+    | 'tertiary'
+    | 'fourth'
+    | 'fifth'
+    | 'sixth'
+    | 'seventh'
+    | 'eighth'
+    | 'ninth'
+    | 'tenth';
+  /**
+   * Whether node should try to decode row data using code abi.
+   * Determined automatically based the `type` param if omitted.
+   */
+  json?: boolean;
+  /**
+   * Set to true to populate the ram_payers array in the response.
+   */
+  show_payer?: boolean;
 }
 
 export type ApiClient = {
@@ -49,4 +78,5 @@ export type ApiClient = {
   getPermissionLinks: (address: string) => Promise<PermissionLinks[]>;
   getTableByScope: (address: string) => Promise<Userres[]>;
   getBlock: (block: string) => Promise<Block>;
+  getActions: (address: string, filter: string) => Promise<Get_actions>;
 };

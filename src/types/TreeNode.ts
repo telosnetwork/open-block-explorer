@@ -1,4 +1,4 @@
-import { Authorization } from './index';
+import { Authorization, Action } from './index';
 
 export interface TreeNode {
   label: string;
@@ -8,6 +8,7 @@ export interface TreeNode {
   account: string;
   authorization: Authorization[];
   data: unknown;
+  action: Action;
   children: TreeNode[];
   notifications: string[];
 }

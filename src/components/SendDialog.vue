@@ -68,11 +68,14 @@ export default defineComponent({
           await this.signTransaction({
             user: users[0],
             account: actionAccount,
-            data
+            data,
+            name: 'transfer'
           })
         ).transactionId as string;
+        this.$store.commit('account/setTransaction', this.transactionId);
       } catch (e) {
         this.transactionError = e;
+        this.$store.commit('account/setTransactionError', e);
         this.resetForm();
       }
     },
@@ -105,11 +108,13 @@ export default defineComponent({
     },
     formatDec() {
       let amount = Number(this.sendAmount);
-      this.sendAmount = amount.toLocaleString('en-US', {
-        style: 'decimal',
-        maximumFractionDigits: this.sendToken.precision,
-        minimumFractionDigits: this.sendToken.precision
-      });
+      this.sendAmount = amount
+        .toLocaleString('en-US', {
+          style: 'decimal',
+          maximumFractionDigits: this.sendToken.precision,
+          minimumFractionDigits: this.sendToken.precision
+        })
+        .replace(/,/g, '');
       this.sendAmount = this.sendAmount.replace(/[^0-9.]/g, '');
     }
   }
@@ -117,12 +122,12 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
+q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
   q-card.sendCard
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
-      .col-xs-12.col-sm-8.col-md-7.col-lg-6
+      .col-xs-12.col-sm-8.col-md-7.col-lg-6.maxSize
         .row
           q-card-section 
             img.send-img.q-pr-md( src="~assets/send.svg")
@@ -174,136 +179,8 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm')
 </template>
 
 <style lang="sass" scoped>
-$medium:750px
-
-.button-accent
-  &:disabled
-    cursor: not-allowed
-    pointer-events: none
-
-.close-dialog
-  width: 100%
-
-.ellipsis-overflow
-  cursor: pointer
-  white-space: nowrap
-  text-overflow: ellipsis
-  display: block
-  overflow: hidden
-
-.q-markup-table
-  width: 100%
-  th,td
-    padding: unset
-
-.account-card
-  color: white
-  font-size: 36px
-  max-width: 100%
-  background: unset
-
-  .q-table tbody td
-    font-size: 12px
-    &.total-label, &.total-value
-      color: white
-      font-size: 14px
-    &.total-amount
-      font-size: 20px
-
-  .q-table__card
-    background: unset
-    color: $black-5
-
-  .q-table--horizontal-separator
-    thead th
-      border-bottom: 1px solid $black-13
-    tbody tr:not(:last-child) td
-      border-bottom: none
-
-  .q-table thead tr, .q-table tbody td
-    height: 36px
-
-    &.total-row
-      height: 48px
-
-.table-body
-  width: 100%
-  display: table
-  tr
-    border-width: 0
-
-.inline-section
-  width: 100%
-  display: inline-block
-
-.resources
-  text-align: center
-  width: 100%
-  margin: 1rem auto 0 auto
-
-.resource
-  margin-right: 2rem
-
-.text-right
-  font-weight: bold
-
-.text-title, .text-subtitle
-  display: flex
-  align-items: center
-  justify-content: center
-
-.text-subtitle
-  text-transform: uppercase
-  color: $black-5
-  font-size: 12px
-  a
-    cursor: pointer
-    text-decoration: underline
-
-.total-amount
-  color: white
-  font-size: 20px
-  font-family: Silka
-  font-weight: normal
-
-.total-value
-  font-family: Silka
-  font-weight: normal
-
-@media screen and (max-width: $medium) // screen < $medium
-  .account-card
-    width: 100%
-    padding: unset
-    margin-top: unset
-    height: 100%
-    border-radius: unset
-
-  .q-markup-table
-    overflow: unset
-    width: unset
-    margin-right: .5rem
-    margin-left: .5rem
-
-  .resources
-    float: unset
-
-  .inline-section
-    width: 100%
-
-.total-row
-  a
-    cursor: pointer
-    text-decoration: underline
-    color: white
-    font-size: 16px
-    font-family: Silka
-    font-weight: normal
 
 .sendCard
-  width: 1000px !important
-  max-width: 80vw !important
-  height: 800px !important
-  max-height: 80vh !important
   color: $grey-6
   background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
   .send-icon
