@@ -47,7 +47,7 @@ export default defineComponent({
     .row.full-width.q-pt-md.q-px-lg
       .col-12.text-subtitle1.text-weight-thin.text-grey-3 Irreversible Block
       .col-12.text-h6.text-grey-3.text-bold {{lastIrreversibleBlock}}
-.row.full-width.container.text-center.justify-center(v-else)
+.row.full-width.text-center.justify-center(v-else)
   .col-3
     .row
       .col-12.text-subtitle1.text-weight-thin.text-grey-3 Head Block

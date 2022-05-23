@@ -41,7 +41,7 @@ div.row
     .row.gradient-box
       .col-12
         Map
-  .col-12.map-data-position.z-top(v-if="$q.screen.lt.lg")
+  .col-12.map-data-position(v-if="$q.screen.lt.lg")
     MapData(:mobile="true")
   PriceChart.z-top.price-box-position
   TransactionsTable
