@@ -41,7 +41,6 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
     }
   },
   async updateBlockData({ commit }) {
-    console.log('updateblockdata');
     try {
       const info = await api.getInfo();
       commit('setHead_block_num', info.head_block_num);

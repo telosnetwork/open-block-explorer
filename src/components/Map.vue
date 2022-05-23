@@ -32,6 +32,7 @@ const style = new Style({
   zIndex: 50
 });
 
+// BP location feature style with zIndex biggetr that map
 const featureStyle = new Style({
   image: new CircleStyle({
     fill: new Fill({
@@ -74,13 +75,15 @@ export default defineComponent({
     const HeadProducer = computed(
       (): string => store.state.chain.head_block_producer
     );
+    const currentHeadProducer = ref<string>('');
     return {
       center,
       projection,
       zoom,
       rotation,
       BPlist,
-      HeadProducer
+      HeadProducer,
+      currentHeadProducer
     };
   },
   data() {
@@ -93,12 +96,10 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapActions('chain', ['updateBpList']),
+    ...mapActions('chain', ['updateBpList'])
   },
   async mounted() {
     await this.updateBpList();
-
-    // BP location feature style with zIndex biggetr that map
 
     // ---- Overlay ----
     const container = this.$refs['popup'] as any;
@@ -135,7 +136,7 @@ export default defineComponent({
     let selected = null as any;
 
     // Track mouse click and detect collisions with BP features for mobile
-    map.on('singleclick', function (evt) {
+    map.on('singleclick',  (evt) => {
       // Clear overlay when no collision
       if (
         selected !== null &&
@@ -161,8 +162,11 @@ export default defineComponent({
         selected.getProperties().type &&
         selected.getProperties().type === 'bp'
       ) {
-        content.innerHTML =
-          '<div class="owner-text text-h5 text-center text-uppercase">' +
+        content.innerHTML = (selected.getId() === this.HeadProducer
+          ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
+            'Producing</div>'
+          : '')+
+        '<div class="owner-text text-h5 text-center text-uppercase">' +
           selected.getId() +
           '</div>' +
           '<div class=".country-text text-subtitle1 text-center">' +
@@ -176,7 +180,7 @@ export default defineComponent({
     });
 
     // Track mouse pointer and detect collisions with BP features
-    map.on('pointermove', function (e) {
+    map.on('pointermove',  (e) => {
       // Clear overlay when no collision
       if (
         selected !== null &&
@@ -202,8 +206,11 @@ export default defineComponent({
         selected.getProperties().type &&
         selected.getProperties().type === 'bp'
       ) {
-        content.innerHTML =
-          '<div class="owner-text text-h5 text-center text-uppercase">' +
+        content.innerHTML = (selected.getId() === this.HeadProducer
+          ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
+            'Producing</div>'
+          : '')+
+        '<div class="owner-text text-h5 text-center text-uppercase">' +
           selected.getId() +
           '</div>' +
           '<div class=".country-text text-subtitle1 text-center">' +
@@ -234,7 +241,7 @@ export default defineComponent({
       }
     }
 
-    const duration  = 2600;
+    const duration = 2600;
     // Draw the flash animation on the BP feature location
     function flash(feature: any) {
       const start = Date.now();
@@ -271,10 +278,29 @@ export default defineComponent({
       }
     }
 
+    const list = this.BPlist;
+
+    const addBPflash = () => {
+      if (this.HeadProducer !== this.currentHeadProducer) {
+        console.log(this.HeadProducer, this.currentHeadProducer);
+        let feature = source.getFeatureById(this.HeadProducer);
+        this.currentHeadProducer = this.HeadProducer;
+        this.MapSource;
+        if (feature !== null) {
+          feature.setProperties({ producing: true });
+          source.removeFeature(feature);
+          source.addFeature(feature);
+        }
+      }
+    };
+
     source.on('addfeature', function (e) {
       flash(e.feature);
     });
-    const list = this.BPlist;
+
+    window.setInterval(() => {
+      addBPflash();
+    }, 500);
 
     addBP(this.BPlist);
     this.map = map;
