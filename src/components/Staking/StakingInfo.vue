@@ -88,7 +88,7 @@ export default defineComponent({
 
 </template>
 
-<style lang="sass">
+<style scoped lang="sass">
 .container
   border: 2px solid $grey-3
   border-radius: 13px

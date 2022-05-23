@@ -16,7 +16,8 @@ export {
   TransferData,
   Refund,
   Userres,
-  Block
+  Block,
+  Get_actions
 } from './Actions';
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';
@@ -24,3 +25,4 @@ export { GenericObj } from './GenericObj';
 export { Transaction } from './Transaction';
 export { OptionsObj } from './OptionsObj';
 export { TreeNode } from './TreeNode';
+export { RexbalRows, Rexbal } from './TableRows';
