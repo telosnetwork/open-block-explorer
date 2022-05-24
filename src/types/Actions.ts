@@ -176,7 +176,26 @@ export interface Block {
   schedule_version: number;
   new_producers: null | string;
   producer_signature: string;
-  transactions: string[];
+  transactions: {
+    trx: {
+      id: string;
+      transaction: {
+        actions: {
+          account: string;
+          authorization: {
+            actor: string;
+            permission: string;
+          }[];
+          data: {
+            executer: string;
+            proposal_name: string;
+            proposer: string;
+          };
+          name: string;
+        }[];
+      }[];
+    };
+  }[];
   id: string;
   block_num: number;
   ref_block_prefix: number;
