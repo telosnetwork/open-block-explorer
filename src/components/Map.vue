@@ -19,6 +19,7 @@ import { unByKey } from 'ol/Observable';
 import { mapActions } from 'vuex';
 import { BP } from 'src/types';
 import { useStore } from 'src/store';
+import VectorImageLayer from 'ol/layer/VectorImage';
 
 // Map core style
 const style = new Style({
@@ -54,9 +55,18 @@ const source = new VectorSource({
   format: new GeoJSON()
 });
 
-const vector = new VectorLayer({
+const vectorLayer = new VectorImageLayer({
+  imageRatio: 1,
   source: source,
   style: style
+});
+
+const vectorSource = new VectorSource({
+  wrapX: false,
+});
+
+const vector = new VectorLayer({
+  source: vectorSource,
 });
 
 export default defineComponent({
@@ -124,9 +134,9 @@ export default defineComponent({
 
     // ---- Map ----
     const map = new Map({
-      layers: [vector],
+      layers: [vectorLayer, vector],
       overlays: [overlay],
-      target: this.$refs['map-root'] as string,
+      target: 'map',
       view: new View({
         center: [0, 0],
         zoom: 0
@@ -236,7 +246,7 @@ export default defineComponent({
           feature.setStyle(featureStyle);
           feature.setId(bp.owner);
           feature.setProperties({ type: 'bp', country: bp.org.location.name });
-          source.addFeature(feature);
+          vectorSource.addFeature(feature);
         }
       }
     }
@@ -278,31 +288,29 @@ export default defineComponent({
       }
     }
 
-    const list = this.BPlist;
-
     // Checks to see if BP has changed and adds flash animation
     const addBPflash = () => {
       if (this.HeadProducer !== this.currentHeadProducer) {
-        let feature = source.getFeatureById(this.HeadProducer);
+        let feature = vectorSource.getFeatureById(this.HeadProducer);
         this.currentHeadProducer = this.HeadProducer;
         this.MapSource;
         if (feature !== null) {
           feature.setProperties({ producing: true });
-          source.removeFeature(feature);
-          source.addFeature(feature);
+          vectorSource.removeFeature(feature);
+          vectorSource.addFeature(feature);
         }
       }
     };
 
     // on feature add do a flash animation
-    source.on('addfeature', function (e) {
+    vectorSource.on('addfeature', function (e) {
       flash(e.feature);
     });
 
     // Check BP every half second for changes
     window.setInterval(() => {
       addBPflash();
-    }, 500);
+    }, 1000);
 
     addBP(this.BPlist);
     this.map = map;
@@ -315,7 +323,7 @@ export default defineComponent({
 
 .map-container(id="map" ref="map-root")
 div(id="popup" ref="popup" class="ol-popup")
-  a(href="#" id="popup-closer" ref="popup-closer" class="ol-popup-closer")
+  a(href="#" id="popup-closer" ref="popup-closer" class="ol-popup-closer" v-show="$q.platform.is.mobile")
   div(id="popup-content" ref="popup-content")
 
 </template>
