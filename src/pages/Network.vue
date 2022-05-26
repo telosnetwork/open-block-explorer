@@ -31,17 +31,12 @@ export default defineComponent({
 
 <template lang="pug">
 div.row
-  .col-12(v-if="$q.screen.gt.md")
-    .row.gradient-box
-      .col-xl-8.col-lg-10
-        Map
-      .col-xl-4.col-lg-2
-        MapData(:mobile="false")
-  .col-12(v-else)
-    .row.gradient-box
+  .col-12
+    .row.gradient-box.justify-center
       .col-12
         Map
-  .col-12.map-data-position(v-if="$q.screen.lt.lg")
+      
+  .col-12.map-data-position
     MapData(:mobile="true")
   PriceChart.z-top.price-box-position
   TransactionsTable
