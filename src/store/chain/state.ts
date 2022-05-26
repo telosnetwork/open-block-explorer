@@ -5,6 +5,7 @@ export interface ChainStateInterface {
   head_block_num: number;
   last_irreversible_block_num: number;
   head_block_producer: string;
+  producerSchedule: string[];
 }
 
 export function state(): ChainStateInterface {
@@ -18,6 +19,7 @@ export function state(): ChainStateInterface {
     bpList: [],
     head_block_num: 0,
     last_irreversible_block_num: 0,
-    head_block_producer: ''
+    head_block_producer: '',
+    producerSchedule: []
   };
 }

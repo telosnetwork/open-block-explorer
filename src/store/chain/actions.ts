@@ -7,23 +7,10 @@ import { api } from 'src/api/index';
 
 export const actions: ActionTree<ChainStateInterface, StateInterface> = {
   async updateBpList({ commit }) {
-    // const producersParams = {
-    //   code: 'eosio',
-    //   limit: '1000',
-    //   scope: 'eosio',
-    //   table: 'producers',
-    //   reverse: false,
-    //   json: true
-    // } as GetTableRowsParams;
-    // const producers = (await api.getTableRows(producersParams)) as ProducerRows;
-    // const bpList = [];
-    // for (const producer of producers.rows) {
-    //   const url = producer.url;
-    //   const blockProducer: BP = await axios.get(url + '/bp.json');
-    //   bpList.push(blockProducer);
-    // }
-
     try {
+      const producerSchedule = (await api.getSchedule()).active.producers;
+      const schedule = producerSchedule.map((el) => el.producer_name);
+      commit('setProducerSchedule', schedule);
       const objectList = await axios.get(process.env.PRODUCER_BUCKET_URL);
       const parser = new DOMParser();
       const contentsArray = parser

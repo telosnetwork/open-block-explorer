@@ -23,6 +23,12 @@ import VectorImageLayer from 'ol/layer/VectorImage';
 
 // Map core style
 const style = new Style({
+  image: new CircleStyle({
+    fill: new Fill({
+      color: '#FFFFFF'
+    }),
+    radius: 5
+  }),
   fill: new Fill({
     color: '#4325c2'
   }),
@@ -34,13 +40,27 @@ const style = new Style({
 });
 
 // BP location feature style with zIndex biggetr that map
-const featureStyle = new Style({
+const producerStyle = new Style({
   image: new CircleStyle({
     fill: new Fill({
       color: '#8276d2'
     }),
     stroke: new Stroke({
       color: '#63C9EF',
+      width: 3
+    }),
+    radius: 5
+  }),
+  zIndex: 51
+});
+
+const top21Style = new Style({
+  image: new CircleStyle({
+    fill: new Fill({
+      color: '#8276d2'
+    }),
+    stroke: new Stroke({
+      color: '#FFFFFF',
       width: 3
     }),
     radius: 5
@@ -62,11 +82,11 @@ const vectorLayer = new VectorImageLayer({
 });
 
 const vectorSource = new VectorSource({
-  wrapX: false,
+  wrapX: false
 });
 
 const vector = new VectorLayer({
-  source: vectorSource,
+  source: vectorSource
 });
 
 export default defineComponent({
@@ -82,6 +102,9 @@ export default defineComponent({
     const zoom = ref(8);
     const rotation = ref(0);
     const BPlist = computed((): BP[] => store.state.chain.bpList);
+    const schedule = computed(
+      (): string[] => store.state.chain.producerSchedule
+    );
     const HeadProducer = computed(
       (): string => store.state.chain.head_block_producer
     );
@@ -93,7 +116,8 @@ export default defineComponent({
       rotation,
       BPlist,
       HeadProducer,
-      currentHeadProducer
+      currentHeadProducer,
+      schedule
     };
   },
   data() {
@@ -116,6 +140,10 @@ export default defineComponent({
     const content = this.$refs['popup-content'] as any;
     const closer = this.$refs['popup-closer'] as any;
 
+    const producerContainer = this.$refs['producerPopup'] as any;
+    const producerContent = this.$refs['producerPopup-content'] as any;
+    const producerCloser = this.$refs['producerPopup-closer'] as any;
+
     const overlay = new Overlay({
       element: container,
       autoPan: {
@@ -125,9 +153,19 @@ export default defineComponent({
       }
     });
 
+    const producerOverlay = new Overlay({
+      element: producerContainer
+    });
+
     closer.onclick = function () {
       overlay.setPosition(undefined);
       closer.blur();
+      return false;
+    };
+
+    producerCloser.onclick = function () {
+      producerOverlay.setPosition(undefined);
+      producerCloser.blur();
       return false;
     };
     // ---- Overlay ----
@@ -135,7 +173,7 @@ export default defineComponent({
     // ---- Map ----
     const map = new Map({
       layers: [vectorLayer, vector],
-      overlays: [overlay],
+      overlays: [overlay, producerOverlay],
       target: 'map',
       view: new View({
         center: [0, 0],
@@ -146,7 +184,7 @@ export default defineComponent({
     let selected = null as any;
 
     // Track mouse click and detect collisions with BP features for mobile
-    map.on('singleclick',  (evt) => {
+    map.on('singleclick', (evt) => {
       // Clear overlay when no collision
       if (
         selected !== null &&
@@ -172,11 +210,12 @@ export default defineComponent({
         selected.getProperties().type &&
         selected.getProperties().type === 'bp'
       ) {
-        content.innerHTML = (selected.getId() === this.HeadProducer
-          ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
-            'Producing</div>'
-          : '')+
-        '<div class="owner-text text-h5 text-center text-uppercase">' +
+        content.innerHTML =
+          (selected.getId() === this.HeadProducer
+            ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
+              'Producing</div>'
+            : '') +
+          '<div class="owner-text text-h5 text-center text-uppercase">' +
           selected.getId() +
           '</div>' +
           '<div class=".country-text text-subtitle1 text-center">' +
@@ -190,7 +229,7 @@ export default defineComponent({
     });
 
     // Track mouse pointer and detect collisions with BP features
-    map.on('pointermove',  (e) => {
+    map.on('pointermove', (e) => {
       // Clear overlay when no collision
       if (
         selected !== null &&
@@ -216,11 +255,12 @@ export default defineComponent({
         selected.getProperties().type &&
         selected.getProperties().type === 'bp'
       ) {
-        content.innerHTML = (selected.getId() === this.HeadProducer
-          ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
-            'Producing</div>'
-          : '')+
-        '<div class="owner-text text-h5 text-center text-uppercase">' +
+        content.innerHTML =
+          (selected.getId() === this.HeadProducer
+            ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
+              'Producing</div>'
+            : '') +
+          '<div class="owner-text text-h5 text-center text-uppercase">' +
           selected.getId() +
           '</div>' +
           '<div class=".country-text text-subtitle1 text-center">' +
@@ -236,17 +276,35 @@ export default defineComponent({
     // ---- Map ----
 
     // Add all the BP location features from s3 bucket to map
-    function addBP(BPlist: BP[]) {
+    function addBP(BPlist: BP[], schedule: string[]) {
       for (const bp of BPlist) {
         if (bp.org && bp.org.location) {
           const x = bp.org.location.longitude;
           const y = bp.org.location.latitude;
           const geom = new Point(fromLonLat([x, y]));
           const feature = new Feature(geom);
-          feature.setStyle(featureStyle);
+          if (schedule.includes(bp.owner)) {
+            feature.setStyle(top21Style);
+          } else {
+            feature.setStyle(style);
+          }
           feature.setId(bp.owner);
           feature.setProperties({ type: 'bp', country: bp.org.location.name });
           vectorSource.addFeature(feature);
+        } else {
+          const x = Math.random() * 360 - 180;
+          const y = Math.random() * 15 - 89;
+          const geom = new Point(fromLonLat([x, y]));
+          const feature = new Feature(geom);
+          if (schedule.includes(bp.owner)) {
+            feature.setStyle(top21Style);
+          } else {
+            feature.setStyle(style);
+          }
+          feature.setId(bp.owner);
+          feature.setProperties({ type: 'bp', country: 'unknown'});
+          vectorSource.addFeature(feature);
+
         }
       }
     }
@@ -291,13 +349,34 @@ export default defineComponent({
     // Checks to see if BP has changed and adds flash animation
     const addBPflash = () => {
       if (this.HeadProducer !== this.currentHeadProducer) {
+        producerOverlay.setPosition(undefined);
         let feature = vectorSource.getFeatureById(this.HeadProducer);
+        let oldFeature = vectorSource.getFeatureById(this.currentHeadProducer);
         this.currentHeadProducer = this.HeadProducer;
         this.MapSource;
         if (feature !== null) {
-          feature.setProperties({ producing: true });
-          vectorSource.removeFeature(feature);
-          vectorSource.addFeature(feature);
+          producerContent.innerHTML =
+            (feature.getId() === this.HeadProducer
+              ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
+                'Producing</div>'
+              : '') +
+            '<div class="owner-text text-h5 text-center text-uppercase">' +
+            feature.getId() +
+            '</div>' +
+            '<div class=".country-text text-subtitle1 text-center">' +
+            feature.getProperties().country +
+            '</div>';
+
+          producerOverlay.setPosition((feature as any).getGeometry().getCoordinates());
+          feature.setStyle(producerStyle);
+          flash(feature);
+        }
+        if (oldFeature !== null) {
+          if (this.schedule.includes(this.currentHeadProducer)) {
+            oldFeature.setStyle(top21Style);
+          } else {
+            oldFeature.setStyle(style);
+          }
         }
       }
     };
@@ -312,7 +391,7 @@ export default defineComponent({
       addBPflash();
     }, 1000);
 
-    addBP(this.BPlist);
+    addBP(this.BPlist, this.schedule);
     this.map = map;
     this.MapSource = source;
   }
@@ -326,6 +405,10 @@ div(id="popup" ref="popup" class="ol-popup")
   a(href="#" id="popup-closer" ref="popup-closer" class="ol-popup-closer" v-show="$q.platform.is.mobile")
   div(id="popup-content" ref="popup-content")
 
+div(id="producerPopup" ref="producerPopup" class="ol-popup")
+  a(href="#" id="producerPopup-closer" ref="producerPopup-closer" class="ol-popup-closer")
+  div(id="producerPopup-content" ref="producerPopup-content")
+
 </template>
 
 <style lang="sass" scoped>
@@ -336,7 +419,7 @@ div(id="popup" ref="popup" class="ol-popup")
   background-color: transparent
   background-repeat: no-repeat
   width: 100%
-  height:80vh
+  height:70vh
 
 .ol-popup
   position: absolute

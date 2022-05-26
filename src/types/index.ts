@@ -28,3 +28,4 @@ export { TreeNode } from './TreeNode';
 export { RexbalRows, Rexbal, ProducerRows } from './TableRows';
 export { BP } from './BP';
 export { ChainInfo } from './ChainInfo';
+export { ProducerSchedule } from './ProducerSchedule';

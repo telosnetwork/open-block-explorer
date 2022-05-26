@@ -16,7 +16,8 @@ import {
   getTableByScope,
   getBlock,
   getActions,
-  getInfo
+  getInfo,
+  getSchedule
 } from './hyperion'; //  e.g. './new-service' method name stays the same
 import { getTableRows, getTokenBalances } from './eosio_core';
 
@@ -34,5 +35,6 @@ export const api = {
   getTableByScope,
   getBlock,
   getActions,
-  getInfo
+  getInfo,
+  getSchedule
 };

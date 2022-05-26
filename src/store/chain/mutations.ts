@@ -23,5 +23,8 @@ export const mutations: MutationTree<ChainStateInterface> = {
   },
   setHead_block_producer(state: ChainStateInterface, hbp: string) {
     state.head_block_producer = hbp;
+  },
+  setProducerSchedule(state: ChainStateInterface, schedule: string[]) {
+    state.producerSchedule = schedule;
   }
 };

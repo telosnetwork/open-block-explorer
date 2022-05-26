@@ -19,7 +19,8 @@ import {
   Userres,
   Block,
   Get_actions,
-  ChainInfo
+  ChainInfo,
+  ProducerSchedule
 } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
@@ -148,5 +149,11 @@ export const getActions = async function (
 export const getInfo = async function (): Promise<ChainInfo> {
   controller.abort();
   const response = await hyperion.get('v1/chain/get_info');
+  return response.data;
+};
+
+export const getSchedule = async function (): Promise<ProducerSchedule> {
+  controller.abort();
+  const response = await hyperion.get('v1/chain/get_producer_schedule');
   return response.data;
 };
