@@ -16,6 +16,8 @@ import {
   getTableByScope,
   getBlock,
   getActions,
+  getInfo,
+  getSchedule,
   getProposals,
   getProducers
 } from './hyperion'; //  e.g. './new-service' method name stays the same
@@ -35,6 +37,8 @@ export const api = {
   getTableByScope,
   getBlock,
   getActions,
+  getInfo,
+  getSchedule,
   getProposals,
   getProducers
 };

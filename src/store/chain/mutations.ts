@@ -1,4 +1,4 @@
-import { Token } from 'src/types';
+import { Token, BP } from 'src/types';
 import { MutationTree } from 'vuex';
 import { ChainStateInterface } from './state';
 
@@ -11,5 +11,20 @@ export const mutations: MutationTree<ChainStateInterface> = {
   },
   setPrecision(state: ChainStateInterface, precision: number) {
     state.token.precision = precision;
+  },
+  setBpList(state: ChainStateInterface, bpList: BP[]) {
+    state.bpList = bpList;
+  },
+  setHead_block_num(state: ChainStateInterface, hbn: number) {
+    state.head_block_num = hbn;
+  },
+  setLIB(state: ChainStateInterface, lib: number) {
+    state.last_irreversible_block_num = lib;
+  },
+  setHead_block_producer(state: ChainStateInterface, hbp: string) {
+    state.head_block_producer = hbp;
+  },
+  setProducerSchedule(state: ChainStateInterface, schedule: string[]) {
+    state.producerSchedule = schedule;
   }
 };
