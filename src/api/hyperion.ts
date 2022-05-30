@@ -20,7 +20,10 @@ import {
   Block,
   Get_actions,
   ChainInfo,
-  ProducerSchedule
+  ProducerSchedule,
+  GetProposalsProps,
+  GetProposals,
+  GetProducers
 } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
@@ -155,5 +158,36 @@ export const getInfo = async function (): Promise<ChainInfo> {
 export const getSchedule = async function (): Promise<ProducerSchedule> {
   controller.abort();
   const response = await hyperion.get('v1/chain/get_producer_schedule');
+  return response.data;
+};
+
+export const getProposals = async function ({
+  proposer,
+  proposal,
+  requested,
+  provided,
+  executed,
+  limit,
+  skip
+}: GetProposalsProps): Promise<GetProposals> {
+  const response = await hyperion.get('v2/state/get_proposals', {
+    params: {
+      proposer,
+      proposal,
+      requested,
+      provided,
+      executed,
+      limit,
+      skip
+    }
+  });
+  return response.data;
+};
+
+export const getProducers = async function (): Promise<GetProducers> {
+  const response = await hyperion.post('v1/chain/get_producers', {
+    json: true,
+    limit: 10000
+  });
   return response.data;
 };

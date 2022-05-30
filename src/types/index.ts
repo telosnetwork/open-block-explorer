@@ -29,3 +29,5 @@ export { RexbalRows, Rexbal, ProducerRows } from './TableRows';
 export { BP } from './BP';
 export { ChainInfo } from './ChainInfo';
 export { ProducerSchedule } from './ProducerSchedule';
+export { GetProposalsProps, GetProposals } from './Proposal';
+export { GetProducers } from './Producers';
