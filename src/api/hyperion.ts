@@ -19,6 +19,8 @@ import {
   Userres,
   Block,
   Get_actions,
+  ChainInfo,
+  ProducerSchedule,
   GetProposalsProps,
   GetProposals,
   GetProducers
@@ -147,6 +149,18 @@ export const getActions = async function (
   return response.data;
 };
 
+export const getInfo = async function (): Promise<ChainInfo> {
+  controller.abort();
+  const response = await hyperion.get('v1/chain/get_info');
+  return response.data;
+};
+
+export const getSchedule = async function (): Promise<ProducerSchedule> {
+  controller.abort();
+  const response = await hyperion.get('v1/chain/get_producer_schedule');
+  return response.data;
+};
+
 export const getProposals = async function ({
   proposer,
   proposal,
@@ -175,6 +189,5 @@ export const getProducers = async function (): Promise<GetProducers> {
     json: true,
     limit: 10000
   });
-
   return response.data;
 };
