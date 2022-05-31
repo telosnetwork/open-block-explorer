@@ -38,16 +38,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     }
   },
   async updateRexData({ commit }, { account }) {
-    // const params = {
-    //   code: 'eosio',
-    //   json: true,
-    //   limit: '1',
-    //   key_type: '',
-    //   lower_bound: account as TableIndexType,
-    //   scope: 'eosio',
-    //   table: 'rexfund',
-    //   upper_bound: account as TableIndexType
-    // } as GetTableRowsParams;
     const paramsrexbal = {
       code: 'eosio',
       limit: '1',
@@ -291,5 +281,9 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   resetTransaction({ commit }) {
     commit('setTransaction', '');
     commit('setTransactionError', '');
+  },
+  async updateABI({ commit }, account: string) {
+    const abi = await api.getABI(account);
+    commit('setABI', abi);
   }
 };

@@ -15,3 +15,6 @@ interface Maturities {
 export interface RexbalRows {
   rows: Rexbal[];
 }
+export interface GenericTable {
+  rows: unknown[];
+}
