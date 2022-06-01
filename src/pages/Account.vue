@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, computed } from 'vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 import TokensPanel from 'components/TokensPanel.vue';
 import KeysPanel from 'components/KeysPanel.vue';
@@ -19,20 +19,20 @@ export default defineComponent({
     AccountCard,
     ContractTabs
   },
-  data() {
-    return {
-      account: this.$route.params.account
-    };
-  },
   setup() {
     const store = useStore();
     const route = useRoute();
     const tab = ref<string>('transactions');
+    const account = ref<string>('');
+    const abi = computed(() => store.state.account.abi.abi);
     onMounted(async () => {
+      account.value = route.params.account as string;
       await store.dispatch('account/updateABI', route.params.account);
     });
     return {
-      tab
+      tab,
+      account,
+      abi
     };
   }
 });
@@ -45,14 +45,14 @@ div.row.col-12
         AccountCard.account-card(:account='account')
       q-tabs(v-model="tab" no-caps).tabs
         q-tab( name="transactions" label="Transactions" )
-        q-tab( name="contract" label="Contract" )
+        q-tab( name="contract" label="Contract" v-if="abi")
         q-tab( name="tokens" label="Tokens" )
         q-tab( name="keys" label="Keys" )
         q-tab( name="children" label="Children" )
     q-tab-panels(v-model="tab").col-12
       q-tab-panel(name="transactions")
         TransactionsTable(:account='account')
-      q-tab-panel(name="contract")
+      q-tab-panel(name="contract" v-if="abi")
         ContractTabs
       q-tab-panel(name="tokens")
         TokensPanel(:account='account')
