@@ -16,6 +16,8 @@ import {
   getTableByScope,
   getBlock,
   getActions,
+  getInfo,
+  getSchedule,
   getProposals,
   getProducers,
   getABI
@@ -36,6 +38,8 @@ export const api = {
   getTableByScope,
   getBlock,
   getActions,
+  getInfo,
+  getSchedule,
   getProposals,
   getProducers,
   getABI

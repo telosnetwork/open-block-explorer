@@ -60,6 +60,10 @@ yarn global add @quasar/cli
 
 Do not use uneven versions of Node i.e. 13, 15, etc. These versions are not tested with Quasar and often cause issues due to their experimental nature. We highly recommend always using the LTS version of Node. 
 
+It is recommended to use Node version 14 if you experience issues running the application with other versions. 
+
+Using nvm: `nvm use 14` 
+
 ### Clone repo
 ```bash
 git clone https://github.com/telosnetwork/open-block-explorer
