@@ -285,5 +285,41 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async updateABI({ commit }, account: string) {
     const abi = await api.getABI(account);
     commit('setABI', abi);
+  },
+  async pushTransaction(
+    { commit, state },
+    { action, actor, permission, data }
+  ) {
+    let transaction = null;
+    const authenticators = ual().getAuthenticators().availableAuthenticators;
+    const user = (await authenticators[0].login())[0];
+    const actions = [
+      {
+        account: state.abi.account_name,
+        name: action as string,
+        authorization: [
+          {
+            actor: actor as string,
+            permission: permission as string
+          }
+        ],
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data
+      }
+    ];
+    try {
+      transaction = await user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
   }
 };

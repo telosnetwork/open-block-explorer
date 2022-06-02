@@ -23,7 +23,7 @@ interface Table {
 
 interface Struct {
   base: string;
-  field: Field[];
+  fields: Field[];
   name: string;
 }
 
