@@ -49,6 +49,14 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/Proposal.vue') }]
   },
   {
+    path: '/proposal/new',
+    name: 'ProposalNew',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('src/pages/ProposalNew.vue') }
+    ]
+  },
+  {
     path: '/explore',
     name: 'explore',
     component: () => import('layouts/MainLayout.vue'),
