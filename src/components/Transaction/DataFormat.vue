@@ -28,7 +28,6 @@ export default defineComponent({
     });
 
     function formatGeneralData(data: any): any[] {
-      console.log('data: ', data)
       var dict: any[] = [];
       for (let key in data) {
         if (data[key] instanceof Object) {
@@ -42,8 +41,6 @@ export default defineComponent({
             dict = dict.concat(keyValArray);
           } else {
             let keyValArray = [];
-            console.log('execute');
-            console.log(formatGeneralData(data[key]));
             keyValArray.push(formatGeneralData(data[key]));
             dict = dict.concat(keyValArray);
           }
@@ -51,7 +48,6 @@ export default defineComponent({
           dict.push({key, value:data[key]});
         }
       }
-      console.log('dict:',dict);
       return dict;
     }
 
