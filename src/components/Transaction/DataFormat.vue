@@ -35,7 +35,9 @@ export default defineComponent({
           if (Array.isArray(data[key])) {
             var keyValArray: any[] = [];
             for (let i = 0; i < data[key].length; i++) {
-              keyValArray = keyValArray.concat(formatGeneralData(data[key][i]));
+              if (data[key][i] instanceof Object) {
+                keyValArray = keyValArray.concat(formatGeneralData(data[key][i]));
+              }
             }
             dict = dict.concat(keyValArray);
           } else {
