@@ -133,7 +133,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
             img.send-img.q-pr-md( src="~assets/send.svg")
             .text-h4.q-pb-md.inline-block.color-grey-3 Send Tokens
 
-        .transaction-form(v-if='transactionForm')
+        .transaction-form(v-if='transactionForm').text-grey-3.text-weight-light
           q-separator(dark v-if='transactionForm')
           q-card-section(v-if='transactionForm')
             .row
@@ -153,7 +153,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                 .row.justify-between.q-pb-sm.q-gutter-x-sm 
                   div AMOUNT
                   q-space
-                  .color-grey-3 {{sendToken.amount}} AVAILABLE
+                  .color-grey-3.text-weight-bold {{sendToken.amount}} AVAILABLE
                 q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken.amount || "invalid amount" ]' type="text" dense dark)
             .row
               .col-12
