@@ -34,7 +34,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.row.full-width.q-pl-xl.container(v-if="!isMobile")
+.row.full-width.q-pl-xl.container.actor-font(v-if="!isMobile")
   .col
     .row.full-width.q-pt-md.q-px-lg
       .col-12.text-subtitle1.text-weight-thin.text-grey-3 Head Block
@@ -47,23 +47,23 @@ export default defineComponent({
     .row.full-width.q-pt-md.q-px-lg
       .col-12.text-subtitle1.text-weight-thin.text-grey-3 Irreversible Block
       .col-12.text-h6.text-grey-3.text-bold {{lastIrreversibleBlock}}
-.row.full-width.text-center.justify-center(v-else)
+.row.full-width.text-center.justify-center.actor-font(v-else)
   .col-3
     .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Head Block
+      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Head Block
       .col-12.text-subtitle1.text-grey-3.text-bold {{HeadBlock}}
   .col-1
     .hr-vertical
   .col-3
     .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Producing
+      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Producing
       .col-12.text-subtitle1.text-grey-3.text-bold {{HeadBlockProducer}}
   .col-1
     .hr-vertical
   .col-3
     .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Irreversible
-      .col-12.text-subtitle1.text-grey-3.text-bold {{lastIrreversibleBlock}}
+      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Irreversible
+      .col-12.text-subtitle1.text-grey-3.text-bold  {{lastIrreversibleBlock}}
 </template>
 
 <style scoped lang="sass">
