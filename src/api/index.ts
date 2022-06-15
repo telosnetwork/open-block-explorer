@@ -19,7 +19,8 @@ import {
   getInfo,
   getSchedule,
   getProposals,
-  getProducers
+  getProducers,
+  getABI
 } from './hyperion'; //  e.g. './new-service' method name stays the same
 import { getTableRows, getTokenBalances } from './eosio_core';
 
@@ -40,5 +41,6 @@ export const api = {
   getInfo,
   getSchedule,
   getProposals,
-  getProducers
+  getProducers,
+  getABI
 };

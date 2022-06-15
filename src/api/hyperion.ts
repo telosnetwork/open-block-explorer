@@ -23,7 +23,8 @@ import {
   ProducerSchedule,
   GetProposalsProps,
   GetProposals,
-  GetProducers
+  GetProducers,
+  ABI
 } from 'src/types';
 
 const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
@@ -189,5 +190,13 @@ export const getProducers = async function (): Promise<GetProducers> {
     json: true,
     limit: 10000
   });
+  return response.data;
+};
+
+export const getABI = async function (account: string): Promise<ABI> {
+  const response = await hyperion.post('v1/chain/get_abi', {
+    account_name: account
+  });
+
   return response.data;
 };
