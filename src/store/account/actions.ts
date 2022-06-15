@@ -38,16 +38,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     }
   },
   async updateRexData({ commit }, { account }) {
-    // const params = {
-    //   code: 'eosio',
-    //   json: true,
-    //   limit: '1',
-    //   key_type: '',
-    //   lower_bound: account as TableIndexType,
-    //   scope: 'eosio',
-    //   table: 'rexfund',
-    //   upper_bound: account as TableIndexType
-    // } as GetTableRowsParams;
     const paramsrexbal = {
       code: 'eosio',
       limit: '1',
@@ -291,5 +281,45 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   resetTransaction({ commit }) {
     commit('setTransaction', '');
     commit('setTransactionError', '');
+  },
+  async updateABI({ commit }, account: string) {
+    const abi = await api.getABI(account);
+    commit('setABI', abi);
+  },
+  async pushTransaction(
+    { commit, state },
+    { action, actor, permission, data }
+  ) {
+    let transaction = null;
+    const authenticators = ual().getAuthenticators().availableAuthenticators;
+    const user = (await authenticators[0].login())[0];
+    const actions = [
+      {
+        account: state.abi.account_name,
+        name: action as string,
+        authorization: [
+          {
+            actor: actor as string,
+            permission: permission as string
+          }
+        ],
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data
+      }
+    ];
+    try {
+      transaction = await user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
   }
 };
