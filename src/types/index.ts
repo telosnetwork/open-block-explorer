@@ -17,7 +17,8 @@ export {
   Refund,
   Userres,
   Block,
-  Get_actions
+  Get_actions,
+  Error
 } from './Actions';
 export { TransactionTableRow } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';
@@ -29,6 +30,12 @@ export { RexbalRows, Rexbal, ProducerRows, GenericTable } from './TableRows';
 export { BP } from './BP';
 export { ChainInfo } from './ChainInfo';
 export { ProducerSchedule } from './ProducerSchedule';
-export { GetProposalsProps, GetProposals } from './Proposal';
+export {
+  GetProposalsProps,
+  GetProposals,
+  ProposalTableRow,
+  ProposalForm,
+  RequestedApprovals
+} from './Proposal';
 export { GetProducers } from './Producers';
 export { ABI } from './ABI';
