@@ -63,28 +63,28 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.container
+.container.grey-3
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
-      .col-6.text-h6.grey-3 ACCOUNT TOTAL
-      .col-6.text-h6.text-right.grey-3 {{accountData.account?.core_liquid_balance}}
+      .col-6.text-h6.text-bold ACCOUNT TOTAL
+      .col-6.text-h6.text-right.text-bold {{accountData.account?.core_liquid_balance}}
     .row.full-width.q-py-md
       hr
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7 STAKED TO CPU
-          .col-5.text-right.grey-3 {{accountData.account?.total_resources?.cpu_weight}}
+          .col-7.text-weight-light STAKED TO CPU
+          .col-5.text-right.text-bold {{accountData.account?.total_resources?.cpu_weight}}
         .row.q-pt-sm
-          .col-7 STAKED TO NET
-          .col-5.text-right.grey-3 {{accountData.account?.total_resources?.net_weight}}
+          .col-7.text-weight-light STAKED TO NET
+          .col-5.text-right.text-bold {{accountData.account?.total_resources?.net_weight}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7 STAKED BY OTHERS
-          .col-5.text-right.grey-3 {{formatStaked(accountData.account?.voter_info?.staked)}}
+          .col-7.text-weight-light STAKED BY OTHERS
+          .col-5.text-right.text-bold {{formatStaked(accountData.account?.voter_info?.staked)}}
         .row.q-pt-sm
-          .col-7 REFUNDING
-          .col-5.text-right.grey-3 {{formatTotalRefund(accountData.account?.refund_request)}}
+          .col-7.text-weight-light REFUNDING
+          .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
 
 </template>
 

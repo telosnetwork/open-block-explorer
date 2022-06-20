@@ -55,7 +55,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.container
+.container.text-grey-3.text-weight-light
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
       .col-6.text-h6.grey-3 ACCOUNT TOTAL
@@ -95,17 +95,17 @@ export default defineComponent({
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 TOTAL TLOS IN REX
-          .col-5.text-right.grey-3 {{rexInfo ? rexInfo.vote_stake : '0 TLOS'}}
+          .col-5.text-right.text-weight-bold {{rexInfo ? rexInfo.vote_stake : '0 TLOS'}}
         .row.q-pt-sm
           .col-7 REX BALANCE
-          .col-5.text-right.grey-3 {{rexInfo ? rexInfo.rex_balance : '0 TLOS'}}
+          .col-5.text-right.text-weight-bold {{rexInfo ? rexInfo.rex_balance : '0 TLOS'}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 MATURED REX
-          .col-5.text-right.grey-3 {{rexInfo ? rexInfo.matured_rex : '0 TLOS'}}
+          .col-5.text-right.text-weight-bold {{rexInfo ? rexInfo.matured_rex : '0 TLOS'}}
         .row.q-pt-sm
           .col-7 MATURING REX
-          .col-5.text-right.grey-3 {{maturingRex()}}
+          .col-5.text-right.text-weight-bold {{maturingRex()}}
 
 </template>
 
