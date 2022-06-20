@@ -203,7 +203,7 @@ export default defineComponent({
     q-tabs(v-model="tab"  active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
       q-route-tab.deactive(name="network" label="Network" to='/')
       q-route-tab.deactive(name="wallet" v-if="account" label="Wallet" :to="'/account/' + account")
-      //- q-route-tab.deactive(name="vote" label="Vote" to='/vote')
+      q-route-tab.deactive(name="vote" label="Vote" to='/vote')
       //- q-route-tab.deactive(name="proposal"  label="Proposal" to='/proposal')
       //- q-route-tab.deactive(name="explore" label="Explore" to='/explore')
 </template>
