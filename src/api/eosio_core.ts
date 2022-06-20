@@ -6,7 +6,7 @@ import { APIClient } from '@greymass/eosio';
 import { GetTableRowsParams } from 'src/types';
 
 const eosioCore = new APIClient({
-  url: 'https://telos.caleos.io'
+  url: process.env.HYPERION_ENDPOINT
 });
 
 export const getTokenBalances = async function (

@@ -1,4 +1,4 @@
-import { Authorization, AccountDetails, Action, Rexbal } from 'src/types';
+import { Authorization, AccountDetails, Action, Rexbal, ABI } from 'src/types';
 
 export interface AccountStateInterface {
   loading: unknown;
@@ -12,6 +12,7 @@ export interface AccountStateInterface {
   TransactionId: string;
   TransactionError: unknown;
   rexbal: Rexbal;
+  abi: ABI;
 }
 
 export function state(): AccountStateInterface {
@@ -26,6 +27,7 @@ export function state(): AccountStateInterface {
     rexActions: [],
     TransactionId: '',
     TransactionError: '',
-    rexbal: {} as Rexbal
+    rexbal: {} as Rexbal,
+    abi: { abi: null } as ABI
   };
 }

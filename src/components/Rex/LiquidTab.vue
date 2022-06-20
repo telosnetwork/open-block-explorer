@@ -115,16 +115,16 @@ export default defineComponent({
       .col-xs-12.col-sm-12.col-md-6
         .row
           .row.q-pb-sm.full-width
-            .col-9 LIQUID TLOS TO LEND
-            .col-3.grey-3.text-right {{accountData.account.core_liquid_balance}}
+            .col-8 LIQUID TLOS TO LEND
+            .col-4.text-weight-bold.text-right {{accountData.account.core_liquid_balance}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="lendTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Lend" flat @click="stake" )
       .col-xs-12.col-sm-12.col-md-6
         .row
           .row.q-pb-sm.full-width
-            .col-9 LIQUID TLOS TO WITHDRAW
-            .col-3.grey-3.text-right {{rexbal.vote_stake ? rexbal.vote_stake : '0 TLOS'}}
+            .col-8 LIQUID TLOS TO WITHDRAW
+            .col-4.text-weight-bold.text-right {{rexbal.vote_stake ? rexbal.vote_stake : '0 TLOS'}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="withdrawTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(rexbal.vote_stake)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Withdraw" flat @click="unstake" )

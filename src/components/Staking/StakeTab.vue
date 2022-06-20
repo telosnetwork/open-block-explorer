@@ -113,12 +113,12 @@ export default defineComponent({
 
 <template lang="pug">
 .staking-form
-  q-card-section
+  q-card-section.text-grey-3.text-weight-light
     .row
       .col-12
         .row.justify-between.q-pb-sm STAKING ACCOUNT
           q-space
-          .color-grey-3 Defaults to selected account
+          .text-grey-3 Defaults to selected account
         q-input.full-width(standout dense dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row.q-py-md
       .col-6
