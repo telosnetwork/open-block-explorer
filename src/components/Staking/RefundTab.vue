@@ -153,18 +153,18 @@ export default defineComponent({
         .col-6.text-h6.text-right.grey-3 {{formatTotalRefund(accountData.account?.refund_request)}}
       .row.full-width.q-py-md
         hr
-      .row.full-width.q-pb-lg
+      .row.full-width.q-pb-lg.text-grey-3.text-weight-light
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-6 CPU REFUND
-            .col-6.text-right.grey-3 {{accountData.account?.refund_request?.cpu_amount || '0'}}
+            .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.cpu_amount || '0'}}
           .row.q-pt-md
             .col-6 NET REFUND
-            .col-6.text-right.grey-3 {{accountData.account?.refund_request?.net_amount || '0'}}
+            .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.net_amount || '0'}}
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-7 {{refundCountdown()}}
-            .col-5.text-right.grey-3 
+            .col-5.text-right.text-weight-bold
               q-linear-progress( :value="refundProgress()" :buffer="buffer" color="grey-3" class="q-mt-sm")
           .row.q-pt-sm
             .col-7.q-pt-sm Refund

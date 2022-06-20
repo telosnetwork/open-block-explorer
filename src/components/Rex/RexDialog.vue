@@ -135,7 +135,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
           .text-h4.q-pb-md.inline-block.color-grey-3.inline Rex
         .q-pa-sm
           RexInfo
-          .q-pt-lg
+          .q-pt-lg.text-grey-3.text-weight-light
             q-tabs(
               v-model="tab" 
               dense class="text-grey"

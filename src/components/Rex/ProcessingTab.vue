@@ -98,11 +98,11 @@ export default defineComponent({
       .col-xs-12.col-sm-6
         .row.q-pa-sm
           .col-6 Rex maturing
-          .col-6.text-right.grey-3 {{maturingRex()}}
+          .col-6.text-right.text-weight-bold {{maturingRex()}}
       .col-xs-12.col-sm-6
         .row.q-pa-sm
           .col-7 {{maturitiesCountdown()}}
-          .col-5.text-right.grey-3 
+          .col-5.text-right.text-weight-bold 
             q-linear-progress( :value="refundProgress()" :buffer="buffer" color="grey-3" class="q-mt-sm")
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
