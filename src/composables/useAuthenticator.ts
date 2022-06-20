@@ -2,13 +2,13 @@ import { getCurrentInstance, computed, ComputedRef } from 'vue';
 import { UAL, Authenticator, User } from 'universal-authenticator-library';
 import { useStore } from 'src/store';
 
-interface UseAuthenticatorReturn {
+interface UseAuthenticator {
   account: ComputedRef<string>;
   isAuthenticated: ComputedRef<boolean>;
   getUser: () => Promise<User>;
 }
 
-export function useAuthenticator(): UseAuthenticatorReturn {
+export function useAuthenticator(): UseAuthenticator {
   const app = getCurrentInstance();
 
   const store = useStore();
