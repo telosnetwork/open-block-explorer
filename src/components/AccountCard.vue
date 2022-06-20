@@ -94,7 +94,6 @@ export default defineComponent({
         data = await this.$api.getAccount(this.account);
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
-        console.log(e);
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;

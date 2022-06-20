@@ -70,8 +70,13 @@ import {
   PropType,
   computed
 } from 'vue';
-import { PaginationSettings } from 'src/types/PaginationSettings';
-import { GetProposals, ProposalTableRow } from 'src/types/Proposal';
+import { useQuasar } from 'quasar';
+import {
+  GetProposals,
+  ProposalTableRow,
+  PaginationSettings,
+  Error
+} from 'src/types';
 import { api } from 'src/api';
 
 const initialStatePagination = {
@@ -104,6 +109,8 @@ export default defineComponent({
     }
   },
   setup(setupProps) {
+    const $q = useQuasar();
+
     const rows = ref<ProposalTableRow[]>([]);
     const pagination = ref(initialStatePagination);
     const isSigned = ref(false);
@@ -193,8 +200,18 @@ export default defineComponent({
             executed: proposal.executed
           };
         });
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        const error = JSON.parse(JSON.stringify(e)) as Error;
+        $q.notify({
+          color: 'negative',
+          message: error?.cause?.json?.error?.what || 'Unable load proposals',
+          actions: [
+            {
+              label: 'Dismiss',
+              color: 'white'
+            }
+          ]
+        });
       }
     }
 
