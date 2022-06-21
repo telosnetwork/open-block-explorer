@@ -5,7 +5,7 @@ import { api } from 'src/api/index';
 import { GetTableRowsParams, GenericTable } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { PaginationSettings } from 'src/types';
-
+/* eslint-disable */
 export default defineComponent({
   name: 'ContractTable',
   setup() {
@@ -29,8 +29,10 @@ export default defineComponent({
     } as PaginationSettings);
 
     const rows = ref([]);
+    const canShowMore = computed(
+      () => Number(limit.value) >= rows.value.length
+    );
     async function getRows() {
-      console.log('here');
       const params = {
         code: account.value,
         limit: limit.value,
@@ -41,7 +43,9 @@ export default defineComponent({
         key_type: 'i64',
         upper_bound: upper.value as unknown as TableIndexType
       } as GetTableRowsParams;
-      rows.value = ((await api.getTableRows(params)) as GenericTable).rows;
+      let data = ((await api.getTableRows(params)) as GenericTable).rows;
+      data = data.map((row) => formatData(row));
+      rows.value = data;
     }
     async function updateRows(val: string) {
       const params = {
@@ -54,11 +58,30 @@ export default defineComponent({
         key_type: 'i64',
         upper_bound: upper.value as unknown as TableIndexType
       } as GetTableRowsParams;
-      rows.value = ((await api.getTableRows(params)) as GenericTable).rows;
+      let data = ((await api.getTableRows(params)) as GenericTable).rows;
+      data = data.map((row) => formatData(row));
+      rows.value = data;
     }
     onMounted(async () => {
       await getRows();
     });
+
+    async function showMore() {
+      limit.value = (Number(limit.value) + Number(limit.value)).toString();
+      await getRows();
+    }
+
+    function formatData(data: any): any {
+      var dict: any = {};
+      for (let key in data) {
+        if (data[key] instanceof Object) {
+           dict[key] = JSON.stringify(data[key]);
+        } else {
+          dict[key] = data[key];
+        }
+      }
+      return dict;
+    }
 
     return {
       table,
@@ -70,7 +93,9 @@ export default defineComponent({
       rows,
       getRows,
       pagination,
-      updateRows
+      updateRows,
+      showMore,
+      canShowMore
     };
   }
 });
@@ -107,19 +132,13 @@ q-card(
   q-card-section.q-pt-none
     q-table(
       :rows="rows"
-      v-model:pagination="pagination"
+      :row-key="rows[0] ? rows[0][0] : ''"
+      :rows-per-page-options="[0]"
     )
-      template( v-slot:pagination="scope")
-        div.row.col-12.q-mt-md.q-mb-xl()
-        div.col-1(align="left")
+      template( v-slot:bottom)
+        .row.full-width.justify-center.q-py-md.q-px-xl(v-if="canShowMore")
           q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-            :disable="scope.isFirstPage"
-            @click="scope.prevPage") PREV
-        q-space
-        div.col-1(align="right")
-          q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-            :disable="scope.isLastPage"
-            @click="scope.nextPage") NEXT
+            @click="showMore") Show more
 
 </template>
 
