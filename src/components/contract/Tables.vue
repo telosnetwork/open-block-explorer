@@ -58,7 +58,6 @@ export default defineComponent({
         key_type: 'i64',
         upper_bound: upper.value as unknown as TableIndexType
       } as GetTableRowsParams;
-      //rows.value =
       let data = ((await api.getTableRows(params)) as GenericTable).rows;
       data = data.map((row) => formatData(row));
       rows.value = data;
