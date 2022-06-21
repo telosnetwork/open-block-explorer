@@ -102,6 +102,20 @@ export default defineComponent({
       }
     ];
 
+    function handleError(e: unknown, defaultMessage: string) {
+      const error = JSON.parse(JSON.stringify(e)) as Error;
+      $q.notify({
+        color: 'negative',
+        message: error?.cause?.json?.error?.what || defaultMessage,
+        actions: [
+          {
+            label: 'Dismiss',
+            color: 'white'
+          }
+        ]
+      });
+    }
+
     onMounted(async () => {
       try {
         const {
@@ -154,17 +168,7 @@ export default defineComponent({
         const transaction = await api.getTransaction(transactionId.value);
         transactionData.value = transaction.actions[0].act.data;
       } catch (e) {
-        const error = JSON.parse(JSON.stringify(e)) as Error;
-        $q.notify({
-          color: 'negative',
-          message: error?.cause?.json?.error?.what || 'Proposal not found',
-          actions: [
-            {
-              label: 'Dismiss',
-              color: 'white'
-            }
-          ]
-        });
+        handleError(e, 'Proposal not found');
         await router.push('/proposal');
       }
     });
@@ -219,17 +223,7 @@ export default defineComponent({
 
         document.location.reload();
       } catch (e) {
-        const error = JSON.parse(JSON.stringify(e)) as Error;
-        $q.notify({
-          color: 'negative',
-          message: error?.cause?.json?.error?.what || 'Unable approve proposal',
-          actions: [
-            {
-              label: 'Dismiss',
-              color: 'white'
-            }
-          ]
-        });
+        handleError(e, 'Unable approve proposal');
       }
     }
 
@@ -246,17 +240,7 @@ export default defineComponent({
 
         document.location.reload();
       } catch (e) {
-        const error = JSON.parse(JSON.stringify(e)) as Error;
-        $q.notify({
-          color: 'negative',
-          message: error?.cause?.json?.error?.what || 'Unable execute proposal',
-          actions: [
-            {
-              label: 'Dismiss',
-              color: 'white'
-            }
-          ]
-        });
+        handleError(e, 'Unable execute proposal');
       }
     }
 
@@ -273,17 +257,7 @@ export default defineComponent({
 
         document.location.reload();
       } catch (e) {
-        const error = JSON.parse(JSON.stringify(e)) as Error;
-        $q.notify({
-          color: 'negative',
-          message: error?.cause?.json?.error?.what || 'Unable cancel proposal',
-          actions: [
-            {
-              label: 'Dismiss',
-              color: 'white'
-            }
-          ]
-        });
+        handleError(e, 'Unable cancel proposal');
       }
     }
 
