@@ -64,121 +64,6 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 21
     });
-    const producerColumns = [
-      {
-        name: 'selected',
-        label: '',
-        align: 'left',
-        sortable: false,
-        headerClasses: 'selected-column'
-      },
-      {
-        name: 'number',
-        label: '#',
-        field: (row: any) => producerRows.value.indexOf(row) + 1,
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'owner',
-        label: 'Block Producer',
-        field: 'owner',
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'country',
-        label: 'Country',
-        field: (row: { location: string }) => row.location,
-        align: 'center',
-        sortable: true
-      },
-      {
-        name: 'social',
-        label: 'Links',
-        field: (row: { org: string }) => row.org,
-        align: 'center'
-      },
-      {
-        name: 'votes',
-        label: 'Total Votes',
-        field: (row: { total_votes: number }) =>
-          (row.total_votes / 10000).toFixed(0),
-        align: 'right',
-        sortable: true,
-        sort: (a: string, b: string, rowA: any, rowB: any) =>
-          parseInt(a, 10) - parseInt(b, 10)
-      },
-      {
-        name: 'sslVerified',
-        label: 'SSL',
-        field: (row: { sslVerified: boolean }) => row.sslVerified === true,
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'apiVerified',
-        label: 'API',
-        field: (row: { apiVerified: boolean }) => row.apiVerified === true,
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'sslVerifiedTestNet',
-        label: 'SSL*',
-        field: (row: { sslVerifiedTestNet: boolean }) =>
-          row.sslVerifiedTestNet === true,
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'apiVerifiedTestNet',
-        label: 'API*',
-        field: (row: { apiVerifiedTestNet: boolean }) =>
-          row.apiVerifiedTestNet === true,
-        align: 'left',
-        sortable: true
-      },
-      {
-        name: 'lifetimeProducedBlocks',
-        label: 'LPB',
-        field: 'lifetime_produced_blocks',
-        align: 'center',
-        sortable: true,
-        sort: (a: string, b: string, rowA: any, rowB: any) =>
-          parseInt(a, 10) - parseInt(b, 10)
-      },
-      {
-        name: 'lifetimeMissedBlocks',
-        label: 'LMB',
-        field: 'lifetime_missed_blocks',
-        align: 'center',
-        sortable: true,
-        sort: (a: string, b: string, rowA: any, rowB: any) =>
-          parseInt(a, 10) - parseInt(b, 10)
-      },
-      {
-        name: 'missedBlocksPer',
-        label: 'LMB(%)',
-        field: (row: {
-          lifetime_produced_blocks: number;
-          lifetime_missed_blocks: number;
-        }) =>
-          row.lifetime_produced_blocks === 0
-            ? row.lifetime_missed_blocks === 0
-              ? 'N/A'
-              : 100
-            : (
-                (row.lifetime_missed_blocks / row.lifetime_produced_blocks) *
-                100
-              ).toFixed(3),
-        align: 'left',
-        sortable: true,
-        sort: (a: string, b: string, rowA: any, rowB: any) =>
-          parseFloat(a) - parseFloat(b)
-      }
-    ];
-
     function removeVote(index: string) {
       currentVote.value.splice(Number(index), 1);
     }
@@ -271,8 +156,7 @@ export default defineComponent({
       getLink,
       getFlag,
       currentVote,
-      pagination,
-      producerColumns
+      pagination
     };
   }
   // watch: {
@@ -303,24 +187,6 @@ export default defineComponent({
 
 <template lang="pug">
 .q-pa-md
-  //- .row.items-start.q-gutter-md(v-if='account')
-  //-   q-card( v-for='(prod,i) in currentVote').producer-card
-  //-     .q-card-section {{ prod }}
-  //-         q-icon(
-  //-           name="fas fa-times"
-  //-           size="xs"
-  //-           color='primary'
-  //-           @click='removeVote(prod)'
-  //-         )
-  //- q-card.voting-stats(v-if='account')
-  //-   .count-field Selected Validators:
-  //-     span( :class="{'full-selection' : maxSelected }") {{ currentVote.length }} of 30
-  //-   .count-field Projected Vote Weight:
-  //-     span( :class="{'full-selection' : maxSelected }")  {{ projectedVoteWeight }}
-  //-   .count-field Last Vote Weight:
-  //-     span  {{ lastWeight }}
-  //-   .count-field Vote Weight Change:
-  //-     span  {{ weightChange }}
   div.bp-list(style="overflow-x: scroll; width: 100%;")
     .row.q-col-gutter-sm
       .col-12(style="min-width: 1000px;")
@@ -350,111 +216,6 @@ export default defineComponent({
                 .row.full-selection.justify-center
                   q-checkbox(v-model="selection" :val="bp.owner")
 
-
-
-  //- q-table(
-  //-   title= 'tableHeader'
-  //-   :rows="producerRows"
-  //-   flat
-  //-   :columns="producerColumns"
-  //-   row-key="owner"
-  //-   :pagination= "{rowsPerPage:0}"
-  //-   :hide-pagination="true"
-  //-   class="bp-table"
-  //- )
-  //-   template( v-slot:top-right class='testnet-indicator') * = testnet, LPB = lifetime produced blocks, LMB = lifetime missed blocks
-  //-   template(v-slot:body="props").q-pa-lg
-  //-     q-tr( slot="body" slot-scope="props" :props="props" class="table-row q-py-ms")
-  //-       q-td.q-py-lg( key="selected" v-if='account' class="table-column")
-  //-         .q-py-md.select 
-  //-           q-checkbox(  v-model='currentVote' :val='props.cols[2].value' )
-  //-       q-td( key="number" class='vote-indicator' auto-width)
-  //-         .q-py-md.middle-cell.full-width.full-height {{props.cols[1].value}}
-  //-       q-td( key="owner" ) {{props.cols[2].value }}
-  //-       q-td( key="country" ).flag-column
-  //-         span(:class='getFlag(props.cols[3].value)').flag-icon
-  //-       q-td(v-if='props.cols[4].value' key="social" align="center").no-decoration
-  //-         a(v-if="props.cols[4].value.website" :href="props.cols[4].value.website")
-  //-           q-icon(
-  //-             name="fas fa-globe"
-  //-             size="xs"
-  //-             color='primary'
-  //-           )
-  //-         a(v-if="props.cols[4].value.social.twitter" :href="getLink('twitter.com',props.cols[4].value.social.twitter)")
-  //-           q-icon(
-  //-             name="fab fa-twitter"
-  //-             size="xs"
-  //-             color='primary'
-  //-           )
-  //-         a(v-if="props.cols[4].value.social.github" :href="getLink('github.com',props.cols[4].value.social.github)")
-  //-           q-icon(
-  //-             name="fab fa-github"
-  //-             size="xs"
-  //-             color='primary'
-  //-           )
-  //-         a(v-if="props.cols[4].value.social.telegram" :href="getLink('t.me',props.cols[4].value.social.telegram)")
-  //-           q-icon(
-  //-             name="fab fa-telegram"
-  //-             size="xs"
-  //-             color='primary'
-  //-           )
-  //-       q-td(v-else key="social-none")
-  //-       q-td( key="votes" align="right") {{props.cols[5].value }}
-  //-       q-td( key="sslVerified" align='left')
-  //-         q-icon(
-  //-           v-if="props.cols[6].value === true"
-  //-           name="fas fa-check"
-  //-           size="xs"
-  //-           color='green'
-  //-         )
-  //-         q-icon(
-  //-           v-else
-  //-           name="fas fa-times"
-  //-           size="xs"
-  //-           color='red'
-  //-         )
-  //-       q-td( key="apiVerified" align='left')
-  //-         q-icon(
-  //-           v-if="props.cols[7].value === true"
-  //-           name="fas fa-check"
-  //-           size="xs"
-  //-           color='green'
-  //-         )
-  //-         q-icon(
-  //-           v-else
-  //-           name="fas fa-times"
-  //-           size="xs"
-  //-           color='red'
-  //-         )
-  //-       q-td( key="sslVerifiedTestNet" align='left')
-  //-         q-icon(
-  //-           v-if="props.cols[8].value === true"
-  //-           name="fas fa-check"
-  //-           size="xs"
-  //-           color='green'
-  //-         )
-  //-         q-icon(
-  //-           v-else
-  //-           name="fas fa-times"
-  //-           size="xs"
-  //-           color='red'
-  //-         )
-  //-       q-td( key="apiVerifiedTestNet" align='left')
-  //-         q-icon(
-  //-           v-if="props.cols[9].value === true"
-  //-           name="fas fa-check"
-  //-           size="xs"
-  //-           color='green'
-  //-         )
-  //-         q-icon(
-  //-           v-else
-  //-           name="fas fa-times"
-  //-           size="xs"
-  //-           color='red'
-  //-         )
-  //-       q-td( key="lifetimeProducedBlocks" align='right' ) {{props.cols[10].value }}
-  //-       q-td( key="lifetimeMissedBlocks" align='right') {{props.cols[11].value }}
-  //-       q-td( key='missedBlocksPer' align='left') {{props.cols[12].value }}
 </template>
 
 <style lang="sass" scoped>
