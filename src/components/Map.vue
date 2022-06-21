@@ -407,7 +407,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.z-top.absolute.q-pa-md.producer-toggle.text-white
+.absolute.q-pa-md.producer-toggle.text-white
   q-toggle(
         v-model="producerToggle"
         label="Show Active BP"
@@ -496,4 +496,6 @@ div(id="producerPopup" ref="producerPopup" class="ol-popup")
   text-align: left
 .producer-toggle
   right: 0
+  z-index: 1
+
 </style>
