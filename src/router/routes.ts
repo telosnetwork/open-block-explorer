@@ -57,6 +57,12 @@ const routes: RouteRecordRaw[] = [
     ]
   },
   {
+    path: '/proposal/:proposalName',
+    name: 'ProposalItem',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/ProposalItem.vue') }]
+  },
+  {
     path: '/explore',
     name: 'explore',
     component: () => import('layouts/MainLayout.vue'),
