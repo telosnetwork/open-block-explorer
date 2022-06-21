@@ -5,7 +5,7 @@ import { api } from 'src/api/index';
 import { GetTableRowsParams, GenericTable } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { PaginationSettings } from 'src/types';
-
+/* eslint-disable */
 export default defineComponent({
   name: 'ContractTable',
   setup() {
@@ -43,7 +43,9 @@ export default defineComponent({
         key_type: 'i64',
         upper_bound: upper.value as unknown as TableIndexType
       } as GetTableRowsParams;
-      rows.value = ((await api.getTableRows(params)) as GenericTable).rows;
+      let data = ((await api.getTableRows(params)) as GenericTable).rows;
+      data = data.map((row) => formatData(row));
+      rows.value = data;
     }
     async function updateRows(val: string) {
       const params = {
@@ -56,7 +58,10 @@ export default defineComponent({
         key_type: 'i64',
         upper_bound: upper.value as unknown as TableIndexType
       } as GetTableRowsParams;
-      rows.value = ((await api.getTableRows(params)) as GenericTable).rows;
+      //rows.value =
+      let data = ((await api.getTableRows(params)) as GenericTable).rows;
+      data = data.map((row) => formatData(row));
+      rows.value = data;
     }
     onMounted(async () => {
       await getRows();
@@ -65,6 +70,18 @@ export default defineComponent({
     async function showMore() {
       limit.value = (Number(limit.value) + Number(limit.value)).toString();
       await getRows();
+    }
+
+    function formatData(data: any): any {
+      var dict: any = {};
+      for (let key in data) {
+        if (data[key] instanceof Object) {
+           dict[key] = JSON.stringify(data[key]);
+        } else {
+          dict[key] = data[key];
+        }
+      }
+      return dict;
     }
 
     return {
@@ -116,6 +133,7 @@ q-card(
   q-card-section.q-pt-none
     q-table(
       :rows="rows"
+      :row-key="rows[0] ? rows[0][0] : ''"
       :rows-per-page-options="[0]"
     )
       template( v-slot:bottom)
