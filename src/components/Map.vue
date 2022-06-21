@@ -497,4 +497,5 @@ div(id="producerPopup" ref="producerPopup" class="ol-popup")
 .producer-toggle
   right: 0
   z-index: 1
+
 </style>
