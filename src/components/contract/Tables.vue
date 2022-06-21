@@ -29,8 +29,10 @@ export default defineComponent({
     } as PaginationSettings);
 
     const rows = ref([]);
+    const canShowMore = computed(
+      () => Number(limit.value) >= rows.value.length
+    );
     async function getRows() {
-      console.log('here');
       const params = {
         code: account.value,
         limit: limit.value,
@@ -60,6 +62,11 @@ export default defineComponent({
       await getRows();
     });
 
+    async function showMore() {
+      limit.value = (Number(limit.value) + Number(limit.value)).toString();
+      await getRows();
+    }
+
     return {
       table,
       options,
@@ -70,7 +77,9 @@ export default defineComponent({
       rows,
       getRows,
       pagination,
-      updateRows
+      updateRows,
+      showMore,
+      canShowMore
     };
   }
 });
@@ -107,19 +116,12 @@ q-card(
   q-card-section.q-pt-none
     q-table(
       :rows="rows"
-      v-model:pagination="pagination"
+      :rows-per-page-options="[0]"
     )
-      template( v-slot:pagination="scope")
-        div.row.col-12.q-mt-md.q-mb-xl()
-        div.col-1(align="left")
+      template( v-slot:bottom)
+        .row.full-width.justify-center.q-py-md.q-px-xl(v-if="canShowMore")
           q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-            :disable="scope.isFirstPage"
-            @click="scope.prevPage") PREV
-        q-space
-        div.col-1(align="right")
-          q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-            :disable="scope.isLastPage"
-            @click="scope.nextPage") NEXT
+            @click="showMore") Show more
 
 </template>
 
