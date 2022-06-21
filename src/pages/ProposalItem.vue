@@ -163,7 +163,8 @@ export default defineComponent({
         );
 
         const block = await api.getBlock(String(proposal.block_num));
-        transactionId.value = block.transactions[0].trx.id;
+        transactionId.value =
+          block.transactions[block.transactions.length - 1].trx.id;
 
         const transaction = await api.getTransaction(transactionId.value);
         transactionData.value = transaction.actions[0].act.data;
