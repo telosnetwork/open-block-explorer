@@ -176,8 +176,8 @@ q-page(padding)
                   span.text-h6.text-weight-regular(v-else) Action {{index + 1}}
                 div.col-12.col-sm
                   span.text-body2(v-if="item.dataAction.from && item.dataAction.to && item.dataAction.quantity") <b>{{item.dataAction.from}} → {{item.dataAction.to}}</b> {{item.dataAction.quantity}}
-            div(v-if="formData.trx.actions.length !== 1")
-              q-btn(outline padding="sm md" color="white" text-color="primary" label="Remove" @click.stop="formData.trx.actions.splice(index, 1)")
+            div
+              q-btn(outline padding="sm md" color="white" text-color="primary" label="Remove" :disabled="formData.trx.actions.length === 1" @click.stop="formData.trx.actions.splice(index, 1)")
         div.q-pa-md
           div.row.q-col-gutter-md.q-mb-md
             div.col-6.col-sm-4
@@ -265,7 +265,7 @@ q-page(padding)
                 label="Permission (e.g. active)"
                 :rules="[value => !!value || 'Field is required']")
             div.col-sm-4
-              q-btn(outline padding="sm md" color="white" text-color="primary" label="Remove" @click="item.authorization.splice(authorizationIndex, 1)")
+              q-btn(outline padding="sm md" color="white" text-color="primary" label="Remove" :disable="item.authorization.length === 1" @click="item.authorization.splice(authorizationIndex, 1)")
 
           q-btn(outline padding="sm md" color="white" text-color="primary" label="Add" @click.stop="item.authorization.push({})")
 
