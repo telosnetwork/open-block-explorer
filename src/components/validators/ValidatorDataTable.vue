@@ -1,5 +1,12 @@
 <script lang="ts">
-import { defineComponent, computed, ref, PropType, onMounted } from 'vue';
+import {
+  defineComponent,
+  computed,
+  ref,
+  PropType,
+  onMounted,
+  watch
+} from 'vue';
 import moment from 'moment';
 import { useStore } from 'src/store';
 import { ual } from 'src/boot/ualapi';
@@ -20,13 +27,12 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
     const account = computed(() => store.state.account.accountName);
-    const currentVote = ref<string[]>([]);
+    const currentVote = computed(() => store.state.account.vote);
     const selection = ref<string[]>([]);
     const HeadProducer = computed(
       (): string => store.state.chain.head_block_producer
     );
     const producerRows = computed((): BP[] => store.state.chain.bpList);
-    const producerVotes = computed(() => props.producerVotes);
     const lastWeight = computed(() => Number(props.lastWeight));
     const lastUpdated = computed(() => props.lastUpdated);
     const stakedAmount = computed(() => props.stakedAmount);
@@ -71,25 +77,11 @@ export default defineComponent({
       return `https://${domain}/${username}`;
     }
 
-    function getCountry(): string {
-      return 'SA';
-    }
-
     function getFlag(alpha2: number) {
       if (alpha2) {
         return `flag-icon-${alpha2}`;
       }
       return '';
-    }
-
-    function checkHeader() {
-      const checkHeader = document.getElementsByClassName('selected-column')[0];
-      checkHeader.setAttribute('style', 'height: 48px;');
-      if (!account.value) {
-        checkHeader.setAttribute('style', 'display: none;');
-      } else {
-        checkHeader.setAttribute('style', 'display: block;');
-      }
     }
 
     function areEqualArrays(firstArray: [], secondArray: []) {
@@ -110,31 +102,12 @@ export default defineComponent({
       return true;
     }
 
-    function resetVotes() {
-      currentVote.value = producerVotes.value;
+    function updateVote(val: string[]) {
+      store.commit('account/setVote', val);
     }
+
     async function sendVoteTransaction() {
-      currentVote.value.sort();
-      const voteActions = [
-        {
-          account: 'eosio',
-          name: 'voteproducer',
-          data: {
-            voter: account.value,
-            proxy: '',
-            producers: [...currentVote.value]
-          }
-        }
-      ];
-      try {
-        const authenticators =
-          ual().getAuthenticators().availableAuthenticators;
-        const user = (await authenticators[0].login())[0];
-        await user.signTransaction(voteActions);
-        //this.$emit('get-votes');
-      } catch (e) {
-        console.error(e);
-      }
+      await store.dispatch('account/sendVoteTransaction');
     }
 
     onMounted(() => {
@@ -156,32 +129,10 @@ export default defineComponent({
       getLink,
       getFlag,
       currentVote,
-      pagination
+      pagination,
+      updateVote
     };
   }
-  // watch: {
-  //   producerVotes(val) {
-  //     this.$emit('vote-changed', false);
-  //     if (this.currentVote.length === 0) {
-  //       this.currentVote = [...val];
-  //     }
-  //   },
-  //   currentVote(val) {
-  //     if (val.length > MAX_VOTE_PRODUCERS) {
-  //       this.currentVote.pop();
-  //       alert('You can only vote for 30 validators.');
-  //       return;
-  //     }
-  //     if (this.areEqualArrays(val, this.producerVotes)) {
-  //       this.$emit('vote-changed', false);
-  //     } else {
-  //       this.$emit('vote-changed', true);
-  //     }
-  //   },
-  //   account() {
-  //     this.checkHeader();
-  //   }
-  // }
 });
 </script>
 
@@ -214,7 +165,7 @@ export default defineComponent({
                 .row.items-center.full-height {{ (bp.total_votes / 10000).toFixed(0) }}
               .col-1.select-box.q-py-md
                 .row.full-selection.justify-center
-                  q-checkbox(v-model="selection" :val="bp.owner")
+                  q-checkbox(v-model="currentVote" :val="bp.owner" @update:model-value="(val)=> updateVote(val)")
 
 </template>
 

@@ -291,5 +291,42 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   resetTransaction({ commit }) {
     commit('setTransaction', '');
     commit('setTransactionError', '');
+  },
+  async sendVoteTransaction({ commit, state }) {
+    let transaction = null;
+    const authenticators = ual().getAuthenticators().availableAuthenticators;
+    const user = (await authenticators[0].login())[0];
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'voteproducer',
+        authorization: [
+          {
+            actor: this.state.account.accountName,
+            permission: 'owner'
+          }
+        ],
+        data: {
+          voter: state.accountName,
+          proxy: '',
+          producers: state.vote
+        }
+      }
+    ];
+    console.log(actions);
+    try {
+      transaction = await user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 30
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
   }
 };
