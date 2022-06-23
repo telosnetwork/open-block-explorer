@@ -74,6 +74,11 @@ export default defineComponent({
   async mounted() {
     await this.loadTableData();
   },
+  watch: {
+    async account() {
+      await this.loadTableData();
+    }
+  },
   computed: {
     isTransaction(): boolean {
       return this.account != null && this.account.length > 12;
