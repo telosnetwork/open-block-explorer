@@ -1,6 +1,8 @@
+import { Action } from 'src/types';
 export interface TransactionTableRow {
-  transaction: string;
+  name: string;
+  transaction: { id: string; type: string };
   timestamp: string;
-  action: string;
-  data: unknown;
+  action: Action;
+  data: { data: unknown; name: string };
 }

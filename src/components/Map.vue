@@ -101,6 +101,7 @@ export default defineComponent({
     const projection = ref('EPSG:4326');
     const zoom = ref(8);
     const rotation = ref(0);
+    const producerToggle = ref<boolean>(Boolean(Number(localStorage.getItem('mapBP-toggle'))));
     const BPlist = computed((): BP[] => store.state.chain.bpList);
     const schedule = computed(
       (): string[] => store.state.chain.producerSchedule
@@ -109,6 +110,9 @@ export default defineComponent({
       (): string => store.state.chain.head_block_producer
     );
     const currentHeadProducer = ref<string>('');
+    function updateToggleOption(val: boolean) {
+      localStorage.setItem('mapBP-toggle', Number(val).toString());
+    }
     return {
       center,
       projection,
@@ -117,7 +121,9 @@ export default defineComponent({
       BPlist,
       HeadProducer,
       currentHeadProducer,
-      schedule
+      schedule,
+      producerToggle,
+      updateToggleOption
     };
   },
   data() {
@@ -212,13 +218,13 @@ export default defineComponent({
       ) {
         content.innerHTML =
           (selected.getId() === this.HeadProducer
-            ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
+            ? '<div class="owner-text text-h6 text-center text-uppercase text-primary">' +
               'Producing</div>'
             : '') +
-          '<div class="owner-text text-h5 text-center text-uppercase">' +
+          '<div class="owner-text text-h6 text-center text-uppercase">' +
           selected.getId() +
           '</div>' +
-          '<div class=".country-text text-subtitle1 text-center">' +
+          '<div class="country-text text-subtitle1 text-center">' +
           selected.getProperties().country +
           '</div>';
         overlay.setPosition(selected.getGeometry().getCoordinates());
@@ -257,13 +263,13 @@ export default defineComponent({
       ) {
         content.innerHTML =
           (selected.getId() === this.HeadProducer
-            ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
+            ? '<div class="owner-text text-h6 text-center text-uppercase text-primary">' +
               'Producing</div>'
             : '') +
-          '<div class="owner-text text-h5 text-center text-uppercase">' +
+          '<div class="owner-text text-h6 text-center text-uppercase">' +
           selected.getId() +
           '</div>' +
-          '<div class=".country-text text-subtitle1 text-center">' +
+          '<div class="country-text text-subtitle1 text-center">' +
           selected.getProperties().country +
           '</div>';
 
@@ -302,9 +308,8 @@ export default defineComponent({
             feature.setStyle(style);
           }
           feature.setId(bp.owner);
-          feature.setProperties({ type: 'bp', country: 'unknown'});
+          feature.setProperties({ type: 'bp', country: 'unknown' });
           vectorSource.addFeature(feature);
-
         }
       }
     }
@@ -357,17 +362,20 @@ export default defineComponent({
         if (feature !== null) {
           producerContent.innerHTML =
             (feature.getId() === this.HeadProducer
-              ? '<div class="owner-text text-h5 text-center text-uppercase text-primary">' +
+              ? '<div class="owner-text text-h6 text-center text-uppercase text-primary">' +
                 'Producing</div>'
               : '') +
-            '<div class="owner-text text-h5 text-center text-uppercase">' +
+            '<div class="owner-text text-h6 text-center text-uppercase">' +
             feature.getId() +
             '</div>' +
-            '<div class=".country-text text-subtitle1 text-center">' +
+            '<div class="country-text text-subtitle1 text-center">' +
             feature.getProperties().country +
             '</div>';
-
-          producerOverlay.setPosition((feature as any).getGeometry().getCoordinates());
+          if (this.producerToggle) {
+            producerOverlay.setPosition(
+              (feature as any).getGeometry().getCoordinates()
+            );
+          }
           feature.setStyle(producerStyle);
           flash(feature);
         }
@@ -399,8 +407,16 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-
+.absolute.q-pa-md.producer-toggle.text-white
+  q-toggle(
+        v-model="producerToggle"
+        label="Show Active BP"
+        left-label
+        color="cyan-4"
+        @update:model-value="(val)=> updateToggleOption(val)"
+      )
 .map-container(id="map" ref="map-root")
+
 div(id="popup" ref="popup" class="ol-popup")
   a(href="#" id="popup-closer" ref="popup-closer" class="ol-popup-closer" v-show="$q.platform.is.mobile")
   div(id="popup-content" ref="popup-content")
@@ -423,13 +439,13 @@ div(id="producerPopup" ref="producerPopup" class="ol-popup")
 
 .ol-popup
   position: absolute
-  background: linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)
+  background: linear-gradient(90deg, rgba(203, 202, 245, 0.7) 0%, rgba(169, 202, 243, 0.7) 56.377%, rgba(73, 206, 255, 0.7) 100%)
   box-shadow: 0 1px 4px rgba(0,0,0,0.2)
-  padding: 15px
+  padding: 5px
   border-radius: 10px
   bottom: 12px
   left: -50px
-  min-width: 280px
+  min-width: 200px
 
 .ol-popup:after, .ol-popup:before
   top: 100%
@@ -466,7 +482,7 @@ div(id="producerPopup" ref="producerPopup" class="ol-popup")
   font-family: Actor
   font-size: 13px
   font-weight: 400
-  line-height: 16px
+  line-height: 5px
   letter-spacing: 0em
   text-align: center
 
@@ -475,7 +491,11 @@ div(id="producerPopup" ref="producerPopup" class="ol-popup")
   font-family: Roboto
   font-size: 10px
   font-weight: 400
-  line-height: 12px
+  line-height: 5px
   letter-spacing: 0em
   text-align: left
+.producer-toggle
+  right: 0
+  z-index: 1
+
 </style>

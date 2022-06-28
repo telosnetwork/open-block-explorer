@@ -16,6 +16,10 @@ export interface RexbalRows {
   rows: Rexbal[];
 }
 
+export interface GenericTable {
+  rows: unknown[];
+}
+
 export interface Producer {
   owner: string;
   total_votes: string;

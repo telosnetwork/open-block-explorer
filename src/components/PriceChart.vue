@@ -136,7 +136,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-div.row.col-12.justify-center(align="center")
+div.row.col-12.justify-center.actor-font(align="center")
     div.row.col-11.price-box.flex
         div.col-xs-12.col-sx-12.col-md-8.col-lg-8.col-xs-8.q-pa-md
             highcharts.highcharts-description.col-12(:options="chartOptions" style="height:250px" :highcharts="hcInstance")
@@ -205,7 +205,6 @@ $medium:750px
   margin: 1em auto
 
 .highcharts-data-table table
-  font-family: Verdana, sans-serif
   border-collapse: collapse
   border: 1px solid #ebebeb
   margin: 10px auto

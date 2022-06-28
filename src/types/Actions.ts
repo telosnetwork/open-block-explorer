@@ -230,3 +230,12 @@ export interface Get_actions {
   actions: Action[];
   cached: boolean;
 }
+export interface Error {
+  cause?: {
+    json?: {
+      error?: {
+        what?: string;
+      };
+    };
+  };
+}

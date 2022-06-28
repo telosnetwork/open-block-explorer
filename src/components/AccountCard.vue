@@ -94,7 +94,6 @@ export default defineComponent({
         data = await this.$api.getAccount(this.account);
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
-        console.log(e);
         this.total = this.refunding = this.staked = this.rex = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;
@@ -336,11 +335,9 @@ $medium:750px
 .total-amount
   color: white
   font-size: 20px
-  font-family: Silka
   font-weight: normal
 
 .total-value
-  font-family: Silka
   font-weight: normal
 
 @media screen and (max-width: $medium) // screen < $medium
@@ -369,7 +366,6 @@ $medium:750px
     text-decoration: underline
     color: white
     font-size: 16px
-    font-family: Silka
     font-weight: normal
 
 .tx-link

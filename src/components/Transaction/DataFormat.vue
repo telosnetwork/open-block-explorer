@@ -27,19 +27,22 @@ export default defineComponent({
       }
     });
 
-    function formatGeneralData(data: any): any {
-      var dict = []
+    function formatGeneralData(data: any): any[] {
+      var dict: any[] = [];
       for (let key in data) {
         if (data[key] instanceof Object) {
           if (Array.isArray(data[key])) {
-            var keyValArray = [];
+            var keyValArray: any[] = [];
             for (let i = 0; i < data[key].length; i++) {
-              keyValArray.push(formatGeneralData(data[key][i]));
+              if (data[key][i] instanceof Object) {
+                keyValArray = keyValArray.concat(formatGeneralData(data[key][i]));
+              }
             }
-            return keyValArray;
+            dict = dict.concat(keyValArray);
           } else {
-            var keyValArray = [];
+            let keyValArray = [];
             keyValArray.push(formatGeneralData(data[key]));
+            dict = dict.concat(keyValArray);
           }
         } else {
           dict.push({key, value:data[key]});

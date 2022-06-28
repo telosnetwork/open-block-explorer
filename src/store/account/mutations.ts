@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex';
 import { AccountStateInterface } from './state';
-import { AccountDetails, Action, Rexbal } from 'src/types';
+import { AccountDetails, Action, Rexbal, ABI } from 'src/types';
 
 export const mutations: MutationTree<AccountStateInterface> = {
   setLoadingWallet(state: AccountStateInterface, wallet: string) {
@@ -30,5 +30,8 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setVote(state: AccountStateInterface, vote: string[]) {
     state.vote = vote;
+  },
+  setABI(state: AccountStateInterface, abi: ABI) {
+    state.abi = abi;
   }
 };

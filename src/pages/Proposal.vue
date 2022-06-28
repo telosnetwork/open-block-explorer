@@ -2,6 +2,12 @@
 q-page(padding)
   div.row.justify-between.items-center.q-pt-lg.q-pb-sm
     h1.text-h5.q-ma-none Multisig Transactions
+    q-btn(
+      v-if="isAuthenticated"
+      padding="sm md"
+      color="primary"
+      label="New proposal"
+      to="/proposal/new")
 
   q-tabs(v-model="tab" align="left" active-color="primary" content-class="text-grey-7"  no-caps)
     q-tab(v-if="isAuthenticated" name="myProposal" label="My proposals")

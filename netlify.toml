@@ -8,7 +8,7 @@
   command = "quasar build"
 
 [context.production.environment]
-  APP_NAME = "Open Block Explorer"
+  APP_NAME = "Telos Block Explorer"
   NODE_VERSION = "14"
   NETWORK_CHAIN_ID = "4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11"
   NETWORK_HOST = "telos.caleos.io"
@@ -18,12 +18,11 @@
   NETWORK_EVM_ENDPOINT = "https://mainnet.telos.net"
   NETWORK_EVM_CONTRACT = "eosio.evm"
   NETWORK_EVM_CHAIN_ID = "40"
-  NETWORK_EXPLORER = "https://telos.bloks.io"
   HYPERION_ENDPOINT = "https://mainnet.telos.net"
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
 
 [context.develop.environment]
-  APP_NAME = "Open Block Explorer"
+  APP_NAME = "Telos Testnet Block Explorer"
   NODE_VERSION = "14"
   NETWORK_CHAIN_ID = "1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"
   NETWORK_HOST = "testnet.telos.net"
@@ -33,12 +32,11 @@
   NETWORK_EVM_ENDPOINT = "https://testnet.telos.net"
   NETWORK_EVM_CONTRACT = "eosio.evm"
   NETWORK_EVM_CHAIN_ID = "41"
-  NETWORK_EXPLORER = "https://telos-test.bloks.io"
-  HYPERION_ENDPOINT = "https://testnet.telosusa.io"
+  HYPERION_ENDPOINT = "https://testnet.telos.net"
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
   
 [context.deploy-preview.environment]
-  APP_NAME = "Open Block Explorer"
+  APP_NAME = "Telos Block Explorer"
   NODE_VERSION = "14"
   NETWORK_CHAIN_ID = "4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11"
   NETWORK_HOST = "telos.caleos.io"
@@ -48,6 +46,5 @@
   NETWORK_EVM_ENDPOINT = "https://mainnet.telos.net"
   NETWORK_EVM_CONTRACT = "eosio.evm"
   NETWORK_EVM_CHAIN_ID = "40"
-  NETWORK_EXPLORER = "https://telos.bloks.io"
   HYPERION_ENDPOINT = "https://mainnet.telos.net"
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
