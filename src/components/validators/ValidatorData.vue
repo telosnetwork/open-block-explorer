@@ -5,6 +5,7 @@ import { api } from 'src/api';
 import { useStore } from 'src/store';
 import { BP } from 'src/types';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
+import { GetTableRowsParams } from 'src/types';
 
 export default defineComponent({
   name: 'Validator',
@@ -15,6 +16,9 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const account = computed(() => store.state.account.accountName);
+    const balance = computed(
+      () => store.state.account.data?.account?.core_liquid_balance || 0
+    );
     const lastUpdated = ref<string>('');
     const producerData = computed((): BP[] => store.state.chain.bpList);
     const producerVotes = ref([]);
@@ -29,6 +33,14 @@ export default defineComponent({
     const transactionId = ref<string>(store.state.account.TransactionId);
     const transactionError = ref<unknown>(store.state.account.TransactionError);
     const openTransaction = ref<boolean>(false);
+    const payrate = ref(0);
+    const top21pay24h = ref(0);
+    const supply = ref(0);
+    const voters = ref(0);
+    const amount_voted = ref(0);
+    const votesProgress = computed(() => {
+      return amount_voted.value / supply.value || 0;
+    });
 
     async function getVotes() {
       if (account.value && account.value !== '') {
@@ -41,6 +53,60 @@ export default defineComponent({
         stakedAmount.value = voterInfo.staked;
       }
     }
+    function assetToAmount(asset: string, decimals = -1): number {
+      try {
+        let qty: string = asset.split(' ')[0];
+        let val: number = parseFloat(qty);
+        if (decimals > -1) qty = val.toFixed(decimals);
+        return val;
+      } catch (error) {
+        return 0;
+      }
+    }
+    async function getVotingStatistics() {
+      const request = {
+        code: 'eosio',
+        lower_bound: 'eosio',
+        table: 'voters'
+      };
+      voters.value = (await api.getTableByScope(request))[0].count;
+      const totalStakeParams = {
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'global'
+      } as GetTableRowsParams;
+      amount_voted.value =
+        (
+          (await api.getTableRows(totalStakeParams)) as {
+            rows: { total_activated_stake: number }[];
+          }
+        ).rows[0].total_activated_stake / 10000;
+
+      const paramsSupply = {
+        code: 'eosio.token',
+        scope: 'TLOS',
+        table: 'stat'
+      } as GetTableRowsParams;
+      supply.value = assetToAmount(
+        (
+          (await api.getTableRows(paramsSupply)) as {
+            rows: { supply: string }[];
+          }
+        ).rows[0].supply
+      );
+      const paramsPayrate = {
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'payrate'
+      } as GetTableRowsParams;
+      payrate.value = (
+        (await api.getTableRows(paramsPayrate)) as {
+          rows: { bpay_rate: number }[];
+        }
+      ).rows[0].bpay_rate;
+      top21pay24h.value = ((payrate.value / 100000) * supply.value) / 365 / 21;
+    }
+
     function toggleView() {
       showCpu.value = !showCpu.value;
     }
@@ -51,6 +117,7 @@ export default defineComponent({
 
     onMounted(async () => {
       await getVotes();
+      await getVotingStatistics();
     });
 
     return {
@@ -71,7 +138,14 @@ export default defineComponent({
       sendVoteTransaction,
       openTransaction,
       transactionId,
-      transactionError
+      transactionError,
+      payrate,
+      top21pay24h,
+      supply,
+      voters,
+      amount_voted,
+      votesProgress,
+      balance
     };
   }
 });
@@ -79,48 +153,47 @@ export default defineComponent({
 
 <template lang="pug">
 div
-  //- q-btn.toggle(@click='toggleView' label='toggleLabel' color='primary')
-  //- q-btn.toggle( v-if='account' @click='' :disable='!voteChanged' label='Vote' color='primary')
-  //- q-btn.toggle( v-if='account' @click='' :disable='!voteChanged' label='Reset' color='primary')
   .q-pa-md
-    .row.q-col-gutter-md
+    .row.q-col-gutter-md.q-pt-md
       div(:class="accountValid ? 'col-md-8 col-sm-12 col-xs-12' : 'col-12'")
-        q-card(flat).full-height
-          q-card-section.voting-card
-            .row.q-pa-md.text-h6 Voting Statistics
-            .row.q-pa-md.q-col-gutter-md
-              .col-6
-                q-linear-progress(size="120px" :value="0.9" color="gradient4"  class="q-mt-sm")
-              .col-6
-                q-linear-progress(size="120px" :value="0.1"  class="q-mt-sm" )
-            .row.q-pa-md.q-col-gutter-md
-              .col-6
-                .row
-                  .col-6 Total votes
-                  .col-6
-                    .float-right Total Supply
-                .row
-                  .col-6 323,3232,32
-                  .col-6
-                    .float-right 323,3232,32
-              .col-6
-                .row
-                  .col-6 Total votes
-                  .col-6
-                    .float-right Total Supply
-                .row
-                  .col-6 323,3232,32
-                  .col-6
-                    .float-right 323,3232,32
-      .col-md-4.col-sm-12.col-xs-12(v-if="accountValid").full-height
         q-card(flat)
-          q-card-section.voting-card
+          q-card-section.card-gradient
+            .row.q-pa-md.text-h5.text-weight-light Voting Statistics
+            .row.q-pa-md.q-col-gutter-md
+              .col-12
+                q-linear-progress.gradient-color(size="120px" rounded :value="votesProgress" class="q-mt-sm")
+              //- When we have a way to determine total accounts
+              //- .col-6
+              //-   q-linear-progress.gradient-color(size="120px" rounded :value="0.1" class="q-mt-sm" )
+            .row.q-pa-md.q-col-gutter-md
+              .col-12
+                .row
+                  .col-6.text-uppercase.text-weight-light.text-grey-4 Total votes
+                  .col-6
+                    .float-right.text-uppercase.text-weight-light.text-grey-4 Total Supply
+                .row
+                  .col-6 {{ amount_voted.toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}
+                  .col-6
+                    .float-right {{ supply.toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}
+              //- When we have a way to determine total accounts
+              //- .col-6
+              //-   .row
+              //-     .col-6 Voting Accounts
+              //-     .col-6
+              //-       .float-right Total Accounts
+              //-   .row
+              //-     .col-6 {{ voters.toLocaleString(undefined, {minimumFractionDigits: 2,maximumFractionDigits: 2,}) }}
+              //-     .col-6
+              //-       .float-right 323,3232,32
+      .col-md-4.col-sm-12.col-xs-12(v-if="accountValid")
+        q-card(flat).full-height.card-gradient
+          q-card-section.card-gradient
             .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 YOUR AVAILABLE TLOS
-            .row.full-width.justify-center.text-h5 2,545,5
+            .row.full-width.justify-center.text-h5 {{ balance }}
             .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{account}}
           q-separator(color="primary" size="2px")
-          q-card-section.voting-card
-            .row.full-width.justify-center.subtitle2.q-py-md.text-weight-light.text-grey-4 SELECTED {{currentVote.length}} BLOCK PRODUCERS
+          q-card-section
+            .row.full-width.justify-center.subtitle2.q-py-md.text-weight-light.text-grey-4.q-pt-lg SELECTED {{currentVote.length}} BLOCK PRODUCERS
             .row.full-width.justify-center.q-pb-sm
               q-btn.full-width.q-pa-sm(label="Vote for Block Producers" color="primary" @click="sendVoteTransaction")
   ValidatorDataTable(
@@ -132,19 +205,13 @@ div
     :stakedAmount='stakedAmount'
     :lastUpdated='lastUpdated'
     @get-votes='getVotes'
+    :top21pay24h = 'top21pay24h'
   )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 </template>
 
 <style lang="sass" scoped>
-.toggle
-  margin-top: 0.75rem
-  margin-left: 1rem
-.voting-card
+.card-gradient
   background: $gradient-2
   color: white
-.q-linear-progress
-    color: $gradient-4 !important
-.my-progress
-  background: $gradient-4 !important
 </style>

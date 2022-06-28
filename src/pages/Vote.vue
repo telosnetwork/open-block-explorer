@@ -19,23 +19,5 @@ export default defineComponent({
 <template lang="pug">
 Validator
 </template>
-<style lang="sass" scoped>
-.hover-dec
-  text-decoration: none
-  color: $dark
-  &:hover
-    text-decoration: underline
 
-.tokens-container
-  display: grid
-  grid-gap: 2rem
-  align-items: stretch
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
-  grid-template-rows: min-content
-
-.token-card
-  background: rgba(138, 101, 212, 0.1)
-  border-radius: .2rem
-  box-shadow: none
-  padding: 0.5rem 0
-</style>
+<style lang="sass" scoped></style>

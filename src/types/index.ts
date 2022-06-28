@@ -15,7 +15,7 @@ export {
   Authorization,
   TransferData,
   Refund,
-  Userres,
+  TableByScope,
   Block,
   Get_actions
 } from './Actions';

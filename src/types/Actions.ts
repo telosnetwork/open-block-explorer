@@ -167,7 +167,7 @@ export interface Refund {
   owner: string;
   request_time: string;
 }
-export interface Userres {
+export interface TableByScope {
   code: string;
   scope: string;
   table: string;

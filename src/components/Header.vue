@@ -117,7 +117,14 @@ export default defineComponent({
         var account: string;
         try {
           account = this.selected.toLowerCase();
-          const value = await this.$api.getTableByScope(account);
+          const request = {
+            code: 'eosio',
+            limit: 5,
+            lower_bound: account,
+            table: 'userres',
+            upper_bound: account.padEnd(12, 'z')
+          };
+          const value = await this.$api.getTableByScope(request);
           this.options = [];
           if (value.length > 0) {
             this.options.push({
