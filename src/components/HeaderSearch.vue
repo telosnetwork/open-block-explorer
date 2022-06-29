@@ -84,7 +84,14 @@ export default defineComponent({
 
     async function searchAccounts(value: string): Promise<void> {
       try {
-        const accounts = await api.getTableByScope(value);
+        const request = {
+          code: 'eosio',
+          limit: 5,
+          lower_bound: value,
+          table: 'userres',
+          upper_bound: value.padEnd(12, 'z')
+        };
+        const accounts = await api.getTableByScope(request);
 
         if (accounts.length > 0) {
           options.value.push({
