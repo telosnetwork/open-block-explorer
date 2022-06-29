@@ -6,23 +6,34 @@ import { useStore } from 'src/store';
 import { BP } from 'src/types';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { GetTableRowsParams } from 'src/types';
+import WalletModal from 'src/components/WalletModal.vue';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'Validator',
   components: {
     ValidatorDataTable,
-    ViewTransaction
+    ViewTransaction,
+    WalletModal
   },
   setup() {
     const store = useStore();
+    const route = useRoute();
+    const query = route.query;
     const account = computed(() => store.state.account.accountName);
     const balance = computed(
       () => store.state.account.data?.account?.core_liquid_balance || 0
     );
     const lastUpdated = ref<string>('');
     const producerData = computed((): BP[] => store.state.chain.bpList);
-    const producerVotes = ref([]);
-    const currentVote = computed(() => store.state.account.vote);
+    const producerVotes = ref<string[]>([]);
+    const currentVote = computed(() => {
+      let votes = store.state.account.vote;
+      if (query['vote']) {
+        return votes.concat(query['vote'] as string);
+      }
+      return votes;
+    });
     const showCpu = ref<boolean>(false);
     const voteChanged = ref<boolean>(false);
     const resetFlag = ref<boolean>(false);
@@ -33,6 +44,7 @@ export default defineComponent({
     const transactionId = ref<string>(store.state.account.TransactionId);
     const transactionError = ref<unknown>(store.state.account.TransactionError);
     const openTransaction = ref<boolean>(false);
+    const showWalletModal = ref<boolean>(false);
     const payrate = ref(0);
     const top21pay24h = ref(0);
     const supply = ref(0);
@@ -64,6 +76,41 @@ export default defineComponent({
       }
     }
     async function getVotingStatistics() {
+      await updateVoteAmount();
+      await updateSupply();
+      await updatePayRate();
+    }
+
+    async function updatePayRate() {
+      const paramsPayrate = {
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'payrate'
+      } as GetTableRowsParams;
+      payrate.value = (
+        (await api.getTableRows(paramsPayrate)) as {
+          rows: { bpay_rate: number }[];
+        }
+      ).rows[0].bpay_rate;
+      top21pay24h.value = ((payrate.value / 100000) * supply.value) / 365 / 21;
+    }
+
+    async function updateSupply() {
+      const paramsSupply = {
+        code: 'eosio.token',
+        scope: 'TLOS',
+        table: 'stat'
+      } as GetTableRowsParams;
+      supply.value = assetToAmount(
+        (
+          (await api.getTableRows(paramsSupply)) as {
+            rows: { supply: string }[];
+          }
+        ).rows[0].supply
+      );
+    }
+
+    async function updateVoteAmount() {
       const request = {
         code: 'eosio',
         lower_bound: 'eosio',
@@ -81,38 +128,18 @@ export default defineComponent({
             rows: { total_activated_stake: number }[];
           }
         ).rows[0].total_activated_stake / 10000;
-
-      const paramsSupply = {
-        code: 'eosio.token',
-        scope: 'TLOS',
-        table: 'stat'
-      } as GetTableRowsParams;
-      supply.value = assetToAmount(
-        (
-          (await api.getTableRows(paramsSupply)) as {
-            rows: { supply: string }[];
-          }
-        ).rows[0].supply
-      );
-      const paramsPayrate = {
-        code: 'eosio',
-        scope: 'eosio',
-        table: 'payrate'
-      } as GetTableRowsParams;
-      payrate.value = (
-        (await api.getTableRows(paramsPayrate)) as {
-          rows: { bpay_rate: number }[];
-        }
-      ).rows[0].bpay_rate;
-      top21pay24h.value = ((payrate.value / 100000) * supply.value) / 365 / 21;
     }
 
     function toggleView() {
       showCpu.value = !showCpu.value;
     }
     async function sendVoteTransaction() {
-      await store.dispatch('account/sendVoteTransaction');
-      openTransaction.value = true;
+      if (accountValid.value) {
+        await store.dispatch('account/sendVoteTransaction');
+        openTransaction.value = true;
+      } else {
+        showWalletModal.value = true;
+      }
     }
 
     onMounted(async () => {
@@ -145,7 +172,8 @@ export default defineComponent({
       voters,
       amount_voted,
       votesProgress,
-      balance
+      balance,
+      showWalletModal
     };
   }
 });
@@ -155,9 +183,9 @@ export default defineComponent({
 div
   .q-pa-md
     .row.q-col-gutter-md.q-pt-md
-      div(:class="accountValid ? 'col-md-8 col-sm-12 col-xs-12' : 'col-12'")
-        q-card(flat)
-          q-card-section.card-gradient
+      .col-md-8.col-sm-12.col-xs-12
+        q-card(flat).card-gradient
+          q-card-section
             .row.q-pa-md.text-h5.text-weight-light Voting Statistics
             .row.q-pa-md.q-col-gutter-md
               .col-12
@@ -194,8 +222,16 @@ div
           q-separator(color="primary" size="2px")
           q-card-section
             .row.full-width.justify-center.subtitle2.q-py-md.text-weight-light.text-grey-4.q-pt-lg SELECTED {{currentVote.length}} BLOCK PRODUCERS
-            .row.full-width.justify-center.q-pb-sm
+            .row.full-width.justify-center
               q-btn.full-width.q-pa-sm(label="Vote for Block Producers" color="primary" @click="sendVoteTransaction")
+      .col-md-4.col-sm-12.col-xs-12(v-else)
+        q-card(flat).full-height.card-gradient
+          q-card-section.full-height
+            .column.justify-center.full-height
+              .row
+                .col-12.subtitle2.q-pb-md.text-weight-light.text-grey-4.q-pt-lg.text-center SELECTED {{currentVote.length}} BLOCK PRODUCERS
+                .col-12
+                  q-btn.full-width.q-pa-sm(label="Vote for Block Producers" color="primary" @click="sendVoteTransaction")
   ValidatorDataTable(
     ref="ValidatorDataTable"
     :producerData='producerData'
@@ -208,6 +244,7 @@ div
     :top21pay24h = 'top21pay24h'
   )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+  WalletModal( v-model='showWalletModal' :changeRoute='false')
 </template>
 
 <style lang="sass" scoped>

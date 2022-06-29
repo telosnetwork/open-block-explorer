@@ -343,7 +343,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         }
       }
     ];
-    console.log(actions);
     try {
       transaction = await user.signTransaction(
         {

@@ -8,8 +8,6 @@ import { api } from 'src/api/index';
 export const actions: ActionTree<ChainStateInterface, StateInterface> = {
   async updateBpList({ commit }) {
     try {
-      const producerSchedule1 = await api.getSchedule();
-      console.log(producerSchedule1);
       const producerSchedule = (await api.getSchedule()).active.producers;
       const schedule = producerSchedule.map((el) => el.producer_name);
       commit('setProducerSchedule', schedule);

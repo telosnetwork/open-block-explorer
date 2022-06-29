@@ -3,6 +3,7 @@ import { defineComponent, computed, ref, PropType, onMounted } from 'vue';
 import moment from 'moment';
 import { useStore } from 'src/store';
 import { BP } from 'src/types';
+import { useRoute } from 'vue-router';
 
 const MAX_VOTE_PRODUCERS = 30;
 
@@ -19,8 +20,16 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
+    const route = useRoute();
+    const query = route.query;
     const account = computed(() => store.state.account.accountName);
-    const currentVote = computed(() => store.state.account.vote);
+    const currentVote = computed(() => {
+      let votes = store.state.account.vote;
+      if (query['vote']) {
+        return votes.concat(query['vote'] as string);
+      }
+      return votes;
+    });
     const selection = ref<string[]>([]);
     const HeadProducer = computed(
       (): string => store.state.chain.head_block_producer
@@ -87,10 +96,6 @@ export default defineComponent({
       return bpTop21.value.includes(val);
     }
 
-    onMounted(() => {
-      console.log(producerRows.value);
-      console.log(account.value);
-    });
     return {
       producerRows,
       account,
@@ -153,7 +158,7 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .producer-card
-  background: #f5f4fe
+  background: $purple-light-1
 .select-box
-  background: #e0dffb
+  background: $purple-light-2
 </style>
