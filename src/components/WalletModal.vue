@@ -28,10 +28,14 @@ export default defineComponent({
         this.$ual.getAuthenticators().availableAuthenticators[idx];
       this.error = null;
       try {
+        await this.login({
+          account: this.account as string,
+          authenticator
+        });
         if (this.$props.changeRoute) {
-          await this.login({
-            account: this.account as string,
-            authenticator
+          await this.$router.push({
+            name: 'account',
+            params: { account: this.account as string }
           });
         }
         this.$router.go(0);
