@@ -30,6 +30,7 @@ export interface BP {
   owner: string;
   producer_key: string;
   nodes: Location[];
+  total_votes: number;
 }
 
 interface Location {

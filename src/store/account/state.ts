@@ -12,6 +12,7 @@ export interface AccountStateInterface {
   TransactionId: string;
   TransactionError: unknown;
   rexbal: Rexbal;
+  vote: string[];
   abi: ABI;
 }
 
@@ -28,6 +29,7 @@ export function state(): AccountStateInterface {
     TransactionId: '',
     TransactionError: '',
     rexbal: {} as Rexbal,
+    vote: [],
     abi: { abi: null } as ABI
   };
 }

@@ -78,7 +78,16 @@ export type AccountDetails = {
       cpu_weight: string;
       ram_bytes: number;
     };
-    voter_info: null | { staked: number };
+    voter_info: {
+      owner: string;
+      proxy: string;
+      producers: string[];
+      staked: number;
+      last_stake: number;
+      last_vote_weight: string;
+      proxied_vote_weight: number;
+      is_proxy: number;
+    };
   };
   actions: Action[];
   links: string[];
@@ -158,7 +167,7 @@ export interface Refund {
   owner: string;
   request_time: string;
 }
-export interface Userres {
+export interface TableByScope {
   code: string;
   scope: string;
   table: string;

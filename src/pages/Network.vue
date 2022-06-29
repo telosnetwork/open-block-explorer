@@ -38,7 +38,7 @@ div.row
       
   .col-12.map-data-position
     MapData(:mobile="true")
-  PriceChart.z-top.price-box-position
+  PriceChart.price-box-position
   TransactionsTable
 
 </template>
