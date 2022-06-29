@@ -16,7 +16,7 @@ import {
   Transaction,
   PermissionLinksData,
   PermissionLinks,
-  Userres,
+  TableByScope,
   Block,
   Get_actions,
   ChainInfo,
@@ -115,15 +115,9 @@ export const getPermissionLinks = async function (
 };
 
 export const getTableByScope = async function (
-  account: string
-): Promise<Userres[]> {
-  const response = await hyperion.post('v1/chain/get_table_by_scope', {
-    code: 'eosio',
-    limit: 5,
-    lower_bound: account,
-    table: 'userres',
-    upper_bound: account.padEnd(12, 'z')
-  });
+  data: unknown
+): Promise<TableByScope[]> {
+  const response = await hyperion.post('v1/chain/get_table_by_scope', data);
   return response.data.rows;
 };
 

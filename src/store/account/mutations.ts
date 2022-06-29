@@ -14,6 +14,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setAccountData(state: AccountStateInterface, AccountData: AccountDetails) {
     state.data = AccountData;
+    state.vote = AccountData.account.voter_info.producers;
   },
   setTransaction(state: AccountStateInterface, TransactionId: string) {
     state.TransactionId = TransactionId;
@@ -26,6 +27,9 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setRexbal(state: AccountStateInterface, rexbal: Rexbal) {
     state.rexbal = rexbal;
+  },
+  setVote(state: AccountStateInterface, vote: string[]) {
+    state.vote = vote.sort();
   },
   setABI(state: AccountStateInterface, abi: ABI) {
     state.abi = abi;

@@ -9,7 +9,6 @@ export const actions: ActionTree<TransactionStateInterface, StateInterface> = {
     commit('setTransaction', transaction);
   },
   updateTransactionId({ commit }, transactionId) {
-    console.log(transactionId);
     commit('setTransactionId', transactionId);
   }
 };

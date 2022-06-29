@@ -15,7 +15,7 @@ import {
   Action,
   Token,
   PermissionLinks,
-  Userres,
+  TableByScope,
   Block,
   ActionData,
   Get_actions
@@ -76,7 +76,7 @@ export type ApiClient = {
   getTransactionV1: (id: string) => Promise<Transaction>;
   getChildren: (address: string) => Promise<Action[]>;
   getPermissionLinks: (address: string) => Promise<PermissionLinks[]>;
-  getTableByScope: (address: string) => Promise<Userres[]>;
+  getTableByScope: (data: unknown) => Promise<TableByScope[]>;
   getBlock: (block: string) => Promise<Block>;
   getActions: (address: string, filter: string) => Promise<Get_actions>;
 };
