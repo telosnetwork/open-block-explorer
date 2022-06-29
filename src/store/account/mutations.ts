@@ -29,7 +29,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
     state.rexbal = rexbal;
   },
   setVote(state: AccountStateInterface, vote: string[]) {
-    state.vote = vote;
+    state.vote = vote.sort();
   },
   setABI(state: AccountStateInterface, abi: ABI) {
     state.abi = abi;
