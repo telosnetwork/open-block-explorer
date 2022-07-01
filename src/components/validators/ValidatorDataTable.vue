@@ -1,8 +1,8 @@
 <script lang="ts">
-import { defineComponent, computed, ref, PropType, onMounted } from 'vue';
+import { defineComponent, computed, ref, PropType } from 'vue';
 import moment from 'moment';
 import { useStore } from 'src/store';
-import { BP } from 'src/types';
+import { Producer } from 'src/types';
 import { useRoute } from 'vue-router';
 
 const MAX_VOTE_PRODUCERS = 30;
@@ -11,7 +11,6 @@ export default defineComponent({
   name: 'ValidatorDataTable',
   props: {
     producerVotes: { type: Array as PropType<string[]>, required: true },
-    producerData: { type: Array, required: true },
     lastWeight: { type: String, required: true },
     lastStaked: { type: Number, required: true },
     stakedAmount: { type: Number, required: true },
@@ -34,7 +33,9 @@ export default defineComponent({
     const HeadProducer = computed(
       (): string => store.state.chain.head_block_producer
     );
-    const producerRows = computed((): BP[] => store.state.chain.bpList);
+    const producerRows = computed(
+      (): Producer[] => store.state.chain.producers || []
+    );
     const lastWeight = computed(() => Number(props.lastWeight));
     const lastUpdated = computed(() => props.lastUpdated);
     const stakedAmount = computed(() => props.stakedAmount);
@@ -138,8 +139,8 @@ export default defineComponent({
               .col-1.q-py-md
                 .row.items-center.full-height.text-h6.q-px-md {{producerRows.indexOf(bp) + 1}}
               .col-3.q-py-md
-                .text-uppercase.text-h6 {{ bp.org?.candidate_name || bp.owner }}
-                .text-body2 {{ bp.org?.location?.name ? bp.org.location.name : 'unknown' }}
+                .text-uppercase.text-h6 {{ bp.name|| bp.owner }}
+                .text-body2 {{ bp.location }}
               .col-2.q-py-md.offset-1
                 .row.items-center.full-height
                   q-chip(v-if="HeadProducer === bp.owner " square color="primary" text-color="white" label="Producing")
