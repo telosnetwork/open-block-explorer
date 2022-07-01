@@ -1,7 +1,8 @@
-import { Token, BP } from 'src/types';
+import { Token, BP, Producer } from 'src/types';
 export interface ChainStateInterface {
   token: Token;
   bpList: BP[];
+  producers: Producer[];
   head_block_num: number;
   last_irreversible_block_num: number;
   head_block_producer: string;
@@ -17,6 +18,7 @@ export function state(): ChainStateInterface {
       contract: ''
     },
     bpList: [],
+    producers: [],
     head_block_num: 0,
     last_irreversible_block_num: 0,
     head_block_producer: '',
