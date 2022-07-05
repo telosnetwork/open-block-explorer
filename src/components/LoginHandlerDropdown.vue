@@ -44,7 +44,7 @@ export default defineComponent({
       }
     },
     clearAccount(): void {
-      localStorage.removeItem('account');
+      localStorage.clear();
       this.setAccountName('');
     }
   }
