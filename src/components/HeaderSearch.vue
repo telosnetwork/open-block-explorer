@@ -37,6 +37,7 @@ import { defineComponent, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
+import { isValidHex } from 'src/utils/stringValidator';
 
 export default defineComponent({
   name: 'HeaderSearch',
@@ -99,6 +100,15 @@ export default defineComponent({
             to: '',
             isHeader: true
           });
+
+          // because the get table by scope for userres does not include eosio account
+          if ('eosio'.includes(value)) {
+            options.value.push({
+              label: 'eosio',
+              to: '/account/eosio',
+              isHeader: false
+            });
+          }
 
           accounts.forEach((user) => {
             options.value.push({
@@ -166,10 +176,27 @@ export default defineComponent({
     async function handleGoTo() {
       const optionsRaw = toRaw(options.value);
 
-      if (!inputValue.value || optionsRaw.length === 0) {
+      if (!inputValue.value) {
         return;
       }
 
+      if (optionsRaw.length === 0) {
+        if (isValidHex(inputValue.value) && inputValue.value.length == 64) {
+          await router.push({
+            name: 'transaction',
+            params: { transaction: inputValue.value }
+          });
+          router.go(0);
+        } else {
+          await router.push({
+            name: 'account',
+            params: {
+              account: inputValue.value
+            }
+          });
+          router.go(0);
+        }
+      }
       const option = optionsRaw.find((item) => item.label === inputValue.value);
       const to = option ? option.to : optionsRaw[1].to;
 
