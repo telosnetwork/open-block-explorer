@@ -98,7 +98,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: this.state.account.accountName,
-            permission: 'owner'
+            permission: 'active'
           }
         ],
         data: {
@@ -112,7 +112,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: this.state.account.accountName,
-            permission: 'owner'
+            permission: 'active'
           }
         ],
         data: {
@@ -162,7 +162,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: this.state.account.accountName,
-            permission: 'owner'
+            permission: 'active'
           }
         ],
         data: {
@@ -176,7 +176,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: this.state.account.accountName,
-            permission: 'owner'
+            permission: 'active'
           }
         ],
         data: {
@@ -213,7 +213,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: this.state.account.accountName,
-            permission: 'owner'
+            permission: 'active'
           }
         ],
         data: {
@@ -252,7 +252,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: this.state.account.accountName,
-            permission: 'owner'
+            permission: 'active'
           }
         ],
         data: {
@@ -333,7 +333,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: this.state.account.accountName,
-            permission: 'owner'
+            permission: 'active'
           }
         ],
         data: {

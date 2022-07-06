@@ -1,4 +1,4 @@
-import { Token, BP } from 'src/types';
+import { Token, BP, Producer } from 'src/types';
 import { MutationTree } from 'vuex';
 import { ChainStateInterface } from './state';
 
@@ -26,5 +26,8 @@ export const mutations: MutationTree<ChainStateInterface> = {
   },
   setProducerSchedule(state: ChainStateInterface, schedule: string[]) {
     state.producerSchedule = schedule;
+  },
+  setProducers(state: ChainStateInterface, bpList: Producer[]) {
+    state.producers = bpList;
   }
 };

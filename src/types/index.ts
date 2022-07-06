@@ -37,5 +37,5 @@ export {
   ProposalForm,
   RequestedApprovals
 } from './Proposal';
-export { GetProducers } from './Producers';
+export { GetProducers, Producer } from './Producers';
 export { ABI } from './ABI';

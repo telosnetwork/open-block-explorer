@@ -3,7 +3,6 @@ import { defineComponent, computed, ref, onMounted } from 'vue';
 import ValidatorDataTable from './ValidatorDataTable.vue';
 import { api } from 'src/api';
 import { useStore } from 'src/store';
-import { BP } from 'src/types';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
@@ -25,7 +24,6 @@ export default defineComponent({
       () => store.state.account.data?.account?.core_liquid_balance || 0
     );
     const lastUpdated = ref<string>('');
-    const producerData = computed((): BP[] => store.state.chain.bpList);
     const producerVotes = ref<string[]>([]);
     const currentVote = computed(() => {
       let votes = store.state.account.vote;
@@ -150,7 +148,6 @@ export default defineComponent({
     return {
       account,
       lastUpdated,
-      producerData,
       producerVotes,
       showCpu,
       voteChanged,
@@ -234,7 +231,6 @@ div
                   q-btn.full-width.q-pa-sm(label="Vote for Block Producers" color="primary" @click="sendVoteTransaction")
   ValidatorDataTable(
     ref="ValidatorDataTable"
-    :producerData='producerData'
     :producerVotes='producerVotes'
     :lastWeight='lastWeight'
     :lastStaked='lastStaked'
