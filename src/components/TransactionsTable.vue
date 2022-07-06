@@ -240,13 +240,13 @@ body
     border: 0.1rem solid rgba(196, 196, 196, 0.3)
 
 .memo-card
-  background: #8A65D41A
-
+  background: $gradient-3
+  border-radius: 3px
   flex-grow: 1
   display: flex
   .memo-card-title
     padding: 0.5rem
-    background: #8A65D41A
+    background: $gradient-3
     font-weight: bold
     flex-shrink: 0
     display: flex
