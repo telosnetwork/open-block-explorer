@@ -54,7 +54,7 @@ q-card(
   style="background: #f4f0fb"
 )
   q-card-section.q-pl-md(style="background: #eae2f7")
-    div.q-pb-sm.text-subtitle2.text-bold Select table
+    div.q-pb-sm.text-subtitle2.text-bold Select action
     .row.justify-content.full-width
       .col-xs-8.col-sm-10
         q-select(outlined dense v-model="action" :options="actions" color="primary" style="background: #ffffff")
