@@ -35,25 +35,37 @@ export default defineComponent({
             var keyValArray: any[] = [];
             for (let i = 0; i < data[key].length; i++) {
               if (data[key][i] instanceof Object) {
-                keyValArray = keyValArray.concat(formatGeneralData(data[key][i]));
+                keyValArray = keyValArray.concat(
+                  formatGeneralData(data[key][i])
+                );
               }
             }
             dict = dict.concat(keyValArray);
           } else {
-            let keyValArray = [];
-            keyValArray.push(formatGeneralData(data[key]));
-            dict = dict.concat(keyValArray);
+            var keyValArray: any[] = [];
+            let formatData = formatGeneralData(data[key]);
+            if (formatData.length > 0) {
+              keyValArray = keyValArray.concat(formatGeneralData(data[key]));
+              dict = dict.concat(keyValArray);
+            }
           }
         } else {
-          dict.push({key, value:data[key]});
+          dict.push({ key, value: data[key] });
         }
       }
       return dict;
     }
 
     function isAccount(data: string): boolean {
-      const accountRegEx = ['account', 'to', 'from', 'owner', 'account_name', 'voter'];
-      return (accountRegEx.includes(data));
+      const accountRegEx = [
+        'account',
+        'to',
+        'from',
+        'owner',
+        'account_name',
+        'voter'
+      ];
+      return accountRegEx.includes(data);
     }
 
     return {
@@ -73,7 +85,9 @@ export default defineComponent({
     span.text-bold 
       AccountFormatter(:account="transferData.from" type="account")
     span.text-bold &nbsp; → &nbsp;
-      AccountFormatter(:account="transferData.to" type="account") &nbsp; 
+      AccountFormatter(:account="transferData.to" type="account") &nbsp;
+    span.text-bold {{ ' ' + transferData.quantity}}
+  .col-12
   .memo-card
     .memo-card-title MEMO
     .memo-card-memo {{transferData.memo}}
