@@ -132,13 +132,17 @@ export const getBlock = async function (block: string): Promise<Block> {
 
 export const getActions = async function (
   account: string,
-  filter: string
+  filter: string,
+  limit?: number,
+  skip?: number
 ): Promise<Get_actions> {
   controller.abort();
   const response = await hyperion.get('v2/history/get_actions', {
     params: {
       account,
-      filter
+      filter,
+      limit,
+      skip
     }
   });
   return response.data;
