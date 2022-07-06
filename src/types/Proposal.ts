@@ -8,24 +8,26 @@ export interface GetProposalsProps {
   skip?: number;
 }
 
-export interface GetProposals {
-  proposals: {
-    block_num: number;
-    executed: false;
-    primary_key: string;
-    proposal_name: string;
-    proposer: string;
-    provided_approvals: {
-      actor: string;
-      permission: string;
-      time: string;
-    }[];
-    requested_approvals: {
-      actor: string;
-      permission: string;
-      time: string;
-    }[];
+export interface Proposal {
+  block_num: number;
+  executed: false;
+  primary_key: string;
+  proposal_name: string;
+  proposer: string;
+  provided_approvals: {
+    actor: string;
+    permission: string;
+    time: string;
   }[];
+  requested_approvals: {
+    actor: string;
+    permission: string;
+    time: string;
+  }[];
+}
+
+export interface GetProposals {
+  proposals: Proposal[];
   total: {
     value: number;
   };
