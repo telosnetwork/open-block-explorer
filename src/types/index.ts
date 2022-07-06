@@ -33,6 +33,7 @@ export { ProducerSchedule } from './ProducerSchedule';
 export {
   GetProposalsProps,
   GetProposals,
+  Proposal,
   ProposalTableRow,
   ProposalForm,
   RequestedApprovals
