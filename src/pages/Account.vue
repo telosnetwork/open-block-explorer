@@ -23,10 +23,9 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
     const tab = ref<string>('transactions');
-    const account = ref<string>('');
+    const account = computed(() => route.params.account as string);
     const abi = computed(() => store.state.account.abi.abi);
     onMounted(async () => {
-      account.value = route.params.account as string;
       await store.dispatch('account/updateABI', route.params.account);
     });
     return {
