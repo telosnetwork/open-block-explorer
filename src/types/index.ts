@@ -33,9 +33,10 @@ export { ProducerSchedule } from './ProducerSchedule';
 export {
   GetProposalsProps,
   GetProposals,
+  Proposal,
   ProposalTableRow,
   ProposalForm,
   RequestedApprovals
 } from './Proposal';
-export { GetProducers } from './Producers';
+export { GetProducers, Producer } from './Producers';
 export { ABI } from './ABI';
