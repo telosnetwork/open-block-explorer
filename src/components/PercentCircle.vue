@@ -76,7 +76,7 @@ div.chart-container
       :stroke-dasharray="dashArray"
       :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
       :stroke='strokeColor'
-      :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1 }"
+      :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1, 'stroke' : !Number.isNaN(formatResourcePercent) && Number(formatResourcePercent) > 80 ? 'red' : 'white' }"
     )
     text.text.label( 
       x="18"
