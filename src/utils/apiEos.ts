@@ -10,11 +10,16 @@ interface AnchorLinkList {
 }
 
 export function apiEos() {
+  const key = Object.keys(localStorage).find((key) =>
+    /anchor-link-(.*)-list/.test(key)
+  );
+  const identifier = key.replace(/anchor-link-(.*)-list/, '$1');
+
   const [userLogged] = JSON.parse(
-    localStorage.getItem('anchor-link--list')
+    localStorage.getItem(`anchor-link-${identifier}-list`)
   ) as AnchorLinkList[];
 
-  const localStorageName = `anchor-link--${userLogged.auth.actor}@${userLogged.auth.permission}-${userLogged.chainId}`;
+  const localStorageName = `anchor-link-${identifier}-${userLogged.auth.actor}@${userLogged.auth.permission}-${userLogged.chainId}`;
 
   const {
     data: { requestKey }
