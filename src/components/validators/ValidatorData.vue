@@ -57,7 +57,8 @@ export default defineComponent({
         const data = await api.getAccount(account.value);
         store.commit('account/setAccountData', data);
         const voterInfo = data.account.voter_info;
-        producerVotes.value = voterInfo.producers;
+        if (!voterInfo) return;
+        producerVotes.value = voterInfo?.producers;
         lastWeight.value = parseFloat(voterInfo.last_vote_weight).toFixed(2);
         lastStaked.value = voterInfo.last_stake;
         stakedAmount.value = voterInfo.staked;
