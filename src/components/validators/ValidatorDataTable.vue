@@ -139,7 +139,8 @@ export default defineComponent({
               .col-1.q-py-md
                 .row.items-center.full-height.text-h6.q-px-md {{producerRows.indexOf(bp) + 1}}
               .col-3.q-py-md
-                .text-uppercase.text-h6 {{ bp.name|| bp.owner }}
+                a(:href=" '/account/' + bp.owner" class="hover-dec")
+                  .text-uppercase.text-h6.text-black {{ bp.name|| bp.owner }}
                 .text-body2 {{ bp.location }}
               .col-2.q-py-md.offset-1
                 .row.items-center.full-height
@@ -162,4 +163,9 @@ export default defineComponent({
   background: $purple-light-1
 .select-box
   background: $purple-light-2
+.hover-dec
+  text-decoration: none
+  &:hover
+    text-decoration: underline
+    color: black
 </style>
