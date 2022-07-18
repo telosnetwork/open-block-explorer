@@ -141,6 +141,7 @@ export default defineComponent({
               .col-3.q-py-md
                 a(:href=" '/account/' + bp.owner" class="hover-dec")
                   .text-uppercase.text-h6.text-black {{ bp.name|| bp.owner }}
+
                 .text-body2 {{ bp.location }}
               .col-2.q-py-md.offset-1
                 .row.items-center.full-height
