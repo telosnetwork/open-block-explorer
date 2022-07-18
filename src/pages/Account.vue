@@ -24,6 +24,7 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const tab = ref<string>((route.query['tab'] as string) || 'transactions');
+
     const account = computed(() => route.params.account as string);
     const abi = computed(() => store.state.account.abi.abi);
 
