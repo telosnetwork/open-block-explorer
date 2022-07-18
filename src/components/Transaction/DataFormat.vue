@@ -117,7 +117,6 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
         span.text-weight-regular(v-else) {{val.value}} &nbsp;
 .row(v-if="isOverflowing")
   q-btn.full-width( flat size="xs" :icon="showOverflow ? 'expand_less' : 'expand_more'" @click="toggleOverflow")
-
 </template>
 
 <style lang="sass" scoped>
