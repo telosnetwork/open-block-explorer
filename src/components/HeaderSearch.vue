@@ -1,37 +1,3 @@
-<template lang="pug">
-q-select(
-  borderless
-  dense
-  filled
-  use-input
-  hide-selected
-  fill-input
-  hide-bottom-space
-  input-style="color:white"
-  color="white"
-  :loading="isLoading"
-  :model-value="inputValue"
-  @input-value="(value: string) => inputValue = value"
-  @keyup.enter="handleGoTo"
-  :options="options"
-  :option-disable="(item) => item.isHeader"
-).search-input
-  template(#prepend)
-    q-icon(name="search" color="white" size="20px").rotate-90
-
-  template(#no-option)
-    q-item
-      q-item-section.text-center
-        q-item-label(v-if="isLoading") Searching...
-        q-item-label(v-else) {{ inputValue ? 'Nothing found' : 'Search by accounts, proposals and transactions' }}
-
-  template(#option="scope")
-    q-item-label(v-if="scope.opt.isHeader" header) {{ scope.opt.label }}
-    q-item(v-else v-bind="scope.itemProps" exact @click="handleGoTo" clickable)
-      q-item-section
-        q-item-label {{ scope.opt.label }}
-</template>
-
 <script lang="ts">
 import { defineComponent, ref, toRaw, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -180,22 +146,38 @@ export default defineComponent({
         return;
       }
 
-      if (optionsRaw.length === 0) {
-        if (isValidHex(inputValue.value) && inputValue.value.length == 64) {
-          await router.push({
-            name: 'transaction',
-            params: { transaction: inputValue.value }
-          });
-          router.go(0);
-        } else {
-          await router.push({
-            name: 'account',
-            params: {
-              account: inputValue.value
-            }
-          });
-          router.go(0);
-        }
+      if (isValidHex(inputValue.value) && inputValue.value.length == 64) {
+        await router.push({
+          name: 'transaction',
+          params: { transaction: inputValue.value }
+        });
+        router.go(0);
+      } else if (
+        inputValue.value.length == 53 &&
+        inputValue.value.startsWith('EOS')
+      ) {
+        await router.push({
+          name: 'key',
+          params: { key: inputValue.value }
+        });
+        router.go(0);
+      } else if (
+        inputValue.value.length == 57 &&
+        inputValue.value.startsWith('PUB_K1')
+      ) {
+        await router.push({
+          name: 'key',
+          params: { key: inputValue.value }
+        });
+        router.go(0);
+      } else if (inputValue.value.length <= 12) {
+        await router.push({
+          name: 'account',
+          params: {
+            account: inputValue.value
+          }
+        });
+        router.go(0);
       }
       const option = optionsRaw.find((item) => item.label === inputValue.value);
       const to = option ? option.to : optionsRaw[1].to;
@@ -213,6 +195,40 @@ export default defineComponent({
   }
 });
 </script>
+
+<template lang="pug">
+q-select(
+  borderless
+  dense
+  filled
+  use-input
+  hide-selected
+  fill-input
+  hide-bottom-space
+  input-style="color:white"
+  color="white"
+  :loading="isLoading"
+  :model-value="inputValue"
+  @input-value="(value: string) => inputValue = value"
+  @keyup.enter="handleGoTo"
+  :options="options"
+  :option-disable="(item) => item.isHeader"
+).search-input
+  template(#prepend)
+    q-icon(name="search" color="white" size="20px").rotate-90
+
+  template(#no-option)
+    q-item
+      q-item-section.text-center
+        q-item-label(v-if="isLoading") Searching...
+        q-item-label(v-else) {{ inputValue ? 'Nothing found' : 'Search by accounts, keys, proposals and transactions' }}
+
+  template(#option="scope")
+    q-item-label(v-if="scope.opt.isHeader" header) {{ scope.opt.label }}
+    q-item(v-else v-bind="scope.itemProps" exact @click="handleGoTo" clickable)
+      q-item-section
+        q-item-label {{ scope.opt.label }}
+</template>
 
 <style lang="sass">
 .search-input

@@ -74,6 +74,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('pages/Repository.vue') }]
   },
+  {
+    path: '/key/:key',
+    name: 'key',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/Key.vue') }]
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
