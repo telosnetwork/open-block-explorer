@@ -14,6 +14,7 @@ import RexDialog from 'src/components/Rex/RexDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { mapActions } from 'vuex';
 import { date } from 'quasar';
+import { copyToClipboard } from 'quasar';
 
 export default defineComponent({
   name: 'AccountCard',
@@ -193,6 +194,25 @@ export default defineComponent({
       } catch (error) {
         return 0;
       }
+    },
+    copy(value: string) {
+      copyToClipboard(value)
+        .then((): void => {
+          this.$q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            message: 'Copied to clipboard',
+            timeout: 1000
+          });
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: 'red-8',
+            textColor: 'white',
+            message: 'Could not copy',
+            timeout: 1000
+          });
+        });
     }
   }
 });
@@ -203,7 +223,11 @@ export default defineComponent({
   q-card.account-card
     q-card-section.resources-container
       .inline-section
-        .text-title {{ account }}
+        .row.justify-center.full-height.items-center
+          .col-5
+            .text-title {{ account }}
+          .col-1
+            q-btn.float-right( @click="copy(account)" flat round color="white" icon="content_copy" size='sm')
         .text-subtitle(v-if="creatingAccount !== '__self__'") created by
           span &nbsp;
             a( @click='loadCreatorAccount') {{ creatingAccount }}
