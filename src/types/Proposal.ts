@@ -58,7 +58,6 @@ export interface ProposalForm {
     delay_sec: number;
     context_free_actions: string[] | string;
     transaction_extensions: string[] | string;
-
     actions: {
       account: string;
       name: string;
@@ -66,13 +65,7 @@ export interface ProposalForm {
         actor: string;
         permission: string;
       }[];
-      dataAction: {
-        from: string;
-        to: string;
-        quantity: string;
-        memo: string;
-      };
-      data?: string;
+      data: unknown;
     }[];
   };
 }
