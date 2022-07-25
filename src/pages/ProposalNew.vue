@@ -19,7 +19,7 @@ q-page(padding)
         switch-toggle-side
         default-opened
       )
-        template(v-slot:header)
+        template(#header)
           span.text-h6.text-weight-regular Proposal Info
         div.row.q-col-gutter-md.q-pa-md
           div.col-12.col-sm-6
@@ -50,51 +50,34 @@ q-page(padding)
       q-expansion-item(
         switch-toggle-side
         default-opened
-        v-model="requestedApprovalsExpansionItem.opened"
       )
-        template(v-slot:header)
+        template(#header)
           span.text-h6.text-weight-regular Requested approvals
-            span(v-if="requestedApprovalsExpansionItem.error").text-body2.text-red.q-ml-sm At least one requested approval
 
-        q-item(tag="label" v-ripple v-if="blockProducers.length")
-          q-item-section(side top)
-            q-checkbox(v-model="areBlockProducersApproving")
-          q-item-section
-            span.text-body1 All block producers need approvals
-        q-separator.q-my-md
         div.q-pa-md
-          div.row.q-col-gutter-md.q-mb-md(v-for="(item, index) in formData.requested")
-            div.col.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                bg-color="white"
-                v-model="item.actor"
-                label="Actor (e.g. eosio)"
-                :rules="[value => !!value || 'Field is required']")
-            div.col.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                bg-color="white"
-                v-model="item.permission"
-                label="Permission (e.g. active)"
-                :rules="[value => !!value || 'Field is required']")
-            div.col-sm-4
-              q-btn(outline padding="sm md" color="white" text-color="primary" label="Remove" @click="formData.requested.splice(index, 1)")
-
+          ProposalAuthorization(
+            v-for="(item, index) in formData.requested"
+            :key="index"
+            v-model:actor="item.actor"
+            v-model:permission="item.permission"
+            @remove="formData.requested.splice(index, 1)"
+          )
           q-btn(outline padding="sm md" color="white" text-color="primary" label="Add" @click="formData.requested.push({})")
+
+        q-separator.q-my-md
+        div.q-pb-md
+          q-item(tag="label" v-ripple v-if="blockProducers.length")
+            q-item-section(side top)
+              q-checkbox(v-model="areBlockProducersApproving")
+            q-item-section
+              span.text-body1 All block producers need approvals
 
     q-card(flat :style="{background: '#E8E2F7'}").q-mt-xs
       q-expansion-item(
         switch-toggle-side
       )
-        template(v-slot:header)
-          span.text-h6.text-weight-regular Transaction Settings
+        template(#header)
+          span.text-h6.text-weight-regular Advanced transaction settings
         div.row.q-col-gutter-md.q-pa-md
           div.col-12.col-sm-6
             q-input(
@@ -142,9 +125,35 @@ q-page(padding)
               dense
               hide-bottom-space
               bg-color="white"
-              v-model="formData.trx.expiration"
               label="expiration"
-              mask="####-##-##T##:##:##")
+              v-model="formData.trx.expiration"
+              @update:model-value="onExpiration"
+              :rules="[value => !!value || 'Field is required', value => !isNaN(new Date(value).getTime()) || 'Invalid date', value => new Date(value) > new Date() || 'Date must be greater than today']")
+              template(#prepend)
+                q-icon(name="event" class="cursor-pointer" size="20px")
+                  q-popup-proxy(cover transition-show="scale" transition-hide="scale")
+                    q-date(v-model="formData.trx.expiration" @update:model-value="onExpiration" mask="YYYY-MM-DDTHH:mm:ss" :options="(date) => date >= '2022/07/05'")
+                      div.row.items-center.justify-end
+                        div.col
+                          q-input(
+                            outlined
+                            dense
+                            hide-bottom-space
+                            bg-color="white"
+                            type="number"
+                            min="1"
+                            v-model="amountOfDaysToExpire"
+                            @update:model-value="onAmountOfDaysToExpire"
+                            label="Amount of days to expire"
+                          )
+                        q-btn(v-close-popup label="Close" color="primary" flat)
+              template(#append)
+                q-icon(name="access_time" class="cursor-pointer" size="20px")
+                  q-popup-proxy(cover transition-show="scale" transition-hide="scale")
+                    q-time(v-model="formData.trx.expiration" @update:model-value="onExpiration" mask="YYYY-MM-DDTHH:mm:ss")
+                      div.row.items-center.justify-end
+                        q-btn(v-close-popup label="Close" color="primary" flat)
+
           div.col-12.col-sm-6
             q-input(
               outlined
@@ -162,112 +171,11 @@ q-page(padding)
               v-model="formData.trx.ref_block_prefix"
               label="ref_block_prefix")
 
-    q-card(v-for="(item, index) in formData.trx.actions").q-mt-md
-      q-expansion-item(
-        switch-toggle-side
-        default-opened
-      )
-        template(v-slot:header)
-          div.full-width.row.justify-between.items-center
-            div.col.row.items-center(:style="{minHeight: '36px'}")
-              div.col.row.items-center
-                div.col-12.col-sm
-                  span.text-h6.text-weight-regular(v-if="item.account && item.name") {{item.account}} - {{item.name}}
-                  span.text-h6.text-weight-regular(v-else) Action {{index + 1}}
-                div.col-12.col-sm
-                  span.text-body2(v-if="item.dataAction.from && item.dataAction.to && item.dataAction.quantity") <b>{{item.dataAction.from}} → {{item.dataAction.to}}</b> {{item.dataAction.quantity}}
-            div
-              q-btn(outline padding="sm md" color="white" text-color="primary" label="Remove" :disabled="formData.trx.actions.length === 1" @click.stop="formData.trx.actions.splice(index, 1)")
-        div.q-pa-md
-          div.row.q-col-gutter-md.q-mb-md
-            div.col-6.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                v-model="item.account"
-                label="account"
-                :rules="[value => !!value || 'Field is required']")
-            div.col-6.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                v-model="item.name"
-                label="Action"
-                :rules="[value => !!value || 'Field is required']")
-
-          div.row.q-col-gutter-md
-            div.col-6.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                v-model="item.dataAction.from"
-                label="From"
-                maxlength="12"
-                :rules="[value => !!value || 'Field is required']")
-            div.col-6.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                v-model="item.dataAction.to"
-                label="To"
-                maxlength="12"
-                :rules="[value => !!value || 'Field is required']")
-            div.col-12.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                v-model="item.dataAction.quantity"
-                label="Quantity"
-                fill-mask="0"
-                reverse-fill-mask
-                mask="#.######## TLO\\S"
-                :rules="[value => !!value || 'Field is required', value => Number(value.replace(' TLOS', '')) > 0 || 'Field must have a value greater than zero' ]")
-            div.col-12
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                v-model="item.dataAction.memo"
-                label="Memo (optional)").q-mt-xs
-
-          p.text-body1.q-my-md.q-mb-none Authorization
-
-          div.row.q-col-gutter-md.q-mb-md(v-for="(authorizationItem, authorizationIndex) in item.authorization")
-            div.col.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                bg-color="white"
-                v-model="authorizationItem.actor"
-                label="Actor (e.g. eosio)"
-                maxlength="12"
-                :rules="[value => !!value || 'Field is required']")
-            div.col.col-sm-4
-              q-input(
-                outlined
-                dense
-                hide-bottom-space
-                lazy-rules
-                bg-color="white"
-                v-model="authorizationItem.permission"
-                label="Permission (e.g. active)"
-                :rules="[value => !!value || 'Field is required']")
-            div.col-sm-4
-              q-btn(outline padding="sm md" color="white" text-color="primary" label="Remove" :disable="item.authorization.length === 1" @click="item.authorization.splice(authorizationIndex, 1)")
-
-          q-btn(outline padding="sm md" color="white" text-color="primary" label="Add" @click.stop="item.authorization.push({})")
+    ProposalAction(
+      v-for="(_, index) in formData.trx.actions"
+      v-model="formData.trx.actions[index]"
+      @remove="formData.trx.actions.splice(index, 1)"
+    )
 
     q-card.q-my-md.q-pa-xl
       div.row.justify-center.items-center
@@ -285,6 +193,8 @@ import { defineComponent, reactive, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import moment from 'moment';
 import ProposalSuccess from 'components/ProposalSuccess.vue';
+import ProposalAuthorization from 'components/ProposalAuthorization.vue';
+import ProposalAction from 'components/ProposalAction.vue';
 import { Authorization, ProposalForm, Error } from 'src/types';
 import { api } from 'src/api';
 import { useAuthenticator } from 'src/composables/useAuthenticator';
@@ -295,19 +205,18 @@ import { useQuasar } from 'quasar';
 export default defineComponent({
   name: 'ProposalNew',
   components: {
-    ProposalSuccess
+    ProposalSuccess,
+    ProposalAuthorization,
+    ProposalAction
   },
   setup() {
     const router = useRouter();
     const { account, isAuthenticated, getUser } = useAuthenticator();
     const $q = useQuasar();
 
+    const amountOfDaysToExpire = ref(7);
     const blockProducers = ref<Authorization[]>([]);
     const areBlockProducersApproving = ref(false);
-    const requestedApprovalsExpansionItem = reactive({
-      opened: false,
-      error: false
-    });
 
     const success = reactive({
       proposalName: '',
@@ -318,9 +227,16 @@ export default defineComponent({
     const formData: ProposalForm = reactive({
       proposer: '',
       proposal_name: '',
-      requested: [],
+      requested: [
+        {
+          actor: '',
+          permission: ''
+        }
+      ],
       trx: {
-        expiration: moment().add(1, 'week').format('YYYY-MM-DDTHH:mm:ss'),
+        expiration: moment()
+          .add(amountOfDaysToExpire.value, 'days')
+          .format('YYYY-MM-DDTHH:mm:ss'),
         ref_block_num: 0,
         ref_block_prefix: 0,
         max_net_usage_words: 0,
@@ -328,32 +244,13 @@ export default defineComponent({
         delay_sec: 0,
         context_free_actions: '',
         transaction_extensions: '',
-        actions: [
-          {
-            account: 'eosio.token',
-            name: 'transfer',
-            authorization: [
-              {
-                actor: '',
-                permission: ''
-              }
-            ],
-            data: '',
-            dataAction: {
-              from: '',
-              to: '',
-              quantity: '',
-              memo: ''
-            }
-          }
-        ]
+        actions: []
       }
     });
 
     onMounted(() => {
       formData.proposal_name = randomEosioName();
       formData.proposer = account.value;
-      formData.trx.actions[0].dataAction.from = account.value;
     });
 
     onMounted(async () => {
@@ -379,6 +276,19 @@ export default defineComponent({
       blockProducers.value = producersAccount;
     });
 
+    function handleError(message: string) {
+      $q.notify({
+        color: 'negative',
+        message,
+        actions: [
+          {
+            label: 'Dismiss',
+            color: 'white'
+          }
+        ]
+      });
+    }
+
     async function onSubmit() {
       const data = JSON.parse(JSON.stringify(formData)) as ProposalForm;
 
@@ -389,8 +299,12 @@ export default defineComponent({
       }
 
       if (data.requested.length === 0) {
-        requestedApprovalsExpansionItem.opened = true;
-        requestedApprovalsExpansionItem.error = true;
+        handleError('At least one requested approval');
+        return;
+      }
+
+      if (data.trx.actions.length === 0) {
+        handleError('At least one action');
         return;
       }
 
@@ -404,15 +318,18 @@ export default defineComponent({
 
       try {
         for (let i = 0; i < data.trx.actions.length; i++) {
-          const item = data.trx.actions[i];
+          const item = data.trx.actions[i] as {
+            account: string;
+            name: string;
+            data: unknown;
+          };
 
           const hexData = await serializeActionData({
             account: item.account,
             name: item.name,
-            data: item.dataAction
+            data: item.data
           });
 
-          delete data.trx.actions[i].dataAction;
           data.trx.actions[i].data = hexData;
         }
 
@@ -444,47 +361,60 @@ export default defineComponent({
         success.proposalName = data.proposal_name;
       } catch (e) {
         const error = JSON.parse(JSON.stringify(e)) as Error;
-        $q.notify({
-          color: 'negative',
-          message:
-            error?.cause?.json?.error?.what || 'Unable to create a proposal',
-          actions: [
-            {
-              label: 'Dismiss',
-              color: 'white'
-            }
-          ]
-        });
+        handleError(
+          error?.cause?.json?.error?.what || 'Unable to create a proposal'
+        );
       }
     }
 
     function onAddAction() {
       formData.trx.actions.push({
-        account: 'eosio.token',
-        name: 'transfer',
+        account: '',
+        name: '',
         authorization: [
           {
             actor: '',
             permission: ''
           }
         ],
-        dataAction: {
-          from: '',
-          to: '',
-          quantity: '',
-          memo: ''
-        }
+        data: {}
       });
+    }
+
+    function onAmountOfDaysToExpire(days: number) {
+      if (days) {
+        formData.trx.expiration = moment()
+          .add(days, 'days')
+          .format('YYYY-MM-DDTHH:mm:ss');
+      }
+    }
+
+    function onExpiration(value: string) {
+      if (value === null) {
+        amountOfDaysToExpire.value = 7;
+        onAmountOfDaysToExpire(7);
+        return;
+      }
+
+      const now = new Date().getTime();
+      const date = new Date(value).getTime();
+      if (!isNaN(date)) {
+        const diffTime = Math.abs(date - now);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        amountOfDaysToExpire.value = diffDays;
+      }
     }
 
     return {
       onSubmit,
       onAddAction,
+      amountOfDaysToExpire,
+      onAmountOfDaysToExpire,
+      onExpiration,
       formData,
       areBlockProducersApproving,
       blockProducers,
-      success,
-      requestedApprovalsExpansionItem
+      success
     };
   }
 });
