@@ -44,7 +44,11 @@ export default defineComponent({
                 );
               }
             }
-            dict = dict.concat(keyValArray);
+            if(keyValArray.length == 0) {
+              dict.push({ key, value: JSON.stringify(data[key]) });
+            } else{
+              dict = dict.concat(keyValArray);
+            }
           } else {
             var keyValArray: any[] = [];
             let formatData = formatGeneralData(data[key]);
