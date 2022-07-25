@@ -96,7 +96,7 @@ export default defineComponent({
               .text-body1.text-weight-medium.text-uppercase Status
             .col-xs-12.col-sm-6.text-right.text-bold 
               q-badge(transparent align="middle" color="purple-2" text-color="black").text-bold {{executed ? 'EXECUTED' : 'PENDING'}}
-              q-badge.q-ml-sm( v-if="executed" transparent align="middle" color="deep-orange-2" text-color="black").text-bold {{'IRREVERSIBLE'}}
+              q-badge.q-ml-sm( v-if="irreversable" transparent align="middle" color="deep-orange-2" text-color="black").text-bold {{'IRREVERSIBLE'}}
         q-separator(inset).card-separator
         q-card-section
           .row
