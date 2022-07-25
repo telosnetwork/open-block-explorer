@@ -153,17 +153,8 @@ export default defineComponent({
         });
         router.go(0);
       } else if (
-        inputValue.value.length == 53 &&
-        inputValue.value.startsWith('EOS')
-      ) {
-        await router.push({
-          name: 'key',
-          params: { key: inputValue.value }
-        });
-        router.go(0);
-      } else if (
-        inputValue.value.length == 57 &&
-        inputValue.value.startsWith('PUB_K1')
+        (inputValue.value.length == 53 && inputValue.value.startsWith('EOS')) ||
+        (inputValue.value.length == 57 && inputValue.value.startsWith('PUB_K1'))
       ) {
         await router.push({
           name: 'key',
