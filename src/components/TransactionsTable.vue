@@ -1,9 +1,4 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
 import { defineComponent } from 'vue';
 import DateField from 'src/components/DateField.vue';
@@ -76,6 +71,7 @@ export default defineComponent({
   },
   watch: {
     async account() {
+      console.log(this.account);
       await this.loadTableData();
     }
   },
@@ -128,54 +124,54 @@ export default defineComponent({
 
 <template lang="pug">
 div.row.col-12.q-mt-xs.justify-center.text-left
-    div.row.col-11
-        div.row.col-12.q-mt-lg
-            div.col-3
-                p.panel-title {{ tableTitle }} 
-            q-space
-            div.col-3.row.flex.filter-buttons.temp-hide
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
-        q-separator.row.col-12.q-mt-md.separator
-        div.row.col-12.table-container
-          q-table.q-mt-lg.row.fixed-layout(
-              :rows="rows"
-              :columns="columns"
-              row-key="name"
-              flat
-              :bordered="false"
-              :square="true"
-              table-header-class="table-header"
-              v-model:pagination="paginationSettings"
-              v-model:expanded="expanded"
-              :hide-pagination="!hasPages"
-              @update:expanded='updateExpanded'
-              )
-            template( v-slot:body-cell-transaction="props")
-              q-td( :props="props" )
-                AccountFormatter(:account="props.value.id" :type="props.value.type")
-            template( v-slot:body-cell-timestamp="props")
-              q-td( :props="props" )
-                DateField( :timestamp="props.value", showAge=true )
-            template( v-slot:body-cell-action="props")
-              q-td( :props="props" )
-                .row.justify-left.text-weight-light
-                  ActionFormatter(:action="props.value")
-            template( v-slot:body-cell-data="props")
-              q-td( :props="props"  )
-                DataFormatter(:actionData="props.value.data" :actionName="props.value.name ")
-            template( v-slot:pagination="scope")
-              div.row.col-12.q-mt-md.q-mb-xl()
-              div.col-1(align="left")
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-                  :disable="scope.isFirstPage"
-                  @click="scope.prevPage") PREV
-              q-space
-              div.col-1(align="right")
-                q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-                  :disable="scope.isLastPage"
-                  @click="scope.nextPage") NEXT
+  div.row.col-11
+    div.row.col-12.q-mt-lg
+      div.col-3
+          p.panel-title {{ tableTitle }} 
+      q-space
+      div.col-3.row.flex.filter-buttons.temp-hide
+        q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
+        q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
+        q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
+    q-separator.row.col-12.q-mt-md.separator
+    div.row.col-12.table-container
+      q-table.q-mt-lg.row.fixed-layout(
+        :rows="rows"
+        :columns="columns"
+        row-key="name"
+        flat
+        :bordered="false"
+        :square="true"
+        table-header-class="table-header"
+        v-model:pagination="paginationSettings"
+        v-model:expanded="expanded"
+        :hide-pagination="!hasPages"
+        @update:expanded='updateExpanded'
+        )
+        template( v-slot:body-cell-transaction="props")
+          q-td( :props="props" )
+            AccountFormatter(:account="props.value.id" :type="props.value.type")
+        template( v-slot:body-cell-timestamp="props")
+          q-td( :props="props" )
+            DateField( :timestamp="props.value", :showAge='true' )
+        template( v-slot:body-cell-action="props")
+          q-td( :props="props" )
+            .row.justify-left.text-weight-light
+              ActionFormatter(:action="props.value")
+        template( v-slot:body-cell-data="props")
+          q-td( :props="props"  )
+            DataFormatter(:actionData="props.value.data" :actionName="props.value.name ")
+        template( v-slot:pagination="scope")
+          div.row.col-12.q-mt-md.q-mb-xl()
+          div.col-1(align="left")
+            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+              :disable="scope.isFirstPage"
+              @click="scope.prevPage") PREV
+          q-space
+          div.col-1(align="right")
+            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+              :disable="scope.isLastPage"
+              @click="scope.nextPage") NEXT
 </template>
 
 <style lang="sass">

@@ -29,6 +29,9 @@ export default defineComponent({
     const rexbal = computed(() => {
       return store.state.account.rexbal;
     });
+    const maturedRex = computed(() => {
+      return store.state?.account.maturedRex;
+    });
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
@@ -102,7 +105,8 @@ export default defineComponent({
       assetToAmount,
       accountData,
       rexInfo,
-      rexbal
+      rexbal,
+      maturedRex
     };
   }
 });
@@ -124,8 +128,8 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-8 LIQUID TLOS TO WITHDRAW
-            .col-4.text-weight-bold.text-right {{rexbal.vote_stake ? rexbal.vote_stake : '0 TLOS'}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="withdrawTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(rexbal.vote_stake)  || 'Invalid amount.' ]" type="text" dense dark)
+            .col-4.text-weight-bold.text-right {{maturedRex}}
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="withdrawTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Withdraw" flat @click="unstake" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")

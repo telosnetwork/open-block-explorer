@@ -26,7 +26,14 @@ export { GenericObj } from './GenericObj';
 export { Transaction } from './Transaction';
 export { OptionsObj } from './OptionsObj';
 export { TreeNode } from './TreeNode';
-export { RexbalRows, Rexbal, ProducerRows, GenericTable } from './TableRows';
+export {
+  RexbalRows,
+  Rexbal,
+  ProducerRows,
+  GenericTable,
+  RexPoolRows,
+  RexPool
+} from './TableRows';
 export { BP } from './BP';
 export { ChainInfo } from './ChainInfo';
 export { ProducerSchedule } from './ProducerSchedule';

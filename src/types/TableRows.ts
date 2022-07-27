@@ -43,3 +43,18 @@ export interface Producer {
 export interface ProducerRows {
   rows: Producer[];
 }
+
+export interface RexPoolRows {
+  rows: RexPool[];
+}
+
+export interface RexPool {
+  loan_num: number;
+  namebid_proceeds: string;
+  total_lendable: string;
+  total_lent: string;
+  total_rent: string;
+  total_rex: string;
+  total_unlent: string;
+  version: number;
+}
