@@ -17,17 +17,9 @@ export default defineComponent({
     const accountData = computed((): AccountDetails => {
       return store.state?.account.data;
     });
-
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
+    const maturingRex = computed(() => {
+      return store.state?.account.maturingRex;
+    });
 
     function refundProgress(): number {
       let diff =
@@ -64,13 +56,6 @@ export default defineComponent({
       }
     }
 
-    function maturingRex(): string {
-      const mature =
-        assetToAmount(accountData.value.account.rex_info?.vote_stake) -
-        assetToAmount(accountData.value.account.rex_info?.matured_rex);
-      return mature.toString() + ' TLOS';
-    }
-
     function component(x: number, v: number) {
       return Math.floor(x / v);
     }
@@ -98,13 +83,12 @@ export default defineComponent({
       .col-xs-12.col-sm-6
         .row.q-pa-sm
           .col-6 Rex maturing
-          .col-6.text-right.text-weight-bold {{maturingRex()}}
+          .col-6.text-right.text-weight-bold {{maturingRex}}
       .col-xs-12.col-sm-6
         .row.q-pa-sm
           .col-7 {{maturitiesCountdown()}}
           .col-5.text-right.text-weight-bold 
-            q-linear-progress( :value="refundProgress()" :buffer="buffer" color="grey-3" class="q-mt-sm")
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+            q-linear-progress( :value="refundProgress()" :buffer="0.5" color="grey-3" class="q-mt-sm")
 
 </template>
 
