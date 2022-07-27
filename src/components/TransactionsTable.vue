@@ -71,7 +71,6 @@ export default defineComponent({
   },
   watch: {
     async account() {
-      console.log(this.account);
       await this.loadTableData();
     }
   },
