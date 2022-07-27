@@ -14,6 +14,10 @@ export interface AccountStateInterface {
   rexbal: Rexbal;
   vote: string[];
   abi: ABI;
+  coreRexBalance: string;
+  maturingRex: string;
+  maturedRex: string;
+  savingsRex: string;
 }
 
 export function state(): AccountStateInterface {
@@ -30,6 +34,10 @@ export function state(): AccountStateInterface {
     TransactionError: '',
     rexbal: {} as Rexbal,
     vote: [],
-    abi: { abi: null } as ABI
+    abi: { abi: null } as ABI,
+    coreRexBalance: '0 TLOS',
+    maturingRex: '0 TLOS',
+    maturedRex: '0 TLOS',
+    savingsRex: '0 TLOS'
   };
 }

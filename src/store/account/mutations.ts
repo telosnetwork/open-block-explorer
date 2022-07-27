@@ -25,8 +25,21 @@ export const mutations: MutationTree<AccountStateInterface> = {
   setRexActions(state: AccountStateInterface, actions: Action[]) {
     state.rexActions = actions;
   },
-  setRexbal(state: AccountStateInterface, rexbal: Rexbal) {
-    state.rexbal = rexbal;
+  setRexbal(
+    state: AccountStateInterface,
+    params: {
+      rexbal: Rexbal;
+      coreBalance: number;
+      maturingRex: number;
+      savingsRex: number;
+      maturedRex: number;
+    }
+  ) {
+    state.rexbal = params.rexbal;
+    state.coreRexBalance = params.coreBalance.toFixed(4) + ' TLOS';
+    state.maturedRex = params.maturedRex.toFixed(4) + ' TLOS';
+    state.maturingRex = params.maturingRex.toFixed(4) + ' TLOS';
+    state.savingsRex = params.savingsRex.toFixed(4) + ' TLOS';
   },
   setVote(state: AccountStateInterface, vote: string[]) {
     state.vote = vote.sort();

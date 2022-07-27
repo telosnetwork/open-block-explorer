@@ -3,7 +3,7 @@ import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AccountStateInterface } from './state';
 import { api } from 'src/api/index';
-import { GetTableRowsParams, RexbalRows } from 'src/types';
+import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { ual } from 'src/boot/ualapi';
 
@@ -40,16 +40,59 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async updateRexData({ commit }, { account }) {
     const paramsrexbal = {
       code: 'eosio',
-      limit: '1',
+      limit: '2',
       lower_bound: account as TableIndexType,
       scope: 'eosio',
       table: 'rexbal',
       reverse: false,
       upper_bound: account as TableIndexType
     } as GetTableRowsParams;
-    const rexbal = (await api.getTableRows(paramsrexbal)) as RexbalRows;
-    if (rexbal.rows.length > 0) {
-      commit('setRexbal', Number(rexbal.rows[0].vote_stake.split(' ')[0]));
+    const rexbalRows = (await api.getTableRows(paramsrexbal)) as RexbalRows;
+    const paramsrexpool = {
+      code: 'eosio',
+      scope: 'eosio',
+      table: 'rexpool',
+      json: true,
+      reverse: false
+    } as GetTableRowsParams;
+    const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
+      .rows[0];
+    const rexbal = rexbalRows.rows[0];
+    const rexBalance =
+      rexbal && rexbal.rex_balance
+        ? parseFloat(rexbal.rex_balance.split(' ')[0])
+        : 0;
+    const totalRex = Number(rexpool.total_rex.split(' ')[0]);
+    const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
+    const rexTlosRatio = totalRex > 0 ? totalLendable / totalRex : 1;
+    const coreBalance =
+      totalRex > 0 ? (totalLendable / totalRex) * rexBalance : 0;
+
+    const maturingRex = rexbal
+      ? rexbal.rex_maturities &&
+        rexbal.rex_maturities[0] &&
+        rexbal.rex_maturities[0].second &&
+        rexTlosRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
+      : 0;
+
+    const savingsRex = rexbal
+      ? rexbal.rex_maturities &&
+        rexbal.rex_maturities[1] &&
+        rexbal.rex_maturities[1].second &&
+        rexTlosRatio * (Number(rexbal.rex_maturities[1].second) / 10000)
+      : 0;
+
+    const maturedRex = rexbal
+      ? rexTlosRatio * (Number(rexbal.matured_rex) / 10000)
+      : 0;
+    if (rexbalRows.rows.length > 0) {
+      commit('setRexbal', {
+        rexbal: rexbalRows.rows[0],
+        coreBalance,
+        maturingRex,
+        savingsRex,
+        maturedRex
+      });
     }
     const filter =
       'eosio:sellrex,eosio:buyrex,eosio:deposit,eosio:withdraw,eosio:unstaketorex,eosio:cnclrexorder,eosio:rentcpu,eosio:rentnet,eosio:fundcpuloan,eosio:fundnetloan,eosio:defcpuloan,eosio:defnetloan,eosio:updaterex,eosio:consolidate,eosio:closerex,eosio:mvfrsavings,eosio:mvtosavings,eosio:rexexec';

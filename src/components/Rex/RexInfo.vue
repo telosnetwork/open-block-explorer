@@ -19,27 +19,18 @@ export default defineComponent({
     const rexInfo = computed(() => {
       return store.state?.account.data.account.rex_info;
     });
-
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
-
-    function maturingRex(): string {
-      if (!rexInfo.value) {
-        return '0 TLOS';
-      }
-      const mature =
-        assetToAmount(rexInfo.value.vote_stake) -
-        assetToAmount(rexInfo.value.matured_rex);
-      return mature.toString() + 'TLOS';
-    }
+    const maturingRex = computed(() => {
+      return store.state?.account.maturingRex;
+    });
+    const coreRexBalance = computed(() => {
+      return store.state?.account.coreRexBalance;
+    });
+    const maturedRex = computed(() => {
+      return store.state?.account.maturedRex;
+    });
+    const rexSavings = computed(() => {
+      return store.state?.account.savingsRex;
+    });
 
     return {
       store,
@@ -48,7 +39,10 @@ export default defineComponent({
       accountData,
       token,
       maturingRex,
-      rexInfo
+      rexInfo,
+      coreRexBalance,
+      maturedRex,
+      rexSavings
     };
   }
 });
@@ -95,17 +89,17 @@ export default defineComponent({
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 TOTAL TLOS IN REX
-          .col-5.text-right.text-weight-bold {{rexInfo ? rexInfo.vote_stake : '0 TLOS'}}
+          .col-5.text-right.text-weight-bold {{coreRexBalance}}
         .row.q-pt-sm
-          .col-7 REX BALANCE
-          .col-5.text-right.text-weight-bold {{rexInfo ? rexInfo.rex_balance : '0 TLOS'}}
+          .col-7 REX SAVINGS
+          .col-5.text-right.text-weight-bold {{rexSavings}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 MATURED REX
-          .col-5.text-right.text-weight-bold {{rexInfo ? rexInfo.matured_rex : '0 TLOS'}}
+          .col-5.text-right.text-weight-bold {{maturedRex}}
         .row.q-pt-sm
           .col-7 MATURING REX
-          .col-5.text-right.text-weight-bold {{maturingRex()}}
+          .col-5.text-right.text-weight-bold {{maturingRex}}
 
 </template>
 
