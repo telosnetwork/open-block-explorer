@@ -1,4 +1,4 @@
-import { Authenticator, User } from 'universal-authenticator-library';
+import { Authenticator } from 'universal-authenticator-library';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AccountStateInterface } from './state';
@@ -27,12 +27,18 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (users.length) {
       const account = users[0];
       const accountName = await account.getAccountName();
+      debugger;
+      commit('setUser', account);
       commit('setAccountName', accountName);
       localStorage.setItem(
         'autoLogin',
         (authenticator as Authenticator).constructor.name
       );
       localStorage.setItem('account', accountName);
+      localStorage.setItem(
+        'autoLogin',
+        (authenticator as Authenticator).getName()
+      );
       localStorage.setItem('returning', 'true');
       commit('setLoadingWallet');
     }
@@ -99,7 +105,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const rexActions = (await api.getActions(account, filter)).actions;
     commit('setRexActions', rexActions);
   },
-  async sendTransaction({}, { user, account, data, name }) {
+  async sendTransaction({}, { account, data, name }) {
     let transaction = null;
     const actions = [
       {
@@ -115,7 +121,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await (user as User).signTransaction(
+      transaction = await this.state.account.user.signTransaction(
         {
           actions
         },
