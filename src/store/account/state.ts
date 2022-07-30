@@ -1,8 +1,10 @@
 import { Authorization, AccountDetails, Action, Rexbal, ABI } from 'src/types';
+import { User } from 'universal-authenticator-library';
 
 export interface AccountStateInterface {
   loading: unknown;
   accountName: string;
+  user: User;
   autoLogin: unknown;
   isAuthenticated: boolean;
   linkedAccounts: Array<unknown>;
@@ -24,6 +26,7 @@ export function state(): AccountStateInterface {
   return {
     loading: false,
     accountName: '',
+    user: null,
     autoLogin: null,
     isAuthenticated: false,
     linkedAccounts: [],

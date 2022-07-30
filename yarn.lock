@@ -1820,6 +1820,16 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@telosnetwork/ual-cleos@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@telosnetwork/ual-cleos/-/ual-cleos-0.1.0.tgz#fdb67793311c76506d9848490ce8f034eaae35fd"
+  integrity sha512-1vZWwlax+WcpEqV/o7BwzINB5yrtCH8jweP14ZDJ/CC1RbOXuDfxLyPfYySQk91kci1gcdy0e5LXGC65+qfMtw==
+  dependencies:
+    eosjs "^22.1.0"
+    text-encoding "^0.7.0"
+    typescript "^4.7.4"
+    universal-authenticator-library "0.3.0"
+
 "@tootallnate/once@1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
@@ -4675,6 +4685,16 @@ eosjs@^21.0.3:
   version "21.0.4"
   resolved "https://registry.yarnpkg.com/eosjs/-/eosjs-21.0.4.tgz#67794a9fbc3c7659de19a7926c2c13cce4515571"
   integrity sha512-XbuIoidplA1hHIejy7VQ+hmBfC6T28kYFaQMsn6G1DMTg1CFwUzxwzUvZg/dGNPuf7hgPxOpaQvAUsdidTgGhQ==
+  dependencies:
+    bn.js "5.2.0"
+    elliptic "6.5.4"
+    hash.js "1.1.7"
+    pako "2.0.3"
+
+eosjs@^22.1.0:
+  version "22.1.0"
+  resolved "https://registry.yarnpkg.com/eosjs/-/eosjs-22.1.0.tgz#7ac40e2f1f959fab70539c30ac8ae46c9038aa3c"
+  integrity sha512-Ka8KO7akC3RxNdSg/3dkGWuUWUQESTzSUzQljBdVP16UG548vmQoBqSGnZdnjlZyfcab8VOu2iEt+JjyfYc5+A==
   dependencies:
     bn.js "5.2.0"
     elliptic "6.5.4"
@@ -10774,6 +10794,11 @@ test-exclude@^6.0.0:
     glob "^7.1.4"
     minimatch "^3.0.4"
 
+text-encoding@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.7.0.tgz#f895e836e45990624086601798ea98e8f36ee643"
+  integrity sha512-oJQ3f1hrOnbRLOcwKz0Liq2IcrvDeZRHXhd9RgLrsT+DjWY/nty1Hi7v3dtkaEYbPYe0mUoOfzRrMwfXXwgPUA==
+
 text-segmentation@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/text-segmentation/-/text-segmentation-1.0.3.tgz#52a388159efffe746b24a63ba311b6ac9f2d7943"
@@ -11029,6 +11054,11 @@ typescript@4.5.5:
   version "4.5.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.5.tgz#d8c953832d28924a9e3d37c73d729c846c5896f3"
   integrity sha512-TCTIul70LyWe6IJWT8QSYeA54WQe8EjQFU4wY52Fasj5UKx88LNYKCgBEHcOMOrFF1rKGbD8v/xcNWVUq9SymA==
+
+typescript@^4.7.4:
+  version "4.7.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
+  integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
 
 ual-anchor@1.1.5:
   version "1.1.5"
