@@ -2,21 +2,34 @@
 import { defineComponent } from 'vue';
 import Footer from 'components/Footer.vue';
 import Header from 'components/Header.vue';
+import ChainsSidebar from 'components/ChainsSidebar.vue';
 
 export default defineComponent({
   name: 'MainLayout',
   components: {
     Header,
-    Footer
+    Footer,
+    ChainsSidebar
+  },
+  methods: {
+    showSidebar(): boolean {
+      return process.env.SHOW_SIDEBAR == 'true';
+    }
   }
 });
 </script>
 
 <template lang="pug">
-q-layout( view="hHh lpR fff")
+q-layout( view="lHh lpR lFf")
   q-header
     Header
     q-separator.separator
+  q-header
+
+  chains-sidebar(
+    v-if="showSidebar()"
+  )
+
   q-page-container
     router-view
     q-separator

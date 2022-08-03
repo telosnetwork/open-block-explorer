@@ -4,6 +4,10 @@ import { ChainStateInterface } from './state';
 import { BP } from 'src/types';
 import axios from 'axios';
 import { api } from 'src/api/index';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain: Chain = getChain();
 
 export const actions: ActionTree<ChainStateInterface, StateInterface> = {
   async updateBpList({ commit }) {
@@ -11,7 +15,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
       const producerSchedule = (await api.getSchedule()).active.producers;
       const schedule = producerSchedule.map((el) => el.producer_name);
       commit('setProducerSchedule', schedule);
-      const objectList = await axios.get(process.env.PRODUCER_BUCKET_URL);
+      const objectList = await axios.get(chain.getS3ProducerBucket());
       const parser = new DOMParser();
       const contentsArray = parser
         .parseFromString(objectList.data, 'text/xml')
@@ -19,7 +23,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
       const lastEntry = contentsArray[contentsArray.length - 1];
       const lastKey = lastEntry.childNodes[0].textContent;
       const producerData: BP[] = (
-        await axios.get(`${process.env.PRODUCER_BUCKET_URL}/${lastKey}`)
+        await axios.get(`${chain.getS3ProducerBucket()}/${lastKey}`)
       ).data as BP[];
       let producers = (await api.getProducers()).rows;
       producers = producers.filter((producer) => producer.is_active === 1);

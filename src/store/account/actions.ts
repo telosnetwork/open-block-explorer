@@ -180,6 +180,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     }
   },
   async unstakeRex({ commit, state }, { amount }) {
+    debugger;
     let transaction = null;
     const tokenRexBalance = state.rexbal.rex_balance
       ? Number(state.rexbal.rex_balance.split(' ')[0])

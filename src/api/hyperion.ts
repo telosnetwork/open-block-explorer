@@ -26,8 +26,12 @@ import {
   GetProducers,
   ABI
 } from 'src/types';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
 
-const hyperion = axios.create({ baseURL: process.env.HYPERION_ENDPOINT });
+const chain: Chain = getChain();
+
+const hyperion = axios.create({ baseURL: chain.getHyperionEndpoint() });
 const controller = new AbortController();
 
 export const getAccount = async function (

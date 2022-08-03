@@ -4,9 +4,13 @@
 /* see https://github.com/greymass/eosio-core/blob/master/test/api.ts for documentation */
 import { APIClient } from '@greymass/eosio';
 import { GetTableRowsParams } from 'src/types';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain: Chain = getChain();
 
 const eosioCore = new APIClient({
-  url: process.env.HYPERION_ENDPOINT
+  url: chain.getHyperionEndpoint()
 });
 
 export const getTokenBalances = async function (

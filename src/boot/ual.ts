@@ -1,6 +1,11 @@
 import { boot } from 'quasar/wrappers';
 import { UAL } from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain: Chain = getChain();
+
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $ual: UAL;
@@ -9,15 +14,8 @@ declare module '@vue/runtime-core' {
 
 export default boot(({ app }) => {
   const mainChain = {
-    chainId: process.env.NETWORK_CHAIN_ID,
-    origin: process.env.TELOS_ORIGIN,
-    rpcEndpoints: [
-      {
-        protocol: process.env.NETWORK_PROTOCOL,
-        host: process.env.NETWORK_HOST,
-        port: parseInt(process.env.NETWORK_PORT)
-      }
-    ]
+    chainId: chain.getChainId(),
+    rpcEndpoints: [chain.getRPCEndpoint()]
   };
 
   const authenticators = [
