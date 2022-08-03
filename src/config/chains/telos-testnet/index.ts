@@ -18,10 +18,13 @@ PRODUCER_BUCKET_URL=
 
 import BaseChain from '../../BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
+import { PriceChartData } from 'src/types/PriceChartData';
+import { getEmptyPriceChartData } from 'src/api/price';
 
 const CHAIN_ID =
   '1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f';
 const DISPLAY = 'Telos testnet';
+const SYMBOL = 'TLOS';
 const HYPERION_ENDPOINT = 'https://testnet.telos.net';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = {
@@ -48,5 +51,13 @@ export default class TelosTestnet extends BaseChain {
 
   getS3ProducerBucket(): string {
     return S3_PRODUCER_BUCKET;
+  }
+
+  getPriceData(): Promise<PriceChartData> {
+    return getEmptyPriceChartData();
+  }
+
+  getSymbol(): string {
+    return SYMBOL;
   }
 }
