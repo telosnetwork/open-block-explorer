@@ -82,7 +82,7 @@ export default defineComponent({
         },
         series: [
           {
-            name: 'TLOS',
+            name: chain.getSymbol(),
             color: '#571AFF',
             data: [] as DateTuple[]
           }
