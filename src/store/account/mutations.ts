@@ -8,7 +8,6 @@ export const mutations: MutationTree<AccountStateInterface> = {
     state.loading = wallet;
   },
   setUser(state: AccountStateInterface, user: User) {
-    debugger;
     state.user = user;
   },
   setAccountName(state: AccountStateInterface, accountName: string) {
