@@ -27,7 +27,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (users.length) {
       const account = users[0];
       const accountName = await account.getAccountName();
-      debugger;
       commit('setUser', account);
       commit('setAccountName', accountName);
       localStorage.setItem(
