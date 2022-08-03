@@ -19,7 +19,7 @@ export default class ConfigManager {
   private init(): void {
     const showSidebar = process.env.SHOW_SIDEBAR;
     const configuredChain = process.env.CHAIN_NAME;
-
+    console.log(showSidebar);
     if (showSidebar) {
       this.testnets = chainsConfig.testnets;
       this.mainnets = chainsConfig.mainnets;

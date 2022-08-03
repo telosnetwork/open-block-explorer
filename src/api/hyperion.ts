@@ -30,6 +30,7 @@ import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain: Chain = getChain();
+console.dir(chain);
 
 const hyperion = axios.create({ baseURL: chain.getHyperionEndpoint() });
 const controller = new AbortController();
