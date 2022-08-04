@@ -1,22 +1,23 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
 import Footer from 'components/Footer.vue';
 import Header from 'components/Header.vue';
 import ChainsSidebar from 'components/ChainsSidebar.vue';
 
-export default defineComponent({
+export default {
   name: 'MainLayout',
   components: {
     Header,
     Footer,
     ChainsSidebar
   },
-  methods: {
-    showSidebar(): boolean {
-      return process.env.SHOW_SIDEBAR == 'true';
-    }
+  setup() {
+    return {
+      showSidebar: () => {
+        return process.env.SHOW_SIDEBAR == 'true';
+      }
+    };
   }
-});
+};
 </script>
 
 <template lang="pug">
@@ -39,7 +40,7 @@ q-layout( view="lHh lpR lFf")
 
 <style lang="sass" scoped>
 .q-header
-  background-color: $primary-dark
+  background-color: var(--q-secondary)
 .separator
   height: 2px
   min-height: 2px

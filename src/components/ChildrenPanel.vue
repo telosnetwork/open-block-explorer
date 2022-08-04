@@ -56,7 +56,7 @@ div.row.col-12.q-mt-lg.q-mb-xs.q-px-xl.justify-center.text-left
 <style lang="sass" scoped>
 .hover-dec
   text-decoration: none
-  color: $dark
+  color: var(--q-dark)
   &:hover
     text-decoration: underline
 

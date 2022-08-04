@@ -73,5 +73,5 @@ export default defineComponent({
   font-size: 18px
 
 .header-background
-  background: $primary-dark
+  background: var(--q-secondary)
 </style>

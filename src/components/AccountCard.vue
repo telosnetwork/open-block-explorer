@@ -304,11 +304,11 @@ $medium:750px
 
   .q-table__card
     background: unset
-    color: $black-5
+    color: rgba(255, 255, 255, 0.5)
 
   .q-table--horizontal-separator
     thead th
-      border-bottom: 1px solid $black-13
+      border-bottom: 1px solid rgba(255,255,255, 0.13)
     tbody tr:not(:last-child) td
       border-bottom: none
 
@@ -350,7 +350,7 @@ $medium:750px
 
 .text-subtitle
   text-transform: uppercase
-  color: $black-5
+  color: rgba(255, 255, 255, 0.5)
   font-size: 12px
   a
     cursor: pointer

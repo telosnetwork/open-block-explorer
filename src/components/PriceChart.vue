@@ -169,7 +169,7 @@ $medium:750px
 .border-line
     width: 19px
     height: 2px
-    background: $primary
+    background: var(--q-primary)
     border-radius: 4px
     @media screen and (max-width: $medium) // screen < $medium
         width: 156px !important
@@ -195,7 +195,7 @@ $medium:750px
     font-weight: normal
     font-size: 22.75px
     line-height: 27px
-    color: $primary
+    color: var(--q-primary)
     backdrop-filter: blur(14px)
 
 .highcharts-figure,
