@@ -25,7 +25,6 @@ q-layout( view="lHh lpR lFf")
   q-header
     Header
     q-separator.separator
-  q-header
 
   chains-sidebar(
     v-if="showSidebar()"

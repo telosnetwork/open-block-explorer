@@ -14,7 +14,8 @@ q-drawer(
       template( v-for="(chain, index) in getAllChains()" :key="index" )
         q-item(clickable v-ripple @click="chainSelected(chain)")
           q-item-section(avatar)
-            q-icon( :name="`menu`" )
+          q-avatar
+            img( :src="chain.getSmallLogoPath()" )
           q-item-section
             div {{ chain.getDisplay() }}
 </template>
@@ -35,6 +36,13 @@ export default {
         return configMgr.getAllChains();
       },
       chainSelected(chain: Chain) {
+        if (
+          localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) ===
+          chain.getName()
+        ) {
+          return;
+        }
+
         // TODO: maybe we can reload vue store and boot files instead of full reload?
         localStorage.setItem(
           ConfigManager.CHAIN_LOCAL_STORAGE,

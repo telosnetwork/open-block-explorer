@@ -19,7 +19,7 @@ const RPC_ENDPOINT = {
 };
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 
-export default class Telos extends BaseChain {
+export default class EOS extends BaseChain {
   getChainId(): string {
     return CHAIN_ID;
   }
@@ -50,5 +50,13 @@ export default class Telos extends BaseChain {
 
   getUsdPrice(): Promise<number> {
     return getCoingeckoUsdPrice('eos');
+  }
+
+  getLargeLogoPath(): string {
+    return 'chains/eos/eos_large.png';
+  }
+
+  getSmallLogoPath(): string {
+    return 'chains/eos/eos.png';
   }
 }

@@ -64,4 +64,12 @@ export default class TelosTestnet extends BaseChain {
   getUsdPrice(): Promise<number> {
     return Promise.resolve(0);
   }
+
+  getLargeLogoPath(): string {
+    return 'chains/telos/telos_logo.svg';
+  }
+
+  getSmallLogoPath(): string {
+    return 'chains/telos/tlos.png';
+  }
 }

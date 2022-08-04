@@ -5,6 +5,8 @@ export interface Chain {
   getName(): string;
   getSymbol(): string;
   getDisplay(): string;
+  getSmallLogoPath(): string;
+  getLargeLogoPath(): string;
   getChainId(): string;
   getRPCEndpoint(): RpcEndpoint;
   getHyperionEndpoint(): string;

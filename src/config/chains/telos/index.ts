@@ -66,4 +66,12 @@ export default class Telos extends BaseChain {
   getUsdPrice(): Promise<number> {
     return getCoingeckoUsdPrice('telos');
   }
+
+  getLargeLogoPath(): string {
+    return 'chains/telos/telos_logo.svg';
+  }
+
+  getSmallLogoPath(): string {
+    return 'chains/telos/tlos.png';
+  }
 }

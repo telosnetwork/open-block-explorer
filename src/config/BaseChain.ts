@@ -13,6 +13,14 @@ export default abstract class BaseChain implements Chain {
     return this.name;
   }
 
+  getLargeLogoPath(): string {
+    return `~/assets/${this.name}/logo_lg.svg`;
+  }
+
+  getSmallLogoPath(): string {
+    return `~/assets/${this.name}/logo_sm.svg`;
+  }
+
   abstract getSymbol(): string;
   abstract getChainId(): string;
   abstract getDisplay(): string;

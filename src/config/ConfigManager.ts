@@ -53,7 +53,7 @@ export default class ConfigManager {
     return this.currentChain;
   }
 
-  public getSelectedChain(): string {
+  private getSelectedChain(): string {
     return LocalStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
   }
 

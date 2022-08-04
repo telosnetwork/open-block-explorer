@@ -24,10 +24,8 @@ const customThemeVars: string[] = [
 ];
 
 const chainName = getChain().getName();
-//check if already on current chain on nav
-if (chainName !== process.env.CHAIN_NAME) {
-  setTheme();
-}
+
+setTheme();
 
 function setTheme(): void {
   for (var themeVar of quasarThemeVars) {
@@ -46,5 +44,5 @@ export default {
 </script>
 
 <template lang="pug">
-router-view 
+router-view
 </template>

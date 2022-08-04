@@ -4,6 +4,7 @@ import { useQuasar } from 'quasar';
 import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
 import { useAuthenticator } from 'src/composables/useAuthenticator';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
   name: 'Header',
@@ -13,12 +14,14 @@ export default defineComponent({
   },
   setup() {
     const $q = useQuasar();
+    const chain = getChain();
     const { account } = useAuthenticator();
-    const isSmall = computed((): boolean => $q.screen.gt.sm);
+    const isLarge = computed((): boolean => $q.screen.gt.sm);
 
     return {
       account,
-      isSmall
+      isLarge: isLarge,
+      chain
     };
   }
 });
@@ -30,8 +33,8 @@ export default defineComponent({
     .logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2
       .q-px-xs-xs.q-px-sm-xs.q-px-md-md.q-px-lg-md
         a( href="/").float-left.q-ml-sm
-          img.logo( v-if="isSmall" src="~assets/telos_logo.svg")
-          img.logo-tlos( v-else src="~assets/tlos.png")
+          img.logo( v-if="isLarge" :src="chain.getLargeLogoPath()")
+          img.logo-token( v-else :src="chain.getSmallLogoPath()")
     .col-xs-5.col-sm-6.col-md-4.col-lg-6
       .q-px-xs-xs.q-px-sm-xs.q-px-md-md.q-px-lg-md
         .row.justify-center.full-width
@@ -56,7 +59,7 @@ export default defineComponent({
 .logo
   width: 104px
   height:40px
-.logo-tlos
+.logo-token
   width: 40px
   height: 40px
 
