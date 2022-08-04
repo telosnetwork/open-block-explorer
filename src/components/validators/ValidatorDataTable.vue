@@ -160,9 +160,9 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .producer-card
-  background: var(--q-producer-card-background)
+  background: var(--q-color-producer-card-background)
 .select-box
-  background: var(--q-select-box-background)
+  background: var(--q-color-select-box-background)
 .hover-dec
   text-decoration: none
   &:hover

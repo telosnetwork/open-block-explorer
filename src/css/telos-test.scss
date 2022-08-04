@@ -1,0 +1,13 @@
+$telos-primary-dark : blue;
+$telos-secondary    : rgba(138, 101, 212, 0.1);// #8A65D41A
+$telos-accent       : #9C27B0;
+$telos-dark      : #1d1d1d;
+$telos-gray      : rgba(196, 196, 196, 0.8); // #C4C4C44D 
+$telos-positive  : #21BA45;
+$telos-negative  : #ff0000;
+$telos-info      : #31CCEC;
+$telos-warning   : #F2C037;
+
+:export {
+  primary: $telos-primary-dark
+}

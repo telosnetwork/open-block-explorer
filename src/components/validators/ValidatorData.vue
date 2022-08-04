@@ -246,6 +246,6 @@ div
 
 <style lang="sass" scoped>
 .card-gradient
-  background: var(--q-primary-gradient)
+  background: var(--q-color-primary-gradient)
   color: white
 </style>

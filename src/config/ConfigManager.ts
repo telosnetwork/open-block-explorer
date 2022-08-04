@@ -1,5 +1,6 @@
 import chainsConfig from './configuredChains';
 import { Chain } from '../types/Chain';
+import { LocalStorage } from 'quasar';
 
 export function getChain(): Chain {
   return ConfigManager.get().getCurrentChain();
@@ -19,14 +20,12 @@ export default class ConfigManager {
   private init(): void {
     const showSidebar = process.env.SHOW_SIDEBAR;
     const configuredChain = process.env.CHAIN_NAME;
-    console.log(showSidebar);
     if (showSidebar) {
       this.testnets = chainsConfig.testnets;
       this.mainnets = chainsConfig.mainnets;
+
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const userConfiguredChain = localStorage.getItem(
-        ConfigManager.CHAIN_LOCAL_STORAGE
-      );
+      const userConfiguredChain = this.getSelectedChain();
 
       if (userConfiguredChain) {
         this.currentChain = this.findChain(userConfiguredChain);
@@ -52,6 +51,10 @@ export default class ConfigManager {
 
   public getCurrentChain(): Chain {
     return this.currentChain;
+  }
+
+  public getSelectedChain(): string {
+    return LocalStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
   }
 
   public getAllChains(): Chain[] {
