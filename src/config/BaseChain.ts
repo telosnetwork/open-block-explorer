@@ -1,5 +1,6 @@
 import { Chain } from '../types/Chain';
 import { RpcEndpoint } from 'universal-authenticator-library';
+import { PriceChartData } from 'src/types/PriceChartData';
 
 export default abstract class BaseChain implements Chain {
   protected name: string;
@@ -12,13 +13,11 @@ export default abstract class BaseChain implements Chain {
     return this.name;
   }
 
+  abstract getSymbol(): string;
   abstract getChainId(): string;
-
   abstract getDisplay(): string;
-
   abstract getHyperionEndpoint(): string;
-
   abstract getRPCEndpoint(): RpcEndpoint;
-
   abstract getS3ProducerBucket(): string;
+  abstract getPriceData(): Promise<PriceChartData>;
 }

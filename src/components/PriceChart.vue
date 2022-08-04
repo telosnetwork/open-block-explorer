@@ -5,6 +5,10 @@ import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
 import axios from 'axios';
 import { PriceStats, PriceHistory, DateTuple } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
+import { PriceChartData } from 'src/types/PriceChartData';
+
+const chain = getChain();
 
 const ONE_MILLION = 1000000;
 const ONE_BILLION = 1000000000;
@@ -78,7 +82,7 @@ export default defineComponent({
         },
         series: [
           {
-            name: 'TLOS',
+            name: chain.getSymbol(),
             color: '#571AFF',
             data: [] as DateTuple[]
           }
@@ -98,11 +102,21 @@ export default defineComponent({
     };
   },
   async mounted() {
-    await this.setExchangeStats();
-    await this.setPriceHistory();
+    //await this.setExchangeStats();
+    //await this.setPriceHistory();
+    await this.fetchPriceChartData();
   },
 
   methods: {
+    async fetchPriceChartData() {
+      const data: PriceChartData = await chain.getPriceData();
+      this.lastUpdated = data.lastUpdated;
+      this.tokenPrice = this.formatCurrencyValue(data.tokenPrice);
+      this.dayChange = this.formatPercentage(data.dayChange);
+      this.dayVolume = this.formatCurrencyValue(data.dayVolume);
+      this.marketCap = this.formatCurrencyValue(data.marketCap);
+      this.chartOptions.series[0].data = data.prices;
+    },
     async setExchangeStats() {
       const priceStats: PriceStats = await axios.get(exchangeStatsUrl);
       this.lastUpdated = priceStats.data.telos.last_updated_at;
@@ -153,7 +167,7 @@ div.row.col-12.justify-center.actor-font(align="center")
             div.col-12.flex.row
                 div.col-6.chart-info
                     p 24H CHANGE
-                    p.sub-title {{ dayChange  }} 
+                    p.sub-title {{ dayChange  }}
                 div.col-6.chart-info
                     p 24H VOLUME
                     p.sub-title {{ dayVolume }}
