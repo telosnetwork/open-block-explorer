@@ -5,6 +5,10 @@ import { Token } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
 
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+
 export default defineComponent({
   name: 'SendDialog',
   components: {
@@ -13,7 +17,7 @@ export default defineComponent({
   data() {
     return {
       sendToken: {
-        symbol: 'TLOS',
+        symbol: chain.getSymbol(),
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
@@ -93,7 +97,7 @@ export default defineComponent({
     resetForm() {
       this.transactionId = null;
       this.sendToken = {
-        symbol: 'TLOS',
+        symbol: chain.getSymbol(),
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
@@ -129,7 +133,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-8.col-md-7.col-lg-6.maxSize
         .row
-          q-card-section 
+          q-card-section
             img.send-img.q-pr-md( src="~assets/send.svg")
             .text-h4.q-pb-md.inline-block.color-grey-3 Send Tokens
 
@@ -150,7 +154,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                       q-icon.fas.fa-chevron-down.q-pr-lg(size="17px")
 
               .col-8.q-pl-md
-                .row.justify-between.q-pb-sm.q-gutter-x-sm 
+                .row.justify-between.q-pb-sm.q-gutter-x-sm
                   div AMOUNT
                   q-space
                   .color-grey-3.text-weight-bold {{sendToken.amount}} AVAILABLE
@@ -167,12 +171,12 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
         .transaction-result(v-else)
           q-card-section(v-if='transactionId')
             .row
-              .col-12 
+              .col-12
                 .row You successfully sent {{ sendAmount }} {{ sendToken.symbol }} to {{ recievingAccount }}.
-                .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}            
+                .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}
           q-card-section(v-else)
             .row
-              .col-12 
+              .col-12
                 .row Transaction Failed: {{ transactionError }}
           q-btn.close-dialog( v-close-popup label='Close')
     CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" v-model="openCoinDialog" :availableTokens="availableTokens")

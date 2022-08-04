@@ -7,7 +7,6 @@ import { AccountDetails, Token, Refund } from 'src/types';
 import { defineComponent, computed, ref } from 'vue';
 import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
-import { exchangeStatsUrl } from 'src/components/PriceChart.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import StakingDialog from 'src/components/Staking/StakingDialog.vue';
 import RexDialog from 'src/components/Rex/RexDialog.vue';
@@ -15,6 +14,9 @@ import DateField from 'src/components/DateField.vue';
 import { mapActions } from 'vuex';
 import { date } from 'quasar';
 import { copyToClipboard } from 'quasar';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
 
 export default defineComponent({
   name: 'AccountCard',
@@ -173,10 +175,12 @@ export default defineComponent({
       this.$router.go(0);
     },
     async loadPriceData(): Promise<void> {
-      const telosPrice: number = (await axios.get(exchangeStatsUrl)).data.telos
-        .usd;
-      const dollarAmount = telosPrice * parseFloat(this.total);
-      this.totalValue = `$${dollarAmount.toFixed(2)} (@ $${telosPrice}/TLOS)`;
+      const usdPrice: number = await chain.getUsdPrice();
+
+      const dollarAmount = usdPrice * parseFloat(this.total);
+      this.totalValue = `$${dollarAmount.toFixed(
+        2
+      )} (@ $${usdPrice}/${chain.getSymbol()})`;
     },
     formatTotalRefund(refund: Refund): string {
       const totalRefund = (
@@ -258,9 +262,9 @@ export default defineComponent({
           tr
           tr
             td.text-left.total-label TOTAL
-            td.text-right.total-amount {{ total }} 
+            td.text-right.total-amount {{ total }}
           tr.total-row
-            td.text-left 
+            td.text-left
             td.text-right.total-value {{ totalValue }}
           tr
           tr

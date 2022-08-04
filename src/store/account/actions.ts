@@ -6,6 +6,10 @@ import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { ual } from 'src/boot/ualapi';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+const symbol = chain.getSymbol();
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {
@@ -64,7 +68,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         : 0;
     const totalRex = Number(rexpool.total_rex.split(' ')[0]);
     const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
-    const rexTlosRatio = totalRex > 0 ? totalLendable / totalRex : 1;
+    const rexSystemTokenRatio = totalRex > 0 ? totalLendable / totalRex : 1;
     const coreBalance =
       totalRex > 0 ? (totalLendable / totalRex) * rexBalance : 0;
 
@@ -72,18 +76,18 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       ? rexbal.rex_maturities &&
         rexbal.rex_maturities[0] &&
         rexbal.rex_maturities[0].second &&
-        rexTlosRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
+        rexSystemTokenRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
       : 0;
 
     const savingsRex = rexbal
       ? rexbal.rex_maturities &&
         rexbal.rex_maturities[1] &&
         rexbal.rex_maturities[1].second &&
-        rexTlosRatio * (Number(rexbal.rex_maturities[1].second) / 10000)
+        rexSystemTokenRatio * (Number(rexbal.rex_maturities[1].second) / 10000)
       : 0;
 
     const maturedRex = rexbal
-      ? rexTlosRatio * (Number(rexbal.matured_rex) / 10000)
+      ? rexSystemTokenRatio * (Number(rexbal.matured_rex) / 10000)
       : 0;
     if (rexbalRows.rows.length > 0) {
       commit('setRexbal', {
@@ -133,7 +137,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     let transaction = null;
     const authenticators = ual().getAuthenticators().availableAuthenticators;
     const user = (await authenticators[0].login())[0];
-    const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
+    const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',
@@ -189,7 +193,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     }
     const authenticators = ual().getAuthenticators().availableAuthenticators;
     const user = (await authenticators[0].login())[0];
-    const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
+    const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
     const accountInfo = state.data.account.rex_info;
     const totalRex = state.data.account.rex_info
       ? Number(accountInfo.rex_balance.split(' ')[0])
@@ -247,8 +251,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     let transaction = null;
     const authenticators = ual().getAuthenticators().availableAuthenticators;
     const user = (await authenticators[0].login())[0];
-    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} TLOS`;
-    const quantityStrNET = `${Number(netAmount).toFixed(4)} TLOS`;
+    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
+    const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',
@@ -286,8 +290,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     let transaction = null;
     const authenticators = ual().getAuthenticators().availableAuthenticators;
     const user = (await authenticators[0].login())[0];
-    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} TLOS`;
-    const quantityStrNET = `${Number(netAmount).toFixed(4)} TLOS`;
+    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
+    const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',

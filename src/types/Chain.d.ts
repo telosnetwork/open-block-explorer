@@ -10,4 +10,5 @@ export interface Chain {
   getHyperionEndpoint(): string;
   getS3ProducerBucket(): string;
   getPriceData(): Promise<PriceChartData>;
+  getUsdPrice(): Promise<number>;
 }

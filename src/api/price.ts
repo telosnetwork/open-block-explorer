@@ -2,10 +2,20 @@ import axios from 'axios';
 import { PriceStats, PriceHistory } from 'src/types';
 import { PriceChartData } from 'src/types/PriceChartData';
 
+export const getCoingeckoUsdPrice = async (
+  tokenId: string
+): Promise<number> => {
+  const stats: PriceStats = await axios.get(
+    getCoingeckoExchangeStatsUrl(tokenId)
+  );
+
+  return stats.data[tokenId].usd;
+};
+
 export const getCoingeckoPriceChartData = async (
   tokenId: string
 ): Promise<PriceChartData> => {
-  const exchangeStatsUrl = `https://api.coingecko.com/api/v3/simple/price?ids=${tokenId}&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true`;
+  const exchangeStatsUrl = getCoingeckoExchangeStatsUrl(tokenId);
   const priceHistoryUrl = `https://api.coingecko.com/api/v3/coins/${tokenId}/market_chart?vs_currency=USD&days=1&interval=hourly`;
 
   const [priceStats, priceHistory]: [PriceStats, PriceHistory] =
@@ -34,4 +44,8 @@ export const getEmptyPriceChartData = async (): Promise<PriceChartData> => {
     marketCap: 0,
     prices: []
   };
+};
+
+const getCoingeckoExchangeStatsUrl = (tokenId: string): string => {
+  return `https://api.coingecko.com/api/v3/simple/price?ids=${tokenId}&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true`;
 };

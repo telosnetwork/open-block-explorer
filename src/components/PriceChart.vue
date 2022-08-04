@@ -3,8 +3,7 @@ import { defineComponent } from 'vue';
 import { Chart } from 'highcharts-vue';
 import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
-import axios from 'axios';
-import { PriceStats, PriceHistory, DateTuple } from 'src/types';
+import { DateTuple } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { PriceChartData } from 'src/types/PriceChartData';
 
@@ -12,11 +11,6 @@ const chain = getChain();
 
 const ONE_MILLION = 1000000;
 const ONE_BILLION = 1000000000;
-
-export const exchangeStatsUrl =
-  'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true';
-const priceHistoryUrl =
-  'https://api.coingecko.com/api/v3/coins/telos/market_chart?vs_currency=USD&days=1&interval=hourly';
 
 exportingInit(Highcharts);
 export default defineComponent({
@@ -102,8 +96,6 @@ export default defineComponent({
     };
   },
   async mounted() {
-    //await this.setExchangeStats();
-    //await this.setPriceHistory();
     await this.fetchPriceChartData();
   },
 
@@ -117,20 +109,6 @@ export default defineComponent({
       this.marketCap = this.formatCurrencyValue(data.marketCap);
       this.chartOptions.series[0].data = data.prices;
     },
-    async setExchangeStats() {
-      const priceStats: PriceStats = await axios.get(exchangeStatsUrl);
-      this.lastUpdated = priceStats.data.telos.last_updated_at;
-      this.tokenPrice = this.formatCurrencyValue(priceStats.data.telos.usd);
-      this.dayChange = this.formatPercentage(
-        priceStats.data.telos.usd_24h_change
-      );
-      this.dayVolume = this.formatCurrencyValue(
-        priceStats.data.telos.usd_24h_vol
-      );
-      this.marketCap = this.formatCurrencyValue(
-        priceStats.data.telos.usd_market_cap
-      );
-    },
     formatPercentage(val: number): string {
       return `${val.toFixed(2)} %`;
     },
@@ -140,10 +118,6 @@ export default defineComponent({
         : val < ONE_BILLION
         ? `$${(val / ONE_MILLION).toFixed(2)}M`
         : `$${(val / ONE_BILLION).toFixed(2)}B`;
-    },
-    async setPriceHistory() {
-      const priceHistory: PriceHistory = await axios.get(priceHistoryUrl);
-      this.chartOptions.series[0].data = priceHistory.data.prices;
     }
   }
 });

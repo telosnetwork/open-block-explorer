@@ -20,4 +20,5 @@ export default abstract class BaseChain implements Chain {
   abstract getRPCEndpoint(): RpcEndpoint;
   abstract getS3ProducerBucket(): string;
   abstract getPriceData(): Promise<PriceChartData>;
+  abstract getUsdPrice(): Promise<number>;
 }

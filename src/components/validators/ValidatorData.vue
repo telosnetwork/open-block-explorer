@@ -7,6 +7,10 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useRoute } from 'vue-router';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+const symbol = chain.getSymbol();
 
 export default defineComponent({
   name: 'Validator',
@@ -97,7 +101,7 @@ export default defineComponent({
     async function updateSupply() {
       const paramsSupply = {
         code: 'eosio.token',
-        scope: 'TLOS',
+        scope: chain.getSymbol(),
         table: 'stat'
       } as GetTableRowsParams;
       supply.value = assetToAmount(
@@ -214,7 +218,7 @@ div
       .col-md-4.col-sm-12.col-xs-12(v-if="accountValid")
         q-card(flat).full-height.card-gradient
           q-card-section.card-gradient
-            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 YOUR AVAILABLE TLOS
+            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{ `YOUR AVAILABLE ${symbol}` }}
             .row.full-width.justify-center.text-h5 {{ balance }}
             .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{account}}
           q-separator(color="primary" size="2px")
