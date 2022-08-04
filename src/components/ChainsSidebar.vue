@@ -5,18 +5,17 @@ q-drawer(
   @mouseover="miniState = false"
   @mouseout="miniState = true"
   mini-to-overlay
-  :width="200"
+  :width="175"
   :breakpoint="500"
   bordered
 )
   q-scroll-area.fit
     q-list
       template( v-for="(chain, index) in getAllChains()" :key="index" )
-        q-item(clickable v-ripple @click="chainSelected(chain)")
-          q-item-section(avatar)
+        q-item(clickable v-ripple @click="chainSelected(chain)" :class="{ selected: isSelected(chain) }")
           q-avatar
-            img( :src="chain.getSmallLogoPath()" )
-          q-item-section
+            img( :src="chain.getSmallLogoPath()" ).sidebar-logo
+          q-item-section.margin-left
             div {{ chain.getDisplay() }}
 </template>
 
@@ -36,23 +35,36 @@ export default {
         return configMgr.getAllChains();
       },
       chainSelected(chain: Chain) {
-        if (
-          localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) ===
-          chain.getName()
-        ) {
+        if (this.isSelected(chain)) {
           return;
         }
-
         // TODO: maybe we can reload vue store and boot files instead of full reload?
         localStorage.setItem(
           ConfigManager.CHAIN_LOCAL_STORAGE,
           chain.getName()
         );
         location.reload();
+      },
+      isSelected(chain: Chain): boolean {
+        return (
+          localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) ===
+          chain.getName()
+        );
       }
     };
   }
 };
 </script>
 
-<style lang="sass"></style>
+<style lang="sass" scoped>
+.margin-left
+  margin-left: .5rem
+.q-item
+  &:hover, &.selected
+    background-color: var(--q-color-sidebar-selected)
+  padding-left: 4px
+  padding-top: 4px
+.sidebar-logo
+  height: 35px !important
+  width: 35px !important
+</style>

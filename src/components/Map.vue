@@ -478,7 +478,7 @@ div(id="producerPopup" ref="producerPopup" class="ol-popup")
   content: "✖"
 
 .owner-text
-  color: #071A5F
+  color: var(--q-secondary)
   font-family: Actor
   font-size: 13px
   font-weight: 400
@@ -487,7 +487,7 @@ div(id="producerPopup" ref="producerPopup" class="ol-popup")
   text-align: center
 
 .country-text
-  color: #071A5F
+  color: var(--q-secondary)
   font-family: Roboto
   font-size: 10px
   font-weight: 400
