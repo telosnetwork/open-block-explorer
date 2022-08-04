@@ -60,4 +60,8 @@ export default class TelosTestnet extends BaseChain {
   getSymbol(): string {
     return SYMBOL;
   }
+
+  getUsdPrice(): Promise<number> {
+    return Promise.resolve(0);
+  }
 }

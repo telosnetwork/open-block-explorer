@@ -8,12 +8,12 @@ import { AccountDetails, Token } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain = getChain();
-const symbol = chain.getSymbol();
 
 export default defineComponent({
   name: 'StakingInfo',
   setup() {
     const store = useStore();
+    const symbol = ref<string>(chain.getSymbol());
     const stakingAccount = ref<string>('');
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);
@@ -46,7 +46,8 @@ export default defineComponent({
       rexInfo,
       coreRexBalance,
       maturedRex,
-      rexSavings
+      rexSavings,
+      symbol
     };
   }
 });

@@ -7,7 +7,6 @@ import { useRoute } from 'vue-router';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain = getChain();
-const symbol = chain.getSymbol();
 
 const MAX_VOTE_PRODUCERS = 30;
 
@@ -25,6 +24,7 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
     const query = route.query;
+    const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
     const currentVote = computed(() => {
       let votes = store.state.account.vote;
@@ -117,7 +117,8 @@ export default defineComponent({
       pagination,
       updateVote,
       producerPay,
-      isTop21
+      isTop21,
+      symbol
     };
   }
 });

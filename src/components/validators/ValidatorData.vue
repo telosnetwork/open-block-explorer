@@ -10,7 +10,6 @@ import { useRoute } from 'vue-router';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain = getChain();
-const symbol = chain.getSymbol();
 
 export default defineComponent({
   name: 'Validator',
@@ -23,6 +22,7 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
     const query = route.query;
+    const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
     const balance = computed(
       () => store.state.account.data?.account?.core_liquid_balance || 0
@@ -175,7 +175,8 @@ export default defineComponent({
       amount_voted,
       votesProgress,
       balance,
-      showWalletModal
+      showWalletModal,
+      symbol
     };
   }
 });

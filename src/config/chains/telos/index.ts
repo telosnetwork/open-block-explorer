@@ -15,9 +15,11 @@
 
 import BaseChain from '../../BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
-import { getCoingeckoPriceChartData } from 'src/api/price';
+import {
+  getCoingeckoPriceChartData,
+  getCoingeckoUsdPrice
+} from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
-import axios from "axios";
 
 const CHAIN_ID =
   '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11';
@@ -62,8 +64,6 @@ export default class Telos extends BaseChain {
   }
 
   getUsdPrice(): Promise<number> {
-    await axios.get(exchangeStatsUrl)).data.telos
-      .usd;
-    return Promise.resolve(0);
+    return getCoingeckoUsdPrice('telos');
   }
 }

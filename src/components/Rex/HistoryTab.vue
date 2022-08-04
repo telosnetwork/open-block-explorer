@@ -11,6 +11,7 @@ export default defineComponent({
   components: {},
   setup() {
     const store = useStore();
+    const symbol = chain.getSymbol();
     const rexActions = computed((): Action[] => store.state.account.rexActions);
 
     function formatDate(date: string): string {
@@ -24,7 +25,8 @@ export default defineComponent({
     return {
       store,
       rexActions,
-      formatDate
+      formatDate,
+      symbol
     };
   }
 });
