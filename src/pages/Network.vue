@@ -40,9 +40,17 @@ div.row
       .col-12
         Map
       
-  .col-12.map-data-position
+  .col-12.map-data-position(v-if="displayMap" :class="{'overlap-map' : displayMap}")
     MapData(:mobile="true")
-  PriceChart.price-box-position
+  PriceChart.price-box-position(:class="{'overlap-map' : displayMap}")
   TransactionsTable
 
 </template>
+
+<style lang="sass">
+.overlap-map
+  &.map-data-position
+    margin-top: -200px
+  &.price-box-position
+    margin-top: -100px
+</style>
