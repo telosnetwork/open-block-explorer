@@ -46,5 +46,8 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setABI(state: AccountStateInterface, abi: ABI) {
     state.abi = abi;
+  },
+  setTlosRexRatio(state: AccountStateInterface, ratio: number) {
+    state.tlosRexRatio = ratio;
   }
 };

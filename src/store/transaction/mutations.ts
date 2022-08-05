@@ -4,9 +4,9 @@ import { ActionData } from 'src/types';
 
 export const mutations: MutationTree<TransactionStateInterface> = {
   setTransaction(state: TransactionStateInterface, transaction: ActionData) {
-    state.transaction = transaction;
-    state.executed = transaction.executed;
-    if (transaction.actions.length > 0) {
+    if (transaction && transaction.actions && transaction.actions.length > 0) {
+      state.transaction = transaction;
+      state.executed = transaction.executed || false;
       const action = transaction.actions[0];
       state.blockNum = action.block_num;
       state.timestamp = action.timestamp;
@@ -15,6 +15,9 @@ export const mutations: MutationTree<TransactionStateInterface> = {
       state.actionCount = transaction.actions.length;
       state.irreversable = transaction.lib > action.block_num;
       state.actions = transaction.actions;
+      state.transactionFound = true;
+    } else {
+      state.transactionFound = false;
     }
   },
   setTransactionId(state: TransactionStateInterface, transactionId: string) {
@@ -40,5 +43,8 @@ export const mutations: MutationTree<TransactionStateInterface> = {
   },
   setIrreversable(state: TransactionStateInterface, irreversable: boolean) {
     state.irreversable = irreversable;
+  },
+  setTransactionFounde(state: TransactionStateInterface, found: boolean) {
+    state.transactionFound = found;
   }
 };
