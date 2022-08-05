@@ -121,7 +121,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
     } catch (e) {
@@ -171,7 +171,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -235,7 +235,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -274,7 +274,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -313,7 +313,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -357,7 +357,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -393,7 +393,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
