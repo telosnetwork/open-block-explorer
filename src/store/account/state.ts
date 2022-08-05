@@ -18,6 +18,7 @@ export interface AccountStateInterface {
   maturingRex: string;
   maturedRex: string;
   savingsRex: string;
+  tlosRexRatio: number;
 }
 
 export function state(): AccountStateInterface {
@@ -38,6 +39,7 @@ export function state(): AccountStateInterface {
     coreRexBalance: '0 TLOS',
     maturingRex: '0 TLOS',
     maturedRex: '0 TLOS',
-    savingsRex: '0 TLOS'
+    savingsRex: '0 TLOS',
+    tlosRexRatio: 1
   };
 }
