@@ -1,9 +1,9 @@
 <script lang="ts">
 import { setCssVar } from 'quasar';
 import ConfigManager from 'src/config/ConfigManager';
-import { themeProps } from './types/Theme';
+import { Theme, themeProps } from './types/Theme';
 
-const theme = ConfigManager.get().getCurrentChain().getTheme();
+const theme = ConfigManager.get().getCurrentChain().getTheme() as Theme;
 
 setTheme();
 
