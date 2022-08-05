@@ -17,13 +17,22 @@ function setTheme(): void {
 }
 
 function setMetaData(): void {
-  var link = document.querySelector("link[rel~='icon']");
+  setFavIcon();
+  setTitle();
+}
+
+function setFavIcon(): void {
+  let link = document.querySelector("link[rel~='icon']");
   if (!link) {
     link = document.createElement('link');
     (link as HTMLLinkElement).rel = 'icon';
     document.getElementsByTagName('head')[0].appendChild(link);
   }
   (link as HTMLLinkElement).href = `chains/${chainName}/favicon.png`;
+}
+
+function setTitle(): void {
+  document.title = chainName;
 }
 
 export default {
