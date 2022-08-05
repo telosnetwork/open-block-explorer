@@ -4,9 +4,9 @@ import { ActionData } from 'src/types';
 
 export const mutations: MutationTree<TransactionStateInterface> = {
   setTransaction(state: TransactionStateInterface, transaction: ActionData) {
-    state.transaction = transaction;
-    state.executed = transaction ? transaction.executed || false : false;
     if (transaction && transaction.actions && transaction.actions.length > 0) {
+      state.transaction = transaction;
+      state.executed = transaction.executed || false;
       const action = transaction.actions[0];
       state.blockNum = action.block_num;
       state.timestamp = action.timestamp;
