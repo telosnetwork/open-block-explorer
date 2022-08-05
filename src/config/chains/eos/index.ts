@@ -5,7 +5,6 @@ import {
   getCoingeckoUsdPrice
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
-import { theme } from 'highcharts';
 
 const CHAIN_ID =
   'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
