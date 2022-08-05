@@ -33,6 +33,7 @@ const RPC_ENDPOINT = {
   port: 443
 };
 const DISPLAY_MAP = true;
+const THEME = {};
 
 export default class TelosTestnet extends BaseChain {
   getChainId(): string {
@@ -77,5 +78,9 @@ export default class TelosTestnet extends BaseChain {
 
   getMapDisplay(): boolean {
     return DISPLAY_MAP;
+  }
+
+  getTheme(): Theme {
+    return THEME;
   }
 }

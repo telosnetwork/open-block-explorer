@@ -1,9 +1,8 @@
 <script lang="ts">
-import { /*colors,*/ getCssVar, setCssVar } from 'quasar';
-import { getChain } from 'src/config/ConfigManager';
-// import variables from 'telos-testnet.scss';
+import { setCssVar } from 'quasar';
+import ConfigManager from 'src/config/ConfigManager';
 
-const quasarThemeVars: string[] = [
+const themeVars: string[] = [
   'primary',
   'secondary',
   'accent',
@@ -11,10 +10,7 @@ const quasarThemeVars: string[] = [
   'positive',
   'negative',
   'info',
-  'warning'
-];
-
-const customThemeVars: string[] = [
+  'warning',
   'color-primary-gradient',
   'color-secondary-gradient',
   'color-tertiary-gradient',
@@ -23,18 +19,13 @@ const customThemeVars: string[] = [
   'color-select-box-background'
 ];
 
-const chainName = getChain().getName();
+const theme = ConfigManager.get().getCurrentChain().getTheme();
 
 setTheme();
 
 function setTheme(): void {
-  for (var themeVar of quasarThemeVars) {
-    let themeVal = getCssVar(`color-${themeVar}-${chainName}`) || '';
-    setCssVar(themeVar, themeVal);
-  }
-  for (var themeVar of customThemeVars) {
-    let themeVal = getCssVar(`${themeVar}-${chainName}`) || '';
-    setCssVar(themeVar, themeVal);
+  for (var themeVar of themeVars) {
+    if (theme[themeVar]) setCssVar(themeVar, theme[themeVar]);
   }
 }
 

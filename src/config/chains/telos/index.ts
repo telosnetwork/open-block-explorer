@@ -20,6 +20,7 @@ import {
   getCoingeckoUsdPrice
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
+import { theme } from 'highcharts';
 
 const CHAIN_ID =
   '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11';
@@ -34,6 +35,26 @@ const RPC_ENDPOINT = {
 };
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
+const THEME = {
+  primary: '#571aff',
+  secondary: '#071A5F',
+  accent: '#9C27B0',
+  dark: '#1d1d1d',
+  positive: '#21BA45',
+  negative: '#ff0000',
+  info: '#31CCEC',
+  warning: '#F2C037',
+  'color-map': '#4325c2',
+  'color-primary-gradient': 'linear-gradient(90deg, #071A5F 0%, #571AFF 100%)',
+  'color-secondary-gradient':
+    'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
+  'color-tertiary-gradient':
+    'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
+  'color-progress-gradient':
+    'linear-gradient(90deg, #571AFF 0%, #A088F9 48.44%, #CBCAF5 100%)',
+  'color-producer-card-background': '#f5f4fe',
+  'color-select-box-background': '#e0dffb'
+};
 
 export default class Telos extends BaseChain {
   getChainId(): string {
@@ -78,5 +99,9 @@ export default class Telos extends BaseChain {
 
   getMapDisplay(): boolean {
     return DISPLAY_MAP;
+  }
+
+  getTheme(): Theme {
+    return THEME;
   }
 }

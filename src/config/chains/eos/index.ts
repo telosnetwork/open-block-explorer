@@ -5,6 +5,7 @@ import {
   getCoingeckoUsdPrice
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
+import { theme } from 'highcharts';
 
 const CHAIN_ID =
   'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
@@ -19,6 +20,9 @@ const RPC_ENDPOINT = {
 };
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
+const THEME = {
+  'color-map': '#d1d1d1'
+};
 
 export default class EOS extends BaseChain {
   getChainId(): string {
@@ -63,5 +67,9 @@ export default class EOS extends BaseChain {
 
   getMapDisplay(): boolean {
     return DISPLAY_MAP;
+  }
+
+  getTheme(): Theme {
+    return THEME;
   }
 }

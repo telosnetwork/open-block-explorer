@@ -14,4 +14,5 @@ export interface Chain {
   getPriceData(): Promise<PriceChartData>;
   getUsdPrice(): Promise<number>;
   getMapDisplay(): boolean;
+  getTheme(): Theme;
 }
