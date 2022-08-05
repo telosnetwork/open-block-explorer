@@ -46,7 +46,7 @@ export default class EOS extends BaseChain {
   }
 
   getPriceData(): Promise<PriceChartData> {
-    return getCoingeckoPriceChartData('eos');
+    return getCoingeckoPriceChartData('wax');
   }
 
   getSymbol(): string {
@@ -54,7 +54,7 @@ export default class EOS extends BaseChain {
   }
 
   getUsdPrice(): Promise<number> {
-    return getCoingeckoUsdPrice('eos');
+    return getCoingeckoUsdPrice('wax');
   }
 
   getLargeLogoPath(): string {
