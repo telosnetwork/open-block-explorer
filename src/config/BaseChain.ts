@@ -1,6 +1,7 @@
 import { Chain } from '../types/Chain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
+import { Theme } from 'src/types/Theme';
 
 export default abstract class BaseChain implements Chain {
   protected name: string;

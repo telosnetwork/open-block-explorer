@@ -20,6 +20,7 @@ import BaseChain from '../../BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { getEmptyPriceChartData } from 'src/api/price';
+import { Theme } from 'src/types/Theme';
 
 const CHAIN_ID =
   '1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f';
