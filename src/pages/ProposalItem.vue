@@ -7,15 +7,16 @@ div(:style="isLoading ? '' : 'max-height: 12rem;'").full-width.row.justify-cente
     h1.text-h4.text-white.q-ma-none Proposal {{proposalName}}
     p.text-caption.text-white.text-uppercase.q-mt-xs(:style="{opacity:'0.5'}").
       PROPOSER <router-link :to="'/account/' + proposer" class="text-white cursor-pointer">{{proposer}}</router-link> • APPROVAL STATUS {{approvalStatus}} • EXPIRATION {{expirationDate}}
-    div
-      q-badge(v-if="isExecuted" color="green" label="EXECUTED")
-      q-badge(v-if="!isShowApproveButton && !isShowExecuteButton && !isShowCancelButton" color="orange" label="NOT EXECUTED")
+    div.q-mb-lg
+      q-badge(v-if="isExecuted && !isCanceled" color="green" label="EXECUTED")
+      q-badge(v-if="!isExecuted && !isCanceled" color="orange" label="NOT EXECUTED")
       q-badge(v-if="isCanceled" color="red" label="CANCELED")
 
     div.row.q-gutter-sm.justify-center.items-center
-      q-btn(v-if="isShowApproveButton" outline padding="sm md" color="white" text-color="white" label="Approve" @click="onApprove")
       q-btn(v-if="isShowExecuteButton" outline padding="sm md" color="white" text-color="white" label="Execute" @click="onExecute")
       q-btn(v-if="isShowCancelButton" outline padding="sm md" color="white" text-color="white" label="Cancel" @click="onCancel")
+      q-btn(v-if="isShowApproveButton" outline padding="sm md" color="white" text-color="white" label="Approve" @click="onApprove")
+      q-btn(v-if="isShowUnapproveButton" outline padding="sm md" color="white" text-color="white" label="Unapprove" @click="onUnapprove")
 
 q-page(v-if="!isLoading" padding)
   h2.text-h6.text-weight-regular Multisig Transaction
@@ -110,7 +111,6 @@ export default defineComponent({
     const approvalStatus = ref('');
     const expirationDate = ref('');
 
-    const hasOneApproval = ref(false);
     const hasUserAlreadyApproved = ref(false);
     const isExecuted = ref(false);
     const isCanceled = ref(false);
@@ -162,6 +162,16 @@ export default defineComponent({
       );
     });
 
+    const isShowUnapproveButton = computed(() => {
+      return (
+        isAuthenticated.value &&
+        hasUserAlreadyApproved.value &&
+        !hasProposalAlreadyExpired.value &&
+        !isExecuted.value &&
+        !isCanceled.value
+      );
+    });
+
     const isShowExecuteButton = computed(() => {
       return (
         isAuthenticated.value &&
@@ -169,7 +179,6 @@ export default defineComponent({
         (account.value === proposer.value ||
           isUserApprovalList.value ||
           hasUserAlreadyApproved.value) &&
-        hasOneApproval.value &&
         !isExecuted.value &&
         !isCanceled.value
       );
@@ -226,27 +235,45 @@ export default defineComponent({
       }));
     }
 
+    async function loadProposal() {
+      try {
+        const { proposals } = await api.getProposals({
+          proposal: proposalName as string,
+          limit: 1
+        });
+
+        return proposals[0];
+      } catch (e) {
+        handleError(e, 'Proposal not found');
+        await router.push('/proposal');
+      }
+    }
+
     async function handleMultsigTransaction(proposal: Proposal) {
       let action;
       let actionSkip = 0;
       const actionLimit = 100;
 
       while (typeof action === 'undefined') {
-        const { actions } = await api.getActions(
-          proposal.proposer,
-          'eosio.msig:propose',
-          actionLimit,
-          actionSkip
-        );
+        try {
+          const { actions } = await api.getActions(
+            proposal.proposer,
+            'eosio.msig:propose',
+            actionLimit,
+            actionSkip
+          );
 
-        [action] = actions.filter((action) => {
-          const { proposal_name } = action.act.data as {
-            proposal_name: string;
-          };
-          return proposal_name === proposal.proposal_name;
-        });
+          [action] = actions.filter((action) => {
+            const { proposal_name } = action.act.data as {
+              proposal_name: string;
+            };
+            return proposal_name === proposal.proposal_name;
+          });
 
-        actionSkip += actionLimit;
+          actionSkip += actionLimit;
+        } catch (error) {
+          console.log(error);
+        }
       }
 
       const { trx } = action.act.data as {
@@ -298,56 +325,45 @@ export default defineComponent({
     }
 
     onMounted(async () => {
-      try {
-        const {
-          proposals: [proposal]
-        } = await api.getProposals({
-          proposal: proposalName as string,
-          limit: 1
-        });
+      const proposal = await loadProposal();
 
-        if (typeof proposal === 'undefined') {
-          await router.push('/proposal');
-        }
-
-        proposer.value = proposal.proposer;
-        approvalStatus.value = `${proposal.provided_approvals.length}/${
-          proposal.provided_approvals.length +
-          proposal.requested_approvals.length
-        }`;
-        hasOneApproval.value = proposal.provided_approvals.length > 0;
-        isExecuted.value = proposal.executed;
-        hasUserAlreadyApproved.value = proposal.provided_approvals.some(
-          (item) => item.actor === account.value
-        );
-        isUserApprovalList.value = proposal.requested_approvals.some(
-          (item) => item.actor === account.value
-        );
-
-        requestedApprovalsRows.value = handleRequestedApprovals(proposal);
-        multsigTransactionData.value = await handleMultsigTransaction(proposal);
-
-        const transactions = await handleTransactionHistory(proposal.block_num);
-        transactionHistoryData.value = transactions;
-
-        isCanceled.value = transactions.some(
-          (item) =>
-            item[0].act.account === 'eosio.msig' &&
-            item[0].act.name === 'cancel'
-        );
-      } catch (e) {
-        handleError(e, 'Proposal not found');
+      if (typeof proposal === 'undefined') {
+        handleError(null, 'Proposal not found');
         await router.push('/proposal');
-      } finally {
-        isLoading.value = false;
+        return;
       }
+
+      proposer.value = proposal.proposer;
+      approvalStatus.value = `${proposal.provided_approvals.length}/${
+        proposal.provided_approvals.length + proposal.requested_approvals.length
+      }`;
+      isExecuted.value = proposal.executed;
+      hasUserAlreadyApproved.value = proposal.provided_approvals.some(
+        (item) => item.actor === account.value
+      );
+      isUserApprovalList.value = proposal.requested_approvals.some(
+        (item) => item.actor === account.value
+      );
+
+      requestedApprovalsRows.value = handleRequestedApprovals(proposal);
+      multsigTransactionData.value = await handleMultsigTransaction(proposal);
+
+      const transactions = await handleTransactionHistory(proposal.block_num);
+      transactionHistoryData.value = transactions;
+
+      isCanceled.value = transactions.some(
+        (item) =>
+          item[0].act.account === 'eosio.msig' && item[0].act.name === 'cancel'
+      );
+
+      isLoading.value = false;
     });
 
     async function signTransaction({
       name,
       data
     }: {
-      name: 'approve' | 'cancel' | 'exec' | 'invalidate';
+      name: 'approve' | 'unapprove' | 'cancel' | 'exec';
       data: unknown;
     }) {
       const user = await getUser();
@@ -381,6 +397,27 @@ export default defineComponent({
       try {
         await signTransaction({
           name: 'approve',
+          data: {
+            proposer: proposer.value,
+            proposal_name: proposalName,
+            level: {
+              actor: account.value,
+              permission: 'active'
+            }
+          }
+        });
+
+        document.location.reload();
+      } catch (e) {
+        console.log(e);
+        handleError(e, 'Unable approve proposal');
+      }
+    }
+
+    async function onUnapprove() {
+      try {
+        await signTransaction({
+          name: 'unapprove',
           data: {
             proposer: proposer.value,
             proposal_name: proposalName,
@@ -442,6 +479,7 @@ export default defineComponent({
       expirationDate,
 
       isShowApproveButton,
+      isShowUnapproveButton,
       isShowExecuteButton,
       isShowCancelButton,
       isExecuted,
@@ -453,6 +491,7 @@ export default defineComponent({
       transactionHistoryData,
 
       onApprove,
+      onUnapprove,
       onExecute,
       onCancel
     };
