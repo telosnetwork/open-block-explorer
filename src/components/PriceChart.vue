@@ -6,6 +6,7 @@ import exportingInit from 'highcharts/modules/exporting';
 import { DateTuple } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { PriceChartData } from 'src/types/PriceChartData';
+import { getCssVar } from 'quasar';
 
 const chain = getChain();
 
@@ -77,7 +78,7 @@ export default defineComponent({
         series: [
           {
             name: chain.getSymbol(),
-            color: '#571AFF',
+            color: getCssVar('primary'),
             data: [] as DateTuple[]
           }
         ],

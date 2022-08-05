@@ -25,6 +25,7 @@ export const themeProps: (keyof Theme)[] = [
   'negative',
   'info',
   'warning',
+  'color-map',
   'color-primary-gradient',
   'color-secondary-gradient',
   'color-tertiary-gradient',

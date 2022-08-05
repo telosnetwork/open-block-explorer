@@ -17,9 +17,7 @@ const RPC_ENDPOINT = {
 };
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
-const THEME = {
-  'color-map': '#d1d1d1'
-};
+const THEME = {};
 
 export default class UX extends BaseChain {
   getChainId(): string {
