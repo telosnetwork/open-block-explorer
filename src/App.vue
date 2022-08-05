@@ -1,30 +1,14 @@
 <script lang="ts">
 import { setCssVar } from 'quasar';
 import ConfigManager from 'src/config/ConfigManager';
+import { Theme, themeProps } from './types/Theme';
 
-const themeVars: string[] = [
-  'primary',
-  'secondary',
-  'accent',
-  'dark',
-  'positive',
-  'negative',
-  'info',
-  'warning',
-  'color-primary-gradient',
-  'color-secondary-gradient',
-  'color-tertiary-gradient',
-  'color-progress-gradient',
-  'color-producer-card-background',
-  'color-select-box-background'
-];
-
-const theme = ConfigManager.get().getCurrentChain().getTheme();
+const theme = ConfigManager.get().getCurrentChain().getTheme() as Theme;
 
 setTheme();
 
 function setTheme(): void {
-  for (var themeVar of themeVars) {
+  for (var themeVar of themeProps) {
     if (theme[themeVar]) setCssVar(themeVar, theme[themeVar]);
   }
 }
