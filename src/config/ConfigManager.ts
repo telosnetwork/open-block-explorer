@@ -61,6 +61,14 @@ export default class ConfigManager {
     return this.mainnets.concat(this.testnets);
   }
 
+  public getMainnets(): Chain[] {
+    return this.mainnets;
+  }
+
+  public getTestnets(): Chain[] {
+    return this.testnets;
+  }
+
   private findChain(chainName: string) {
     const fromMainnet = this.mainnets.find((c) => c.getName() === chainName);
     if (fromMainnet) return fromMainnet;

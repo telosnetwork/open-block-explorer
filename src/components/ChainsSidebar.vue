@@ -11,7 +11,14 @@ q-drawer(
 )
   q-scroll-area.fit
     q-list
-      template( v-for="(chain, index) in getAllChains()" :key="index" )
+      template( v-for="(chain, index) in getMainnets()" :key="index" )
+        q-item(clickable v-ripple @click="chainSelected(chain)" :class="{ selected: isSelected(chain) }")
+          q-avatar
+            img( :src="chain.getSmallLogoPath()" ).sidebar-logo
+          q-item-section.margin-left
+            div {{ chain.getDisplay() }}
+      q-separator.separator
+      template( v-for="(chain, index) in getTestnets()" :key="index" )
         q-item(clickable v-ripple @click="chainSelected(chain)" :class="{ selected: isSelected(chain) }")
           q-avatar
             img( :src="chain.getSmallLogoPath()" ).sidebar-logo
@@ -33,6 +40,12 @@ export default {
       miniState: ref(true),
       getAllChains: () => {
         return configMgr.getAllChains();
+      },
+      getMainnets: () => {
+        return configMgr.getMainnets();
+      },
+      getTestnets: () => {
+        return configMgr.getTestnets();
       },
       chainSelected(chain: Chain) {
         if (this.isSelected(chain)) {
@@ -64,6 +77,14 @@ export default {
     background-color: var(--q-color-sidebar-selected)
   padding-left: 4px
   padding-top: 4px
+.separator
+  margin-top: .5rem
+  margin-bottom: .5rem
+  margin-left: 5px
+  min-height: 5px
+  min-width: 0
+  width: calc(100% - 10px)
+  background: var(--q-color-sidebar-selected)
 .sidebar-logo
   height: 35px !important
   width: 35px !important
