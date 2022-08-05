@@ -11,6 +11,7 @@ export interface TransactionStateInterface {
   actionCount: number;
   irreversable: boolean;
   actions: Action[];
+  transactionFound: boolean;
 }
 
 export function state(): TransactionStateInterface {
@@ -24,6 +25,7 @@ export function state(): TransactionStateInterface {
     netUsage: 0,
     actionCount: 0,
     irreversable: false,
-    actions: [] as Action[]
+    actions: [] as Action[],
+    transactionFound: true
   };
 }

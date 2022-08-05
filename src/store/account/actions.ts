@@ -69,26 +69,26 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         : 0;
     const totalRex = Number(rexpool.total_rex.split(' ')[0]);
     const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
-    const rexTlosRatio = totalRex > 0 ? totalLendable / totalRex : 1;
-    const coreBalance =
-      totalRex > 0 ? (totalLendable / totalRex) * rexBalance : 0;
+    const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
+    commit('setTlosRexRatio', tlosRexRatio);
+    const coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0;
 
     const maturingRex = rexbal
       ? rexbal.rex_maturities &&
         rexbal.rex_maturities[0] &&
         rexbal.rex_maturities[0].second &&
-        rexTlosRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
+        tlosRexRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
       : 0;
 
     const savingsRex = rexbal
       ? rexbal.rex_maturities &&
         rexbal.rex_maturities[1] &&
         rexbal.rex_maturities[1].second &&
-        rexTlosRatio * (Number(rexbal.rex_maturities[1].second) / 10000)
+        tlosRexRatio * (Number(rexbal.rex_maturities[1].second) / 10000)
       : 0;
 
     const maturedRex = rexbal
-      ? rexTlosRatio * (Number(rexbal.matured_rex) / 10000)
+      ? tlosRexRatio * (Number(rexbal.matured_rex) / 10000)
       : 0;
     if (rexbalRows.rows.length > 0) {
       commit('setRexbal', {
@@ -126,7 +126,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
     } catch (e) {
@@ -176,7 +176,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -195,12 +195,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const authenticators = ual().getAuthenticators().availableAuthenticators;
     const user = (await authenticators[0].login())[0];
     const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
-    const accountInfo = state.data.account.rex_info;
-    const totalRex = state.data.account.rex_info
-      ? Number(accountInfo.rex_balance.split(' ')[0])
-      : 0;
-    const portionToUnstake = Number(amount) / tokenRexBalance;
-    const rexToUnstake = (totalRex * portionToUnstake).toFixed(4);
+    const rexToUnstake = (Number(amount) / state.tlosRexRatio).toFixed(4);
 
     //   TODO check maturities
     const actions = [
@@ -240,7 +235,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -279,7 +274,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -318,7 +313,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -362,7 +357,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -398,7 +393,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
