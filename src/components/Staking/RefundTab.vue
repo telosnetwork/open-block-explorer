@@ -112,16 +112,12 @@ export default defineComponent({
         owner: this.accountData.account.account_name,
         transfer: false
       };
-      const authenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const users = await authenticators[0].login();
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
           await this.signTransaction({
             account: 'eosio',
             name: 'refund',
-            user: users[0],
             data
           })
         ).transactionId as string;
@@ -165,7 +161,7 @@ export default defineComponent({
           .row
             .col-7 {{refundCountdown()}}
             .col-5.text-right.text-weight-bold
-              q-linear-progress( :value="refundProgress()" :buffer="buffer" color="grey-3" class="q-mt-sm")
+              q-linear-progress( :value="refundProgress()" :buffer="0.5" color="grey-3" class="q-mt-sm")
           .row.q-pt-sm
             .col-7.q-pt-sm Refund
               q-icon(class="q-ml-xs" name="far fa-question-circle")

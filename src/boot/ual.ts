@@ -1,11 +1,12 @@
 import { boot } from 'quasar/wrappers';
-import { Authenticator, UAL } from 'universal-authenticator-library';
+import { Authenticator, UAL, User } from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
 import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $ual: UAL;
+    $user: User;
   }
 }
 
@@ -23,9 +24,14 @@ export default boot(({ app }) => {
   };
 
   function loginHandler() {
-    // TODO: dialog prompt for what account they want to login with
+    let accountName = '';
+    if (localStorage.getItem('autoLogin') === 'cleos') {
+      accountName = localStorage.getItem('account');
+    } else {
+      accountName = prompt('Input you account name', '');
+    }
     return {
-      accountName: 'eosio',
+      accountName,
       permission: 'active'
     };
   }
