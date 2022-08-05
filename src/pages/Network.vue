@@ -22,7 +22,7 @@ export default defineComponent({
     onMounted(() => {
       window.setInterval(() => {
         void store.dispatch('chain/updateBlockData');
-      }, 500);
+      }, 2000);
     });
     const displayMap = ConfigManager.get().getCurrentChain().getMapDisplay();
 
