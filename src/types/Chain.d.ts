@@ -13,4 +13,5 @@ export interface Chain {
   getS3ProducerBucket(): string;
   getPriceData(): Promise<PriceChartData>;
   getUsdPrice(): Promise<number>;
+  getMapDisplay(): boolean;
 }

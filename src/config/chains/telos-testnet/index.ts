@@ -32,6 +32,8 @@ const RPC_ENDPOINT = {
   host: 'testnet.telos.net',
   port: 443
 };
+const DISPLAY_MAP = false;
+
 export default class TelosTestnet extends BaseChain {
   getChainId(): string {
     return CHAIN_ID;
@@ -71,5 +73,9 @@ export default class TelosTestnet extends BaseChain {
 
   getSmallLogoPath(): string {
     return 'chains/telos/tlos.png';
+  }
+
+  getMapDisplay(): boolean {
+    return DISPLAY_MAP;
   }
 }

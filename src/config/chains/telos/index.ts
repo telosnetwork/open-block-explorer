@@ -33,6 +33,7 @@ const RPC_ENDPOINT = {
   port: 443
 };
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
+const DISPLAY_MAP = true;
 
 export default class Telos extends BaseChain {
   getChainId(): string {
@@ -73,5 +74,9 @@ export default class Telos extends BaseChain {
 
   getSmallLogoPath(): string {
     return 'chains/telos/tlos.png';
+  }
+
+  getMapDisplay(): boolean {
+    return DISPLAY_MAP;
   }
 }

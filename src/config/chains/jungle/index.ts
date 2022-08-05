@@ -32,6 +32,8 @@ const RPC_ENDPOINT = {
   host: 'jungle.eosusa.news',
   port: 443
 };
+const DISPLAY_MAP = true;
+
 export default class TelosTestnet extends BaseChain {
   getChainId(): string {
     return CHAIN_ID;
@@ -71,5 +73,9 @@ export default class TelosTestnet extends BaseChain {
 
   getSmallLogoPath(): string {
     return 'chains/eos/eos.png';
+  }
+
+  getMapDisplay(): boolean {
+    return DISPLAY_MAP;
   }
 }
