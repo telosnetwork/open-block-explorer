@@ -20,6 +20,9 @@ import { mapActions } from 'vuex';
 import { BP } from 'src/types';
 import { useStore } from 'src/store';
 import VectorImageLayer from 'ol/layer/VectorImage';
+import { getCssVar } from 'quasar';
+
+
 
 // Map core style
 const style = new Style({
@@ -30,10 +33,10 @@ const style = new Style({
     radius: 5
   }),
   fill: new Fill({
-    color: '#4325c2'
+    color: getCssVar('color-map')
   }),
   stroke: new Stroke({
-    color: '#4325c2',
+    color: getCssVar('color-map'),
     width: 1
   }),
   zIndex: 50
