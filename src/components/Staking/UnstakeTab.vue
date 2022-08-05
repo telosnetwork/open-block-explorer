@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
+import { isValidAccount } from 'src/utils/stringValidator';
 
 export default defineComponent({
   name: 'UnstakeTab',
@@ -63,7 +64,8 @@ export default defineComponent({
       transactionError: null,
       formatDec,
       netStake: assetToAmount(netStake.value),
-      cpuStake: assetToAmount(cpuStake.value)
+      cpuStake: assetToAmount(cpuStake.value),
+      isValidAccount
     };
   },
   methods: {
@@ -81,16 +83,12 @@ export default defineComponent({
           String(parseFloat(this.netTokens).toFixed(4)) + String(' TLOS'),
         transfer: false
       };
-      const authenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const users = await authenticators[0].login();
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
           await this.signTransaction({
             account: 'eosio',
             name: 'undelegatebw',
-            user: users[0],
             data
           })
         ).transactionId as string;
