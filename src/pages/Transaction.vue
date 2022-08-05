@@ -31,7 +31,8 @@ export default defineComponent({
       tab,
       transaction: route.params.transaction,
       actionCount: computed(() => store.state.transaction.actionCount),
-      jsonTransaction: computed(() => store.state.transaction.transaction)
+      jsonTransaction: computed(() => store.state.transaction.transaction),
+      found: computed(() => store.state.transaction.transactionFound),
     };
   },
   components: {
@@ -46,7 +47,14 @@ export default defineComponent({
 <template lang="pug">
 div.row
   .col-12.gradient-box
-    TransactionCard.q-pa-lg
+    TransactionCard.q-pa-lg(v-if='found')
+    .q-pa-lg(v-else)
+      .row.full-width.justify-center
+        .col-xs-12.col-md-8.col-lg-6
+          q-card(flat class="transaction-card")
+            .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
+              q-card-section.q-pl-md
+                div(class="text-h4 text-bold") Transaction not found.
     .q-pt-lg
       q-tabs(
         v-model="tab" 
@@ -90,6 +98,7 @@ div.row
             boxed
             copyable
             sort)
+    
 </template>
 
 <style scoped lang="sass">
