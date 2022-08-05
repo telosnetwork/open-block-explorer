@@ -1,5 +1,6 @@
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
+import { Theme } from 'src/types/Theme';
 
 export interface Chain {
   getName(): string;
