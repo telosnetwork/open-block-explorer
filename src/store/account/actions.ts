@@ -5,7 +5,6 @@ import { AccountStateInterface } from './state';
 import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
-import { ual } from 'src/boot/ualapi';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain = getChain();
@@ -140,8 +139,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async stakeRex({ commit, state }, { amount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
     const actions = [
       {
@@ -196,14 +193,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (tokenRexBalance === 0) {
       return;
     }
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
-    const accountInfo = state.data.account.rex_info;
-    const totalRex = state.data.account.rex_info
-      ? Number(accountInfo.rex_balance.split(' ')[0])
-      : 0;
-    const portionToUnstake = Number(amount) / tokenRexBalance;
     const rexToUnstake = (Number(amount) / state.tlosRexRatio).toFixed(4);
 
     //   TODO check maturities
@@ -254,8 +244,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async stakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
     const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
     const actions = [
@@ -293,8 +281,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async unstakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    await authenticators[0].login();
     const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
     const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
     const actions = [
