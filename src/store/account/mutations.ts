@@ -1,6 +1,8 @@
 import { MutationTree } from 'vuex';
 import { AccountStateInterface } from './state';
 import { AccountDetails, Action, Rexbal, ABI } from 'src/types';
+import { User } from 'universal-authenticator-library';
+import { markRaw } from 'vue';
 
 import { getChain } from 'src/config/ConfigManager';
 
@@ -9,6 +11,9 @@ const symbol = getChain().getSymbol();
 export const mutations: MutationTree<AccountStateInterface> = {
   setLoadingWallet(state: AccountStateInterface, wallet: string) {
     state.loading = wallet;
+  },
+  setUser(state: AccountStateInterface, user: User) {
+    state.user = user ? markRaw(user) : user;
   },
   setAccountName(state: AccountStateInterface, accountName: string) {
     state.accountName = accountName;
@@ -50,5 +55,8 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setABI(state: AccountStateInterface, abi: ABI) {
     state.abi = abi;
+  },
+  setTlosRexRatio(state: AccountStateInterface, ratio: number) {
+    state.tlosRexRatio = ratio;
   }
 };

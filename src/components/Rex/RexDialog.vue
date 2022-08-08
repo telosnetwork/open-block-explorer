@@ -67,14 +67,10 @@ export default defineComponent({
         quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
         memo: this.memo
       };
-      const authenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const users = await authenticators[0].login();
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
           await this.signTransaction({
-            user: users[0],
             account: actionAccount,
             data,
             name: 'transfer'

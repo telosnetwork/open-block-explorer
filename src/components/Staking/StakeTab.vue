@@ -5,6 +5,7 @@ import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { isValidAccount } from 'src/utils/stringValidator';
 
 const chain = getChain();
 const symbol = chain.getSymbol();
@@ -63,7 +64,8 @@ export default defineComponent({
       transactionId: ref<string>(null),
       transactionError: null,
       formatDec,
-      accountTotal: assetToAmount(accountTotal.value)
+      accountTotal: assetToAmount(accountTotal.value),
+      isValidAccount
     };
   },
   methods: {
@@ -84,16 +86,12 @@ export default defineComponent({
         )} ${symbol}`,
         transfer: false
       };
-      const authenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const users = await authenticators[0].login();
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
           await this.signTransaction({
             account: 'eosio',
             name: 'delegatebw',
-            user: users[0],
             data
           })
         ).transactionId as string;

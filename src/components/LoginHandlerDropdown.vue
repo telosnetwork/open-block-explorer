@@ -17,7 +17,8 @@ export default defineComponent({
   },
   methods: {
     ...mapMutations({
-      setAccountName: 'account/setAccountName'
+      setAccountName: 'account/setAccountName',
+      setUser: 'account/setUser'
     }),
     ...mapActions({ logout: 'account/logout' }),
     getAuthenticator() {
@@ -47,6 +48,7 @@ export default defineComponent({
       // TODO: only remove what is related to login, localStorage has other uses
       localStorage.clear();
       this.setAccountName('');
+      this.setUser(null);
     }
   }
 });
