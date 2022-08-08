@@ -20,10 +20,9 @@ export default class ConfigManager {
   private init(): void {
     const showSidebar = process.env.SHOW_SIDEBAR;
     const configuredChain = process.env.CHAIN_NAME;
+    this.testnets = chainsConfig.testnets;
+    this.mainnets = chainsConfig.mainnets;
     if (showSidebar) {
-      this.testnets = chainsConfig.testnets;
-      this.mainnets = chainsConfig.mainnets;
-
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       const userConfiguredChain = this.getSelectedChain();
 
@@ -70,6 +69,7 @@ export default class ConfigManager {
   }
 
   private findChain(chainName: string) {
+    debugger;
     const fromMainnet = this.mainnets.find((c) => c.getName() === chainName);
     if (fromMainnet) return fromMainnet;
 
