@@ -1,10 +1,15 @@
 import { MutationTree } from 'vuex';
 import { AccountStateInterface } from './state';
 import { AccountDetails, Action, Rexbal, ABI } from 'src/types';
+import { User } from 'universal-authenticator-library';
+import { markRaw } from 'vue';
 
 export const mutations: MutationTree<AccountStateInterface> = {
   setLoadingWallet(state: AccountStateInterface, wallet: string) {
     state.loading = wallet;
+  },
+  setUser(state: AccountStateInterface, user: User) {
+    state.user = user ? markRaw(user) : user;
   },
   setAccountName(state: AccountStateInterface, accountName: string) {
     state.accountName = accountName;

@@ -1,11 +1,10 @@
-import { Authenticator, User } from 'universal-authenticator-library';
+import { Authenticator } from 'universal-authenticator-library';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AccountStateInterface } from './state';
 import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
-import { ual } from 'src/boot/ualapi';
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {
@@ -27,12 +26,17 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (users.length) {
       const account = users[0];
       const accountName = await account.getAccountName();
+      commit('setUser', account);
       commit('setAccountName', accountName);
       localStorage.setItem(
         'autoLogin',
         (authenticator as Authenticator).constructor.name
       );
       localStorage.setItem('account', accountName);
+      localStorage.setItem(
+        'autoLogin',
+        (authenticator as Authenticator).getName()
+      );
       localStorage.setItem('returning', 'true');
       commit('setLoadingWallet');
     }
@@ -99,7 +103,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const rexActions = (await api.getActions(account, filter)).actions;
     commit('setRexActions', rexActions);
   },
-  async sendTransaction({}, { user, account, data, name }) {
+  async sendTransaction({ state }, { account, data, name }) {
     let transaction = null;
     const actions = [
       {
@@ -107,7 +111,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: name as string,
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -115,7 +119,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await (user as User).signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
@@ -131,8 +135,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async stakeRex({ commit, state }, { amount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
     const actions = [
       {
@@ -140,7 +142,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'deposit',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -154,7 +156,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'buyrex',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -165,7 +167,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
@@ -187,8 +189,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (tokenRexBalance === 0) {
       return;
     }
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
     const rexToUnstake = (Number(amount) / state.tlosRexRatio).toFixed(4);
 
@@ -199,7 +199,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'sellrex',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -213,7 +213,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'withdraw',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -224,7 +224,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
@@ -240,8 +240,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async stakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} TLOS`;
     const quantityStrNET = `${Number(netAmount).toFixed(4)} TLOS`;
     const actions = [
@@ -250,7 +248,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'unstaketorex',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -263,7 +261,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
@@ -279,8 +277,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async unstakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} TLOS`;
     const quantityStrNET = `${Number(netAmount).toFixed(4)} TLOS`;
     const actions = [
@@ -289,7 +285,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'stakefromrex',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -302,7 +298,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
@@ -329,8 +325,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     { action, actor, permission, data }
   ) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const actions = [
       {
         account: state.abi.account_name,
@@ -346,7 +340,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
@@ -362,15 +356,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async sendVoteTransaction({ commit, state }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const actions = [
       {
         account: 'eosio',
         name: 'voteproducer',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -382,7 +374,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },

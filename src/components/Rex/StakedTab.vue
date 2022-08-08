@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
 
@@ -91,7 +90,6 @@ export default defineComponent({
       netTokens,
       cpuWithdraw,
       netWithdraw,
-      ...mapActions({ signTransaction: 'account/sendTransaction' }),
       transactionId,
       transactionError,
       formatDec,

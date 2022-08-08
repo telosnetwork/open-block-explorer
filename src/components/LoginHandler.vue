@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import LoginHandlerDropdown from './LoginHandlerDropdown.vue';
 import WalletModal from './WalletModal.vue';
+import { Authenticator } from 'universal-authenticator-library';
 
 export default defineComponent({
   name: 'LoginHandler',
@@ -17,6 +18,11 @@ export default defineComponent({
     const storedAccount = localStorage.getItem('account');
     if (storedAccount) {
       this.setAccountName(storedAccount);
+      const ualName = localStorage.getItem('autoLogin');
+      const ual: Authenticator = this.$ual
+        .getAuthenticators()
+        .availableAuthenticators.find((a) => a.getName() === ualName);
+      void this.login({ account: storedAccount, authenticator: ual });
     }
   },
   computed: {
@@ -25,6 +31,9 @@ export default defineComponent({
   methods: {
     ...mapMutations({
       setAccountName: 'account/setAccountName'
+    }),
+    ...mapActions({
+      login: 'account/login'
     })
   }
 });
