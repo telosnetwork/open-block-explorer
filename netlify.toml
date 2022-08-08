@@ -20,8 +20,8 @@
   NETWORK_EVM_CHAIN_ID = "40"
   HYPERION_ENDPOINT = "https://mainnet.telos.net"
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
-  # SHOW_SIDEBAR=true
-  CHAIN_NAME=telos
+  # SHOW_SIDEBAR = "true"
+  CHAIN_NAME = "telos"
 
 [context.develop.environment]
   APP_NAME = "Telos Testnet Block Explorer"
@@ -36,8 +36,8 @@
   NETWORK_EVM_CHAIN_ID = "41"
   HYPERION_ENDPOINT = "https://testnet.telos.net"
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
-  # SHOW_SIDEBAR=true
-  CHAIN_NAME=telos
+  # SHOW_SIDEBAR = "true"
+  CHAIN_NAME = "telos"
   
 [context.deploy-preview.environment]
   APP_NAME = "Telos Block Explorer"
@@ -52,5 +52,5 @@
   NETWORK_EVM_CHAIN_ID = "40"
   HYPERION_ENDPOINT = "https://mainnet.telos.net"
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
-  # SHOW_SIDEBAR=true
-  CHAIN_NAME=telos
+  # SHOW_SIDEBAR = "true"
+  CHAIN_NAME = "telos"
