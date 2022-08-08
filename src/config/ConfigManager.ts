@@ -69,7 +69,6 @@ export default class ConfigManager {
   }
 
   private findChain(chainName: string) {
-    debugger;
     const fromMainnet = this.mainnets.find((c) => c.getName() === chainName);
     if (fromMainnet) return fromMainnet;
 
