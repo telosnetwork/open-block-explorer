@@ -90,14 +90,6 @@ export default boot(({ app }) => {
   }
 
   async function signHandler(trx: string) {
-    // TODO: dialog prompt with cleos command for this transaction
-    /*
-    cleos -u https://telos.greymass.com push transaction '{
-      "delay_sec": 0,
-      "max_cpu_usage_ms": 0,
-      "actions": []
-      }'
-     */
     const trxJSON: string = JSON.stringify(
       Object.assign(
         {
