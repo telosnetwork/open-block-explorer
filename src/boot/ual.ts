@@ -30,7 +30,6 @@ export default boot(({ app }) => {
     if (localStorage.getItem('autoLogin') === 'cleos') {
       accountName = localStorage.getItem('account');
     } else {
-      //accountName = prompt('Input you account name', '');
       await new Promise((resolve) => {
         Dialog.create({
           color: 'primary',
@@ -38,7 +37,7 @@ export default boot(({ app }) => {
           message: 'Account name',
           prompt: {
             model: '',
-            type: 'text' // optional
+            type: 'text'
           },
           cancel: true,
           persistent: true
@@ -47,8 +46,7 @@ export default boot(({ app }) => {
             accountName = data != '' ? data : 'eosio';
           })
           .onCancel(() => {
-            //console.log('>>>> Cancel');
-            throw 'Canceled!';
+            throw 'Cancelled!';
           })
           .onDismiss(() => {
             resolve(true);
@@ -62,7 +60,6 @@ export default boot(({ app }) => {
           options: {
             type: 'radio',
             model: [],
-            // inline: true
             items: [
               { label: 'Active', value: 'active' },
               { label: 'Owner', value: 'owner' }
@@ -75,8 +72,7 @@ export default boot(({ app }) => {
             permission = data;
           })
           .onCancel(() => {
-            //console.log('>>>> Cancel');
-            throw 'Canceled!';
+            throw 'Cancelled!';
           })
           .onDismiss(() => {
             resolve(true);
@@ -113,7 +109,6 @@ export default boot(({ app }) => {
         }
       })
         .onOk(() => {
-          // console.log('OK')
           copyToClipboard(
             `cleos -u https://${process.env.NETWORK_HOST} push transaction '${trxJSON}`
           )
@@ -135,7 +130,7 @@ export default boot(({ app }) => {
             });
         })
         .onCancel(() => {
-          //console.log('>>>> Cancel');
+          throw 'Cancelled!';
         })
         .onDismiss(() => {
           resolve(true);
