@@ -5,6 +5,10 @@ import { Token } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
 
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+
 export default defineComponent({
   name: 'SendDialog',
   components: {
@@ -13,7 +17,7 @@ export default defineComponent({
   data() {
     return {
       sendToken: {
-        symbol: 'TLOS',
+        symbol: chain.getSymbol(),
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
@@ -89,7 +93,7 @@ export default defineComponent({
     resetForm() {
       this.transactionId = null;
       this.sendToken = {
-        symbol: 'TLOS',
+        symbol: chain.getSymbol(),
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
@@ -197,7 +201,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
   border-radius: 4px
   height: 40px
   margin-top: 1px
-  color: $dark
+  color: var(--q-dark)
   &:hover
     background: rgba($grey-4, 0.3)
     border-color: $grey-1

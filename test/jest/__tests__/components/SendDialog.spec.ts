@@ -14,7 +14,9 @@ import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-j
 import { mount } from '@vue/test-utils';
 import SendDialog from 'src/components/SendDialog.vue';
 import { Token } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
 
+const chain = getChain();
 installQuasarPlugin();
 
 const getAuthenticators = jest.fn();
@@ -43,7 +45,7 @@ const storeMock = Object.freeze({
 });
 
 const defaultToken = {
-  symbol: 'TLOS',
+  symbol: chain.getSymbol(),
   precision: 4,
   amount: 0,
   contract: 'eosio.token'
@@ -98,7 +100,7 @@ describe('SendDialog', () => {
       });
       it('sets available balance of default system token if available', () => {
         const mockToken = {
-          symbol: 'TLOS',
+          symbol: chain.getSymbol(),
           precision: 4,
           amount: 99,
           contract: 'mock.token'

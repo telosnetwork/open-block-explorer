@@ -1,6 +1,6 @@
 export interface PriceStats {
   data: {
-    telos: {
+    [tokenId: string]: {
       last_updated_at: number;
       usd: number;
       usd_24h_change: number;

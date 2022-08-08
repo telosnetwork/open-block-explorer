@@ -6,6 +6,7 @@ import TransactionsTable from 'components/TransactionsTable.vue';
 import Map from 'components/Map.vue';
 import MapData from 'components/MapData.vue';
 import { useStore } from 'src/store';
+import ConfigManager from 'src/config/ConfigManager';
 
 export default defineComponent({
   name: 'PageIndex',
@@ -23,22 +24,33 @@ export default defineComponent({
         void store.dispatch('chain/updateBlockData');
       }, 500);
     });
+    const displayMap = ConfigManager.get().getCurrentChain().getMapDisplay();
 
-    return {};
+    return {
+      displayMap
+    };
   }
 });
 </script>
 
 <template lang="pug">
 div.row
-  .col-12
+  .col-12(v-if="displayMap")
     .row.gradient-box.justify-center
       .col-12
         Map
       
-  .col-12.map-data-position
+  .col-12.map-data-position(v-if="displayMap" :class="{'overlap-map' : displayMap}")
     MapData(:mobile="true")
-  PriceChart.price-box-position
+  PriceChart.price-box-position(:class="{'overlap-map' : displayMap}")
   TransactionsTable
 
 </template>
+
+<style lang="sass">
+.overlap-map
+  &.map-data-position
+    margin-top: -200px
+  &.price-box-position
+    margin-top: -100px
+</style>
