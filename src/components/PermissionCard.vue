@@ -68,7 +68,7 @@ div(v-if="permission" )
 <style lang="sass" scoped>
 .hover-dec
   text-decoration: none
-  color: $dark
+  color: var(--q-dark)
   &:hover
     text-decoration: underline
 

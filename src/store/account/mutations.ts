@@ -1,10 +1,19 @@
 import { MutationTree } from 'vuex';
 import { AccountStateInterface } from './state';
 import { AccountDetails, Action, Rexbal, ABI } from 'src/types';
+import { User } from 'universal-authenticator-library';
+import { markRaw } from 'vue';
+
+import { getChain } from 'src/config/ConfigManager';
+
+const symbol = getChain().getSymbol();
 
 export const mutations: MutationTree<AccountStateInterface> = {
   setLoadingWallet(state: AccountStateInterface, wallet: string) {
     state.loading = wallet;
+  },
+  setUser(state: AccountStateInterface, user: User) {
+    state.user = user ? markRaw(user) : user;
   },
   setAccountName(state: AccountStateInterface, accountName: string) {
     state.accountName = accountName;
@@ -36,15 +45,18 @@ export const mutations: MutationTree<AccountStateInterface> = {
     }
   ) {
     state.rexbal = params.rexbal;
-    state.coreRexBalance = params.coreBalance.toFixed(4) + ' TLOS';
-    state.maturedRex = params.maturedRex.toFixed(4) + ' TLOS';
-    state.maturingRex = params.maturingRex.toFixed(4) + ' TLOS';
-    state.savingsRex = params.savingsRex.toFixed(4) + ' TLOS';
+    state.coreRexBalance = `${params.coreBalance.toFixed(4)} ${symbol}`;
+    state.maturedRex = `${params.maturedRex.toFixed(4)} ${symbol}`;
+    state.maturingRex = `${params.maturingRex.toFixed(4)} ${symbol}`;
+    state.savingsRex = `${params.savingsRex.toFixed(4)} ${symbol}`;
   },
   setVote(state: AccountStateInterface, vote: string[]) {
     state.vote = vote.sort();
   },
   setABI(state: AccountStateInterface, abi: ABI) {
     state.abi = abi;
+  },
+  setTlosRexRatio(state: AccountStateInterface, ratio: number) {
+    state.tlosRexRatio = ratio;
   }
 };

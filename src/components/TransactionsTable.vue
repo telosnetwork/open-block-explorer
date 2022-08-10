@@ -235,13 +235,13 @@ body
     border: 0.1rem solid rgba(196, 196, 196, 0.3)
 
 .memo-card
-  background: $gradient-3
+  background: var(--q-color-tertiary-gradient)
   border-radius: 3px
   flex-grow: 1
   display: flex
   .memo-card-title
     padding: 0.5rem
-    background: $gradient-3
+    background: var(--q-color-tertiary-gradient)
     font-weight: bold
     flex-shrink: 0
     display: flex

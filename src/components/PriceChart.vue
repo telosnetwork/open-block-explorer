@@ -3,16 +3,15 @@ import { defineComponent } from 'vue';
 import { Chart } from 'highcharts-vue';
 import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
-import axios from 'axios';
-import { PriceStats, PriceHistory, DateTuple } from 'src/types';
+import { DateTuple } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
+import { PriceChartData } from 'src/types/PriceChartData';
+import { getCssVar } from 'quasar';
+
+const chain = getChain();
 
 const ONE_MILLION = 1000000;
 const ONE_BILLION = 1000000000;
-
-export const exchangeStatsUrl =
-  'https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true';
-const priceHistoryUrl =
-  'https://api.coingecko.com/api/v3/coins/telos/market_chart?vs_currency=USD&days=1&interval=hourly';
 
 exportingInit(Highcharts);
 export default defineComponent({
@@ -78,8 +77,8 @@ export default defineComponent({
         },
         series: [
           {
-            name: 'TLOS',
-            color: '#571AFF',
+            name: chain.getSymbol(),
+            color: getCssVar('primary'),
             data: [] as DateTuple[]
           }
         ],
@@ -98,24 +97,18 @@ export default defineComponent({
     };
   },
   async mounted() {
-    await this.setExchangeStats();
-    await this.setPriceHistory();
+    await this.fetchPriceChartData();
   },
 
   methods: {
-    async setExchangeStats() {
-      const priceStats: PriceStats = await axios.get(exchangeStatsUrl);
-      this.lastUpdated = priceStats.data.telos.last_updated_at;
-      this.tokenPrice = this.formatCurrencyValue(priceStats.data.telos.usd);
-      this.dayChange = this.formatPercentage(
-        priceStats.data.telos.usd_24h_change
-      );
-      this.dayVolume = this.formatCurrencyValue(
-        priceStats.data.telos.usd_24h_vol
-      );
-      this.marketCap = this.formatCurrencyValue(
-        priceStats.data.telos.usd_market_cap
-      );
+    async fetchPriceChartData() {
+      const data: PriceChartData = await chain.getPriceData();
+      this.lastUpdated = data.lastUpdated;
+      this.tokenPrice = this.formatCurrencyValue(data.tokenPrice);
+      this.dayChange = this.formatPercentage(data.dayChange);
+      this.dayVolume = this.formatCurrencyValue(data.dayVolume);
+      this.marketCap = this.formatCurrencyValue(data.marketCap);
+      this.chartOptions.series[0].data = data.prices;
     },
     formatPercentage(val: number): string {
       return `${val.toFixed(2)} %`;
@@ -126,10 +119,6 @@ export default defineComponent({
         : val < ONE_BILLION
         ? `$${(val / ONE_MILLION).toFixed(2)}M`
         : `$${(val / ONE_BILLION).toFixed(2)}B`;
-    },
-    async setPriceHistory() {
-      const priceHistory: PriceHistory = await axios.get(priceHistoryUrl);
-      this.chartOptions.series[0].data = priceHistory.data.prices;
     }
   }
 });
@@ -153,7 +142,7 @@ div.row.col-12.justify-center.actor-font(align="center")
             div.col-12.flex.row
                 div.col-6.chart-info
                     p 24H CHANGE
-                    p.sub-title {{ dayChange  }} 
+                    p.sub-title {{ dayChange  }}
                 div.col-6.chart-info
                     p 24H VOLUME
                     p.sub-title {{ dayVolume }}
@@ -169,7 +158,7 @@ $medium:750px
 .border-line
     width: 19px
     height: 2px
-    background: $primary
+    background: var(--q-primary)
     border-radius: 4px
     @media screen and (max-width: $medium) // screen < $medium
         width: 156px !important
@@ -195,7 +184,7 @@ $medium:750px
     font-weight: normal
     font-size: 22.75px
     line-height: 27px
-    color: $primary
+    color: var(--q-primary)
     backdrop-filter: blur(14px)
 
 .highcharts-figure,

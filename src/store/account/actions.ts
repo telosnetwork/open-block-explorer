@@ -1,11 +1,14 @@
-import { Authenticator, User } from 'universal-authenticator-library';
+import { Authenticator } from 'universal-authenticator-library';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AccountStateInterface } from './state';
 import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
-import { ual } from 'src/boot/ualapi';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+const symbol = chain.getSymbol();
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {
@@ -27,12 +30,17 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (users.length) {
       const account = users[0];
       const accountName = await account.getAccountName();
+      commit('setUser', account);
       commit('setAccountName', accountName);
       localStorage.setItem(
         'autoLogin',
         (authenticator as Authenticator).constructor.name
       );
       localStorage.setItem('account', accountName);
+      localStorage.setItem(
+        'autoLogin',
+        (authenticator as Authenticator).getName()
+      );
       localStorage.setItem('returning', 'true');
       commit('setLoadingWallet');
     }
@@ -64,26 +72,26 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         : 0;
     const totalRex = Number(rexpool.total_rex.split(' ')[0]);
     const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
-    const rexTlosRatio = totalRex > 0 ? totalLendable / totalRex : 1;
-    const coreBalance =
-      totalRex > 0 ? (totalLendable / totalRex) * rexBalance : 0;
+    const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
+    commit('setTlosRexRatio', tlosRexRatio);
+    const coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0;
 
     const maturingRex = rexbal
       ? rexbal.rex_maturities &&
         rexbal.rex_maturities[0] &&
         rexbal.rex_maturities[0].second &&
-        rexTlosRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
+        tlosRexRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
       : 0;
 
     const savingsRex = rexbal
       ? rexbal.rex_maturities &&
         rexbal.rex_maturities[1] &&
         rexbal.rex_maturities[1].second &&
-        rexTlosRatio * (Number(rexbal.rex_maturities[1].second) / 10000)
+        tlosRexRatio * (Number(rexbal.rex_maturities[1].second) / 10000)
       : 0;
 
     const maturedRex = rexbal
-      ? rexTlosRatio * (Number(rexbal.matured_rex) / 10000)
+      ? tlosRexRatio * (Number(rexbal.matured_rex) / 10000)
       : 0;
     if (rexbalRows.rows.length > 0) {
       commit('setRexbal', {
@@ -99,7 +107,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const rexActions = (await api.getActions(account, filter)).actions;
     commit('setRexActions', rexActions);
   },
-  async sendTransaction({}, { user, account, data, name }) {
+  async sendTransaction({ state }, { account, data, name }) {
     let transaction = null;
     const actions = [
       {
@@ -107,7 +115,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: name as string,
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -115,13 +123,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await (user as User).signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
     } catch (e) {
@@ -131,16 +139,14 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async stakeRex({ commit, state }, { amount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
-    const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
+    const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',
         name: 'deposit',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -154,7 +160,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'buyrex',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -165,13 +171,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -187,15 +193,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (tokenRexBalance === 0) {
       return;
     }
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
-    const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
-    const accountInfo = state.data.account.rex_info;
-    const totalRex = state.data.account.rex_info
-      ? Number(accountInfo.rex_balance.split(' ')[0])
-      : 0;
-    const portionToUnstake = Number(amount) / tokenRexBalance;
-    const rexToUnstake = (totalRex * portionToUnstake).toFixed(4);
+    const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
+    const rexToUnstake = (Number(amount) / state.tlosRexRatio).toFixed(4);
 
     //   TODO check maturities
     const actions = [
@@ -204,7 +203,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'sellrex',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -218,7 +217,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         name: 'withdraw',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -229,13 +228,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -245,17 +244,15 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async stakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
-    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} TLOS`;
-    const quantityStrNET = `${Number(netAmount).toFixed(4)} TLOS`;
+    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
+    const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',
         name: 'unstaketorex',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -268,13 +265,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -284,17 +281,15 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async unstakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
-    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} TLOS`;
-    const quantityStrNET = `${Number(netAmount).toFixed(4)} TLOS`;
+    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
+    const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',
         name: 'stakefromrex',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -307,13 +302,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -334,8 +329,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     { action, actor, permission, data }
   ) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const actions = [
       {
         account: state.abi.account_name,
@@ -351,13 +344,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);
@@ -367,15 +360,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async sendVoteTransaction({ commit, state }) {
     let transaction = null;
-    const authenticators = ual().getAuthenticators().availableAuthenticators;
-    const user = (await authenticators[0].login())[0];
     const actions = [
       {
         account: 'eosio',
         name: 'voteproducer',
         authorization: [
           {
-            actor: this.state.account.accountName,
+            actor: state.accountName,
             permission: 'active'
           }
         ],
@@ -387,13 +378,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ];
     try {
-      transaction = await user.signTransaction(
+      transaction = await state.user.signTransaction(
         {
           actions
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
+          expireSeconds: 180
         }
       );
       commit('setTransaction', transaction.transactionId);

@@ -4,6 +4,11 @@ import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
+import { isValidAccount } from 'src/utils/stringValidator';
+
+const chain = getChain();
+const symbol = chain.getSymbol();
 
 export default defineComponent({
   name: 'StakeTab',
@@ -59,7 +64,8 @@ export default defineComponent({
       transactionId: ref<string>(null),
       transactionError: null,
       formatDec,
-      accountTotal: assetToAmount(accountTotal.value)
+      accountTotal: assetToAmount(accountTotal.value),
+      isValidAccount
     };
   },
   methods: {
@@ -71,22 +77,21 @@ export default defineComponent({
       const data = {
         from: this.stakingAccount.toLowerCase(),
         receiver: this.stakingAccount.toLowerCase(),
-        stake_cpu_quantity:
-          String(parseFloat(this.cpuTokens).toFixed(4)) + String(' TLOS'),
-        stake_net_quantity:
-          String(parseFloat(this.netTokens).toFixed(4)) + String(' TLOS'),
+        stake_cpu_quantity: `${parseFloat(this.cpuTokens).toFixed(
+          4
+        )} ${symbol}`,
+
+        stake_net_quantity: `${parseFloat(this.netTokens).toFixed(
+          4
+        )} ${symbol}`,
         transfer: false
       };
-      const authenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const users = await authenticators[0].login();
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
           await this.signTransaction({
             account: 'eosio',
             name: 'delegatebw',
-            user: users[0],
             data
           })
         ).transactionId as string;

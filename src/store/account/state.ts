@@ -1,8 +1,13 @@
 import { Authorization, AccountDetails, Action, Rexbal, ABI } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
+import { User } from 'universal-authenticator-library';
+
+const chain = getChain();
 
 export interface AccountStateInterface {
   loading: unknown;
   accountName: string;
+  user: User;
   autoLogin: unknown;
   isAuthenticated: boolean;
   linkedAccounts: Array<unknown>;
@@ -18,12 +23,14 @@ export interface AccountStateInterface {
   maturingRex: string;
   maturedRex: string;
   savingsRex: string;
+  tlosRexRatio: number;
 }
 
 export function state(): AccountStateInterface {
   return {
     loading: false,
     accountName: '',
+    user: null,
     autoLogin: null,
     isAuthenticated: false,
     linkedAccounts: [],
@@ -35,9 +42,10 @@ export function state(): AccountStateInterface {
     rexbal: {} as Rexbal,
     vote: [],
     abi: { abi: null } as ABI,
-    coreRexBalance: '0 TLOS',
-    maturingRex: '0 TLOS',
-    maturedRex: '0 TLOS',
-    savingsRex: '0 TLOS'
+    coreRexBalance: `0 ${chain.getSymbol()}`,
+    maturingRex: `0 ${chain.getSymbol()}`,
+    maturedRex: `0 ${chain.getSymbol()}`,
+    savingsRex: `0 ${chain.getSymbol()}`,
+    tlosRexRatio: 1
   };
 }

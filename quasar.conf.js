@@ -10,7 +10,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { info } = require('console');
 const { configure } = require('quasar/wrappers');
-const envparsers = require('./config/envparser');
+const envparsers = require('./src/config/envparser');
 
 module.exports = configure(function (ctx) {
   return {
@@ -30,7 +30,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: ['axios', 'api', 'ual'],
+    boot: ['config', 'axios', 'api', 'ual'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.sass'],
@@ -126,7 +126,8 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'Dialog'
       ]
     },
 

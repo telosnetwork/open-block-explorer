@@ -3,6 +3,7 @@ import { useQuasar } from 'quasar';
 import { defineComponent, PropType, computed, ref } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { Numeric } from 'eosjs';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
   name: 'KeyAccountsCard',
@@ -17,9 +18,12 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const chain = getChain();
     const Key = ref(props.pubkey);
     const Accounts = computed(() => props.accounts);
     const $q = useQuasar();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    const tokenLogo = computed(() => require(chain.getSmallLogoPath()));
     function copy(value: string) {
       copyToClipboard(value)
         .then((): void => {
@@ -52,7 +56,8 @@ export default defineComponent({
       Key,
       Accounts,
       copy,
-      toggleKey
+      toggleKey,
+      tokenLogo
     };
   }
 });
@@ -66,9 +71,9 @@ export default defineComponent({
 				q-card-section
 					.row
 						.col-auto.q-gutter-sm
-							img.logo-tlos(src="~assets/tlos.png")
+							img.logo-token(:src="require(tokenLogo)")
 						.col-auto
-						.text-h6.q-pl-sm TELOS Accounts 
+						.text-h6.q-pl-sm TELOS Accounts
 				q-separator(inset)
 				q-card-section
 					.row.q-pb-md
@@ -87,7 +92,7 @@ export default defineComponent({
 </template>
 
 <style lang="sass" scoped>
-.logo-tlos
+.logo-token
 	width: 28px
 	height: 28px
 .hover-dec
