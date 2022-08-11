@@ -198,7 +198,6 @@ import ProposalAction from 'components/ProposalAction.vue';
 import { Authorization, ProposalForm, Error } from 'src/types';
 import { api } from 'src/api';
 import { useAuthenticator } from 'src/composables/useAuthenticator';
-import { serializeActionData } from 'src/utils/serializeActionData';
 import { randomEosioName } from 'src/utils/handleEosioName';
 import { useQuasar } from 'quasar';
 
@@ -324,11 +323,11 @@ export default defineComponent({
             data: unknown;
           };
 
-          const hexData = await serializeActionData({
-            account: item.account,
-            name: item.name,
-            data: item.data
-          });
+          const hexData = await api.serializeActionData(
+            item.account,
+            item.name,
+            item.data
+          );
 
           data.trx.actions[i].data = hexData;
         }

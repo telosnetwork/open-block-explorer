@@ -29,7 +29,8 @@ q-page(v-if="!isLoading" padding)
       default-opened
     )
       template(v-slot:header)
-        span.text-h6.text-weight-regular {{(multsigTransactionItem.account)}} - {{multsigTransactionItem.name}}
+        span(v-if="multsigTransactionItem.account === 'eosio' && multsigTransactionItem.name === 'setcode'").text-h6.text-weight-regular {{multsigTransactionItem.account}} - {{multsigTransactionItem.name}} SHA: {{ getShaForCode(multsigTransactionItem.data.code.array) }}
+        span(v-else).text-h6.text-weight-regular {{multsigTransactionItem.account}} - {{multsigTransactionItem.name}}
       json-viewer(
         :value="multsigTransactionItem"
         :expand-depth="5"
@@ -90,7 +91,7 @@ import moment from 'moment';
 import { api } from 'src/api';
 import { useAuthenticator } from 'src/composables/useAuthenticator';
 import { RequestedApprovals, Error, Proposal } from 'src/types';
-import { deserializeActionData } from 'src/utils/deserializeActionData';
+import sha256 from 'fast-sha256';
 
 export default defineComponent({
   name: 'ProposalItem',
@@ -298,11 +299,11 @@ export default defineComponent({
           return action;
         }
 
-        const data = await deserializeActionData({
-          account: action.account,
-          name: action.name,
-          hexData: action.data as string
-        });
+        const data = await api.deserializeActionData(
+          action.account,
+          action.name,
+          action.data as string
+        );
 
         return {
           ...action,
@@ -469,6 +470,11 @@ export default defineComponent({
       }
     }
 
+    function getShaForCode(code: Uint8Array): string {
+      const sha: Uint8Array = sha256(code);
+      return Buffer.from(sha).toString('hex');
+    }
+
     return {
       isLoading,
       account,
@@ -493,7 +499,9 @@ export default defineComponent({
       onApprove,
       onUnapprove,
       onExecute,
-      onCancel
+      onCancel,
+
+      getShaForCode
     };
   }
 });
