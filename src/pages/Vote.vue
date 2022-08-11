@@ -11,7 +11,7 @@ export default defineComponent({
       await store.dispatch('chain/updateBpList');
       window.setInterval(() => {
         void store.dispatch('chain/updateBlockData');
-      }, 500);
+      }, 2000);
     });
   }
 });

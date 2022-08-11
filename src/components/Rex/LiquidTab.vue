@@ -3,6 +3,9 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
 
 export default defineComponent({
   name: 'LiquidTab',
@@ -14,6 +17,7 @@ export default defineComponent({
     let openTransaction = ref<boolean>(false);
     const lendTokens = ref<string>('0.0000');
     const withdrawTokens = ref<string>('0.0000');
+    const symbol = ref<string>(chain.getSymbol());
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
@@ -106,7 +110,8 @@ export default defineComponent({
       accountData,
       rexInfo,
       rexbal,
-      maturedRex
+      maturedRex,
+      symbol
     };
   }
 });
@@ -119,7 +124,7 @@ export default defineComponent({
       .col-xs-12.col-sm-12.col-md-6
         .row
           .row.q-pb-sm.full-width
-            .col-8 LIQUID TLOS TO LEND
+            .col-8 {{ `LIQUID ${symbol} TO LEND` }}
             .col-4.text-weight-bold.text-right {{accountData.account.core_liquid_balance}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="lendTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
@@ -127,7 +132,7 @@ export default defineComponent({
       .col-xs-12.col-sm-12.col-md-6
         .row
           .row.q-pb-sm.full-width
-            .col-8 LIQUID TLOS TO WITHDRAW
+            .col-8 {{ `LIQUID ${symbol} TO WITHDRAW` }}
             .col-4.text-weight-bold.text-right {{maturedRex}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="withdrawTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row

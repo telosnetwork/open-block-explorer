@@ -75,7 +75,7 @@ hr
   width: 50%
   border-size: 0.5rem
   border : 0px
-  border-top: 2px solid $primary
+  border-top: 2px solid var(--q-primary)
   margin-left: 1rem
   margin-right: 1rem
 .hr-vertical
@@ -84,7 +84,7 @@ hr
   height: 100%
   border-size: 0.5rem
   border : 0px
-  border-right: 2px solid $primary
+  border-right: 2px solid var(--q-primary)
   margin-left: 1rem
   margin-right: 1rem
   margin-top: -0.1rem

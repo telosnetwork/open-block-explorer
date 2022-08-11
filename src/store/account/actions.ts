@@ -5,6 +5,10 @@ import { AccountStateInterface } from './state';
 import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+const symbol = chain.getSymbol();
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {
@@ -135,7 +139,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async stakeRex({ commit, state }, { amount }) {
     let transaction = null;
-    const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
+    const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',
@@ -189,7 +193,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     if (tokenRexBalance === 0) {
       return;
     }
-    const quantityStr = `${Number(amount).toFixed(4)} TLOS`;
+    const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
     const rexToUnstake = (Number(amount) / state.tlosRexRatio).toFixed(4);
 
     //   TODO check maturities
@@ -240,8 +244,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async stakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
     let transaction = null;
-    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} TLOS`;
-    const quantityStrNET = `${Number(netAmount).toFixed(4)} TLOS`;
+    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
+    const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',
@@ -277,8 +281,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async unstakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
     let transaction = null;
-    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} TLOS`;
-    const quantityStrNET = `${Number(netAmount).toFixed(4)} TLOS`;
+    const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
+    const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
     const actions = [
       {
         account: 'eosio',

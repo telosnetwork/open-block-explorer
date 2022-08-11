@@ -8,6 +8,10 @@ import StakedTab from './StakedTab.vue';
 import ProcessingTab from './ProcessingTab.vue';
 import LiquidTab from './LiquidTab.vue';
 import HistoryTab from './HistoryTab.vue';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+const symbol = chain.getSymbol();
 
 export default defineComponent({
   name: 'StakingDialog',
@@ -21,7 +25,7 @@ export default defineComponent({
   data() {
     return {
       sendToken: {
-        symbol: 'TLOS',
+        symbol,
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
@@ -90,7 +94,7 @@ export default defineComponent({
       this.transactionId = null;
       this.transactionError = null;
       this.sendToken = {
-        symbol: 'TLOS',
+        symbol,
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
@@ -127,13 +131,13 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
         .row.q-pl-sm
-          img.send-img.q-pr-md( src="~assets/rex.svg" style="height: 60px; max-width: 60px") 
+          img.send-img.q-pr-md( src="~assets/rex.svg" style="height: 60px; max-width: 60px")
           .text-h4.q-pb-md.inline-block.color-grey-3.inline Rex
         .q-pa-sm
           RexInfo
           .q-pt-lg.text-grey-3.text-weight-light
             q-tabs(
-              v-model="tab" 
+              v-model="tab"
               dense class="text-grey"
               indicator-color="grey-3"
               active-color="grey-3"
@@ -142,9 +146,9 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
               :breakpoint="0"
               no-caps
               class="text-grey-5 tab-text")
-              
 
-              q-tab(name="liquid" label="Liquid") 
+
+              q-tab(name="liquid" label="Liquid")
               q-tab(name="staked" label="Staked")
               q-tab(name="processing" label="Processing")
               q-tab(name="history" label="History")
@@ -186,7 +190,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
   border-radius: 4px
   height: 40px
   margin-top: 1px
-  color: $dark
+  color: var(--q-dark)
   &:hover
     background: rgba($grey-4, 0.3)
     border-color: $grey-1

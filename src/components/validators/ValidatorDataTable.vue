@@ -4,6 +4,9 @@ import moment from 'moment';
 import { useStore } from 'src/store';
 import { Producer } from 'src/types';
 import { useRoute } from 'vue-router';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
 
 const MAX_VOTE_PRODUCERS = 30;
 
@@ -21,6 +24,7 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
     const query = route.query;
+    const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
     const currentVote = computed(() => {
       let votes = store.state.account.vote;
@@ -113,7 +117,8 @@ export default defineComponent({
       pagination,
       updateVote,
       producerPay,
-      isTop21
+      isTop21,
+      symbol
     };
   }
 });
@@ -151,7 +156,7 @@ export default defineComponent({
               .col-2.q-py-md
                 .row.items-center.full-height {{ (bp.total_votes / 10000).toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}
               .col-2.q-py-md
-                .row.items-center.full-height {{ ((producerRows.indexOf(bp) + 1) < 22 ? producerPay : (producerRows.indexOf(bp) + 1) < 43 ? producerPay / 2 : 0 ).toFixed(0)  + ' TLOS' }}
+                .row.items-center.full-height {{ ((producerRows.indexOf(bp) + 1) < 22 ? producerPay : (producerRows.indexOf(bp) + 1) < 43 ? producerPay / 2 : 0 ).toFixed(0)  + ` ${symbol}` }}
               .col-1.select-box.q-py-md
                 .row.full-selection.justify-center
                   q-checkbox(v-model="currentVote" :val="bp.owner" @update:model-value="(val)=> updateVote(val)")
@@ -160,9 +165,9 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .producer-card
-  background: $purple-light-1
+  background: var(--q-color-producer-card-background)
 .select-box
-  background: $purple-light-2
+  background: var(--q-color-select-box-background)
 .hover-dec
   text-decoration: none
   &:hover

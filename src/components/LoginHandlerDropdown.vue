@@ -45,6 +45,7 @@ export default defineComponent({
       }
     },
     clearAccount(): void {
+      // TODO: only remove what is related to login, localStorage has other uses
       localStorage.clear();
       this.setAccountName('');
       this.setUser(null);

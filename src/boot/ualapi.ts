@@ -1,17 +1,14 @@
 import { UAL } from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain: Chain = getChain();
 
 export const ual = function (): UAL {
   const mainChain = {
-    chainId: process.env.NETWORK_CHAIN_ID,
-    origin: process.env.TELOS_ORIGIN,
-    rpcEndpoints: [
-      {
-        protocol: process.env.NETWORK_PROTOCOL,
-        host: process.env.NETWORK_HOST,
-        port: parseInt(process.env.NETWORK_PORT)
-      }
-    ]
+    chainId: chain.getChainId(),
+    rpcEndpoints: [chain.getRPCEndpoint()]
   };
 
   const authenticators = [
