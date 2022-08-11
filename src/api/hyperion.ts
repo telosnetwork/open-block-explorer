@@ -92,10 +92,13 @@ export const getTokens = async function (address: string): Promise<Token[]> {
 };
 
 export const getTransactions = async function (
+  page: number,
+  limit: number,
   address?: string
 ): Promise<Action[]> {
+  const skip = Math.max(0, page - 1) * limit;
   const response = await hyperion.get<ActionData>('v2/history/get_actions', {
-    params: { limit: 100, account: address, 'act.name': '!onblock' }
+    params: { limit, skip, account: address, 'act.name': '!onblock' }
   });
   return response.data.actions;
 };
