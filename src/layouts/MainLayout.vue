@@ -21,7 +21,7 @@ export default {
 </script>
 
 <template lang="pug">
-q-layout( view="lHh lpR lFf")
+q-layout( view="lHh lpR lff")
   q-header
     Header
     q-separator.separator
