@@ -7,6 +7,9 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useRoute } from 'vue-router';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
 
 export default defineComponent({
   name: 'Validator',
@@ -19,6 +22,7 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
     const query = route.query;
+    const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
     const balance = computed(
       () => store.state.account.data?.account?.core_liquid_balance || 0
@@ -97,7 +101,7 @@ export default defineComponent({
     async function updateSupply() {
       const paramsSupply = {
         code: 'eosio.token',
-        scope: 'TLOS',
+        scope: chain.getSymbol(),
         table: 'stat'
       } as GetTableRowsParams;
       supply.value = assetToAmount(
@@ -171,7 +175,8 @@ export default defineComponent({
       amount_voted,
       votesProgress,
       balance,
-      showWalletModal
+      showWalletModal,
+      symbol
     };
   }
 });
@@ -214,7 +219,7 @@ div
       .col-md-4.col-sm-12.col-xs-12(v-if="accountValid")
         q-card(flat).full-height.card-gradient
           q-card-section.card-gradient
-            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 YOUR AVAILABLE TLOS
+            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{ `YOUR AVAILABLE ${symbol}` }}
             .row.full-width.justify-center.text-h5 {{ balance }}
             .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{account}}
           q-separator(color="primary" size="2px")
@@ -246,6 +251,6 @@ div
 
 <style lang="sass" scoped>
 .card-gradient
-  background: $gradient-2
+  background: var(--q-color-primary-gradient)
   color: white
 </style>

@@ -4,7 +4,11 @@ import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
 import { isValidAccount } from 'src/utils/stringValidator';
+
+const chain = getChain();
+const symbol = chain.getSymbol();
 
 export default defineComponent({
   name: 'UnstakeTab',
@@ -77,10 +81,12 @@ export default defineComponent({
       const data = {
         from: this.stakingAccount.toLowerCase(),
         receiver: this.stakingAccount.toLowerCase(),
-        unstake_cpu_quantity:
-          String(parseFloat(this.cpuTokens).toFixed(4)) + String(' TLOS'),
-        unstake_net_quantity:
-          String(parseFloat(this.netTokens).toFixed(4)) + String(' TLOS'),
+        unstake_cpu_quantity: `${parseFloat(this.cpuTokens).toFixed(
+          4
+        )} ${symbol}`,
+        unstake_net_quantity: `${parseFloat(this.netTokens).toFixed(
+          4
+        )} ${symbol}`,
         transfer: false
       };
       try {

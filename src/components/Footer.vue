@@ -3,7 +3,7 @@
     text-decoration: none
     color: #ffffff
 .footer-background
-    background: $primary-linier-gradient
+    background: var(--q-primary-linear-gradient)
     backdrop-filter: blur(14px)
 .no-dec
     text-decoration: none
