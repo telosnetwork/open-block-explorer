@@ -92,6 +92,7 @@ import { api } from 'src/api';
 import { useAuthenticator } from 'src/composables/useAuthenticator';
 import { RequestedApprovals, Error, Proposal } from 'src/types';
 import sha256 from 'fast-sha256';
+import { Action, Serializer, Transaction } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'ProposalItem',
@@ -250,6 +251,7 @@ export default defineComponent({
       }
     }
 
+    /* eslint-disable */
     async function handleMultsigTransaction(proposal: Proposal) {
       let action;
       let actionSkip = 0;
@@ -277,42 +279,26 @@ export default defineComponent({
         }
       }
 
-      const { trx } = action.act.data as {
-        trx: {
-          expiration: string;
-          actions: {
-            account: string;
-            name: string;
-            data: string | unknown;
-          }[];
-        };
-      };
+      const { trx } = action.act.data;
 
-      expirationDate.value = trx.expiration;
+      const transaction = Transaction.from(trx);
+      expirationDate.value = transaction.expiration.toString();
 
       if (!isAuthenticated.value) {
         return trx.actions;
       }
 
-      const actionsPromises = trx.actions.map(async (action) => {
-        if (!action.data) {
-          return action;
-        }
-
-        const data = await api.deserializeActionData(
-          action.account,
-          action.name,
-          action.data as string
-        );
-
+      const actionsPromises = transaction.actions.map(async (action: Action) => {
+        const data = await api.deserializeActionData(action);
         return {
-          ...action,
+          ...Serializer.objectify(action),
           data
-        };
+        }
       });
 
       return await Promise.all(actionsPromises);
     }
+    /* eslint-enable */
 
     async function handleTransactionHistory(blockNumber: number) {
       const block = await api.getBlock(String(blockNumber));

@@ -2,8 +2,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* see https://github.com/greymass/eosio-core/blob/master/test/api.ts for documentation */
-import { ABIDef, APIClient, Serializer } from '@greymass/eosio';
-import { GetTableRowsParams } from 'src/types';
+import {
+  ABIDef,
+  Action,
+  ActionType,
+  APIClient,
+  Serializer
+} from '@greymass/eosio';
+import { ActionData, GetTableRowsParams } from 'src/types';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 
@@ -26,16 +32,15 @@ export const getTableRows = async function (
 };
 
 export const deserializeActionData = async function (
-  account: string,
-  name: string,
-  hexData: string
-): Promise<unknown> {
-  const { abi } = await eosioCore.v1.chain.get_abi(account);
+  data: ActionType
+): Promise<ActionType> {
+  const { abi } = await eosioCore.v1.chain.get_abi(data.account);
   if (!abi) {
-    throw new Error(`No ABI for ${account}`);
+    throw new Error(`No ABI for ${String(data.account)}`);
   }
-
-  return Serializer.decode({ data: hexData, type: name, abi });
+  const action = Action.from(data, abi);
+  // eslint-disable-next-line
+  return Serializer.objectify(action.decodeData(abi));
 };
 
 export const serializeActionData = async function (
