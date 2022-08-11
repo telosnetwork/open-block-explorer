@@ -29,6 +29,7 @@ export default defineComponent({
     } as PaginationSettings);
 
     const rows = ref([]);
+    const isMoreRows = computed(() => rows.value.length >= Number(limit.value));
     const canShowMore = computed(
       () => Number(limit.value) >= rows.value.length
     );
@@ -75,7 +76,7 @@ export default defineComponent({
       var dict: any = {};
       for (let key in data) {
         if (data[key] instanceof Object) {
-           dict[key] = JSON.stringify(data[key]);
+          dict[key] = JSON.stringify(data[key]);
         } else {
           dict[key] = data[key];
         }
@@ -95,7 +96,8 @@ export default defineComponent({
       pagination,
       updateRows,
       showMore,
-      canShowMore
+      canShowMore,
+      isMoreRows
     };
   }
 });
@@ -137,7 +139,7 @@ q-card(
     )
       template( v-slot:bottom)
         .row.full-width.justify-center.q-py-md.q-px-xl(v-if="canShowMore")
-          q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+          q-btn.q-ml-xs.q-mr-xs.col.button-primary( v-if='isMoreRows'
             @click="showMore") Show more
 
 </template>

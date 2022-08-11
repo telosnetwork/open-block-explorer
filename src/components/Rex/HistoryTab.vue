@@ -2,12 +2,14 @@
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'src/store';
 import { Action } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
   name: 'HistoryTab',
   components: {},
   setup() {
     const store = useStore();
+    const symbol = getChain().getSymbol();
     const rexActions = computed((): Action[] => store.state.account.rexActions);
 
     function formatDate(date: string): string {
@@ -21,7 +23,8 @@ export default defineComponent({
     return {
       store,
       rexActions,
-      formatDate
+      formatDate,
+      symbol
     };
   }
 });
@@ -34,10 +37,10 @@ export default defineComponent({
       .col-xs-12.col-sm-6
         .row.q-pa-sm
           .col-6 {{action.act.name}}
-          .col-6.text-weight-bold {{action.act.data.amount ? action.act.data.amount + ' TLOS' : action.act.data.rex}}
+          .col-6.text-weight-bold {{action.act.data.amount ? `${action.act.data.amount} ${symbol}` : action.act.data.rex}}
       .col-xs-12.col-sm-6
         .row.q-pa-sm
-          .col-6 
+          .col-6
           .col-6.text-weight-bold {{formatDate(action.timestamp)}}
       q-separator(color="grey-8" )
 

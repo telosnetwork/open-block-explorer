@@ -58,11 +58,13 @@ export default defineComponent({
       ],
       rows: [] as TransactionTableRow[],
       expanded: [],
+      loading: false,
       paginationSettings: {
         sortBy: 'timestamp',
         descending: true,
         page: 1,
-        rowsPerPage: 10
+        rowsPerPage: 10,
+        rowsNumber: 10000
       } as PaginationSettings
     };
   },
@@ -82,7 +84,10 @@ export default defineComponent({
       return this.isTransaction ? 'Actions' : 'Latest Transactions';
     },
     hasPages(): boolean {
-      return this.rows.length > this.paginationSettings.rowsPerPage;
+      return this.rows.length >= this.paginationSettings.rowsPerPage;
+    },
+    noData(): boolean {
+      return this.rows.length === 0;
     }
   },
   methods: {
@@ -93,8 +98,15 @@ export default defineComponent({
       } else {
         tableData =
           this.account == null
-            ? await this.$api.getTransactions()
-            : await this.$api.getTransactions(this.account);
+            ? await this.$api.getTransactions(
+                this.paginationSettings.page,
+                this.paginationSettings.rowsPerPage
+              )
+            : await this.$api.getTransactions(
+                this.paginationSettings.page,
+                this.paginationSettings.rowsPerPage,
+                this.account
+              );
       }
       if (tableData) {
         this.rows = tableData.map(
@@ -108,6 +120,23 @@ export default defineComponent({
             } as TransactionTableRow)
         );
       }
+    },
+    async onRequest(props: {
+      pagination: {
+        page: number;
+        rowsPerPage: number;
+        sortBy: string;
+        descending: boolean;
+      };
+    }) {
+      this.loading = true;
+      const { page, rowsPerPage, sortBy, descending } = props.pagination;
+      this.paginationSettings.page = page;
+      this.paginationSettings.rowsPerPage = rowsPerPage;
+      this.paginationSettings.sortBy = sortBy;
+      this.paginationSettings.descending = descending;
+      await this.loadTableData();
+      this.loading = false;
     },
     checkIsMultiLine(data: string): boolean {
       return data.length > 0 && data.split('\n').length > 1;
@@ -141,11 +170,13 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         flat
         :bordered="false"
         :square="true"
+        :loading="loading"
         table-header-class="table-header"
         v-model:pagination="paginationSettings"
         v-model:expanded="expanded"
-        :hide-pagination="!hasPages"
+        :hide-pagination="noData"
         @update:expanded='updateExpanded'
+        @request='onRequest'
         )
         template( v-slot:body-cell-transaction="props")
           q-td( :props="props" )
@@ -169,7 +200,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           q-space
           div.col-1(align="right")
             q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              :disable="scope.isLastPage"
+              :disable="scope.isLastPage || ! hasPages"
               @click="scope.nextPage") NEXT
 </template>
 
@@ -235,13 +266,13 @@ body
     border: 0.1rem solid rgba(196, 196, 196, 0.3)
 
 .memo-card
-  background: $gradient-3
+  background: var(--q-color-tertiary-gradient)
   border-radius: 3px
   flex-grow: 1
   display: flex
   .memo-card-title
     padding: 0.5rem
-    background: $gradient-3
+    background: var(--q-color-tertiary-gradient)
     font-weight: bold
     flex-shrink: 0
     display: flex

@@ -1,8 +1,12 @@
 import { boot } from 'quasar/wrappers';
 import { Authenticator, UAL, User } from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
 import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 import { Dialog, Notify, copyToClipboard } from 'quasar';
+
+const chain: Chain = getChain();
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -13,15 +17,8 @@ declare module '@vue/runtime-core' {
 
 export default boot(({ app }) => {
   const mainChain = {
-    chainId: process.env.NETWORK_CHAIN_ID,
-    origin: process.env.TELOS_ORIGIN,
-    rpcEndpoints: [
-      {
-        protocol: process.env.NETWORK_PROTOCOL,
-        host: process.env.NETWORK_HOST,
-        port: parseInt(process.env.NETWORK_PORT)
-      }
-    ]
+    chainId: chain.getChainId(),
+    rpcEndpoints: [chain.getRPCEndpoint()]
   };
 
   async function loginHandler() {

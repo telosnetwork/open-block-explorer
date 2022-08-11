@@ -106,7 +106,7 @@ q-dialog( :persistent='true' maximized)
   border-radius: 4px
   height: 40px
   margin-top: 1px
-  color: $dark
+  color: var(--q-dark)
   &:hover
     background: rgba($grey-4, 0.3)
     border-color: $grey-1

@@ -5,7 +5,7 @@
     text-transform: capitalize
 
 .button-primary
-    background: #571AFF
+    background: var(--q-primary)
     border-radius: 4px
     color: white
 
@@ -20,16 +20,15 @@
 
 .gradient-box
   min-height: 350px
-  height: 80vh
+  height: 70vh
   width: 100%
-  background: $gradient-2
+  background: var(--q-color-secondary-gradient)
 
 .price-box-position
-  margin-top: -100px
+  margin-top: 1rem
   z-index: 1
 
 .map-data-position
-  margin-top: -200px
   z-index: 52
 
 //hide unimplemented ui temporarily
@@ -57,6 +56,6 @@
 
 .gradient-color
   .q-linear-progress__model--determinate
-    background: $gradient-5
+    background: var(--q-color-progress-gradient)
 .actor-font
   font-family: 'Actor'

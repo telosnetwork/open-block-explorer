@@ -5,11 +5,15 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { AccountDetails, Token } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
 
 export default defineComponent({
   name: 'StakingInfo',
   setup() {
     const store = useStore();
+    const symbol = ref<string>(chain.getSymbol());
     const stakingAccount = ref<string>('');
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);
@@ -42,7 +46,8 @@ export default defineComponent({
       rexInfo,
       coreRexBalance,
       maturedRex,
-      rexSavings
+      rexSavings,
+      symbol
     };
   }
 });
@@ -59,7 +64,7 @@ export default defineComponent({
     //-.row.full-width.q-col-gutter-lg.q-pb-md
       .col-xs-12.col-sm-6
         div Your Cumulative Earnings
-        .text-h6.grey-3 30.25 TLOS
+        .text-h6.grey-3 30.25 {{ ${symbol} }}
       .col-xs-12.col-sm-6.q-pt-xs-md.q-pr-lg
         .row(:class="$q.screen.gt.xs ? 'float-right' : '' ")
           .row.q-pr-sm
@@ -88,7 +93,7 @@ export default defineComponent({
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7 TOTAL TLOS IN REX
+          .col-7 {{ `TOTAL ${symbol} IN REX` }}
           .col-5.text-right.text-weight-bold {{coreRexBalance}}
         .row.q-pt-sm
           .col-7 REX SAVINGS
