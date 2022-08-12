@@ -29,8 +29,7 @@ q-page(v-if="!isLoading" padding)
       default-opened
     )
       template(v-slot:header)
-        span(v-if="multsigTransactionItem.account === 'eosio' && multsigTransactionItem.name === 'setcode'").text-h6.text-weight-regular {{multsigTransactionItem.account}} - {{multsigTransactionItem.name}} SHA: {{ getShaForCode(multsigTransactionItem.data.code.array) }}
-        span(v-else).text-h6.text-weight-regular {{multsigTransactionItem.account}} - {{multsigTransactionItem.name}}
+        span.text-h6.text-weight-regular {{(multsigTransactionItem.account)}} - {{multsigTransactionItem.name}}
       json-viewer(
         :value="multsigTransactionItem"
         :expand-depth="5"
@@ -284,12 +283,14 @@ export default defineComponent({
       const transaction = Transaction.from(trx);
       expirationDate.value = transaction.expiration.toString();
 
-      if (!isAuthenticated.value) {
-        return trx.actions;
-      }
-
       const actionsPromises = transaction.actions.map(async (action: Action) => {
-        const data = await api.deserializeActionData(action);
+        const data = await api.deserializeActionData(action) as {
+          code: string
+        };
+
+        if (action.account.toString() === 'eosio' && action.name.toString() === 'setcode') {
+          data.code = `Binary data with SHA <${getShaForCode(data.code)}>`
+        }
         return {
           ...Serializer.objectify(action),
           data
@@ -456,8 +457,9 @@ export default defineComponent({
       }
     }
 
-    function getShaForCode(code: Uint8Array): string {
-      const sha: Uint8Array = sha256(code);
+    function getShaForCode(code: string): string {
+      const codeArray = Uint8Array.from(Buffer.from(code, 'hex'));
+      const sha: Uint8Array = sha256(codeArray);
       return Buffer.from(sha).toString('hex');
     }
 
