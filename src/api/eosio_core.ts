@@ -4,6 +4,7 @@
 /* see https://github.com/greymass/eosio-core/blob/master/test/api.ts for documentation */
 import {
   ABIDef,
+  ABISerializable,
   Action,
   ActionType,
   APIClient,
@@ -33,7 +34,7 @@ export const getTableRows = async function (
 
 export const deserializeActionData = async function (
   data: ActionType
-): Promise<ActionType> {
+): Promise<ABISerializable> {
   const { abi } = await eosioCore.v1.chain.get_abi(data.account);
   if (!abi) {
     throw new Error(`No ABI for ${String(data.account)}`);
