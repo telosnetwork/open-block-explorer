@@ -22,8 +22,9 @@ export default defineComponent({
     const Key = ref(props.pubkey);
     const Accounts = computed(() => props.accounts);
     const $q = useQuasar();
+    console.log(chain.getSmallLogoPath());
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const tokenLogo = computed(() => require(chain.getSmallLogoPath()));
+    const tokenLogo = computed(() => chain.getSmallLogoPath());
     function copy(value: string) {
       copyToClipboard(value)
         .then((): void => {
@@ -71,7 +72,7 @@ export default defineComponent({
 				q-card-section
 					.row
 						.col-auto.q-gutter-sm
-							img.logo-token(:src="require(tokenLogo)")
+							img.logo-token(:src="tokenLogo")
 						.col-auto
 						.text-h6.q-pl-sm TELOS Accounts
 				q-separator(inset)
