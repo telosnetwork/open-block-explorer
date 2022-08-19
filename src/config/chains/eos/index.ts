@@ -11,11 +11,11 @@ const CHAIN_ID =
   'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
 const DISPLAY = 'EOS';
 const SYMBOL = 'EOS';
-const HYPERION_ENDPOINT = 'https://api.eossweden.org';
+const HYPERION_ENDPOINT = 'https://eos.hyperion.eosrio.io';
 
 const RPC_ENDPOINT = {
   protocol: 'https',
-  host: 'api.eossweden.org',
+  host: 'eos.hyperion.eosrio.io',
   port: 443
 };
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
