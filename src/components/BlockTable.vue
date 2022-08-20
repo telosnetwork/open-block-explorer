@@ -73,15 +73,15 @@ export default defineComponent({
       } as PaginationSettings
     };
   },
-  async mounted() {
-    await this.loadTableData();
+  mounted() {
+    this.loadTableData();
   },
   watch: {
-    async account() {
-      await this.loadTableData();
+    account() {
+      this.loadTableData();
     },
-    async actions() {
-      await this.loadTableData();
+    actions() {
+      this.loadTableData();
     }
   },
   computed: {
@@ -102,26 +102,9 @@ export default defineComponent({
     }
   },
   methods: {
-    async loadTableData(): Promise<void> {
-      console.log(this.hasActions, this.actions);
-      let tableData: Action[];
-      if (this.isTransaction) {
-        tableData = (await this.$api.getTransaction(this.account)).actions;
-      } else if (this.hasActions) {
-        tableData = this.actions;
-      } else {
-        tableData =
-          this.account == null
-            ? await this.$api.getTransactions(
-                this.paginationSettings.page,
-                this.paginationSettings.rowsPerPage
-              )
-            : await this.$api.getTransactions(
-                this.paginationSettings.page,
-                this.paginationSettings.rowsPerPage,
-                this.account
-              );
-      }
+    loadTableData() {
+      const tableData = this.actions;
+      console.log(tableData);
       if (tableData) {
         this.rows = tableData.map(
           (tx) =>
@@ -135,7 +118,7 @@ export default defineComponent({
         );
       }
     },
-    async onRequest(props: {
+    onRequest(props: {
       pagination: {
         page: number;
         rowsPerPage: number;
@@ -149,7 +132,7 @@ export default defineComponent({
       this.paginationSettings.rowsPerPage = rowsPerPage;
       this.paginationSettings.sortBy = sortBy;
       this.paginationSettings.descending = descending;
-      await this.loadTableData();
+      this.loadTableData();
       this.loading = false;
     },
     checkIsMultiLine(data: string): boolean {

@@ -4,7 +4,7 @@ import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'TransactionsCard',
+  name: 'BlockCard',
   setup() {
     const store = useStore();
     return {
@@ -64,7 +64,7 @@ export default defineComponent({
     q-card(flat class="transaction-card")
       .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
         q-card-section.q-pl-md
-          div(class="text-h4 text-bold") Transaction
+          div(class="text-h4 text-bold") Block
         
         q-card-section.q-pt-none
           .row.items-center
