@@ -5,7 +5,7 @@ import BlockCard from 'components/BlockCard.vue';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/api/index';
-import { Action } from 'src/types';
+import { Action, Block } from 'src/types';
 
 export default defineComponent({
   name: 'Block',
@@ -14,16 +14,17 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const found = ref(true);
+    const block = ref<Block>(null);
     const actions = ref<Action[]>([]);
     const tab = ref<string>((route.query['tab'] as string) || 'actions');
     onMounted(async () => {
       // api get block and set block
-      const block = await api.getBlock(route.params.block as string);
-      block.transactions.forEach((tr) => {
+      block.value = await api.getBlock(route.params.block as string);
+      block.value.transactions.forEach((tr) => {
         actions.value = actions.value.concat(tr.trx.transaction.actions);
       });
       console.log(actions.value);
-      found.value = block ? true : false;
+      found.value = block.value ? true : false;
     });
     watch([tab], () => {
       void router.push({
@@ -37,7 +38,8 @@ export default defineComponent({
       tab,
       transaction: route.params.transaction,
       found,
-      Actions: actions
+      Actions: actions,
+      block
     };
   },
   components: {
@@ -50,7 +52,7 @@ export default defineComponent({
 <template lang="pug">
 .row
   .col-12.gradient-box.q-pb-lg
-    BlockCard.q-pa-lg(v-if='found')
+    BlockCard.q-pa-lg(v-if='found' :block='block')
     .q-pa-lg(v-else)
       .row.full-width.justify-center
         .col-xs-12.col-md-8.col-lg-6
@@ -59,7 +61,7 @@ export default defineComponent({
               q-card-section.q-pl-md
                 div(class="text-h4 text-bold") Block not found.
   .q-pt-lg
-    BlockTable(:actions='Actions')
+    //BlockTable(:actions='Actions')
     
 </template>
 
