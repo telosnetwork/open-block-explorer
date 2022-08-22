@@ -103,7 +103,6 @@ export default defineComponent({
   },
   methods: {
     async loadTableData(): Promise<void> {
-      console.log(this.hasActions, this.actions);
       let tableData: Action[];
       if (this.isTransaction) {
         tableData = (await this.$api.getTransaction(this.account)).actions;
@@ -130,7 +129,9 @@ export default defineComponent({
               transaction: { id: tx.trx_id, type: 'transaction' },
               timestamp: tx['@timestamp'],
               action: tx,
-              data: { data: tx.act.data, name: tx.act.name }
+              data: this.hasActions
+                ? { data: tx.data, name: tx.account }
+                : { data: tx.act.data, name: tx.act.name }
             } as TransactionTableRow)
         );
       }

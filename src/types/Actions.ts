@@ -198,6 +198,9 @@ export interface Block {
   new_producers: null | string;
   producer_signature: string;
   transactions: {
+    cpu_usage_us: number;
+    net_usage_words: number;
+    status: string;
     trx: {
       id: string;
       transaction: {
