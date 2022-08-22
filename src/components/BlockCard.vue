@@ -1,10 +1,15 @@
 <script lang="ts">
-import { defineComponent, ref, computed, PropType } from 'vue';
-import { copyToClipboard } from 'quasar';
-import { useStore } from 'src/store';
+import {
+  defineComponent,
+  ref,
+  computed,
+  PropType,
+  watch,
+  onMounted
+} from 'vue';
+import { copyToClipboard, useQuasar } from 'quasar';
 import { Block } from 'src/types';
 import { useRouter } from 'vue-router';
-import { blockStatement } from '@babel/types';
 
 export default defineComponent({
   name: 'BlockCard',
@@ -16,9 +21,13 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const store = useStore();
     const router = useRouter();
+    const q = useQuasar();
     const Block = computed(() => props.block);
+    const cpuUsage = ref(0);
+    const netUsage = ref(0);
+    const actionNum = ref(0);
+    const transactions = ref(0);
     async function nextBlock() {
       await router.push({
         name: 'block',
@@ -37,25 +46,10 @@ export default defineComponent({
       });
       void router.go(0);
     }
-    return {
-      block_num: computed(() => Block.value?.block_num || 0),
-      producer: computed(() => Block.value?.producer || ''),
-      timestamp: computed(() => Block.value?.timestamp || ''),
-      confirmed: computed(() => Block.value?.confirmed || 0),
-      irreversable: computed(() => store.state.transaction.irreversable),
-      cpuUsage: computed(() => store.state.transaction.cpuUsage),
-      netUsage: computed(() => store.state.transaction.netUsage),
-      actionsTraces: ref<string>(''),
-      actionNum: computed(() => store.state.transaction.actionCount),
-      nextBlock,
-      previousBlock
-    };
-  },
-  methods: {
-    copy(value: string) {
+    function copy(value: string) {
       copyToClipboard(value)
         .then((): void => {
-          this.$q.notify({
+          q.notify({
             color: 'green-4',
             textColor: 'white',
             message: 'Copied to clipboard',
@@ -63,19 +57,19 @@ export default defineComponent({
           });
         })
         .catch(() => {
-          this.$q.notify({
+          q.notify({
             color: 'red-8',
             textColor: 'white',
             message: 'Could not copy',
             timeout: 1000
           });
         });
-    },
-    numberWithCommas(x: number) {
+    }
+    function numberWithCommas(x: number) {
       if (!x) return 0;
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    },
-    formatDate(date: string): string {
+    }
+    function formatDate(date: string): string {
       return new Date(date).toLocaleDateString('en-US', {
         month: 'long',
         year: 'numeric',
@@ -85,6 +79,45 @@ export default defineComponent({
         second: 'numeric'
       });
     }
+    function setBlockData() {
+      if (Block.value) {
+        let actionCount = 0;
+        let cpu = 0;
+        let net = 0;
+        transactions.value = Block.value.transactions.length || 0;
+        Block.value.transactions.forEach((tx) => {
+          actionCount += tx.trx.transaction.actions.length;
+          cpu += tx.cpu_usage_us;
+          net += tx.net_usage_words;
+        });
+        actionNum.value = actionCount;
+        cpuUsage.value = cpu;
+        netUsage.value = net * 8;
+      }
+    }
+    watch(Block, () => {
+      setBlockData();
+    });
+    onMounted(() => {
+      setBlockData();
+    });
+    return {
+      block_num: computed(() => Block.value?.block_num || 0),
+      producer: computed(() => Block.value?.producer || ''),
+      timestamp: computed(() => Block.value?.timestamp || ''),
+      confirmed: computed(() => Block.value?.confirmed || 0),
+      block_id: computed(() => Block.value?.id || ''),
+      cpuUsage,
+      netUsage,
+      schedule_version: computed(() => Block.value?.schedule_version || 0),
+      actionNum,
+      nextBlock,
+      previousBlock,
+      numberWithCommas,
+      formatDate,
+      copy,
+      transactions
+    };
   }
 });
 </script>
@@ -128,14 +161,6 @@ export default defineComponent({
         q-card-section
           .row
             .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Status
-            .col-xs-12.col-sm-6.text-right.text-bold 
-              q-badge(transparent align="middle" color="purple-2" text-color="black").text-bold {{confirmed ? 'EXECUTED' : 'PENDING'}}
-              q-badge.q-ml-sm( v-if="irreversable" transparent align="middle" color="deep-orange-2" text-color="black").text-bold {{'IRREVERSIBLE'}}
-        q-separator(inset).card-separator
-        q-card-section
-          .row
-            .col-xs-12.col-sm-6
               .text-body1.text-weight-medium.text-uppercase CPU usage
             .col-xs-12.col-sm-6.text-right.text-bold {{cpuUsage + ' μs'}}
         q-separator(inset).card-separator
@@ -148,8 +173,20 @@ export default defineComponent({
         q-card-section
           .row
             .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Actions/Traces
-            .col-xs-12.col-sm-6.text-right.text-bold {{actionNum+'/'+actionNum}}
+              .text-body1.text-weight-medium.text-uppercase Schedule Version
+            .col-xs-12.col-sm-6.text-right.text-bold {{schedule_version}}
+        q-separator(inset).card-separator
+        q-card-section
+          .row
+            .col-xs-12.col-sm-6
+              .text-body1.text-weight-medium.text-uppercase Transactions
+            .col-xs-12.col-sm-6.text-right.text-bold {{transactions}}
+        q-separator(inset).card-separator
+        q-card-section
+          .row
+            .col-xs-12.col-sm-6
+              .text-body1.text-weight-medium.text-uppercase Actions
+            .col-xs-12.col-sm-6.text-right.text-bold {{actionNum}}
 
 </template>
 
