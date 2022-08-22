@@ -1,23 +1,54 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, PropType } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
+import { Block } from 'src/types';
+import { useRouter } from 'vue-router';
+import { blockStatement } from '@babel/types';
 
 export default defineComponent({
   name: 'BlockCard',
-  setup() {
+  props: {
+    block: {
+      type: Object as PropType<Block>,
+      required: false,
+      default: null
+    }
+  },
+  setup(props) {
     const store = useStore();
+    const router = useRouter();
+    const Block = computed(() => props.block);
+    async function nextBlock() {
+      await router.push({
+        name: 'block',
+        params: {
+          block: Block.value.block_num + 1
+        }
+      });
+      router.go(0);
+    }
+    async function previousBlock() {
+      await router.push({
+        name: 'block',
+        params: {
+          block: Block.value.block_num - 1
+        }
+      });
+      void router.go(0);
+    }
     return {
-      transaction: computed(() => store.state.transaction.transactionId),
-      transactionData: computed(() => store.state.transaction.transaction),
-      blockNum: computed(() => store.state.transaction.blockNum),
-      timestamp: computed(() => store.state.transaction.timestamp),
-      executed: computed(() => store.state.transaction.executed),
+      block_num: computed(() => Block.value?.block_num || 0),
+      producer: computed(() => Block.value?.producer || ''),
+      timestamp: computed(() => Block.value?.timestamp || ''),
+      confirmed: computed(() => Block.value?.confirmed || 0),
       irreversable: computed(() => store.state.transaction.irreversable),
       cpuUsage: computed(() => store.state.transaction.cpuUsage),
       netUsage: computed(() => store.state.transaction.netUsage),
       actionsTraces: ref<string>(''),
-      actionNum: computed(() => store.state.transaction.actionCount)
+      actionNum: computed(() => store.state.transaction.actionCount),
+      nextBlock,
+      previousBlock
     };
   },
   methods: {
@@ -64,15 +95,20 @@ export default defineComponent({
     q-card(flat class="transaction-card")
       .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
         q-card-section.q-pl-md
-          div(class="text-h4 text-bold") Block
+          .row.q-col-gutter-sm.justify-between
+            .col-auto(class="text-h4 text-bold") Block
+            .col-auto
+              .row.q-col-gutter-sm
+                .col-auto
+                  q-btn.button-primary( @click="previousBlock" flat dense size='md' icon='arrow_back' )
+                .col-auto 
+                  q-btn.button-primary( @click="nextBlock" flat dense size='md' icon='arrow_forward' )
         
         q-card-section.q-pt-none
           .row.items-center
-            .col-11.text-bold.ellipsis {{transaction}}
+            .col-11.text-bold.ellipsis {{numberWithCommas(block_num)}}
             .col-1
-              q-btn.float-right( @click="copy(transaction)" flat round color="black" icon="content_copy" size='sm')
-        //- q-card-section.q-pt-none
-        //-   q-btn.button-primary( @click="copyTransactionId" flat label="MSIG Template")
+              q-btn.float-right( @click="copy(block_num.toString())" flat round color="black" icon="content_copy" size='sm')
 
         q-card-section
           .text-grey-7 SUMMARY
@@ -80,9 +116,8 @@ export default defineComponent({
         q-card-section
           .row
             .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Block number
-            .col-xs-12.col-sm-6.text-right.text-bold {{numberWithCommas(blockNum)}}
-              q-btn( @click="copy(blockNum)" flat round color="black" icon="content_copy" size='sm')
+              .text-body1.text-weight-medium.text-uppercase Producer
+            .col-xs-12.col-sm-6.text-right.text-bold {{producer}}
         q-separator(inset).card-separator
         q-card-section
           .row
@@ -95,7 +130,7 @@ export default defineComponent({
             .col-xs-12.col-sm-6
               .text-body1.text-weight-medium.text-uppercase Status
             .col-xs-12.col-sm-6.text-right.text-bold 
-              q-badge(transparent align="middle" color="purple-2" text-color="black").text-bold {{executed ? 'EXECUTED' : 'PENDING'}}
+              q-badge(transparent align="middle" color="purple-2" text-color="black").text-bold {{confirmed ? 'EXECUTED' : 'PENDING'}}
               q-badge.q-ml-sm( v-if="irreversable" transparent align="middle" color="deep-orange-2" text-color="black").text-bold {{'IRREVERSIBLE'}}
         q-separator(inset).card-separator
         q-card-section
