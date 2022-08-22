@@ -23,7 +23,12 @@ import {
   getABI,
   getKeyAccounts
 } from './hyperion'; //  e.g. './new-service' method name stays the same
-import { getTableRows, getTokenBalances } from './eosio_core';
+import {
+  getTableRows,
+  getTokenBalances,
+  deserializeActionData,
+  serializeActionData
+} from './eosio_core';
 
 export const api = {
   getAccount,
@@ -44,5 +49,7 @@ export const api = {
   getProposals,
   getProducers,
   getABI,
-  getKeyAccounts
+  getKeyAccounts,
+  deserializeActionData,
+  serializeActionData
 };

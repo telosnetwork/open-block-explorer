@@ -90,7 +90,8 @@ import moment from 'moment';
 import { api } from 'src/api';
 import { useAuthenticator } from 'src/composables/useAuthenticator';
 import { RequestedApprovals, Error, Proposal } from 'src/types';
-import { deserializeActionData } from 'src/utils/deserializeActionData';
+import sha256 from 'fast-sha256';
+import { Action, Serializer, Transaction } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'ProposalItem',
@@ -249,6 +250,7 @@ export default defineComponent({
       }
     }
 
+    /* eslint-disable */
     async function handleMultsigTransaction(proposal: Proposal) {
       let action;
       let actionSkip = 0;
@@ -276,42 +278,28 @@ export default defineComponent({
         }
       }
 
-      const { trx } = action.act.data as {
-        trx: {
-          expiration: string;
-          actions: {
-            account: string;
-            name: string;
-            data: string | unknown;
-          }[];
+      const { trx } = action.act.data;
+
+      const transaction = Transaction.from(trx);
+      expirationDate.value = transaction.expiration.toString();
+
+      const actionsPromises = transaction.actions.map(async (action: Action) => {
+        const data = await api.deserializeActionData(action) as {
+          code: string
         };
-      };
 
-      expirationDate.value = trx.expiration;
-
-      if (!isAuthenticated.value) {
-        return trx.actions;
-      }
-
-      const actionsPromises = trx.actions.map(async (action) => {
-        if (!action.data) {
-          return action;
+        if (action.account.toString() === 'eosio' && action.name.toString() === 'setcode') {
+          data.code = `Binary data with SHA <${getShaForCode(data.code)}>`
         }
-
-        const data = await deserializeActionData({
-          account: action.account,
-          name: action.name,
-          hexData: action.data as string
-        });
-
         return {
-          ...action,
+          ...Serializer.objectify(action),
           data
-        };
+        }
       });
 
       return await Promise.all(actionsPromises);
     }
+    /* eslint-enable */
 
     async function handleTransactionHistory(blockNumber: number) {
       const block = await api.getBlock(String(blockNumber));
@@ -469,6 +457,12 @@ export default defineComponent({
       }
     }
 
+    function getShaForCode(code: string): string {
+      const codeArray = Uint8Array.from(Buffer.from(code, 'hex'));
+      const sha: Uint8Array = sha256(codeArray);
+      return Buffer.from(sha).toString('hex');
+    }
+
     return {
       isLoading,
       account,
@@ -493,7 +487,9 @@ export default defineComponent({
       onApprove,
       onUnapprove,
       onExecute,
-      onCancel
+      onCancel,
+
+      getShaForCode
     };
   }
 });
