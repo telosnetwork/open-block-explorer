@@ -1,8 +1,7 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed, watch } from 'vue';
-import BlockTable from 'src/components/BlockTable.vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
+import TransactionTable from 'src/components/TransactionsTable.vue';
 import BlockCard from 'components/BlockCard.vue';
-import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/api/index';
 import { Action, Block } from 'src/types';
@@ -10,7 +9,6 @@ import { Action, Block } from 'src/types';
 export default defineComponent({
   name: 'Block',
   setup() {
-    const store = useStore();
     const route = useRoute();
     const router = useRouter();
     const found = ref(true);
@@ -21,9 +19,21 @@ export default defineComponent({
       // api get block and set block
       block.value = await api.getBlock(route.params.block as string);
       block.value.transactions.forEach((tr) => {
-        actions.value = actions.value.concat(tr.trx.transaction.actions);
+        const act = tr.trx.transaction.actions.map((act) => {
+          return {
+            ...act,
+            trx_id: tr.trx.id,
+            act: {
+              ...act.act,
+              name: act.name,
+              data: act.data,
+              account: act.account
+            },
+            '@timestamp': block.value.timestamp
+          };
+        });
+        actions.value = actions.value.concat(act);
       });
-      console.log(actions.value);
       found.value = block.value ? true : false;
     });
     watch([tab], () => {
@@ -43,7 +53,7 @@ export default defineComponent({
     };
   },
   components: {
-    BlockTable,
+    TransactionTable,
     BlockCard
   }
 });
@@ -61,7 +71,7 @@ export default defineComponent({
               q-card-section.q-pl-md
                 div(class="text-h4 text-bold") Block not found.
   .q-pt-lg
-    //BlockTable(:actions='Actions')
+    TransactionTable(:actions='Actions')
     
 </template>
 
