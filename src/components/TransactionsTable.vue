@@ -98,7 +98,7 @@ export default defineComponent({
       return this.rows.length === 0;
     },
     hasActions(): boolean {
-      return this.actions != null && this.actions.length > 0;
+      return this.actions != null;
     }
   },
   methods: {

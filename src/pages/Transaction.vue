@@ -51,7 +51,7 @@ div.row
     .q-pa-lg(v-else)
       .row.full-width.justify-center
         .col-xs-12.col-md-8.col-lg-6
-          q-card(flat class="transaction-card")
+          q-card(flat class="info-card")
             .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
               q-card-section.q-pl-md
                 div(class="text-h4 text-bold") Transaction not found.
