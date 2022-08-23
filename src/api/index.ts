@@ -21,7 +21,8 @@ import {
   getProposals,
   getProducers,
   getABI,
-  getKeyAccounts
+  getKeyAccounts,
+  getProducerSchedule
 } from './hyperion'; //  e.g. './new-service' method name stays the same
 import {
   getTableRows,
@@ -51,5 +52,6 @@ export const api = {
   getABI,
   getKeyAccounts,
   deserializeActionData,
-  serializeActionData
+  serializeActionData,
+  getProducerSchedule
 };
