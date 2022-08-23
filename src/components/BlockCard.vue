@@ -24,10 +24,7 @@ export default defineComponent({
     const router = useRouter();
     const q = useQuasar();
     const Block = computed(() => props.block);
-    const cpuUsage = ref(0);
-    const netUsage = ref(0);
-    const actionNum = ref(0);
-    const transactions = ref(0);
+    const blockInfo = ref<{ key: string; value: string }[]>([]);
     async function nextBlock() {
       await router.push({
         name: 'block',
@@ -84,15 +81,26 @@ export default defineComponent({
         let actionCount = 0;
         let cpu = 0;
         let net = 0;
-        transactions.value = Block.value.transactions.length || 0;
         Block.value.transactions.forEach((tx) => {
           actionCount += tx.trx.transaction.actions.length;
           cpu += tx.cpu_usage_us;
           net += tx.net_usage_words;
         });
-        actionNum.value = actionCount;
-        cpuUsage.value = cpu;
-        netUsage.value = net * 8;
+        blockInfo.value = [
+          { key: 'Producer', value: Block.value.producer },
+          { key: 'Block time', value: formatDate(Block.value.timestamp) },
+          { key: 'CPU usage', value: cpu.toString() + ' μs' },
+          { key: 'Net usage', value: (net * 8).toString() + ' Bytes' },
+          {
+            key: 'Schedule Version',
+            value: Block.value.schedule_version.toString()
+          },
+          {
+            key: 'Transactions',
+            value: Block.value.transactions.length.toString()
+          },
+          { key: 'Actions', value: actionCount.toString() }
+        ];
       }
     }
     watch(Block, () => {
@@ -103,20 +111,12 @@ export default defineComponent({
     });
     return {
       block_num: computed(() => Block.value?.block_num || 0),
-      producer: computed(() => Block.value?.producer || ''),
-      timestamp: computed(() => Block.value?.timestamp || ''),
-      confirmed: computed(() => Block.value?.confirmed || 0),
-      block_id: computed(() => Block.value?.id || ''),
-      cpuUsage,
-      netUsage,
-      schedule_version: computed(() => Block.value?.schedule_version || 0),
-      actionNum,
       nextBlock,
       previousBlock,
       numberWithCommas,
       formatDate,
       copy,
-      transactions
+      blockInfo
     };
   }
 });
@@ -125,7 +125,7 @@ export default defineComponent({
 <template lang="pug">
 .row.full-width.justify-center
   .col-xs-12.col-md-8.col-lg-6
-    q-card(flat class="transaction-card")
+    q-card(flat class="info-card")
       .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
         q-card-section.q-pl-md
           .row.q-col-gutter-sm.justify-between
@@ -145,60 +145,14 @@ export default defineComponent({
 
         q-card-section
           .text-grey-7 SUMMARY
-        q-separator(inset).card-separator
-        q-card-section
-          .row
-            .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Producer
-            .col-xs-12.col-sm-6.text-right.text-bold {{producer}}
-        q-separator(inset).card-separator
-        q-card-section
-          .row
-            .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Block time
-            .col-xs-12.col-sm-6.text-right.text-bold {{formatDate(timestamp)}}
-        q-separator(inset).card-separator
-        q-card-section
-          .row
-            .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase CPU usage
-            .col-xs-12.col-sm-6.text-right.text-bold {{cpuUsage + ' μs'}}
-        q-separator(inset).card-separator
-        q-card-section
-          .row
-            .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Net usage
-            .col-xs-12.col-sm-6.text-right.text-bold {{netUsage + ' Bytes'}}
-        q-separator(inset).card-separator
-        q-card-section
-          .row
-            .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Schedule Version
-            .col-xs-12.col-sm-6.text-right.text-bold {{schedule_version}}
-        q-separator(inset).card-separator
-        q-card-section
-          .row
-            .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Transactions
-            .col-xs-12.col-sm-6.text-right.text-bold {{transactions}}
-        q-separator(inset).card-separator
-        q-card-section
-          .row
-            .col-xs-12.col-sm-6
-              .text-body1.text-weight-medium.text-uppercase Actions
-            .col-xs-12.col-sm-6.text-right.text-bold {{actionNum}}
+        div(v-for='item in blockInfo')
+          q-separator(inset).card-separator
+          q-card-section
+            .row
+              .col-xs-12.col-sm-6
+                .text-body1.text-weight-medium.text-uppercase {{item.key}}
+              .col-xs-12.col-sm-6.text-right.text-bold {{item.value}}
 
 </template>
 
-<style lang="sass">
-
-.transaction-card
-  background-color:#ffffff
-  background: #FFFFFF
-  box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
-  border-radius: 10px
-.card-separator
-    min-height: 2px
-    background: rgba(138, 101, 212, 0.1)
-    border-radius: 4px
-</style>
+<style lang="sass"></style>
