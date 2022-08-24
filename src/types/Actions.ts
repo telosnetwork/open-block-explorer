@@ -26,6 +26,17 @@ export interface Action {
   timestamp: string;
   trx_id: string;
   receipts: Receipt[];
+  account: string;
+  authorization: {
+    actor: string;
+    permission: string;
+  }[];
+  data: {
+    executer: string;
+    proposal_name: string;
+    proposer: string;
+  };
+  name: string;
 }
 
 interface AccountRamDelta {
@@ -187,23 +198,14 @@ export interface Block {
   new_producers: null | string;
   producer_signature: string;
   transactions: {
+    cpu_usage_us: number;
+    net_usage_words: number;
+    status: string;
     trx: {
       id: string;
       transaction: {
-        actions: {
-          account: string;
-          authorization: {
-            actor: string;
-            permission: string;
-          }[];
-          data: {
-            executer: string;
-            proposal_name: string;
-            proposer: string;
-          };
-          name: string;
-        }[];
-      }[];
+        actions: Action[];
+      };
     };
   }[];
   id: string;

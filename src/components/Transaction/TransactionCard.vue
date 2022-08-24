@@ -2,9 +2,11 @@
 import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
+import Link from 'src/components/Transaction/AccountFormat.vue';
 
 export default defineComponent({
-  name: 'TransactionsTable',
+  name: 'TransactionsCard',
+  components: { Link },
   setup() {
     const store = useStore();
     return {
@@ -61,7 +63,7 @@ export default defineComponent({
 <template lang="pug">
 .row.full-width.justify-center
   .col-xs-12.col-md-8.col-lg-6
-    q-card(flat class="transaction-card")
+    q-card(flat class="info-card")
       .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
         q-card-section.q-pl-md
           div(class="text-h4 text-bold") Transaction
@@ -81,7 +83,8 @@ export default defineComponent({
           .row
             .col-xs-12.col-sm-6
               .text-body1.text-weight-medium.text-uppercase Block number
-            .col-xs-12.col-sm-6.text-right.text-bold {{numberWithCommas(blockNum)}}
+            .col-xs-12.col-sm-6.text-right.text-bold 
+              Link(:account='blockNum' type='block')
               q-btn( @click="copy(blockNum)" flat round color="black" icon="content_copy" size='sm')
         q-separator(inset).card-separator
         q-card-section
@@ -118,15 +121,4 @@ export default defineComponent({
 
 </template>
 
-<style lang="sass">
-
-.transaction-card
-  background-color:#ffffff
-  background: #FFFFFF
-  box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
-  border-radius: 10px
-.card-separator
-    min-height: 2px
-    background: rgba(138, 101, 212, 0.1)
-    border-radius: 4px
-</style>
+<style lang="sass"></style>

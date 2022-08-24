@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import DateField from 'src/components/DateField.vue';
 import AccountFormatter from 'src/components/Transaction/AccountFormat.vue';
 import ActionFormatter from 'src/components/Transaction/ActionFormat.vue';
@@ -17,6 +17,11 @@ export default defineComponent({
   props: {
     account: {
       type: String,
+      required: false,
+      default: null
+    },
+    actions: {
+      type: Object as PropType<Action[]>,
       required: false,
       default: null
     }
@@ -74,6 +79,9 @@ export default defineComponent({
   watch: {
     async account() {
       await this.loadTableData();
+    },
+    async actions() {
+      await this.loadTableData();
     }
   },
   computed: {
@@ -88,6 +96,9 @@ export default defineComponent({
     },
     noData(): boolean {
       return this.rows.length === 0;
+    },
+    hasActions(): boolean {
+      return this.actions != null;
     }
   },
   methods: {
@@ -95,6 +106,8 @@ export default defineComponent({
       let tableData: Action[];
       if (this.isTransaction) {
         tableData = (await this.$api.getTransaction(this.account)).actions;
+      } else if (this.hasActions) {
+        tableData = this.actions;
       } else {
         tableData =
           this.account == null
@@ -116,7 +129,9 @@ export default defineComponent({
               transaction: { id: tx.trx_id, type: 'transaction' },
               timestamp: tx['@timestamp'],
               action: tx,
-              data: { data: tx.act.data, name: tx.act.name }
+              data: this.hasActions
+                ? { data: tx.data, name: tx.account }
+                : { data: tx.act.data, name: tx.act.name }
             } as TransactionTableRow)
         );
       }
