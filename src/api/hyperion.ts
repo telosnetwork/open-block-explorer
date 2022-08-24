@@ -249,3 +249,11 @@ export const getKeyAccounts = async function (
 
   return response.data;
 };
+
+export const getProducerSchedule = async function (): Promise<{
+  active: { producers: { producer_name: string }[] };
+}> {
+  const response = await hyperion.get('v1/chain/get_producer_schedule');
+
+  return response.data;
+};
