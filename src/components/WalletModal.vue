@@ -32,13 +32,6 @@ export default defineComponent({
           account: this.account as string,
           authenticator
         });
-        if (this.$props.changeRoute) {
-          await this.$router.push({
-            name: 'account',
-            params: { account: this.account as string }
-          });
-        }
-        this.$router.go(0);
       } catch (e) {
         this.error = e;
       }
