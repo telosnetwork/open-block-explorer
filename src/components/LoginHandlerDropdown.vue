@@ -1,9 +1,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapActions, mapMutations } from 'vuex';
+import Link from 'src/components/Transaction/AccountFormat.vue';
+import WalletModal from './WalletModal.vue';
+
 export default defineComponent({
   name: 'LoginHandlerDropdown',
   props: ['account'],
+  components: { Link, WalletModal },
   data() {
     return {
       accounts: [this.account],
@@ -55,8 +59,20 @@ export default defineComponent({
 </script>
 <template lang="pug">
 q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="{ backgroundColor: '#172c6c' }")
-  .buttons-container
-    q-btn.account-button(@click='onLogout' color='primary' :label='disconnectLabel')
+  q-card.buttons-container
+    q-card-section
+      .row(v-for='account in accounts')
+        .col-10
+          a.text-white(:href=" '/account/' + account" class="hover-dec") {{account}}
+        .col-2
+          q-btn(@click='onLogout' color='white' icon='close' dense size='sm' flat )
+    q-separator(dark)
+    q-card-section
+      .q-pa-sm
+        q-btn.full-width(@click='showModal = true' color='primary' label='Attatch an account')
+      .q-px-sm.q-pb-sm
+        q-btn.full-width(@click='onLogout' color='primary' label='Disconect all')
+WalletModal( v-model='showModal')
 </template>
 <style lang="sass" scoped>
 .q-menu
@@ -73,4 +89,8 @@ q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="
   max-width: 140px
   height: 40px
   text-transform: lowercase
+.buttons-container
+  width: 220px
+  max-width: 80vw
+  background: var(--q-color-dropdown-card)
 </style>
