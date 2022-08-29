@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 
@@ -8,9 +8,9 @@ export default defineComponent({
   components: { ViewTransaction },
   setup() {
     const memo = ref<Record<string, unknown>>({});
-    const actor = ref<string>('');
     const permission = ref<string>('');
     const store = useStore();
+    const actor = ref('');
     const openTransaction = ref<boolean>(false);
     const transactionId = ref<string>(store.state.account.TransactionId);
     const transactionError = ref<unknown>(store.state.account.TransactionError);
@@ -32,6 +32,10 @@ export default defineComponent({
       });
       openTransaction.value = true;
     }
+    onMounted(async () => {
+      actor.value = await store.state.account.user.getAccountName();
+      permission.value = store.state.account.accountPermission;
+    });
     return {
       action,
       actions,
