@@ -58,5 +58,8 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setTlosRexRatio(state: AccountStateInterface, ratio: number) {
     state.tlosRexRatio = ratio;
+  },
+  setAccountPermission(state: AccountStateInterface, permission: string) {
+    state.accountPermission = permission;
   }
 };
