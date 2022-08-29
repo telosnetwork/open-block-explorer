@@ -74,5 +74,5 @@ export interface RequestedApprovals {
   actor: string;
   permission: string;
   status: boolean;
-  index: number;
+  isBp: boolean;
 }

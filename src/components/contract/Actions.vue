@@ -69,7 +69,7 @@ q-card(
     .row.q-py-md.q-col-gutter-md
       .col-xs-6.col-sm-3(v-for="field in fields" :key="field.name")
         .text-bold.q-pb-sm {{field.name}}
-        q-input(outlined dense v-model="memo[field.name]" style="background: #ffffff")
+        q-input(outlined dense v-model="memo[field.name]" :placeholder="field.type" style="background: #ffffff")
       .col-xs-6.col-sm-3
         .text-bold.q-pb-sm actor
         q-input(outlined v-model="actor" dense style="background: #ffffff")

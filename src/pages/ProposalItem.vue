@@ -39,8 +39,12 @@ q-page(v-if="!isLoading" padding)
         sort
       )
 
-  h2.text-h6.text-weight-regular.q-mt-xl Requested Approvals
+  h2.text-h6.text-weight-regular.q-mt-xl
+    span Requested Approvals
     span.text-body1.q-ml-sm.text-grey {{approvalStatus}}
+    span.q-mx-sm •
+    span Active BPs
+    span.text-body1.q-ml-sm.text-grey {{producersApprovalStatus}}
   q-card.q-mb-xl
     q-table(
       color="primary"
@@ -51,14 +55,23 @@ q-page(v-if="!isLoading" padding)
       :rows="requestedApprovalsRows"
       :columns="requestedApprovalsColumns"
       row-key="index"
-      :rows-per-page-options="[5,10,20,40,80,160]"
+      :rows-per-page-options="[25,40,80,160]"
     )
-      template(v-slot:body-cell-actor="props")
-        q-td(:props="props")
-          router-link(:to="'/account/' + props.value" style="text-decoration:none").text-primary.cursor-pointer {{props.value}}
-      template(v-slot:body-cell-status="props")
-        q-td(:props="props")
-          q-badge(:color="props.value ? 'green' : 'orange'" :label="props.value ? 'APPROVED' : 'PENDING'")
+      template(v-slot:body="props")
+        q-tr(:props="props")
+          q-td(key="actor" :props="props")
+            router-link(
+              :to="'/account/' + props.row.actor"
+              style="text-decoration:none"
+            ).text-primary.cursor-pointer {{props.row.actor}}
+            q-badge(v-if="props.row.isBp" label="Active BP" class="q-ml-xs")
+          q-td(key="permission" :props="props")
+            span {{props.row.permission}}
+          q-td(key="status" :props="props")
+            q-badge(
+              :color="props.row.status ? 'green' : 'orange'"
+              :label="props.row.status ? 'APPROVED' : 'PENDING'"
+            )
 
   h2.text-h6.text-weight-regular.q-mt-xl Transaction history
   q-card(
@@ -122,12 +135,6 @@ export default defineComponent({
     const transactionHistoryData = ref<unknown>([]);
 
     const requestedApprovalsColumns = [
-      {
-        name: 'index',
-        align: 'left',
-        label: '#',
-        field: 'index'
-      },
       {
         name: 'actor',
         align: 'left',
@@ -195,6 +202,16 @@ export default defineComponent({
       );
     });
 
+    const producersApprovalStatus = computed(() => {
+      const allProducers = requestedApprovalsRows.value.filter(
+        (item) => item.isBp
+      );
+      const producersHaveAlreadyApproved = allProducers.filter(
+        (item) => item.status
+      );
+      return `${producersHaveAlreadyApproved.length}/${allProducers.length}`;
+    });
+
     function handleError(e: unknown, defaultMessage: string) {
       const error = JSON.parse(JSON.stringify(e)) as Error;
       $q.notify({
@@ -209,7 +226,13 @@ export default defineComponent({
       });
     }
 
-    function handleRequestedApprovals(proposal: Proposal) {
+    async function handleRequestedApprovals(proposal: Proposal) {
+      const activeProducers = await api.getProducerSchedule();
+
+      const activeProducersAccount = activeProducers.active.producers.map(
+        (producer) => producer.producer_name
+      );
+
       let requestedApprovals: RequestedApprovals[] = [];
 
       proposal.requested_approvals.forEach((item) => {
@@ -217,7 +240,7 @@ export default defineComponent({
           actor: item.actor,
           permission: item.permission,
           status: false,
-          index: 0
+          isBp: false
         });
       });
 
@@ -226,14 +249,23 @@ export default defineComponent({
           actor: item.actor,
           permission: item.permission,
           status: true,
-          index: 0
+          isBp: false
         });
       });
 
-      return requestedApprovals.map((item, index) => ({
-        ...item,
-        index: index + 1
-      }));
+      requestedApprovals = requestedApprovals
+        .map((item) => ({
+          ...item,
+          isBp: activeProducersAccount.includes(item.actor)
+        }))
+        .sort((a, b) => a.actor.localeCompare(b.actor))
+        .sort(
+          (a, b) =>
+            Number(b.isBp) - Number(a.isBp) ||
+            Number(a.status) - Number(b.status)
+        );
+
+      return requestedApprovals;
     }
 
     async function loadProposal() {
@@ -333,8 +365,14 @@ export default defineComponent({
         (item) => item.actor === account.value
       );
 
-      requestedApprovalsRows.value = handleRequestedApprovals(proposal);
-      multsigTransactionData.value = await handleMultsigTransaction(proposal);
+      const [requestedApprovalsRowsValue, multsigTransactionDataValue] =
+        await Promise.all([
+          handleRequestedApprovals(proposal),
+          handleMultsigTransaction(proposal)
+        ]);
+
+      requestedApprovalsRows.value = requestedApprovalsRowsValue;
+      multsigTransactionData.value = multsigTransactionDataValue;
 
       const transactions = await handleTransactionHistory(proposal.block_num);
       transactionHistoryData.value = transactions;
@@ -470,6 +508,7 @@ export default defineComponent({
       proposalName,
       proposer,
       approvalStatus,
+      producersApprovalStatus,
       expirationDate,
 
       isShowApproveButton,

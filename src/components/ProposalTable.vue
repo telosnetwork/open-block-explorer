@@ -9,7 +9,7 @@ q-table(
   :rows="rows"
   :columns="columns"
   row-key="proposalName"
-  :rows-per-page-options="[5,10,20,40,80,160]"
+  :rows-per-page-options="[20,40,80,160]"
   v-model:pagination="pagination"
   @request="onRequest"
 )
@@ -43,7 +43,7 @@ q-table(
                     q-item-section No results
 
             div.q-pr-md.q-pb-md
-              q-toggle(label="Already executed" v-model="isExecuted")
+              q-toggle(label="Inactive proposals" v-model="isExecuted")
 
   template(v-slot:no-data)
     span.q-pa-md.full-width.text-center.text-body2.
@@ -83,8 +83,8 @@ const initialStatePagination = {
   sortBy: 'desc',
   descending: false,
   page: 1,
-  rowsPerPage: 5,
-  rowsNumber: 5
+  rowsPerPage: 20,
+  rowsNumber: 20
 };
 
 export default defineComponent({
@@ -140,12 +140,6 @@ export default defineComponent({
         align: 'left',
         label: 'PROPOSER',
         field: 'proposer'
-      },
-      {
-        name: 'executed',
-        align: 'left',
-        label: 'EXECUTED',
-        field: 'executed'
       }
     ];
 
@@ -196,8 +190,7 @@ export default defineComponent({
             primaryKey: proposal.primary_key,
             proposalName: proposal.proposal_name,
             approvalStatus,
-            proposer: proposal.proposer,
-            executed: proposal.executed
+            proposer: proposal.proposer
           };
         });
       } catch (e) {
