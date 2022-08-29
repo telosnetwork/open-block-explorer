@@ -7,6 +7,7 @@ const chain = getChain();
 export interface AccountStateInterface {
   loading: unknown;
   accountName: string;
+  accountPermission: string;
   user: User;
   autoLogin: unknown;
   isAuthenticated: boolean;
@@ -30,6 +31,7 @@ export function state(): AccountStateInterface {
   return {
     loading: false,
     accountName: '',
+    accountPermission: 'active',
     user: null,
     autoLogin: null,
     isAuthenticated: false,
