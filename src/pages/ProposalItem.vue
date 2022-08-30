@@ -334,6 +334,7 @@ export default defineComponent({
     /* eslint-enable */
 
     async function handleTransactionHistory(blockNumber: number) {
+      debugger;
       const block = await api.getBlock(String(blockNumber));
       const transactionsPromise = block.transactions.map(
         async (transaction) => {
