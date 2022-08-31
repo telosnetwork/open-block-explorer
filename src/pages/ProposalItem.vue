@@ -337,7 +337,11 @@ export default defineComponent({
       const block = await api.getBlock(String(blockNumber));
       const transactionsPromise = block.transactions.map(
         async (transaction) => {
-          const { actions } = await api.getTransaction(transaction.trx.id);
+          let trxId = transaction.trx.id;
+          if (typeof trxId !== 'string') {
+            trxId = transaction.trx.toString();
+          }
+          const { actions } = await api.getTransaction(trxId);
           return actions;
         }
       );
