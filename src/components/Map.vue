@@ -22,8 +22,6 @@ import { useStore } from 'src/store';
 import VectorImageLayer from 'ol/layer/VectorImage';
 import { getCssVar } from 'quasar';
 
-
-
 // Map core style
 const style = new Style({
   image: new CircleStyle({
@@ -187,7 +185,9 @@ export default defineComponent({
       view: new View({
         center: [0, 0],
         zoom: 0
-      })
+      }),
+      controls: [],
+      interactions: []
     });
 
     let selected = null as any;
