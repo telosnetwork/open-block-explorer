@@ -246,7 +246,7 @@ div
     :top21pay24h = 'top21pay24h'
   )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
-  WalletModal( v-model='showWalletModal' :changeRoute='false')
+  WalletModal( v-model='showWalletModal')
 </template>
 
 <style lang="sass" scoped>
