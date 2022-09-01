@@ -53,6 +53,7 @@ export default defineComponent({
       localStorage.clear();
       this.setAccountName('');
       this.setUser(null);
+      this.$router.go(0);
     }
   }
 });
@@ -62,16 +63,16 @@ q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="
   q-card.buttons-container
     q-card-section
       .row(v-for='account in accounts')
-        .col-10
+        .col-12
           a.text-white(:href=" '/account/' + account" class="hover-dec") {{account}}
-        .col-2
-          q-btn(@click='onLogout' color='white' icon='close' dense size='sm' flat )
+        //- .col-2
+        //-   q-btn.float-right(@click='onLogout' color='white' icon='close' dense size='sm' flat )
     q-separator(dark)
     q-card-section
-      .q-pa-sm
-        q-btn.full-width(@click='showModal = true' color='primary' label='Attatch an account')
+      //- .q-pa-sm
+      //-   q-btn.full-width(@click='showModal = true' color='primary' label='Attatch an account')
       .q-px-sm.q-pb-sm
-        q-btn.full-width(@click='onLogout' color='primary' label='Disconect all')
+        q-btn.full-width(@click='onLogout' color='primary' label='Disconect')
 WalletModal( v-model='showModal')
 </template>
 <style lang="sass" scoped>
