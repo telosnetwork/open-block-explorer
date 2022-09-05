@@ -2,18 +2,20 @@
 import { defineComponent, ref } from 'vue';
 import { AccountDetails } from 'src/types';
 import { mapGetters } from 'vuex';
-import StakingInfo from 'src/components/Staking/StakingInfo.vue';
-import StakingTab from 'src/components/Staking/StakeTab.vue';
-import UnstakingTab from 'src/components/Staking/UnstakeTab.vue';
-import RefundTab from 'src/components/Staking/RefundTab.vue';
+import StakingInfo from 'src/components/Resources/StakingInfo.vue';
+import StakingTab from 'src/components/Resources/StakeTab.vue';
+import UnstakingTab from 'src/components/Resources/UnstakeTab.vue';
+import RefundTab from 'src/components/Resources/RefundTab.vue';
+import RamTab from 'src/components/Resources/RamTab.vue';
 
 export default defineComponent({
-  name: 'StakingDialog',
+  name: 'ResourcesDialog',
   components: {
     StakingInfo,
     StakingTab,
     UnstakingTab,
-    RefundTab
+    RefundTab,
+    RamTab
   },
   setup() {
     return {
@@ -48,12 +50,12 @@ q-dialog( :persistent='true' maximized)
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
         .row.q-pl-sm
-          img.send-img.q-pr-md( src="~assets/cpu.svg" style="height: 60px; max-width: 60px") 
-          .text-h4.q-pb-md.inline-block.color-grey-3.inline Manage Staking
+          img.send-img.q-pr-md( src="~assets/cpu.svg" style="height: 60px; max-width: 60px")
+          .text-h4.q-pb-md.inline-block.color-grey-3.inline Manage Resources
         .q-pa-sm
           stakingInfo
           .q-pt-lg
-            q-tabs(
+            q-tabs.text-grey-5.tab-text(
               v-model="tab" 
               dense class="text-grey"
               indicator-color="grey-3"
@@ -61,12 +63,11 @@ q-dialog( :persistent='true' maximized)
               narrow-indicator
               align="left"
               :breakpoint="0"
-              no-caps
-              class="text-grey-5 tab-text")
-              
+              no-caps)
 
-              q-tab(name="stake" label="Stake") 
-              q-tab(name="unstake" label="Unstake")
+              q-tab(name="stake" label="Stake CPU/NET") 
+              q-tab(name="unstake" label="Unstake CPU/NET")
+              q-tab(name="ram" label="Buy/Sell RAM")
               q-tab(name="refund" label="Refund")
 
             q-separator(color="grey-8")
@@ -77,6 +78,9 @@ q-dialog( :persistent='true' maximized)
 
               q-tab-panel(name="unstake")
                 unstakingTab
+              
+              q-tab-panel(name="ram")
+                RamTab
 
               q-tab-panel(name="refund")
                 refundTab
