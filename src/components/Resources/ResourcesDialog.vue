@@ -50,7 +50,7 @@ q-dialog( :persistent='true' maximized)
 
               q-tab(name="stake" label="Stake CPU/NET") 
               q-tab(name="unstake" label="Unstake CPU/NET")
-              q-tab(name="ram" label="Buy/Sell RAM")
+              q-tab(name="buyram" label="Buy RAM")
               q-tab(name="sellram" label="Sell RAM")
               q-tab(name="refund" label="Refund")
 
@@ -63,7 +63,7 @@ q-dialog( :persistent='true' maximized)
               q-tab-panel(name="unstake")
                 unstakingTab
               
-              q-tab-panel(name="ram")
+              q-tab-panel(name="buyram")
                 BuyRam
 
               q-tab-panel(name="sellram")
