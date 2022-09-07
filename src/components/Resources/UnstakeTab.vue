@@ -127,7 +127,7 @@ export default defineComponent({
         .row.justify-between.q-pb-sm STAKING ACCOUNT
           q-space
           .text-grey-3 Defaults to selected account
-        q-input.full-width(standout dense dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row.q-py-md
       .col-6
         .row.justify-between.q-pb-sm UNSTAKE TO CPU

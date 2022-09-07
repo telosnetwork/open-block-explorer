@@ -437,6 +437,40 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setTransactionError', e);
     }
   },
+  async buyRamBytes({ commit, state }, { amount }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'buyrambytes',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: state.accountPermission
+          }
+        ],
+        data: {
+          payer: state.accountName,
+          receiver: state.accountName,
+          bytes: amount as string
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
   async sellRam({ commit, state }, { amount }) {
     let transaction = null;
     const actions = [

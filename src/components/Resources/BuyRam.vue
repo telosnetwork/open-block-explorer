@@ -1,0 +1,189 @@
+<script lang="ts">
+import { defineComponent, ref, computed, watch } from 'vue';
+import { useStore } from 'src/store';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
+import { AccountDetails } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+
+export default defineComponent({
+  name: 'BuyRam',
+  components: {
+    ViewTransaction
+  },
+  setup() {
+    const store = useStore();
+    let openTransaction = ref<boolean>(false);
+    const buyAmount = ref<string>('0.0000');
+    const buyOptions = ['TLOS', 'Bytes'];
+    const symbol = ref<string>(chain.getSymbol());
+    const buyOption = ref<string>(buyOptions[0]);
+    const transactionId = computed(
+      (): string => store.state.account.TransactionId
+    );
+    const buyPreview = computed(() => {
+      if (buyOption.value === buyOptions[0]) {
+        return (
+          ((Number(buyAmount.value) * 1000) / Number(ramPrice.value)).toFixed(
+            4
+          ) +
+          ' ' +
+          buyOptions[1]
+        );
+      } else {
+        return (
+          ((Number(buyAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
+            4
+          ) +
+          ' ' +
+          buyOptions[0]
+        );
+      }
+    });
+    const transactionError = computed(
+      () => store.state.account.TransactionError
+    );
+    const ramPrice = computed((): string => {
+      return store.state?.chain.ram_price;
+    });
+    const ramAvailable = computed(
+      () =>
+        store.state.account.data.account.ram_quota -
+        store.state.account.data.account.ram_usage
+    );
+    const accountData = computed((): AccountDetails => {
+      return store.state?.account.data;
+    });
+
+    function formatDec() {
+      const precision = store.state.chain.token.precision;
+      if (buyOption.value === buyOptions[0]) {
+        buyAmount.value = Number(buyAmount.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: precision,
+            minimumFractionDigits: precision
+          })
+          .replace(/[^0-9.]/g, '');
+      } else {
+        buyAmount.value = parseInt(buyAmount.value)
+          .toString()
+          .replace(/[^0-9.]/g, '');
+      }
+    }
+
+    async function buy() {
+      void store.dispatch('account/resetTransaction');
+      if (buyOption.value === buyOptions[0]) {
+        if (
+          buyAmount.value === '0.0000' ||
+          '' ||
+          Number(buyAmount.value) >=
+            Number(accountData.value.account.core_liquid_balance.split(' ')[0])
+        ) {
+          return;
+        }
+        await store.dispatch('account/buyRam', {
+          amount: buyAmount.value + ' ' + symbol.value
+        });
+      } else {
+        if (
+          buyAmount.value === '0' ||
+          '' ||
+          Number(buyAmount.value) >=
+            (assetToAmount(accountData.value.account.core_liquid_balance) *
+              1000) /
+              Number(ramPrice.value)
+        ) {
+          return;
+        }
+        await store.dispatch('account/buyRamBytes', {
+          amount: buyAmount.value
+        });
+      }
+      openTransaction.value = true;
+    }
+
+    function assetToAmount(asset: string, decimals = -1): number {
+      try {
+        let qty: string = asset.split(' ')[0];
+        let val: number = parseFloat(qty);
+        if (decimals > -1) qty = val.toFixed(decimals);
+        return val;
+      } catch (error) {
+        return 0;
+      }
+    }
+
+    function buyLimit(): number {
+      if (buyOption.value === buyOptions[0]) {
+        return assetToAmount(accountData.value.account.core_liquid_balance);
+      } else {
+        return (
+          (assetToAmount(accountData.value.account.core_liquid_balance) *
+            1000) /
+          Number(ramPrice.value)
+        );
+      }
+    }
+
+    watch(buyOption, (newVal) => {
+      if (newVal === buyOptions[0]) {
+        buyAmount.value = '0.0000';
+      } else {
+        buyAmount.value = '0';
+      }
+    });
+
+    return {
+      openTransaction,
+      buyAmount,
+      transactionId,
+      transactionError,
+      ramAvailable,
+      accountData,
+      symbol,
+      buyOption,
+      buyPreview,
+      formatDec,
+      buy,
+      assetToAmount,
+      buyLimit
+    };
+  }
+});
+</script>
+
+<template lang="pug">
+.staking-form
+  q-card-section.text-grey-3
+    .row.q-col-gutter-md
+      .text-weight-bold.text-right.text-grey-3 Buy in TLOS or Bytes?
+    .row.q-col-gutter-md.q-pb-md
+      q-radio(v-model="buyOption" dark color="white" val="TLOS" label="TLOS")
+      q-radio(v-model="buyOption" dark color="white" val="Bytes" label="Bytes")
+    .row
+      .col-12
+        .row.justify-between.q-pb-sm RAM Receiver:
+        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+    .row
+      .row.q-pb-sm.full-width
+        .col-12 {{ `Amount of RAM to buy in ` + buyOption}}
+      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="buyAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= buyLimit() && val != '' || 'Invalid amount.' ]" type="text" dense dark)
+    .row.q-pb-sm
+      .text-weight-normal.text-right.text-grey-3 ≈ {{buyPreview}}
+    .row
+      q-btn.full-width.button-accent(label="Buy" flat @click="buy" )
+    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+
+</template>
+
+<style scoped lang="sass">
+.button-accent
+  background: rgba(108, 35, 255, 1)
+  border-radius: 4px
+  color: $grey-4
+.grey-3
+  color: $grey-3
+</style>
