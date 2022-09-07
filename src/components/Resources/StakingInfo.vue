@@ -80,8 +80,8 @@ export default defineComponent({
       .col-6.text-h6.text-right.text-bold {{accountData.account?.core_liquid_balance}}
     .row.full-width.q-py-md
       hr
-    .row.full-width.q-pb-lg
-      .col-xs-12.col-sm-6.q-px-lg
+    .row.full-width.q-pb-md
+      .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light STAKED TO CPU
           .col-5.text-right.text-bold {{accountData.account?.total_resources?.cpu_weight}}
@@ -91,7 +91,7 @@ export default defineComponent({
         .row.q-pt-sm
           .col-7.text-weight-light RAM PRICE
           .col-5.text-right.text-bold {{ramPrice}} TLOS/KB
-      .col-xs-12.col-sm-6.q-px-lg
+      .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light STAKED BY OTHERS
           .col-5.text-right.text-bold {{formatStaked(accountData.account?.voter_info?.staked)}}
