@@ -1,12 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { AccountDetails } from 'src/types';
-import { mapGetters } from 'vuex';
 import StakingInfo from 'src/components/Resources/StakingInfo.vue';
 import StakingTab from 'src/components/Resources/StakeTab.vue';
 import UnstakingTab from 'src/components/Resources/UnstakeTab.vue';
 import RefundTab from 'src/components/Resources/RefundTab.vue';
-import RamTab from 'src/components/Resources/RamTab.vue';
+import BuyRam from 'src/components/Resources/BuyRam.vue';
+import SellRam from 'src/components/Resources/SellRam.vue';
 
 export default defineComponent({
   name: 'ResourcesDialog',
@@ -15,29 +14,13 @@ export default defineComponent({
     StakingTab,
     UnstakingTab,
     RefundTab,
-    RamTab
+    BuyRam,
+    SellRam
   },
   setup() {
     return {
       tab: ref('stake')
     };
-  },
-  computed: {
-    ...mapGetters({ account: 'account/accountName' })
-  },
-  methods: {
-    async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
-      try {
-        data = await this.$api.getAccount(this.account);
-        this.$store.commit('account/setAccountData', data);
-      } catch (e) {
-        return;
-      }
-    }
-  },
-  async mounted() {
-    await this.loadAccountData();
   }
 });
 </script>
@@ -68,6 +51,7 @@ q-dialog( :persistent='true' maximized)
               q-tab(name="stake" label="Stake CPU/NET") 
               q-tab(name="unstake" label="Unstake CPU/NET")
               q-tab(name="ram" label="Buy/Sell RAM")
+              q-tab(name="sellram" label="Sell RAM")
               q-tab(name="refund" label="Refund")
 
             q-separator(color="grey-8")
@@ -80,7 +64,10 @@ q-dialog( :persistent='true' maximized)
                 unstakingTab
               
               q-tab-panel(name="ram")
-                RamTab
+                BuyRam
+
+              q-tab-panel(name="sellram")
+                SellRam
 
               q-tab-panel(name="refund")
                 refundTab

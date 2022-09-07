@@ -87,6 +87,7 @@ export default defineComponent({
       account: this.$store.state.account.accountName
     });
     await this.loadPriceData();
+    void this.$store.dispatch('chain/updateRamPrice');
   },
   methods: {
     ...mapActions({ updateRexData: 'account/updateRexData' }),

@@ -8,14 +8,13 @@ import { getChain } from 'src/config/ConfigManager';
 const chain = getChain();
 
 export default defineComponent({
-  name: 'LiquidTab',
+  name: 'SellRam',
   components: {
     ViewTransaction
   },
   setup() {
     const store = useStore();
     let openTransaction = ref<boolean>(false);
-    const buyAmount = ref<string>('0.0000');
     const sellAmount = ref<string>('0');
     const symbol = ref<string>(chain.getSymbol());
     const transactionId = computed(
@@ -23,6 +22,15 @@ export default defineComponent({
     );
     const transactionError = computed(
       () => store.state.account.TransactionError
+    );
+    const ramPrice = computed((): string => {
+      return store.state?.chain.ram_price;
+    });
+    const sellPreview = computed(
+      () =>
+        ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
+          4
+        ) + ' TLOS'
     );
     const ramAvailable = computed(
       () =>
@@ -34,31 +42,10 @@ export default defineComponent({
     });
 
     function formatDec() {
-      const precision = store.state.chain.token.precision;
-      buyAmount.value = Number(buyAmount.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: precision,
-          minimumFractionDigits: precision
-        })
+      sellAmount.value = parseInt(sellAmount.value)
+        .toString()
         .replace(/[^0-9.]/g, '');
     }
-
-    async function buy() {
-      void store.dispatch('account/resetTransaction');
-      if (
-        buyAmount.value === '0.0000' ||
-        Number(buyAmount.value) >=
-          Number(accountData.value.account.core_liquid_balance.split(' ')[0])
-      ) {
-        return;
-      }
-      await store.dispatch('account/buyRam', {
-        amount: buyAmount.value + ' ' + symbol.value
-      });
-      openTransaction.value = true;
-    }
-
     async function sell() {
       void store.dispatch('account/resetTransaction');
       if (
@@ -87,17 +74,16 @@ export default defineComponent({
 
     return {
       openTransaction,
-      buyAmount,
       sellAmount,
       transactionId,
       transactionError,
       ramAvailable,
-      formatDec,
-      buy,
-      sell,
-      assetToAmount,
       accountData,
-      symbol
+      symbol,
+      sellPreview,
+      formatDec,
+      sell,
+      assetToAmount
     };
   }
 });
@@ -105,24 +91,15 @@ export default defineComponent({
 
 <template lang="pug">
 .staking-form
-  q-card-section
-    .row.q-col-gutter-md
-      .col-xs-12.col-sm-12.col-md-6
-        .row
-          .row.q-pb-sm.full-width
-            .col-8 {{ `AMOUNT TO BUY` }}
-            .col-4.text-weight-bold.text-right {{accountData.account.core_liquid_balance}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="buyAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
-        .row
-          q-btn.full-width.button-accent(label="Buy" flat @click="buy" )
-      .col-xs-12.col-sm-12.col-md-6
-        .row
-          .row.q-pb-sm.full-width
-            .col-8 {{ `AMOUNT TO SELL` }}
-            .col-4.text-weight-bold.text-right {{ramAvailable}} Bytes
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sellAmount" :lazy-rules='true' :rules="[ val => val >= 0  && val <= ramAvailable  || 'Invalid amount.' ]" type="text" dense dark)
-        .row
-          q-btn.full-width.button-accent(label="Sell" flat @click="sell" )
+  q-card-section.text-grey-3
+    .row
+      .row.q-pb-sm.full-width
+        .col-12 {{ `Amount of RAM to sell in Bytes` }}
+      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sellAmount" :lazy-rules='true' :rules="[ val => val >= 0  && val <= ramAvailable && val != ''  || 'Invalid amount.' ]" type="text" dense dark)
+    .row.q-pb-sm
+      .text-weight-normal.text-right.text-grey-3 ≈ {{sellPreview}}
+    .row
+      q-btn.full-width.button-accent(label="Sell" flat @click="sell" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
