@@ -18,9 +18,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const openTransaction = ref<boolean>(false);
-    const stakingAccount = computed(
-      (): string => store.state.account.accountName
-    );
+    const stakingAccount = ref<string>(store.state.account.accountName || '');
     const cpuTokens = ref<string>('0.0000');
     const netTokens = ref<string>('0.0000');
     const netStake = computed(

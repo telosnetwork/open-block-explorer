@@ -18,9 +18,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const openTransaction = ref<boolean>(false);
-    const stakingAccount = computed(
-      (): string => store.state.account.accountName
-    );
+    const stakingAccount = ref<string>(store.state.account.accountName || '');
     const accountTotal = computed(
       (): string => store.state.account.data.account?.core_liquid_balance
     );

@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { isValidAccount } from 'src/utils/stringValidator';
 
 const chain = getChain();
 
@@ -55,6 +56,8 @@ export default defineComponent({
     const accountData = computed((): AccountDetails => {
       return store.state?.account.data;
     });
+
+    const reciever = ref<string>(accountData.value.account.account_name);
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
@@ -146,10 +149,12 @@ export default defineComponent({
       symbol,
       buyOption,
       buyPreview,
+      reciever,
       formatDec,
       buy,
       assetToAmount,
-      buyLimit
+      buyLimit,
+      isValidAccount
     };
   }
 });
@@ -166,7 +171,7 @@ export default defineComponent({
     .row
       .col-12
         .row.justify-between.q-pb-sm RAM Receiver:
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="reciever" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row
       .row.q-pb-sm.full-width
         .col-12 {{ `Amount of RAM to buy in ` + buyOption}}
