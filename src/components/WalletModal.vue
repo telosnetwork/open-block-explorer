@@ -1,15 +1,9 @@
 <script lang="ts">
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import { defineComponent } from 'vue';
+import { DialogChainObject } from 'quasar';
 export default defineComponent({
   name: 'Wallet',
-  props: {
-    changeRoute: {
-      type: Boolean,
-      required: false,
-      default: true
-    }
-  },
   data() {
     return {
       authenticators: {},
@@ -32,22 +26,16 @@ export default defineComponent({
           account: this.account as string,
           authenticator
         });
-        if (this.$props.changeRoute) {
-          await this.$router.push({
-            name: 'account',
-            params: { account: this.account as string }
-          });
-        }
-        this.$router.go(0);
       } catch (e) {
         this.error = e;
       }
+      (this.$refs.walletDialog as DialogChainObject).hide();
     }
   }
 });
 </script>
 <template lang="pug">
-q-dialog.modal-container
+q-dialog.modal-container(ref='walletDialog')
 
   .modal-header-container
     q-icon( name='add_circle_outline' size='2.5rem' color="white") 
