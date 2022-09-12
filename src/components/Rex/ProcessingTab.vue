@@ -22,6 +22,7 @@ export default defineComponent({
     });
 
     function refundProgress(): number {
+      if (maturingRex.value === '0') return 0;
       let diff =
         Math.round(
           new Date(
@@ -33,10 +34,11 @@ export default defineComponent({
         604800 - //The max amount it can take in seconds
         Math.round(new Date(Date.now()).getTime() / 1000);
       let time = diff / 604800;
-      return time > 0 ? time : 0;
+      return time > 0 ? time : 0.01;
     }
 
     function maturitiesCountdown(): string {
+      if (maturingRex.value === '0') return 'No maturing Rex';
       let diff =
         Math.round(
           new Date(
@@ -87,8 +89,8 @@ export default defineComponent({
       .col-xs-12.col-sm-6
         .row.q-pa-sm
           .col-7 {{maturitiesCountdown()}}
-          .col-5.text-right.text-weight-bold 
-            q-linear-progress( :value="refundProgress()" :buffer="0.5" color="grey-3" class="q-mt-sm")
+          .col-5.text-right.text-weight-bold
+            q-linear-progress( :value="refundProgress()" color="grey-3" class="q-mt-sm")
 
 </template>
 

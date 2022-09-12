@@ -93,17 +93,17 @@ export default defineComponent({
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7 {{ `TOTAL ${symbol} IN REX` }}
+          .col-7 {{ `TOTAL ${symbol} STAKED` }}
           .col-5.text-right.text-weight-bold {{coreRexBalance}}
         .row.q-pt-sm
-          .col-7 REX SAVINGS
+          .col-7 STAKED SAVINGS
           .col-5.text-right.text-weight-bold {{rexSavings}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7 MATURED REX
+          .col-7 MATURED STAKED
           .col-5.text-right.text-weight-bold {{maturedRex}}
         .row.q-pt-sm
-          .col-7 MATURING REX
+          .col-7 MATURING STAKED
           .col-5.text-right.text-weight-bold {{maturingRex}}
 
 </template>
