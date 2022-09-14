@@ -38,7 +38,7 @@ export default defineComponent({
     }
 
     function maturitiesCountdown(): string {
-      if (maturingRex.value === '0') return 'No maturing Rex';
+      if (maturingRex.value === '0') return 'No maturing TLOS';
       let diff =
         Math.round(
           new Date(
@@ -84,7 +84,7 @@ export default defineComponent({
     .row.full-width
       .col-xs-12.col-sm-6
         .row.q-pa-sm
-          .col-6 Rex maturing
+          .col-6 Staked TLOS maturing
           .col-6.text-right.text-weight-bold {{maturingRex}}
       .col-xs-12.col-sm-6
         .row.q-pa-sm

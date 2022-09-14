@@ -150,7 +150,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
               q-tab(name="liquid" label="Lend")
               q-tab(name="staked" label="Lend CPU/NET")
               q-tab(name="savings" label="Savings")
-              q-tab(name="staking" label="Staking")
+              q-tab(name="maturing" label="Maturing")
               q-tab(name="history" label="History")
 
             q-separator(color="grey-8")
@@ -162,7 +162,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                 StakedTab
               q-tab-panel(name="savings")
                 SavingsTab
-              q-tab-panel(name="staking")
+              q-tab-panel(name="maturing")
                 ProcessingTab
               q-tab-panel(name="history")
                 HistoryTab
