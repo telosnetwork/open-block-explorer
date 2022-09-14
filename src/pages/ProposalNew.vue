@@ -203,7 +203,7 @@ q-page(padding)
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, onMounted } from 'vue';
+import { defineComponent, reactive, ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import moment from 'moment';
 import ProposalSuccess from 'components/ProposalSuccess.vue';
@@ -212,9 +212,9 @@ import ProposalAction from 'components/ProposalAction.vue';
 import ProposalUploadCSV from 'components/ProposalUploadCSV.vue';
 import { Authorization, ProposalForm, Error } from 'src/types';
 import { api } from 'src/api';
-import { useAuthenticator } from 'src/composables/useAuthenticator';
 import { randomEosioName } from 'src/utils/handleEosioName';
 import { useQuasar } from 'quasar';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'ProposalNew',
@@ -226,11 +226,11 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const { account, isAuthenticated, getUser } = useAuthenticator();
+    const store = useStore();
     const $q = useQuasar();
-
+    const account = computed(() => store.state.account.accountName);
+    const isAuthenticated = computed(() => store.state.account.isAuthenticated);
     const actionsTab = ref<'one' | 'batch'>('one');
-
     const amountOfDaysToExpire = ref(7);
     const blockProducers = ref<Authorization[]>([]);
     const areBlockProducersApproving = ref(false);
@@ -350,8 +350,7 @@ export default defineComponent({
           data.trx.actions[i].data = hexData;
         }
 
-        const user = await getUser();
-        const transaction = await user.signTransaction(
+        const transaction = await store.state.account.user.signTransaction(
           {
             actions: [
               {
@@ -372,8 +371,9 @@ export default defineComponent({
             expireSeconds: 30
           }
         );
+        if (store.state.account.authenticatorName != 'cleos')
+          success.showModal = true;
 
-        success.showModal = true;
         success.transactionId = transaction.transactionId;
         success.proposalName = data.proposal_name;
       } catch (e) {

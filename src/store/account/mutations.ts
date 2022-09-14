@@ -61,5 +61,11 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setAccountPermission(state: AccountStateInterface, permission: string) {
     state.accountPermission = permission;
+  },
+  setIsAuthenticated(state: AccountStateInterface, authenticated: boolean) {
+    state.isAuthenticated = authenticated;
+  },
+  setAuthenticatorName(state: AccountStateInterface, auth: string) {
+    state.authenticatorName = auth;
   }
 };
