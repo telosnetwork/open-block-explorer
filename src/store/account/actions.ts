@@ -34,6 +34,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setAccountPermission', permission);
       const accountName = await account.getAccountName();
       commit('setUser', account);
+      commit('setIsAuthenticated', true);
       commit('setAccountName', accountName);
       localStorage.setItem(
         'autoLogin',
@@ -42,6 +43,10 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       localStorage.setItem('account', accountName);
       localStorage.setItem(
         'autoLogin',
+        (authenticator as Authenticator).getName()
+      );
+      commit(
+        'setAuthenticatorName',
         (authenticator as Authenticator).getName()
       );
       localStorage.setItem('returning', 'true');
