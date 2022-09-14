@@ -7,6 +7,7 @@ export interface ChainStateInterface {
   last_irreversible_block_num: number;
   head_block_producer: string;
   producerSchedule: string[];
+  ram_price: string;
 }
 
 export function state(): ChainStateInterface {
@@ -22,6 +23,7 @@ export function state(): ChainStateInterface {
     head_block_num: 0,
     last_irreversible_block_num: 0,
     head_block_producer: '',
-    producerSchedule: []
+    producerSchedule: [],
+    ram_price: '0'
   };
 }
