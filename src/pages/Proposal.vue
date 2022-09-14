@@ -40,11 +40,11 @@ q-page(padding)
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch, computed } from 'vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
 import ProposalTable from 'src/components/ProposalTable.vue';
 import { api } from 'src/api';
+import { useAuthenticator } from 'src/composables/useAuthenticator';
 import { useRoute, useRouter } from 'vue-router';
-import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'Proposal',
@@ -54,10 +54,8 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const store = useStore();
     const blockProducers = ref<string[]>([]);
-    const account = computed(() => store.state.account.accountName);
-    const isAuthenticated = computed(() => store.state.account.isAuthenticated);
+    const { account, isAuthenticated } = useAuthenticator();
 
     const tab = ref<string>((route.query['tab'] as string) || 'myProposal');
 

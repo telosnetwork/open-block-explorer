@@ -101,10 +101,10 @@ import { useQuasar } from 'quasar';
 import JsonViewer from 'vue-json-viewer';
 import moment from 'moment';
 import { api } from 'src/api';
+import { useAuthenticator } from 'src/composables/useAuthenticator';
 import { RequestedApprovals, Error, Proposal } from 'src/types';
 import sha256 from 'fast-sha256';
 import { Action, Serializer, Transaction } from '@greymass/eosio';
-import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'ProposalItem',
@@ -115,11 +115,9 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const $q = useQuasar();
-    const store = useStore();
 
     const { proposalName } = route.params;
-    const account = computed(() => store.state.account.accountName);
-    const isAuthenticated = computed(() => store.state.account.isAuthenticated);
+    const { account, isAuthenticated, getUser } = useAuthenticator();
 
     const isLoading = ref(true);
 
@@ -398,7 +396,9 @@ export default defineComponent({
       name: 'approve' | 'unapprove' | 'cancel' | 'exec';
       data: unknown;
     }) {
-      const response = await store.state.account.user.signTransaction(
+      const user = await getUser();
+
+      const response = await user.signTransaction(
         {
           actions: [
             {

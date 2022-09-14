@@ -22,9 +22,7 @@ export default defineComponent({
   methods: {
     ...mapMutations({
       setAccountName: 'account/setAccountName',
-      setUser: 'account/setUser',
-      setIsAuthenticaed: 'account/setIsAuthenticated',
-      setAuthenticatorName: 'account/setAuthenticatorName'
+      setUser: 'account/setUser'
     }),
     ...mapActions({ logout: 'account/logout' }),
     getAuthenticator() {
@@ -53,9 +51,7 @@ export default defineComponent({
     clearAccount(): void {
       // TODO: only remove what is related to login, localStorage has other uses
       localStorage.clear();
-      this.setIsAuthenticaed(false);
       this.setAccountName('');
-      this.setAuthenticatorName(null);
       this.setUser(null);
       this.$router.go(0);
     }
