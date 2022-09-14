@@ -34,6 +34,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setAccountPermission', permission);
       const accountName = await account.getAccountName();
       commit('setUser', account);
+      commit('setIsAuthenticated', true);
       commit('setAccountName', accountName);
       localStorage.setItem(
         'autoLogin',
@@ -44,8 +45,20 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         'autoLogin',
         (authenticator as Authenticator).getName()
       );
+      commit(
+        'setAuthenticatorName',
+        (authenticator as Authenticator).getName()
+      );
       localStorage.setItem('returning', 'true');
       commit('setLoadingWallet');
+    }
+  },
+  async loadAccountData({ commit, state }) {
+    try {
+      const data = await api.getAccount(state.accountName);
+      commit('account/setAccountData', data);
+    } catch (e) {
+      return;
     }
   },
   async updateRexData({ commit }, { account }) {
@@ -377,6 +390,107 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
           voter: state.accountName,
           proxy: '',
           producers: state.vote
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async buyRam({ commit, state }, { amount }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'buyram',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: state.accountPermission
+          }
+        ],
+        data: {
+          payer: state.accountName,
+          receiver: state.accountName,
+          quant: amount as string
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async buyRamBytes({ commit, state }, { amount }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'buyrambytes',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: state.accountPermission
+          }
+        ],
+        data: {
+          payer: state.accountName,
+          receiver: state.accountName,
+          bytes: amount as string
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async sellRam({ commit, state }, { amount }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'sellram',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: state.accountPermission
+          }
+        ],
+        data: {
+          account: state.accountName,
+          bytes: amount as string
         }
       }
     ];

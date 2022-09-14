@@ -7,7 +7,7 @@ import { defineComponent, computed, ref } from 'vue';
 import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
-import StakingDialog from 'src/components/Staking/StakingDialog.vue';
+import ResourcesDialog from 'src/components/Resources/ResourcesDialog.vue';
 import RexDialog from 'src/components/Rex/RexDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { mapActions } from 'vuex';
@@ -22,7 +22,7 @@ export default defineComponent({
   components: {
     PercentCircle,
     SendDialog,
-    StakingDialog,
+    ResourcesDialog,
     DateField,
     RexDialog
   },
@@ -87,6 +87,7 @@ export default defineComponent({
       account: this.$store.state.account.accountName
     });
     await this.loadPriceData();
+    void this.$store.dispatch('chain/updateRamPrice');
   },
   methods: {
     ...mapActions({ updateRexData: 'account/updateRexData' }),
@@ -250,7 +251,7 @@ export default defineComponent({
         .col-3
           q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount' class="full-width")
         .col-3
-          q-btn( @click="openStakingDialog = true" color='primary' label='staking' v-if='isAccount' class="full-width")
+          q-btn( @click="openStakingDialog = true" color='primary' label='Resources' v-if='isAccount' class="full-width")
         .col-3
           q-btn( @click="openRexDialog = true" color='primary' label='rex' v-if='isAccount' class="full-width")
     q-markup-table
@@ -279,7 +280,7 @@ export default defineComponent({
             td.text-left REX
             td.text-right {{ rex }}
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
-    stakingDialog(v-model="openStakingDialog")
+    ResourcesDialog(v-model="openStakingDialog")
     RexDialog(v-model="openRexDialog" :availableTokens="availableTokens")
 </template>
 
