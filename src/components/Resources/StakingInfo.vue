@@ -19,6 +19,14 @@ export default defineComponent({
     const accountData = computed((): AccountDetails => {
       return store.state?.account.data;
     });
+    const ramPrice = computed((): string => {
+      return store.state?.chain.ram_price;
+    });
+    const ramAvailable = computed(
+      () =>
+        store.state.account.data.account.ram_quota -
+        store.state.account.data.account.ram_usage
+    );
 
     function formatStaked(staked: number): string {
       const stakedValue = (
@@ -55,6 +63,8 @@ export default defineComponent({
       total,
       accountData,
       token,
+      ramPrice,
+      ramAvailable,
       formatStaked,
       formatTotalRefund
     };
@@ -70,21 +80,27 @@ export default defineComponent({
       .col-6.text-h6.text-right.text-bold {{accountData.account?.core_liquid_balance}}
     .row.full-width.q-py-md
       hr
-    .row.full-width.q-pb-lg
-      .col-xs-12.col-sm-6.q-px-lg
+    .row.full-width.q-pb-md
+      .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light STAKED TO CPU
           .col-5.text-right.text-bold {{accountData.account?.total_resources?.cpu_weight}}
         .row.q-pt-sm
           .col-7.text-weight-light STAKED TO NET
           .col-5.text-right.text-bold {{accountData.account?.total_resources?.net_weight}}
-      .col-xs-12.col-sm-6.q-px-lg
+        .row.q-pt-sm
+          .col-7.text-weight-light RAM PRICE
+          .col-5.text-right.text-bold {{ramPrice}} TLOS/KB
+      .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light STAKED BY OTHERS
           .col-5.text-right.text-bold {{formatStaked(accountData.account?.voter_info?.staked)}}
         .row.q-pt-sm
           .col-7.text-weight-light REFUNDING
           .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
+        .row.q-pt-sm
+          .col-7.text-weight-light AVAILABLE RAM
+          .col-5.text-right.text-bold {{ramAvailable}} Bytes
 
 </template>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import ValidatorDataTable from './ValidatorDataTable.vue';
 import { api } from 'src/api';
 import { useStore } from 'src/store';
@@ -27,6 +27,10 @@ export default defineComponent({
     const balance = computed(
       () => store.state.account.data?.account?.core_liquid_balance || 0
     );
+    const activecount = computed(() => {
+      if (store.state.chain.producers.length > 42) return 42;
+      else return store.state.chain.producers.length;
+    });
     const lastUpdated = ref<string>('');
     const producerVotes = ref<string[]>([]);
     const currentVote = computed(() => {
@@ -85,6 +89,10 @@ export default defineComponent({
     }
 
     async function updatePayRate() {
+      const sharecount =
+        activecount.value <= 21
+          ? activecount.value * 2
+          : 42 + (activecount.value - 21);
       const paramsPayrate = {
         code: 'eosio',
         scope: 'eosio',
@@ -95,7 +103,10 @@ export default defineComponent({
           rows: { bpay_rate: number }[];
         }
       ).rows[0].bpay_rate;
-      top21pay24h.value = ((payrate.value / 100000) * supply.value) / 365 / 21;
+      // 2 shares per top 21 bp
+      // 1 share for standby up untill 42 bps
+      top21pay24h.value =
+        (((payrate.value / 100000) * supply.value) / 365 / sharecount) * 2;
     }
 
     async function updateSupply() {
@@ -144,6 +155,10 @@ export default defineComponent({
         showWalletModal.value = true;
       }
     }
+
+    watch(activecount, () => {
+      void getVotingStatistics();
+    });
 
     onMounted(async () => {
       await getVotes();

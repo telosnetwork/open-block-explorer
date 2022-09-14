@@ -29,5 +29,8 @@ export const mutations: MutationTree<ChainStateInterface> = {
   },
   setProducers(state: ChainStateInterface, bpList: Producer[]) {
     state.producers = bpList;
+  },
+  setRamPrice(state: ChainStateInterface, price: string) {
+    state.ram_price = price;
   }
 };
