@@ -23,7 +23,6 @@ export default defineComponent({
         store.state.account.abi.abi.structs.find((s) => s.name === action.value)
           .fields
     );
-
     async function signAction() {
       await store.dispatch('account/pushTransaction', {
         action: action.value,
@@ -33,29 +32,10 @@ export default defineComponent({
       });
       openTransaction.value = true;
     }
-
-    function formatMemo() {
-      for (var key in memo.value) {
-        const field = fields.value.find((val) => val.name == key);
-        if (field.type === 'bool') {
-          if (
-            memo.value[key] === 'true' ||
-            memo.value[key] === '1' ||
-            memo.value[key] === 'True' ||
-            memo.value[key] === 'T' ||
-            memo.value[key] === 't'
-          )
-            memo.value[key] = true;
-          else memo.value[key] = false;
-        }
-      }
-    }
-
     onMounted(async () => {
       actor.value = await store.state.account.user.getAccountName();
       permission.value = store.state.account.accountPermission;
     });
-
     return {
       action,
       actions,
@@ -66,8 +46,7 @@ export default defineComponent({
       permission,
       openTransaction,
       transactionId,
-      transactionError,
-      formatMemo
+      transactionError
     };
   }
 });
@@ -90,7 +69,7 @@ q-card(
     .row.q-py-md.q-col-gutter-md
       .col-xs-6.col-sm-3(v-for="field in fields" :key="field.name")
         .text-bold.q-pb-sm {{field.name}}
-        q-input(outlined dense @blur="formatMemo" v-model="memo[field.name]" :placeholder="field.type" style="background: #ffffff")
+        q-input(outlined dense v-model="memo[field.name]" :placeholder="field.type" style="background: #ffffff")
       .col-xs-6.col-sm-3
         .text-bold.q-pb-sm actor
         q-input(outlined v-model="actor" dense style="background: #ffffff")
