@@ -3,8 +3,8 @@ import { defineComponent, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
-import { useAuthenticator } from 'src/composables/useAuthenticator';
 import { getChain } from 'src/config/ConfigManager';
+import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'Header',
@@ -15,7 +15,8 @@ export default defineComponent({
   setup() {
     const $q = useQuasar();
     const chain = getChain();
-    const { account } = useAuthenticator();
+    const store = useStore();
+    const account = computed(() => store.state.account.accountName);
     const isLarge = computed((): boolean => $q.screen.gt.sm);
 
     return {
