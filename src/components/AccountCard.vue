@@ -253,7 +253,7 @@ export default defineComponent({
         .col-3
           q-btn( @click="openStakingDialog = true" color='primary' label='Resources' v-if='isAccount' class="full-width")
         .col-3
-          q-btn( @click="openRexDialog = true" color='primary' label='rex' v-if='isAccount' class="full-width")
+          q-btn( @click="openRexDialog = true" color='primary' label='staking (REX)' v-if='isAccount' class="full-width")
     q-markup-table
       thead
         tr
@@ -277,7 +277,7 @@ export default defineComponent({
             td.text-left STAKED BY OTHERS
             td.text-right {{ staked }}
           tr
-            td.text-left REX
+            td.text-left STAKED
             td.text-right {{ rex }}
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
     ResourcesDialog(v-model="openStakingDialog")

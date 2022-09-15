@@ -3,11 +3,12 @@ import { defineComponent, PropType, ref } from 'vue';
 import { Token, AccountDetails } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
-import RexInfo from './RexInfo.vue';
+import StakingInfo from './StakingInfo.vue';
 import StakedTab from './StakedTab.vue';
 import ProcessingTab from './ProcessingTab.vue';
 import LiquidTab from './LiquidTab.vue';
 import HistoryTab from './HistoryTab.vue';
+import SavingsTab from './SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain = getChain();
@@ -16,11 +17,12 @@ const symbol = chain.getSymbol();
 export default defineComponent({
   name: 'StakingDialog',
   components: {
-    RexInfo,
+    StakingInfo,
     StakedTab,
     ProcessingTab,
     LiquidTab,
-    HistoryTab
+    HistoryTab,
+    SavingsTab
   },
   data() {
     return {
@@ -131,12 +133,11 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
         .row.q-pl-sm
-          img.send-img.q-pr-md( src="~assets/rex.svg" style="height: 60px; max-width: 60px")
-          .text-h4.q-pb-md.inline-block.color-grey-3.inline Rex
+          .text-h4.q-pb-md.inline-block.color-grey-3.inline Staking (REX)
         .q-pa-sm
-          RexInfo
+          StakingInfo
           .q-pt-lg.text-grey-3.text-weight-light
-            q-tabs(
+            q-tabs.text-grey-5.tab-text(
               v-model="tab"
               dense class="text-grey"
               indicator-color="grey-3"
@@ -144,13 +145,12 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
               narrow-indicator
               align="left"
               :breakpoint="0"
-              no-caps
-              class="text-grey-5 tab-text")
+              no-caps)
 
-
-              q-tab(name="liquid" label="Liquid")
-              q-tab(name="staked" label="Staked")
-              q-tab(name="processing" label="Processing")
+              q-tab(name="liquid" label="Lend")
+              q-tab(name="staked" label="Lend CPU/NET")
+              q-tab(name="savings" label="Savings")
+              q-tab(name="maturing" label="Maturing")
               q-tab(name="history" label="History")
 
             q-separator(color="grey-8")
@@ -160,7 +160,9 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                 LiquidTab
               q-tab-panel(name="staked")
                 StakedTab
-              q-tab-panel(name="processing")
+              q-tab-panel(name="savings")
+                SavingsTab
+              q-tab-panel(name="maturing")
                 ProcessingTab
               q-tab-panel(name="history")
                 HistoryTab

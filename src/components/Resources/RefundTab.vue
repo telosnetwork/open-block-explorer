@@ -161,7 +161,7 @@ export default defineComponent({
           .row
             .col-7 {{refundCountdown()}}
             .col-5.text-right.text-weight-bold
-              q-linear-progress( :value="refundProgress()" :buffer="0.5" color="grey-3" class="q-mt-sm")
+              q-linear-progress( :value="refundProgress()" color="grey-3" class="q-mt-sm")
           .row.q-pt-sm
             .col-7.q-pt-sm Refund
               q-icon(class="q-ml-xs" name="far fa-question-circle")
