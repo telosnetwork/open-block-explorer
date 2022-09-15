@@ -83,24 +83,24 @@ export default defineComponent({
     .row.full-width.q-pb-md
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
-          .col-7.text-weight-light STAKED TO CPU
+          .col-7.text-weight-light CPU
           .col-5.text-right.text-bold {{accountData.account?.total_resources?.cpu_weight}}
         .row.q-pt-sm
-          .col-7.text-weight-light STAKED TO NET
+          .col-7.text-weight-light NET
           .col-5.text-right.text-bold {{accountData.account?.total_resources?.net_weight}}
         .row.q-pt-sm
-          .col-7.text-weight-light RAM PRICE
-          .col-5.text-right.text-bold {{ramPrice}} TLOS/KB
+          .col-7.text-weight-light AVAILABLE RAM
+          .col-5.text-right.text-bold {{ramAvailable}} Bytes
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
-          .col-7.text-weight-light STAKED BY OTHERS
+          .col-7.text-weight-light DELEGATED
           .col-5.text-right.text-bold {{formatStaked(accountData.account?.voter_info?.staked)}}
         .row.q-pt-sm
           .col-7.text-weight-light REFUNDING
           .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
         .row.q-pt-sm
-          .col-7.text-weight-light AVAILABLE RAM
-          .col-5.text-right.text-bold {{ramAvailable}} Bytes
+          .col-7.text-weight-light RAM PRICE
+          .col-5.text-right.text-bold {{ramPrice}} TLOS/KB
 
 </template>
 

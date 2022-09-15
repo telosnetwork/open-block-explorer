@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import StakingInfo from 'src/components/Resources/StakingInfo.vue';
+import StakingInfo from 'src/components/Resources/ResourcesInfo.vue';
 import StakingTab from 'src/components/Resources/StakeTab.vue';
 import UnstakingTab from 'src/components/Resources/UnstakeTab.vue';
 import RefundTab from 'src/components/Resources/RefundTab.vue';
