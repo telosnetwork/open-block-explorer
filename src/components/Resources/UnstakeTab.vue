@@ -122,11 +122,11 @@ export default defineComponent({
   q-card-section.text-grey-3.text-weight-light
     .row.q-pb-md
       .col-6
-        .row.justify-between.q-pb-sm REFUND CPU
+        .row.justify-between.q-pb-sm REMOVE CPU
         q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= cpuStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
 
       .col-6.q-pl-md
-        .row.justify-between.q-pb-sm REFUND NET
+        .row.justify-between.q-pb-sm REMOVE NET
         q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= netStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
     .row
       .col-12.q-pt-md

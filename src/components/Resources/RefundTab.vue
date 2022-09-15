@@ -152,10 +152,10 @@ export default defineComponent({
       .row.full-width.q-pb-lg.text-grey-3.text-weight-light
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
-            .col-6 CPU REFUND
+            .col-6 CPU
             .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.cpu_amount || '0'}}
           .row.q-pt-md
-            .col-6 NET REFUND
+            .col-6 NET
             .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.net_amount || '0'}}
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
