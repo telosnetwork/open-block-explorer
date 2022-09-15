@@ -5,7 +5,7 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
 
 export default defineComponent({
-  name: 'StakedTab',
+  name: 'StakeFromNetCpu',
   components: {
     ViewTransaction
   },

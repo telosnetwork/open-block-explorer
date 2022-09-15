@@ -8,7 +8,7 @@ import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/Resources/ResourcesDialog.vue';
-import RexDialog from 'src/components/Rex/RexDialog.vue';
+import RexDialog from 'src/components/Staking/StakingDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { mapActions } from 'vuex';
 import { date } from 'quasar';

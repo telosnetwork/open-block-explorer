@@ -4,9 +4,9 @@ import { Token, AccountDetails } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
 import StakingInfo from './StakingInfo.vue';
-import StakedTab from './StakedTab.vue';
+import StakeCpuNetTab from './StakeFromNetCpuTab.vue';
 import ProcessingTab from './ProcessingTab.vue';
-import LiquidTab from './LiquidTab.vue';
+import StakingTab from './StakingTab.vue';
 import HistoryTab from './HistoryTab.vue';
 import SavingsTab from './SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
@@ -18,9 +18,9 @@ export default defineComponent({
   name: 'StakingDialog',
   components: {
     StakingInfo,
-    StakedTab,
+    StakeCpuNetTab,
     ProcessingTab,
-    LiquidTab,
+    StakingTab,
     HistoryTab,
     SavingsTab
   },
@@ -49,7 +49,7 @@ export default defineComponent({
       recievingAccount: ref<string>(''),
       sendAmount: ref<string>('0.0000'),
       memo: ref<string>(''),
-      tab: ref('liquid'),
+      tab: ref('stake'),
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
   },
@@ -147,8 +147,8 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
               :breakpoint="0"
               no-caps)
 
-              q-tab(name="liquid" label="Lend")
-              q-tab(name="staked" label="Lend CPU/NET")
+              q-tab(name="stake" label="Stake")
+              q-tab(name="stakecpunet" label="Lend CPU/NET")
               q-tab(name="savings" label="Savings")
               q-tab(name="maturing" label="Maturing")
               q-tab(name="history" label="History")
@@ -156,10 +156,10 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
             q-separator(color="grey-8")
 
             q-tab-panels(v-model="tab" class="tab-panel")
-              q-tab-panel(name="liquid")
-                LiquidTab
-              q-tab-panel(name="staked")
-                StakedTab
+              q-tab-panel(name="stake")
+                StakingTab
+              q-tab-panel(name="stakecpunet")
+                StakeCpuNetTab
               q-tab-panel(name="savings")
                 SavingsTab
               q-tab-panel(name="maturing")

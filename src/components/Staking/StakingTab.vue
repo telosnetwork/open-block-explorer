@@ -8,7 +8,7 @@ import { getChain } from 'src/config/ConfigManager';
 const chain = getChain();
 
 export default defineComponent({
-  name: 'LiquidTab',
+  name: 'StakingTab',
   components: {
     ViewTransaction
   },
