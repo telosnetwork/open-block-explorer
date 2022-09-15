@@ -148,7 +148,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
               no-caps)
 
               q-tab(name="stake" label="Stake")
-              q-tab(name="stakecpunet" label="Lend CPU/NET")
+              q-tab(name="stakecpunet" label="Stake from CPU/NET")
               q-tab(name="savings" label="Savings")
               q-tab(name="maturing" label="Maturing")
               q-tab(name="history" label="History")
