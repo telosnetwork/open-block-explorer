@@ -98,11 +98,11 @@ export default defineComponent({
       .col-12
         .row
           .row.q-pb-sm.full-width
-            .col-8 {{ `LIQUID ${symbol} TO LEND` }}
+            .col-8 {{ `LIQUID ${symbol}` }}
             .col-4.text-weight-bold.text-right {{accountData.account.core_liquid_balance}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="stakeTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
-          q-btn.full-width.button-accent(label="Lend" flat @click="stake" )
+          q-btn.full-width.button-accent(:label='"Stake " + symbol' flat @click="stake" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>

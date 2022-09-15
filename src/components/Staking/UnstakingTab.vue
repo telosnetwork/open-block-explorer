@@ -99,11 +99,11 @@ export default defineComponent({
       .col-12
         .row
           .row.q-pb-sm.full-width
-            .col-8 {{ `LIQUID ${symbol} TO WITHDRAW` }}
+            .col-8 {{ `MATURED ${symbol}` }}
             .col-4.text-weight-bold.text-right {{maturedRex}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="unstakeTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
-          q-btn.full-width.button-accent(label="Withdraw" flat @click="unstake" )
+          q-btn.full-width.button-accent(:label='"Unstake " + symbol' flat @click="unstake" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
