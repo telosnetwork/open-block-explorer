@@ -7,6 +7,7 @@ import StakingInfo from './StakingInfo.vue';
 import StakeCpuNetTab from './StakeFromNetCpuTab.vue';
 import ProcessingTab from './ProcessingTab.vue';
 import StakingTab from './StakingTab.vue';
+import UnstakingTab from './UnstakingTab.vue';
 import HistoryTab from './HistoryTab.vue';
 import SavingsTab from './SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
@@ -21,6 +22,7 @@ export default defineComponent({
     StakeCpuNetTab,
     ProcessingTab,
     StakingTab,
+    UnstakingTab,
     HistoryTab,
     SavingsTab
   },
@@ -148,6 +150,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
               no-caps)
 
               q-tab(name="stake" label="Stake")
+              q-tab(name="unstake" label="Unstake")
               q-tab(name="stakecpunet" label="Stake from CPU/NET")
               q-tab(name="savings" label="Savings")
               q-tab(name="maturing" label="Maturing")
@@ -158,6 +161,8 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
             q-tab-panels(v-model="tab" class="tab-panel")
               q-tab-panel(name="stake")
                 StakingTab
+              q-tab-panel(name="unstake")
+                UnstakingTab
               q-tab-panel(name="stakecpunet")
                 StakeCpuNetTab
               q-tab-panel(name="savings")
