@@ -70,7 +70,8 @@ export default defineComponent({
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 10000
-      } as PaginationSettings
+      } as PaginationSettings,
+      showAge: true
     };
   },
   async mounted() {
@@ -169,8 +170,6 @@ export default defineComponent({
 div.row.col-12.q-mt-xs.justify-center.text-left
   div.row.col-11
     div.row.col-12.q-mt-lg
-      div.col-3
-          p.panel-title {{ tableTitle }} 
       q-space
       div.col-3.row.flex.filter-buttons.temp-hide
         q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
@@ -193,12 +192,18 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         @update:expanded='updateExpanded'
         @request='onRequest'
         )
+        template(v-slot:top="props")
+          .col
+            p.panel-title {{ tableTitle }}
+          q-space
+          .col
+            q-toggle(v-model="showAge" left-label label="Show Age")
         template( v-slot:body-cell-transaction="props")
           q-td( :props="props" )
             AccountFormatter(:account="props.value.id" :type="props.value.type")
         template( v-slot:body-cell-timestamp="props")
           q-td( :props="props" )
-            DateField( :timestamp="props.value", :showAge='true' )
+            DateField( :timestamp="props.value", :showAge='showAge' )
         template( v-slot:body-cell-action="props")
           q-td( :props="props" )
             .row.justify-left.text-weight-light
