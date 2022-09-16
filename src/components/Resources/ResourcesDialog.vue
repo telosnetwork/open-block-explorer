@@ -50,9 +50,9 @@ q-dialog( :persistent='true' maximized)
 
               q-tab(name="stake" label="Stake CPU/NET") 
               q-tab(name="unstake" label="Unstake CPU/NET")
+              q-tab(name="refund" label="Refund CPU/NET")
               q-tab(name="buyram" label="Buy RAM")
               q-tab(name="sellram" label="Sell RAM")
-              q-tab(name="refund" label="Refund")
 
             q-separator(color="grey-8")
 
@@ -62,15 +62,15 @@ q-dialog( :persistent='true' maximized)
 
               q-tab-panel(name="unstake")
                 unstakingTab
+
+              q-tab-panel(name="refund")
+                refundTab
               
               q-tab-panel(name="buyram")
                 BuyRam
 
               q-tab-panel(name="sellram")
                 SellRam
-
-              q-tab-panel(name="refund")
-                refundTab
 
 </template>
 
