@@ -8,7 +8,7 @@ import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/Resources/ResourcesDialog.vue';
-import RexDialog from 'src/components/Rex/RexDialog.vue';
+import RexDialog from 'src/components/Staking/StakingDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { mapActions } from 'vuex';
 import { date } from 'quasar';
@@ -253,7 +253,7 @@ export default defineComponent({
         .col-3
           q-btn( @click="openStakingDialog = true" color='primary' label='Resources' v-if='isAccount' class="full-width")
         .col-3
-          q-btn( @click="openRexDialog = true" color='primary' label='rex' v-if='isAccount' class="full-width")
+          q-btn( @click="openRexDialog = true" color='primary' label='staking (REX)' v-if='isAccount' class="full-width")
     q-markup-table
       thead
         tr
@@ -277,7 +277,7 @@ export default defineComponent({
             td.text-left STAKED BY OTHERS
             td.text-right {{ staked }}
           tr
-            td.text-left REX
+            td.text-left STAKED
             td.text-right {{ rex }}
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
     ResourcesDialog(v-model="openStakingDialog")

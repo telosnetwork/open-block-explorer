@@ -37,7 +37,14 @@ export function state(): AccountStateInterface {
     autoLogin: null,
     isAuthenticated: false,
     linkedAccounts: [],
-    data: {} as AccountDetails,
+    data: {
+      account: {
+        account_name: '',
+        core_liquid_balance: '0.0000 TLOS'
+      },
+      tokens: [],
+      actions: []
+    } as AccountDetails,
     authorization: [],
     rexActions: [],
     TransactionId: '',
