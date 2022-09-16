@@ -119,17 +119,17 @@ export default defineComponent({
   q-card-section.text-grey-3.text-weight-light
     .row
       .col-12
-        .row.justify-between.q-pb-sm STAKING ACCOUNT
+        .row.justify-between.q-pb-sm CPU/NET Receiver
           q-space
           .text-grey-3 Defaults to selected account
         q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row.q-py-md
       .col-6
-        .row.justify-between.q-pb-sm STAKE TO CPU
+        .row.justify-between.q-pb-sm ADD CPU
         q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 || 'Invalid amount.' ]" type="text" dense dark)
 
       .col-6.q-pl-md
-        .row.justify-between.q-pb-sm STAKE TO NET
+        .row.justify-between.q-pb-sm ADD NET
         q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 ||'Invalid amount.' ]" type="text" dense dark)
     .row
       .col-12.q-pt-md

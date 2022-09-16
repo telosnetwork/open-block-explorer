@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import StakingInfo from 'src/components/Resources/StakingInfo.vue';
+import StakingInfo from 'src/components/Resources/ResourcesInfo.vue';
 import StakingTab from 'src/components/Resources/StakeTab.vue';
 import UnstakingTab from 'src/components/Resources/UnstakeTab.vue';
 import RefundTab from 'src/components/Resources/RefundTab.vue';
@@ -48,8 +48,8 @@ q-dialog( :persistent='true' maximized)
               :breakpoint="0"
               no-caps)
 
-              q-tab(name="stake" label="Stake CPU/NET") 
-              q-tab(name="unstake" label="Unstake CPU/NET")
+              q-tab(name="stake" label="Add CPU/NET") 
+              q-tab(name="unstake" label="Remove CPU/NET")
               q-tab(name="refund" label="Refund CPU/NET")
               q-tab(name="buyram" label="Buy RAM")
               q-tab(name="sellram" label="Sell RAM")
