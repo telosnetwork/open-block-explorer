@@ -120,9 +120,6 @@ export default defineComponent({
     const { proposalName } = route.params;
     const account = computed(() => store.state.account.accountName);
     const isAuthenticated = computed(() => store.state.account.isAuthenticated);
-    // const isAnchor = computed(
-    //   () => store.state.account.authenticatorName != 'cleos'
-    // );
     const isLoading = ref(true);
 
     const proposer = ref('');
@@ -438,8 +435,6 @@ export default defineComponent({
             }
           }
         });
-
-        // if (isAnchor.value) document.location.reload();
       } catch (e) {
         console.log(e);
         handleError(e, 'Unable approve proposal');
@@ -459,8 +454,6 @@ export default defineComponent({
             }
           }
         });
-
-        // if (isAnchor.value) document.location.reload();
       } catch (e) {
         console.log(e);
         handleError(e, 'Unable approve proposal');
@@ -477,8 +470,6 @@ export default defineComponent({
             executer: account.value
           }
         });
-
-        // if (isAnchor.value) document.location.reload();
       } catch (e) {
         handleError(e, 'Unable execute proposal');
       }
@@ -494,8 +485,6 @@ export default defineComponent({
             canceler: account.value
           }
         });
-
-        // if (isAnchor.value) document.location.reload();
       } catch (e) {
         handleError(e, 'Unable cancel proposal');
       }
