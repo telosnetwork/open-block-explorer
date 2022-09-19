@@ -71,7 +71,7 @@ export default defineComponent({
         rowsPerPage: 10,
         rowsNumber: 10000
       } as PaginationSettings,
-      showAge: true
+      showAge: localStorage.getItem('showAge') === 'true'
     };
   },
   async mounted() {
@@ -83,6 +83,9 @@ export default defineComponent({
     },
     async actions() {
       await this.loadTableData();
+    },
+    showAge(val) {
+      localStorage.setItem('showAge', val);
     }
   },
   computed: {
