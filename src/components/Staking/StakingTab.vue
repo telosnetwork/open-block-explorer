@@ -8,15 +8,14 @@ import { getChain } from 'src/config/ConfigManager';
 const chain = getChain();
 
 export default defineComponent({
-  name: 'LiquidTab',
+  name: 'StakingTab',
   components: {
     ViewTransaction
   },
   setup() {
     const store = useStore();
     let openTransaction = ref<boolean>(false);
-    const lendTokens = ref<string>('0.0000');
-    const withdrawTokens = ref<string>('0.0000');
+    const stakeTokens = ref<string>('0.0000');
     const symbol = ref<string>(chain.getSymbol());
     const transactionId = computed(
       (): string => store.state.account.TransactionId
@@ -39,14 +38,7 @@ export default defineComponent({
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
-      lendTokens.value = Number(lendTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: precision,
-          minimumFractionDigits: precision
-        })
-        .replace(/[^0-9.]/g, '');
-      withdrawTokens.value = Number(withdrawTokens.value)
+      stakeTokens.value = Number(stakeTokens.value)
         .toLocaleString('en-US', {
           style: 'decimal',
           maximumFractionDigits: precision,
@@ -58,30 +50,14 @@ export default defineComponent({
     async function stake() {
       void store.dispatch('account/resetTransaction');
       if (
-        lendTokens.value === '0.0000' ||
-        Number(lendTokens.value) >=
+        stakeTokens.value === '0.0000' ||
+        Number(stakeTokens.value) >=
           Number(accountData.value.account.core_liquid_balance.split(' ')[0])
       ) {
         return;
       }
       await store.dispatch('account/stakeRex', {
-        amount: lendTokens.value
-      });
-      openTransaction.value = true;
-    }
-
-    async function unstake() {
-      void store.dispatch('account/resetTransaction');
-      if (
-        withdrawTokens.value === '0.0000' ||
-        !rexbal.value.vote_stake ||
-        Number(withdrawTokens.value) >=
-          Number(rexbal.value.vote_stake.split(' ')[0])
-      ) {
-        return;
-      }
-      await store.dispatch('account/unstakeRex', {
-        amount: withdrawTokens.value
+        amount: stakeTokens.value
       });
       openTransaction.value = true;
     }
@@ -99,13 +75,11 @@ export default defineComponent({
 
     return {
       openTransaction,
-      lendTokens,
-      withdrawTokens,
+      stakeTokens,
       transactionId,
       transactionError,
       formatDec,
       stake,
-      unstake,
       assetToAmount,
       accountData,
       rexInfo,
@@ -121,22 +95,14 @@ export default defineComponent({
 .staking-form
   q-card-section
     .row.q-col-gutter-md
-      .col-xs-12.col-sm-12.col-md-6
+      .col-12
         .row
           .row.q-pb-sm.full-width
-            .col-8 {{ `LIQUID ${symbol} TO LEND` }}
+            .col-8 {{ `LIQUID ${symbol}` }}
             .col-4.text-weight-bold.text-right {{accountData.account.core_liquid_balance}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="lendTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="stakeTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
-          q-btn.full-width.button-accent(label="Lend" flat @click="stake" )
-      .col-xs-12.col-sm-12.col-md-6
-        .row
-          .row.q-pb-sm.full-width
-            .col-8 {{ `LIQUID ${symbol} TO WITHDRAW` }}
-            .col-4.text-weight-bold.text-right {{maturedRex}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="withdrawTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
-        .row
-          q-btn.full-width.button-accent(label="Withdraw" flat @click="unstake" )
+          q-btn.full-width.button-accent(:label='"Stake " + symbol' flat @click="stake" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>

@@ -11,21 +11,22 @@ const chain = getChain();
 const symbol = chain.getSymbol();
 
 export default defineComponent({
-  name: 'StakeTab',
+  name: 'UnstakeTab',
   components: {
     ViewTransaction
   },
   setup() {
     const store = useStore();
     const openTransaction = ref<boolean>(false);
-    const stakingAccount = computed(
-      (): string => store.state.account.accountName
-    );
-    const accountTotal = computed(
-      (): string => store.state.account.data.account?.core_liquid_balance
-    );
+    const stakingAccount = ref<string>(store.state.account.accountName || '');
     const cpuTokens = ref<string>('0.0000');
     const netTokens = ref<string>('0.0000');
+    const netStake = computed(
+      (): string => store.state.account.data.account.total_resources.net_weight
+    );
+    const cpuStake = computed(
+      (): string => store.state.account.data.account.total_resources.cpu_weight
+    );
 
     function formatDec() {
       cpuTokens.value = Number(cpuTokens.value)
@@ -64,7 +65,8 @@ export default defineComponent({
       transactionId: ref<string>(null),
       transactionError: null,
       formatDec,
-      accountTotal: assetToAmount(accountTotal.value),
+      netStake: assetToAmount(netStake.value),
+      cpuStake: assetToAmount(cpuStake.value),
       isValidAccount
     };
   },
@@ -77,11 +79,10 @@ export default defineComponent({
       const data = {
         from: this.stakingAccount.toLowerCase(),
         receiver: this.stakingAccount.toLowerCase(),
-        stake_cpu_quantity: `${parseFloat(this.cpuTokens).toFixed(
+        unstake_cpu_quantity: `${parseFloat(this.cpuTokens).toFixed(
           4
         )} ${symbol}`,
-
-        stake_net_quantity: `${parseFloat(this.netTokens).toFixed(
+        unstake_net_quantity: `${parseFloat(this.netTokens).toFixed(
           4
         )} ${symbol}`,
         transfer: false
@@ -91,7 +92,7 @@ export default defineComponent({
         this.transactionId = (
           await this.signTransaction({
             account: 'eosio',
-            name: 'delegatebw',
+            name: 'undelegatebw',
             data
           })
         ).transactionId as string;
@@ -119,24 +120,18 @@ export default defineComponent({
 <template lang="pug">
 .staking-form
   q-card-section.text-grey-3.text-weight-light
-    .row
-      .col-12
-        .row.justify-between.q-pb-sm STAKING ACCOUNT
-          q-space
-          .text-grey-3 Defaults to selected account
-        q-input.full-width(standout dense dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
-    .row.q-py-md
+    .row.q-pb-md
       .col-6
-        .row.justify-between.q-pb-sm STAKE TO CPU
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 || 'Invalid amount.' ]" type="text" dense dark)
+        .row.justify-between.q-pb-sm REMOVE CPU
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= cpuStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
 
       .col-6.q-pl-md
-        .row.justify-between.q-pb-sm STAKE TO NET
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 ||'Invalid amount.' ]" type="text" dense dark)
+        .row.justify-between.q-pb-sm REMOVE NET
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= netStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
     .row
       .col-12.q-pt-md
         q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )
-  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
 

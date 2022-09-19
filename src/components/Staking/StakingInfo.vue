@@ -4,91 +4,111 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token, Refund } from 'src/types';
+import { AccountDetails, Token } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
 
 export default defineComponent({
   name: 'StakingInfo',
   setup() {
     const store = useStore();
-    const openCoinDialog = ref<boolean>(false);
+    const symbol = ref<string>(chain.getSymbol());
     const stakingAccount = ref<string>('');
-    const cpuTokens = ref<string>('0.0000');
-    const netTokens = ref<string>('0.0000');
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);
     const accountData = computed((): AccountDetails => {
-      return store.state?.account.data;
+      return store.state.account.data;
     });
-
-    function formatStaked(staked: number): string {
-      const stakedValue = (
-        staked / Math.pow(10, token.value.precision)
-      ).toFixed(2);
-      return `${stakedValue} ${token.value.symbol}`;
-    }
-
-    function formatTotalRefund(refund: Refund): string {
-      const totalRefund = (
-        assetToAmount(refund?.cpu_amount, token.value.precision) +
-        assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(2);
-      return `${totalRefund} ${token.value.symbol}`;
-    }
-
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
+    const rexInfo = computed(() => {
+      return store.state?.account.data.account.rex_info;
+    });
+    const maturingRex = computed(() => {
+      return store.state?.account.maturingRex;
+    });
+    const coreRexBalance = computed(() => {
+      return store.state?.account.coreRexBalance;
+    });
+    const maturedRex = computed(() => {
+      return store.state?.account.maturedRex;
+    });
+    const rexSavings = computed(() => {
+      return store.state?.account.savingsRex;
+    });
 
     return {
       store,
-      openCoinDialog,
       stakingAccount,
-      cpuTokens,
-      netTokens,
       total,
       accountData,
       token,
-      formatStaked,
-      formatTotalRefund
+      maturingRex,
+      rexInfo,
+      coreRexBalance,
+      maturedRex,
+      rexSavings,
+      symbol
     };
   }
 });
 </script>
 
 <template lang="pug">
-.container.grey-3
+.container.text-grey-3.text-weight-light
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
-      .col-6.text-h6.text-bold ACCOUNT TOTAL
-      .col-6.text-h6.text-right.text-bold {{accountData.account?.core_liquid_balance}}
-    .row.full-width.q-py-md
+      .col-6.text-h6.grey-3 ACCOUNT TOTAL
+      .col-6.text-h6.text-right.grey-3 {{accountData.account?.core_liquid_balance}}
+    .row.full-width.q-py-md.q-px-md
       hr
+    //-.row.full-width.q-col-gutter-lg.q-pb-md
+      .col-xs-12.col-sm-6
+        div Your Cumulative Earnings
+        .text-h6.grey-3 30.25 {{ ${symbol} }}
+      .col-xs-12.col-sm-6.q-pt-xs-md.q-pr-lg
+        .row(:class="$q.screen.gt.xs ? 'float-right' : '' ")
+          .row.q-pr-sm
+            .col-12(:class="$q.screen.gt.xs ? 'text-right' : '' ") 30 Day intrest
+            .col-12.grey-3(:class="$q.screen.gt.xs ? 'text-right' : '' ")  Here
+          q-separator(vertical color="primary")
+          q-btn-dropdown( padding="xs" flat @click='onMainClick')
+            q-list
+              q-item(clickable v-close-popup @click='onItemClick')
+                q-item-section
+                  q-item-label 30 days
+              q-item(clickable v-close-popup @click='onItemClick')
+                q-item-section
+                  q-item-label 3 months
+              q-item(clickable v-close-popup @click='onItemClick')
+                q-item-section
+                  q-item-label 6 months
+              q-item(clickable v-close-popup @click='onItemClick')
+                q-item-section
+                  q-item-label 1 year
+              q-item(clickable v-close-popup @click='onItemClick')
+                q-item-section
+                  q-item-label 2 years
+    //
+
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7.text-weight-light STAKED TO CPU
-          .col-5.text-right.text-bold {{accountData.account?.total_resources?.cpu_weight}}
+          .col-7 {{ `TOTAL ${symbol} STAKED` }}
+          .col-5.text-right.text-weight-bold {{coreRexBalance}}
         .row.q-pt-sm
-          .col-7.text-weight-light STAKED TO NET
-          .col-5.text-right.text-bold {{accountData.account?.total_resources?.net_weight}}
+          .col-7 SAVINGS
+          .col-5.text-right.text-weight-bold {{rexSavings}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
-          .col-7.text-weight-light STAKED BY OTHERS
-          .col-5.text-right.text-bold {{formatStaked(accountData.account?.voter_info?.staked)}}
+          .col-7 MATURED
+          .col-5.text-right.text-weight-bold {{maturedRex}}
         .row.q-pt-sm
-          .col-7.text-weight-light REFUNDING
-          .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
+          .col-7 MATURING
+          .col-5.text-right.text-weight-bold {{maturingRex}}
 
 </template>
 
-<style scoped lang="sass">
+<style lang="sass">
 .container
   border: 2px solid $grey-3
   border-radius: 13px

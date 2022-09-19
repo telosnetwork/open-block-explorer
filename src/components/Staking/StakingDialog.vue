@@ -1,29 +1,116 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { AccountDetails } from 'src/types';
-import { mapGetters } from 'vuex';
-import StakingInfo from 'src/components/Staking/StakingInfo.vue';
-import StakingTab from 'src/components/Staking/StakeTab.vue';
-import UnstakingTab from 'src/components/Staking/UnstakeTab.vue';
-import RefundTab from 'src/components/Staking/RefundTab.vue';
+import { defineComponent, PropType, ref } from 'vue';
+import { Token, AccountDetails } from 'src/types';
+import { mapActions, mapGetters } from 'vuex';
+import { isValidAccount } from 'src/utils/stringValidator';
+import StakingInfo from './StakingInfo.vue';
+import StakeCpuNetTab from './StakeFromNetCpuTab.vue';
+import ProcessingTab from './ProcessingTab.vue';
+import StakingTab from './StakingTab.vue';
+import UnstakingTab from './UnstakingTab.vue';
+import HistoryTab from './HistoryTab.vue';
+import SavingsTab from './SavingsTab.vue';
+import { getChain } from 'src/config/ConfigManager';
+
+const chain = getChain();
+const symbol = chain.getSymbol();
 
 export default defineComponent({
   name: 'StakingDialog',
   components: {
     StakingInfo,
+    StakeCpuNetTab,
+    ProcessingTab,
     StakingTab,
     UnstakingTab,
-    RefundTab
+    HistoryTab,
+    SavingsTab
+  },
+  data() {
+    return {
+      sendToken: {
+        symbol,
+        precision: 4,
+        amount: 0,
+        contract: 'eosio.token'
+      } as Token,
+      transactionId: null,
+      transactionError: null,
+      sendDialog: false
+    };
+  },
+  props: {
+    availableTokens: {
+      type: Array as PropType<Token[]>,
+      required: true
+    }
   },
   setup() {
     return {
-      tab: ref('stake')
+      openCoinDialog: ref<boolean>(false),
+      recievingAccount: ref<string>(''),
+      sendAmount: ref<string>('0.0000'),
+      memo: ref<string>(''),
+      tab: ref('stake'),
+      ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
   },
   computed: {
-    ...mapGetters({ account: 'account/accountName' })
+    ...mapGetters({ account: 'account/accountName' }),
+    transactionForm(): boolean {
+      return !(this.transactionError || this.transactionId);
+    }
   },
   methods: {
+    isValidAccount,
+    async sendTransaction(): Promise<void> {
+      const actionAccount = this.sendToken.contract;
+      const data = {
+        from: this.account as string,
+        to: this.recievingAccount,
+        quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
+        memo: this.memo
+      };
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        this.transactionId = (
+          await this.signTransaction({
+            account: actionAccount,
+            data,
+            name: 'transfer'
+          })
+        ).transactionId as string;
+      } catch (e) {
+        this.transactionError = e;
+      }
+    },
+    setDefaults() {
+      if (this.availableTokens.length > 0) {
+        this.sendToken = this.availableTokens.find((token) => {
+          return token.symbol === this.sendToken.symbol;
+        });
+      }
+    },
+    updateSelectedCoin(token: Token): void {
+      this.sendToken = token;
+    },
+    resetForm() {
+      this.transactionId = null;
+      this.transactionError = null;
+      this.sendToken = {
+        symbol,
+        precision: 4,
+        amount: 0,
+        contract: 'eosio.token'
+      };
+    },
+    async navToTransaction() {
+      await this.$router.push({
+        name: 'transaction',
+        params: { transaction: this.transactionId as string }
+      });
+      this.$router.go(0);
+    },
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
@@ -41,51 +128,55 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-q-dialog( :persistent='true' maximized)
-  q-card.stakeCard
-    .row.justify-center.items-center.full-height.full-width
+q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
+  q-card.rexCard
+    .row.justify-center.q-pt-xl.full-height.full-width
       .absolute-top-right
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
         .row.q-pl-sm
-          img.send-img.q-pr-md( src="~assets/cpu.svg" style="height: 60px; max-width: 60px") 
-          .text-h4.q-pb-md.inline-block.color-grey-3.inline Manage Staking
+          .text-h4.q-pb-md.inline-block.color-grey-3.inline Staking (REX)
         .q-pa-sm
-          stakingInfo
-          .q-pt-lg
-            q-tabs(
-              v-model="tab" 
+          StakingInfo
+          .q-pt-lg.text-grey-3.text-weight-light
+            q-tabs.text-grey-5.tab-text(
+              v-model="tab"
               dense class="text-grey"
               indicator-color="grey-3"
               active-color="grey-3"
               narrow-indicator
               align="left"
               :breakpoint="0"
-              no-caps
-              class="text-grey-5 tab-text")
-              
+              no-caps)
 
-              q-tab(name="stake" label="Stake") 
+              q-tab(name="stake" label="Stake")
               q-tab(name="unstake" label="Unstake")
-              q-tab(name="refund" label="Refund")
+              q-tab(name="stakecpunet" label="Stake from CPU/NET")
+              q-tab(name="savings" label="Savings")
+              q-tab(name="maturing" label="Maturing")
+              q-tab(name="history" label="History")
 
             q-separator(color="grey-8")
 
             q-tab-panels(v-model="tab" class="tab-panel")
               q-tab-panel(name="stake")
-                stakingTab
-
+                StakingTab
               q-tab-panel(name="unstake")
-                unstakingTab
-
-              q-tab-panel(name="refund")
-                refundTab
+                UnstakingTab
+              q-tab-panel(name="stakecpunet")
+                StakeCpuNetTab
+              q-tab-panel(name="savings")
+                SavingsTab
+              q-tab-panel(name="maturing")
+                ProcessingTab
+              q-tab-panel(name="history")
+                HistoryTab
 
 </template>
 
 <style lang="sass" scoped>
 
-.stakeCard
+.rexCard
   color: $grey-6
   background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
   .send-icon

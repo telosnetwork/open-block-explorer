@@ -34,6 +34,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setAccountPermission', permission);
       const accountName = await account.getAccountName();
       commit('setUser', account);
+      commit('setIsAuthenticated', true);
       commit('setAccountName', accountName);
       localStorage.setItem(
         'autoLogin',
@@ -44,8 +45,20 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         'autoLogin',
         (authenticator as Authenticator).getName()
       );
+      commit(
+        'setAuthenticatorName',
+        (authenticator as Authenticator).getName()
+      );
       localStorage.setItem('returning', 'true');
       commit('setLoadingWallet');
+    }
+  },
+  async loadAccountData({ commit, state }) {
+    try {
+      const data = await api.getAccount(state.accountName);
+      commit('account/setAccountData', data);
+    } catch (e) {
+      return;
     }
   },
   async updateRexData({ commit }, { account }) {
@@ -82,16 +95,21 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const maturingRex = rexbal
       ? rexbal.rex_maturities &&
         rexbal.rex_maturities[0] &&
-        rexbal.rex_maturities[0].second &&
+        new Date(rexbal.rex_maturities[0].first).getFullYear() -
+          new Date().getFullYear() <=
+          1 &&
         tlosRexRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
       : 0;
-
-    const savingsRex = rexbal
-      ? rexbal.rex_maturities &&
-        rexbal.rex_maturities[1] &&
-        rexbal.rex_maturities[1].second &&
-        tlosRexRatio * (Number(rexbal.rex_maturities[1].second) / 10000)
-      : 0;
+    let savingsRex = 0;
+    if (rexbal && rexbal.rex_maturities && rexbal.rex_maturities.length > 0) {
+      const thisYear = new Date().getFullYear();
+      rexbal.rex_maturities.forEach((maturity) => {
+        const maturityYear = new Date(maturity.first).getFullYear();
+        if (maturityYear - thisYear > 1) {
+          savingsRex = tlosRexRatio * (Number(maturity.second) / 10000);
+        }
+      });
+    }
 
     const maturedRex = rexbal
       ? tlosRexRatio * (Number(rexbal.matured_rex) / 10000)
@@ -377,6 +395,177 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
           voter: state.accountName,
           proxy: '',
           producers: state.vote
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async buyRam({ commit, state }, { amount }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'buyram',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: state.accountPermission
+          }
+        ],
+        data: {
+          payer: state.accountName,
+          receiver: state.accountName,
+          quant: amount as string
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async buyRamBytes({ commit, state }, { amount }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'buyrambytes',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: state.accountPermission
+          }
+        ],
+        data: {
+          payer: state.accountName,
+          receiver: state.accountName,
+          bytes: amount as string
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async sellRam({ commit, state }, { amount }) {
+    let transaction = null;
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'sellram',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: state.accountPermission
+          }
+        ],
+        data: {
+          account: state.accountName,
+          bytes: amount as string
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async moveToSavings({ commit, state }, { amount }) {
+    let transaction = null;
+    const rexToUnstake =
+      (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'mvtosavings',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: 'active'
+          }
+        ],
+        data: {
+          owner: state.accountName,
+          rex: rexToUnstake
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async moveFromSavings({ commit, state }, { amount }) {
+    let transaction = null;
+    const rexToUnstake =
+      (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'mvfrsavings',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: 'active'
+          }
+        ],
+        data: {
+          owner: state.accountName,
+          rex: rexToUnstake
         }
       }
     ];

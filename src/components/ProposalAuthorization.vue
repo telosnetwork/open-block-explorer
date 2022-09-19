@@ -41,7 +41,7 @@ div.row.q-col-gutter-md.q-mb-md
             q-item-label(v-if="isLoading") Searching...
             q-item-label(v-else) {{ actor ? 'Nothing found' : 'Search by actor before' }}
 
-  div.col-auto(v-if="requiredAccounts.accounts && requiredAccounts.accounts.length > 0")
+  div.col-auto(v-if="requiredAccounts?.accounts?.length > 0")
     q-btn(flat padding="sm md" color="white" text-color="primary" title="Required accounts")
       q-icon(name="people" class="cursor-pointer" size="20px")
       q-popup-proxy(transition-show="scale" transition-hide="scale")
@@ -68,7 +68,7 @@ div.row.q-col-gutter-md.q-mb-md
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue';
+import { defineComponent, ref, watch, computed, onMounted } from 'vue';
 import { api } from 'src/api';
 
 interface RequiredAccounts {
@@ -121,6 +121,12 @@ export default defineComponent({
       },
       set: (value) => {
         context.emit('update:permission', value);
+      }
+    });
+
+    onMounted(async () => {
+      if (props.actor) {
+        await searchAccounts(props.actor);
       }
     });
 

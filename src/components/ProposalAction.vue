@@ -81,7 +81,14 @@ q-card.q-mt-md
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, computed, PropType } from 'vue';
+import {
+  defineComponent,
+  ref,
+  watch,
+  computed,
+  PropType,
+  onMounted
+} from 'vue';
 import ProposalAuthorization from 'components/ProposalAuthorization.vue';
 import { api } from 'src/api';
 
@@ -172,6 +179,25 @@ export default defineComponent({
       isAccountLoading.value = false;
     });
 
+    onMounted(async () => {
+      if (!props.modelValue.account || !props.modelValue.name) return;
+
+      const queryValue = props.modelValue.account.toLowerCase();
+
+      try {
+        const { abi } = await api.getABI(queryValue);
+        const actionNameIndex = abi.structs.findIndex(
+          (item) => props.modelValue.name === item.name
+        );
+        action.value.name = abi.structs[actionNameIndex ?? 0].name;
+        structs.value = abi.structs;
+      } catch (error) {
+        isAccountError.value = true;
+      }
+
+      isAccountLoading.value = false;
+    });
+
     const actionOptions = computed(() => {
       if (structs.value.length === 0) return [];
       return structs.value.map((item) => item.name);
@@ -188,7 +214,10 @@ export default defineComponent({
     });
 
     watch(fields, (currentValue) => {
-      action.value.data = {};
+      action.value.data = props.modelValue.data ?? {};
+
+      if (props.modelValue.data) return;
+
       for (let index = 0; index < currentValue.length; index++) {
         const element = currentValue[index];
         action.value.data[element.name] = '';

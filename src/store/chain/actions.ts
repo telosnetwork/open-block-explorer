@@ -1,7 +1,7 @@
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { ChainStateInterface } from './state';
-import { BP } from 'src/types';
+import { BP, GetTableRowsParams } from 'src/types';
 import axios from 'axios';
 import { api } from 'src/api/index';
 import { Chain } from 'src/types/Chain';
@@ -63,6 +63,32 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
       commit('setHead_block_num', info.head_block_num);
       commit('setLIB', info.last_irreversible_block_num);
       commit('setHead_block_producer', info.head_block_producer);
+    } catch (err) {
+      console.log('Error', err);
+    }
+  },
+  async updateRamPrice({ commit }) {
+    try {
+      const paramsRammarket = {
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'rammarket',
+        json: true
+      } as GetTableRowsParams;
+      const rammarket = (
+        (await api.getTableRows(paramsRammarket)) as {
+          rows: {
+            supply: string;
+            base: { balance: string; weight: string };
+            quote: { balance: string; weight: string };
+          }[];
+        }
+      ).rows[0];
+      const base = Number(rammarket.base.balance.split(' ')[0]);
+      const quote = Number(rammarket.quote.balance.split(' ')[0]);
+      const price = (quote * 1000) / (base - 1000);
+      // add 0.5% fee to the price
+      commit('setRamPrice', (price / 0.995).toFixed(4));
     } catch (err) {
       console.log('Error', err);
     }

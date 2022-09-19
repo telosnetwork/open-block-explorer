@@ -152,16 +152,16 @@ export default defineComponent({
       .row.full-width.q-pb-lg.text-grey-3.text-weight-light
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
-            .col-6 CPU REFUND
+            .col-6 CPU
             .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.cpu_amount || '0'}}
           .row.q-pt-md
-            .col-6 NET REFUND
+            .col-6 NET
             .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.net_amount || '0'}}
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-7 {{refundCountdown()}}
             .col-5.text-right.text-weight-bold
-              q-linear-progress( :value="refundProgress()" :buffer="0.5" color="grey-3" class="q-mt-sm")
+              q-linear-progress( :value="refundProgress()" color="grey-3" class="q-mt-sm")
           .row.q-pt-sm
             .col-7.q-pt-sm Refund
               q-icon(class="q-ml-xs" name="far fa-question-circle")
