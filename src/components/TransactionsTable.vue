@@ -70,7 +70,11 @@ export default defineComponent({
         page: 1,
         rowsPerPage: 10,
         rowsNumber: 10000
-      } as PaginationSettings
+      } as PaginationSettings,
+      fromDateFilter: new Date().toLocaleString(),
+      toDateFilter: new Date().toLocaleString(),
+      actionsFilter: '',
+      tokenFilter: ''
     };
   },
   async mounted() {
@@ -172,10 +176,54 @@ div.row.col-12.q-mt-xs.justify-center.text-left
       div.col-3
           p.panel-title {{ tableTitle }} 
       q-space
-      div.col-3.row.flex.filter-buttons.temp-hide
-        q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
-        q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
-        q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
+      div.col-3.row.flex.filter-buttons
+        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
+          color="primary"
+          label="Actions")
+          .q-pa-md(style='max-width: 300px')
+            .row
+              q-input(filled v-model='actionsFilter' label="Actions")
+        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
+          persistent
+          color="primary"
+          label="Date")
+          .q-pa-md(style='max-width: 300px')
+            .row
+              q-input(filled v-model='fromDateFilter' label="From")
+                template(v-slot:prepend)
+                  q-icon.cursor-pointer(name='event')
+                    q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
+                      q-date(v-model='fromDateFilter' mask='YYYY-MM-DD HH:mm')
+                        .row.items-center.justify-end
+                          q-btn(v-close-popup='' label='Close' color='primary' flat)
+                template(v-slot:append)
+                  q-icon.cursor-pointer(name='access_time')
+                    q-popup-proxy(cover transition-show='scale' transition-hide='scale')
+                      q-time(v-model='fromDateFilter' mask='YYYY-MM-DD HH:mm' format24h)
+                        .row.items-center.justify-end
+                          q-btn(v-close-popup='' label='Close' color='primary' flat)
+            .row.justify-center.full-width.q-py-xs
+              q-icon(name="arrow_downward")
+            .row
+              q-input(filled v-model='toDateFilter' label="To")
+                template(v-slot:prepend)
+                  q-icon.cursor-pointer(name='event')
+                    q-popup-proxy(cover transition-show='scale' transition-hide='scale')
+                      q-date(v-model='toDateFilter' mask='YYYY-MM-DD HH:mm')
+                        .row.items-center.justify-end
+                          q-btn(v-close-popup='' label='Close' color='primary' flat)
+                template(v-slot:append)
+                  q-icon.cursor-pointer(name='access_time')
+                    q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
+                      q-time(v-model='toDateFilter' mask='YYYY-MM-DD HH:mm' format24h)
+                        .row.items-center.justify-end
+                          q-btn(v-close-popup='' label='Close' color='primary' flat)
+        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
+          color="primary"
+          label="Token")
+          .q-pa-md(style='max-width: 300px')
+            .row
+              q-input(filled v-model='tokenFilter' label="Token")
     q-separator.row.col-12.q-mt-md.separator
     div.row.col-12.table-container
       q-table.q-mt-lg.row.fixed-layout(
