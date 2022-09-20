@@ -74,11 +74,18 @@ export default defineComponent({
       fromDateFilter: new Date().toLocaleString(),
       toDateFilter: new Date().toLocaleString(),
       actionsFilter: '',
-      tokenFilter: ''
+      tokenFilter: '',
+      interval: null
     };
   },
   async mounted() {
     await this.loadTableData();
+    this.interval = window.setInterval(() => {
+      if (this.account == null) void this.loadTableData();
+    }, 5000);
+  },
+  beforeUnmount() {
+    clearInterval(this.interval);
   },
   watch: {
     async account() {
@@ -173,23 +180,23 @@ export default defineComponent({
 div.row.col-12.q-mt-xs.justify-center.text-left
   div.row.col-11
     div.row.col-12.q-mt-lg
-      div.col-3
+      div.col-auto
           p.panel-title {{ tableTitle }} 
       q-space
-      div.col-3.row.flex.filter-buttons
+      div.col-auto.row.flex.filter-buttons
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
           color="primary"
           label="Actions")
           .q-pa-md(style='max-width: 300px')
             .row
-              q-input(filled v-model='actionsFilter' label="Actions")
+              q-input(filled dense v-model='actionsFilter' label="Actions")
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
           persistent
           color="primary"
           label="Date")
           .q-pa-md(style='max-width: 300px')
             .row
-              q-input(filled v-model='fromDateFilter' label="From")
+              q-input(filled dense v-model='fromDateFilter' label="From")
                 template(v-slot:prepend)
                   q-icon.cursor-pointer(name='event')
                     q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
@@ -205,7 +212,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             .row.justify-center.full-width.q-py-xs
               q-icon(name="arrow_downward")
             .row
-              q-input(filled v-model='toDateFilter' label="To")
+              q-input(filled dense v-model='toDateFilter' label="To")
                 template(v-slot:prepend)
                   q-icon.cursor-pointer(name='event')
                     q-popup-proxy(cover transition-show='scale' transition-hide='scale')
@@ -223,7 +230,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           label="Token")
           .q-pa-md(style='max-width: 300px')
             .row
-              q-input(filled v-model='tokenFilter' label="Token")
+              q-input(filled dense v-model='tokenFilter' label="Token")
     q-separator.row.col-12.q-mt-md.separator
     div.row.col-12.table-container
       q-table.q-mt-lg.row.fixed-layout(
