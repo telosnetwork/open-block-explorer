@@ -240,6 +240,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         :hide-pagination="noData"
         @update:expanded='updateExpanded'
         @request='onRequest'
+        :rows-per-page-options='[ 10, 20, 50, 100, 200]'
         )
         template( v-slot:body-cell-transaction="props")
           q-td( :props="props" )
