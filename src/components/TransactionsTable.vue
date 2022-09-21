@@ -72,7 +72,7 @@ export default defineComponent({
         rowsPerPage: 10,
         rowsNumber: 10000
       } as PaginationSettings,
-      fromDateFilter: new Date().toLocaleString(),
+      fromDateFilter: '',
       toDateFilter: new Date().toLocaleString(),
       actionsFilter: '',
       tokenFilter: '',
@@ -187,8 +187,21 @@ export default defineComponent({
     },
     filterRows() {
       this.filteredRows = this.rows.filter((row) =>
-        row.action.act.name.includes(this.filter.actions)
+        row.action.act.name.includes(this.actionsFilter)
       );
+      this.filteredRows = this.filteredRows.filter((row) =>
+        JSON.stringify(row.data).includes(this.tokenFilter)
+      );
+      if (!!this.fromDateFilter && !!this.toDateFilter) {
+        this.filteredRows = this.filteredRows.filter((item) => {
+          return (
+            new Date(item.timestamp).getTime() >=
+              new Date(this.fromDateFilter).getTime() &&
+            new Date(item.timestamp).getTime() <=
+              new Date(this.toDateFilter).getTime()
+          );
+        });
+      }
     }
   }
 });
