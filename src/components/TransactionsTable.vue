@@ -82,7 +82,7 @@ export default defineComponent({
   async mounted() {
     await this.loadTableData();
     this.interval = window.setInterval(() => {
-      if (this.account == null && 0) void this.loadTableData();
+      if (this.account == null) void this.loadTableData();
     }, 5000);
   },
   beforeUnmount() {
