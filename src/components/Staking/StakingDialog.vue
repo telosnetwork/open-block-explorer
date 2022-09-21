@@ -130,7 +130,7 @@ export default defineComponent({
 <template lang="pug">
 q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
   q-card.rexCard
-    .row.justify-center.items-center.full-height.full-width
+    .row.justify-center.q-pt-xl.full-height.full-width
       .absolute-top-right
         q-btn(size="20px" flat dense round icon="clear" v-close-popup)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize

@@ -21,6 +21,13 @@ export default defineComponent({
         return actionTime.fromNow();
       }
       return `${actionTime.format('YYYY-MM-DD h:mm:ss')}`;
+    },
+    tooltipDate(): string {
+      const actionTime = moment.utc(this.timestamp, 'YYYY-MM-DD HH:mm:ssZ');
+      if (!this.showAge) {
+        return actionTime.fromNow();
+      }
+      return `${actionTime.format('YYYY-MM-DD h:mm:ss')}`;
     }
   }
 });
@@ -28,4 +35,5 @@ export default defineComponent({
 
 <template lang="pug">
 div {{ friendlyDate }}
+  q-tooltip(anchor="top middle" self="bottom middle" :offset="[10, 10]") {{ tooltipDate }}
 </template>

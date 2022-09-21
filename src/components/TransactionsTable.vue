@@ -76,7 +76,8 @@ export default defineComponent({
       toDateFilter: new Date().toLocaleString(),
       actionsFilter: '',
       tokenFilter: '',
-      interval: null
+      interval: null,
+      showAge: localStorage.getItem('showAge') === 'true'
     };
   },
   async mounted() {
@@ -97,6 +98,9 @@ export default defineComponent({
     },
     filter() {
       void this.filterRows();
+    },
+    showAge(val) {
+      localStorage.setItem('showAge', val);
     }
   },
   computed: {
@@ -212,7 +216,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
   div.row.col-11
     div.row.col-12.q-mt-lg
       div.col-auto
-          p.panel-title {{ tableTitle }} 
+          p.panel-title {{ tableTitle }}
       q-space
       div.col-auto.row.flex.filter-buttons
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
@@ -280,12 +284,18 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         @request='onRequest'
         :rows-per-page-options='[ 10, 20, 50, 100, 200]'
         )
+        template(v-slot:top="props")
+          .col
+            p.panel-title {{ tableTitle }}
+          q-space
+          .col
+            q-toggle(v-model="showAge" left-label label="Show Age")
         template( v-slot:body-cell-transaction="props")
           q-td( :props="props" )
             AccountFormatter(:account="props.value.id" :type="props.value.type")
         template( v-slot:body-cell-timestamp="props")
           q-td( :props="props" )
-            DateField( :timestamp="props.value", :showAge='true' )
+            DateField( :timestamp="props.value", :showAge='showAge' )
         template( v-slot:body-cell-action="props")
           q-td( :props="props" )
             .row.justify-left.text-weight-light
