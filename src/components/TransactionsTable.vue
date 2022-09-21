@@ -62,6 +62,7 @@ export default defineComponent({
         }
       ],
       rows: [] as TransactionTableRow[],
+      filteredRows: [] as TransactionTableRow[],
       expanded: [],
       loading: false,
       paginationSettings: {
@@ -81,7 +82,7 @@ export default defineComponent({
   async mounted() {
     await this.loadTableData();
     this.interval = window.setInterval(() => {
-      if (this.account == null) void this.loadTableData();
+      if (this.account == null && 0) void this.loadTableData();
     }, 5000);
   },
   beforeUnmount() {
@@ -93,6 +94,9 @@ export default defineComponent({
     },
     async actions() {
       await this.loadTableData();
+    },
+    filter() {
+      void this.filterRows();
     }
   },
   computed: {
@@ -110,6 +114,14 @@ export default defineComponent({
     },
     hasActions(): boolean {
       return this.actions != null;
+    },
+    filter() {
+      return {
+        actions: this.actionsFilter,
+        toDate: this.toDateFilter,
+        fromDate: this.fromDateFilter,
+        token: this.tokenFilter
+      };
     }
   },
   methods: {
@@ -146,6 +158,7 @@ export default defineComponent({
             } as TransactionTableRow)
         );
       }
+      void this.filterRows();
     },
     async onRequest(props: {
       pagination: {
@@ -171,6 +184,11 @@ export default defineComponent({
       if (newExpanded.length > 1) {
         newExpanded.shift();
       }
+    },
+    filterRows() {
+      this.filteredRows = this.rows.filter((row) =>
+        row.action.act.name.includes(this.filter.actions)
+      );
     }
   }
 });
@@ -234,9 +252,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
     q-separator.row.col-12.q-mt-md.separator
     div.row.col-12.table-container
       q-table.q-mt-lg.row.fixed-layout(
-        :rows="rows"
+        :rows="filteredRows"
         :columns="columns"
-        row-key="name"
+        :row-key="row => row.name + row.action.action_ordinal"
         flat
         :bordered="false"
         :square="true"
