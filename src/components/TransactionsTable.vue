@@ -222,14 +222,14 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
           color="primary"
           label="Actions")
-          .q-pa-md(style='max-width: 300px')
+          .q-pa-md.dropdown-filter
             .row
               q-input(filled dense v-model='actionsFilter' label="Actions")
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
           persistent
           color="primary"
           label="Date")
-          .q-pa-md(style='max-width: 300px')
+          .q-pa-md.dropdown-filter
             .row
               q-input(filled dense v-model='fromDateFilter' label="From")
                 template(v-slot:prepend)
@@ -263,7 +263,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
           color="primary"
           label="Token")
-          .q-pa-md(style='max-width: 300px')
+          .q-pa-md.dropdown-filter
             .row
               q-input(filled dense v-model='tokenFilter' label="Token")
     q-separator.row.col-12.q-mt-md.separator
@@ -392,4 +392,7 @@ body
     align-items: center
   .memo-card-memo
     padding: 0.5rem
+
+.dropdown-filter
+  max-width: 300px
 </style>
