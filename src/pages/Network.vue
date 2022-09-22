@@ -19,12 +19,12 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const displayMap = ConfigManager.get().getCurrentChain().getMapDisplay();
     onMounted(() => {
       window.setInterval(() => {
-        void store.dispatch('chain/updateBlockData');
+        if (displayMap) void store.dispatch('chain/updateBlockData');
       }, 2000);
     });
-    const displayMap = ConfigManager.get().getCurrentChain().getMapDisplay();
 
     return {
       displayMap
