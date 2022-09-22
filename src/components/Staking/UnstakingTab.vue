@@ -74,11 +74,6 @@ export default defineComponent({
       }
     }
 
-    function setMaxValue() {
-      unstakeTokens.value = assetToAmount(maturedRex.value).toString();
-      void formatDec();
-    }
-
     return {
       openTransaction,
       unstakeTokens,
@@ -91,8 +86,7 @@ export default defineComponent({
       rexInfo,
       rexbal,
       maturedRex,
-      symbol,
-      setMaxValue
+      symbol
     };
   }
 });
@@ -106,7 +100,7 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-8 {{ `MATURED ${symbol}` }}
-            .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{maturedRex}}
+            .col-4.text-weight-bold.text-right {{maturedRex}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="unstakeTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label='"Unstake " + symbol' flat @click="unstake" )

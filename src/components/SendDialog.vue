@@ -116,10 +116,6 @@ export default defineComponent({
         })
         .replace(/,/g, '');
       this.sendAmount = this.sendAmount.replace(/[^0-9.]/g, '');
-    },
-    setMaxValue() {
-      this.sendAmount = (this.sendToken.amount - 0.1).toString();
-      void this.formatDec();
     }
   }
 });
@@ -157,7 +153,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                 .row.justify-between.q-pb-sm.q-gutter-x-sm
                   div AMOUNT
                   q-space
-                  .color-grey-3.text-weight-bold.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{sendToken.amount}} AVAILABLE
+                  .color-grey-3.text-weight-bold {{sendToken.amount}} AVAILABLE
                 q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken.amount || "invalid amount" ]' type="text" dense dark)
             .row
               .col-12

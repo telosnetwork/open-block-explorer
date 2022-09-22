@@ -83,20 +83,6 @@ export default defineComponent({
       }
     }
 
-    function setMaxNetValue() {
-      netTokens.value = assetToAmount(
-        accountData.value.account.total_resources.net_weight
-      ).toString();
-      void formatDec();
-    }
-
-    function setMaxCpuValue() {
-      cpuTokens.value = assetToAmount(
-        accountData.value.account.total_resources.cpu_weight
-      ).toString();
-      void formatDec();
-    }
-
     return {
       openTransaction,
       stakingAccount,
@@ -110,9 +96,7 @@ export default defineComponent({
       stake,
       unstake,
       assetToAmount,
-      accountData,
-      setMaxNetValue,
-      setMaxCpuValue
+      accountData
     };
   }
 });
@@ -126,12 +110,12 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-9 TRANSFER CPU TO STAKING
-            .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxCpuValue' v-ripple) {{accountData.account.total_resources.cpu_weight}}
+            .col-3.text-weight-bold.text-right {{accountData.account.total_resources.cpu_weight}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.total_resources.cpu_weight)  || 'Invalid amount.' ]" type="text" dense dark)
           .row
           .row.q-pb-sm.full-width
             .col-9 TRANSFER NET TO STAKING
-            .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxNetValue' v-ripple) {{accountData.account.total_resources.net_weight}}
+            .col-3.text-weight-bold.text-right {{accountData.account.total_resources.net_weight}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(accountData.account.total_resources.net_weight) || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Stake TLOS" flat @click="stake" )
