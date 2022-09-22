@@ -73,6 +73,13 @@ export default defineComponent({
       }
     }
 
+    function setMaxValue() {
+      stakeTokens.value = (
+        assetToAmount(accountData.value.account.core_liquid_balance) - 0.1
+      ).toString();
+      void formatDec();
+    }
+
     return {
       openTransaction,
       stakeTokens,
@@ -85,7 +92,8 @@ export default defineComponent({
       rexInfo,
       rexbal,
       maturedRex,
-      symbol
+      symbol,
+      setMaxValue
     };
   }
 });
@@ -99,7 +107,7 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-8 {{ `LIQUID ${symbol}` }}
-            .col-4.text-weight-bold.text-right {{accountData.account.core_liquid_balance}}
+            .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{accountData.account.core_liquid_balance}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="stakeTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label='"Stake " + symbol' flat @click="stake" )

@@ -90,6 +90,16 @@ export default defineComponent({
       }
     }
 
+    function setMaxSavingsValue() {
+      toSavingAmount.value = assetToAmount(maturedRex.value).toString();
+      void formatDec();
+    }
+
+    function setMaxWithdrawValue() {
+      fromSavingAmount.value = assetToAmount(rexSavings.value).toString();
+      void formatDec();
+    }
+
     return {
       openTransaction,
       stakingAccount,
@@ -103,7 +113,9 @@ export default defineComponent({
       formatDec,
       moveToSavings,
       moveFromSavings,
-      assetToAmount
+      assetToAmount,
+      setMaxSavingsValue,
+      setMaxWithdrawValue
     };
   }
 });
@@ -117,7 +129,7 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-9 STAKE TO SAVINGS
-            .col-3.text-weight-bold.text-right {{maturedRex}}
+            .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxSavingsValue' v-ripple) {{maturedRex}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="toSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Move To Savings" flat @click="moveToSavings" )
@@ -125,7 +137,7 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-9 UNSTAKE FROM SAVINGS
-            .col-3.text-weight-bold.text-right {{rexSavings}}
+            .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxWithdrawValue' v-ripple) {{rexSavings}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="fromSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Withdraw from Savings" flat @click="moveFromSavings" )
