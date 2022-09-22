@@ -213,16 +213,18 @@ export default defineComponent({
       return fields;
     });
 
+    /* eslint-disable */
     watch(fields, (currentValue) => {
-      action.value.data = props.modelValue.data ?? {};
-
-      if (props.modelValue.data) return;
+      const actionFields = {} as any;
 
       for (let index = 0; index < currentValue.length; index++) {
         const element = currentValue[index];
-        action.value.data[element.name] = '';
+        actionFields[element.name] = props.modelValue.data[element.name] ?? '';
       }
+
+      action.value.data = actionFields
     });
+    /* eslint-enable */
 
     return {
       action,
