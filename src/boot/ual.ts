@@ -7,6 +7,7 @@ import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 import { Dialog, Notify, copyToClipboard } from 'quasar';
 
 const chain: Chain = getChain();
+let authenticators: Authenticator[] = [];
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -135,7 +136,7 @@ export default boot(({ app }) => {
     });
   }
 
-  const authenticators: Authenticator[] = [
+  authenticators = [
     new Anchor([mainChain], { appName: process.env.APP_NAME }),
     new CleosAuthenticator([mainChain], {
       appName: process.env.APP_NAME,
@@ -148,3 +149,5 @@ export default boot(({ app }) => {
 
   app.config.globalProperties.$ual = ual;
 });
+
+export const getAuthenticators = authenticators;
