@@ -103,8 +103,9 @@ import moment from 'moment';
 import { api } from 'src/api';
 import { RequestedApprovals, Error, Proposal } from 'src/types';
 import sha256 from 'fast-sha256';
-import { Action, Serializer, Transaction } from '@greymass/eosio';
+import { ABI, ABIDef, Action, Serializer, Transaction } from '@greymass/eosio';
 import { useStore } from 'src/store';
+import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
 
 export default defineComponent({
   name: 'ProposalItem',
@@ -284,7 +285,7 @@ export default defineComponent({
     }
 
     /* eslint-disable */
-    async function handleMultsigTransaction(proposal: Proposal) {
+    async function handleMultsigTransaction(proposal: Proposal): Promise<Action[]> {
       let action;
       let actionSkip = 0;
       const actionLimit = 100;
@@ -316,21 +317,44 @@ export default defineComponent({
       const transaction = Transaction.from(trx);
       expirationDate.value = transaction.expiration.toString();
 
-      const actionsPromises = transaction.actions.map(async (action: Action) => {
-        const data = await api.deserializeActionData(action) as {
-          code: string
+      const setAbiCache : {[key: string]: ABIDef} = {};
+      const actions: Action[] = [];
+
+     // const actionsPromises = transaction.actions.map(async (action: Action) => {
+      for (let i = 0; i < transaction.actions.length; i++) {
+        const action = transaction.actions[i];
+        const contract = action.account.toString();
+        let data;
+
+        if (setAbiCache.hasOwnProperty(contract)) {
+          data = deserializeActionDataFromAbi(action, setAbiCache[contract]) as {
+            code: string
+          };
+        }
+
+        data = await api.deserializeActionData(action) as {
+          code: string,
+          abi: string,
+          account: string
         };
 
-        if (action.account.toString() === 'eosio' && action.name.toString() === 'setcode') {
+        if (contract === 'eosio' && action.name.toString() === 'setcode') {
           data.code = `Binary data with SHA <${getShaForCode(data.code)}>`
+        } else if (action.account.toString() === 'eosio' && action.name.toString() === 'setabi') {
+          const abi = Serializer.decode({data: data.abi, type: ABI})
+          setAbiCache[data.account] = abi;
         }
-        return {
+        actions.push({
           ...Serializer.objectify(action),
           data
-        }
-      });
+        })
+        debugger;
+      }
+      //});
 
-      return await Promise.all(actionsPromises);
+      debugger;
+      //return await Promise.all(actionsPromises);
+      return actions;
     }
     /* eslint-enable */
 

@@ -44,6 +44,18 @@ export const deserializeActionData = async function (
   return Serializer.objectify(action.decodeData(abi));
 };
 
+export const deserializeActionDataFromAbi = function (
+  data: ActionType,
+  abi: ABIDef
+): ABISerializable {
+  if (!abi) {
+    throw new Error(`No ABI for ${String(data.account)}`);
+  }
+  const action = Action.from(data, abi);
+  // eslint-disable-next-line
+  return Serializer.objectify(action.decodeData(abi));
+};
+
 export const serializeActionData = async function (
   account: string,
   name: string,
