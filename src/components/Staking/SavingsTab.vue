@@ -52,8 +52,7 @@ export default defineComponent({
       if (
         toSavingAmount.value === '0.0000' ||
         toSavingAmount.value === '' ||
-        Number(toSavingAmount.value) >=
-          assetToAmount(accountData.value.account.total_resources.cpu_weight)
+        Number(toSavingAmount.value) >= assetToAmount(maturedRex.value)
       ) {
         return;
       }
@@ -68,8 +67,7 @@ export default defineComponent({
       if (
         fromSavingAmount.value === '0.0000' ||
         fromSavingAmount.value === '' ||
-        Number(fromSavingAmount.value) >=
-          assetToAmount(accountData.value.account.total_resources.cpu_weight)
+        Number(fromSavingAmount.value) >= assetToAmount(rexSavings.value)
       ) {
         return;
       }
