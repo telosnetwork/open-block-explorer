@@ -58,10 +58,14 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     commit('setAccountName', '');
     commit('setAuthenticatorName', null);
     commit('setUser', null);
-    const items = { ...localStorage };
-    console.log(items);
+    for (const key in localStorage) {
+      if (key.includes('anchor-link--')) {
+        localStorage.removeItem(key);
+      }
+    }
     localStorage.removeItem('account');
     localStorage.removeItem('returning');
+    localStorage.removeItem('autoLogin');
   },
   async loadAccountData({ commit, state }) {
     try {

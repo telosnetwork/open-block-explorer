@@ -42,7 +42,6 @@ export default defineComponent({
     };
 
     const clearAccount = (): void => {
-      // TODO: only remove what is related to login, localStorage has other uses
       void store.dispatch('account/logout');
       router.go(0);
     };
