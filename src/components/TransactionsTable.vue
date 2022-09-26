@@ -62,6 +62,7 @@ export default defineComponent({
         }
       ],
       rows: [] as TransactionTableRow[],
+      filteredRows: [] as TransactionTableRow[],
       expanded: [],
       loading: false,
       paginationSettings: {
@@ -71,11 +72,22 @@ export default defineComponent({
         rowsPerPage: 10,
         rowsNumber: 10000
       } as PaginationSettings,
+      fromDateFilter: '',
+      toDateFilter: new Date().toLocaleString(),
+      actionsFilter: '',
+      tokenFilter: '',
+      interval: null,
       showAge: localStorage.getItem('showAge') === 'true'
     };
   },
   async mounted() {
     await this.loadTableData();
+    this.interval = window.setInterval(() => {
+      if (this.account == null) void this.loadTableData();
+    }, 5000);
+  },
+  beforeUnmount() {
+    clearInterval(this.interval);
   },
   watch: {
     async account() {
@@ -83,6 +95,9 @@ export default defineComponent({
     },
     async actions() {
       await this.loadTableData();
+    },
+    filter() {
+      void this.filterRows();
     },
     showAge(val) {
       localStorage.setItem('showAge', val);
@@ -103,6 +118,14 @@ export default defineComponent({
     },
     hasActions(): boolean {
       return this.actions != null;
+    },
+    filter() {
+      return {
+        actions: this.actionsFilter,
+        toDate: this.toDateFilter,
+        fromDate: this.fromDateFilter,
+        token: this.tokenFilter
+      };
     }
   },
   methods: {
@@ -139,6 +162,7 @@ export default defineComponent({
             } as TransactionTableRow)
         );
       }
+      void this.filterRows();
     },
     async onRequest(props: {
       pagination: {
@@ -164,6 +188,24 @@ export default defineComponent({
       if (newExpanded.length > 1) {
         newExpanded.shift();
       }
+    },
+    filterRows() {
+      this.filteredRows = this.rows.filter((row) =>
+        row.action.act.name.includes(this.actionsFilter)
+      );
+      this.filteredRows = this.filteredRows.filter((row) =>
+        JSON.stringify(row.data).includes(this.tokenFilter)
+      );
+      if (!!this.fromDateFilter && !!this.toDateFilter) {
+        this.filteredRows = this.filteredRows.filter((item) => {
+          return (
+            new Date(item.timestamp).getTime() >=
+              new Date(this.fromDateFilter).getTime() &&
+            new Date(item.timestamp).getTime() <=
+              new Date(this.toDateFilter).getTime()
+          );
+        });
+      }
     }
   }
 });
@@ -173,17 +215,63 @@ export default defineComponent({
 div.row.col-12.q-mt-xs.justify-center.text-left
   div.row.col-11
     div.row.col-12.q-mt-lg
+      div.col-auto
+          p.panel-title {{ tableTitle }}
       q-space
-      div.col-3.row.flex.filter-buttons.temp-hide
-        q-btn.q-ml-xs.q-mr-xs.col.button-primary Actions
-        q-btn.q-ml-xs.q-mr-xs.col.button-primary Date
-        q-btn.q-ml-xs.q-mr-xs.col.button-primary Token
+      div.col-auto.row.flex.filter-buttons
+        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
+          color="primary"
+          label="Actions")
+          .q-pa-md.dropdown-filter
+            .row
+              q-input(filled dense v-model='actionsFilter' label="Actions")
+        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
+          persistent
+          color="primary"
+          label="Date")
+          .q-pa-md.dropdown-filter
+            .row
+              q-input(filled dense v-model='fromDateFilter' label="From")
+                template(v-slot:prepend)
+                  q-icon.cursor-pointer(name='event')
+                    q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
+                      q-date(v-model='fromDateFilter' mask='YYYY-MM-DD HH:mm')
+                        .row.items-center.justify-end
+                          q-btn(v-close-popup='' label='Close' color='primary' flat)
+                template(v-slot:append)
+                  q-icon.cursor-pointer(name='access_time')
+                    q-popup-proxy(cover transition-show='scale' transition-hide='scale')
+                      q-time(v-model='fromDateFilter' mask='YYYY-MM-DD HH:mm' format24h)
+                        .row.items-center.justify-end
+                          q-btn(v-close-popup='' label='Close' color='primary' flat)
+            .row.justify-center.full-width.q-py-xs
+              q-icon(name="arrow_downward")
+            .row
+              q-input(filled dense v-model='toDateFilter' label="To")
+                template(v-slot:prepend)
+                  q-icon.cursor-pointer(name='event')
+                    q-popup-proxy(cover transition-show='scale' transition-hide='scale')
+                      q-date(v-model='toDateFilter' mask='YYYY-MM-DD HH:mm')
+                        .row.items-center.justify-end
+                          q-btn(v-close-popup='' label='Close' color='primary' flat)
+                template(v-slot:append)
+                  q-icon.cursor-pointer(name='access_time')
+                    q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
+                      q-time(v-model='toDateFilter' mask='YYYY-MM-DD HH:mm' format24h)
+                        .row.items-center.justify-end
+                          q-btn(v-close-popup='' label='Close' color='primary' flat)
+        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
+          color="primary"
+          label="Token")
+          .q-pa-md.dropdown-filter
+            .row
+              q-input(filled dense v-model='tokenFilter' label="Token")
     q-separator.row.col-12.q-mt-md.separator
     div.row.col-12.table-container
       q-table.q-mt-lg.row.fixed-layout(
-        :rows="rows"
+        :rows="filteredRows"
         :columns="columns"
-        row-key="name"
+        :row-key="row => row.name + row.action.action_ordinal"
         flat
         :bordered="false"
         :square="true"
@@ -194,6 +282,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         :hide-pagination="noData"
         @update:expanded='updateExpanded'
         @request='onRequest'
+        :rows-per-page-options='[ 10, 20, 50, 100, 200]'
         )
         template(v-slot:top="props")
           .col
@@ -303,4 +392,7 @@ body
     align-items: center
   .memo-card-memo
     padding: 0.5rem
+
+.dropdown-filter
+  max-width: 300px
 </style>

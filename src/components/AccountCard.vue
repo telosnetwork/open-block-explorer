@@ -253,7 +253,7 @@ export default defineComponent({
         .col-3
           q-btn( @click="openStakingDialog = true" color='primary' label='Resources' v-if='isAccount' class="full-width")
         .col-3
-          q-btn( @click="openRexDialog = true" color='primary' label='staking (REX)' v-if='isAccount' class="full-width")
+          q-btn.ellipsis( @click="openRexDialog = true" color='primary' label='staking (REX)' v-if='isAccount' class="full-width")
     q-markup-table
       thead
         tr
