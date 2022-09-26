@@ -320,7 +320,6 @@ export default defineComponent({
       const setAbiCache : {[key: string]: ABIDef} = {};
       const actions: Action[] = [];
 
-     // const actionsPromises = transaction.actions.map(async (action: Action) => {
       for (let i = 0; i < transaction.actions.length; i++) {
         const action = transaction.actions[i];
         const contract = action.account.toString();
@@ -351,12 +350,8 @@ export default defineComponent({
           ...Serializer.objectify(action),
           data
         })
-        debugger;
       }
-      //});
 
-      debugger;
-      //return await Promise.all(actionsPromises);
       return actions;
     }
     /* eslint-enable */
