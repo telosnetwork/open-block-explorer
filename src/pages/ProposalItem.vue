@@ -328,15 +328,18 @@ export default defineComponent({
 
         if (setAbiCache.hasOwnProperty(contract)) {
           data = deserializeActionDataFromAbi(action, setAbiCache[contract]) as {
-            code: string
+            code: string,
+            abi: string,
+            account: string
+          };
+        } else {
+          data = await api.deserializeActionData(action) as {
+            code: string,
+            abi: string,
+            account: string
           };
         }
 
-        data = await api.deserializeActionData(action) as {
-          code: string,
-          abi: string,
-          account: string
-        };
 
         if (contract === 'eosio' && action.name.toString() === 'setcode') {
           data.code = `Binary data with SHA <${getShaForCode(data.code)}>`
