@@ -53,6 +53,16 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setLoadingWallet');
     }
   },
+  logout({ commit }) {
+    commit('setIsAuthenticated', false);
+    commit('setAccountName', '');
+    commit('setAuthenticatorName', null);
+    commit('setUser', null);
+    const items = { ...localStorage };
+    console.log(items);
+    localStorage.removeItem('account');
+    localStorage.removeItem('returning');
+  },
   async loadAccountData({ commit, state }) {
     try {
       const data = await api.getAccount(state.accountName);
