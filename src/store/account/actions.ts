@@ -106,28 +106,27 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     commit('setTlosRexRatio', tlosRexRatio);
     const coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0;
 
-    const maturingRex = rexbal
-      ? rexbal.rex_maturities &&
-        rexbal.rex_maturities[0] &&
-        new Date(rexbal.rex_maturities[0].first).getFullYear() -
-          new Date().getFullYear() <=
-          1 &&
-        tlosRexRatio * (Number(rexbal.rex_maturities[0].second) / 10000)
-      : 0;
     let savingsRex = 0;
+    let maturedRex = rexbal
+      ? tlosRexRatio * (Number(rexbal.matured_rex) / 10000)
+      : 0;
+    let maturingRex = 0;
     if (rexbal && rexbal.rex_maturities && rexbal.rex_maturities.length > 0) {
       const thisYear = new Date().getFullYear();
+      const now = new Date().getTime();
       rexbal.rex_maturities.forEach((maturity) => {
         const maturityYear = new Date(maturity.first).getFullYear();
+        const maturityTime = new Date(maturity.first).getTime();
         if (maturityYear - thisYear > 1) {
           savingsRex = tlosRexRatio * (Number(maturity.second) / 10000);
+        } else if (maturityTime - now < 0) {
+          maturedRex += tlosRexRatio * (Number(maturity.second) / 10000);
+        } else {
+          maturingRex = tlosRexRatio * (Number(maturity.second) / 10000);
         }
       });
     }
 
-    const maturedRex = rexbal
-      ? tlosRexRatio * (Number(rexbal.matured_rex) / 10000)
-      : 0;
     if (rexbalRows.rows.length > 0) {
       commit('setRexbal', {
         rexbal: rexbalRows.rows[0],

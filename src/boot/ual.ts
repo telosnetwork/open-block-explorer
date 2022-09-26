@@ -108,7 +108,7 @@ export default boot(({ app }) => {
       })
         .onOk(() => {
           copyToClipboard(
-            `cleos -u https://${process.env.NETWORK_HOST} push transaction '${trxJSON}`
+            `cleos -u https://${process.env.NETWORK_HOST} push transaction '${trxJSON}'`
           )
             .then((): void => {
               Notify.create({
