@@ -125,7 +125,7 @@ export default defineComponent({
           this.token.precision
         );
         this.total = `${totalString} ${this.token.symbol}`;
-        this.rex = account.rex_info.vote_stake;
+        this.rex = this.$store.state.account.coreRexBalance;
       } else {
         this.total = this.liquid;
         this.rex = this.none;
