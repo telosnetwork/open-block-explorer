@@ -20,7 +20,6 @@ export default defineComponent({
 
     const reset = () => {
       void store.dispatch('account/resetTransaction');
-      void router.go(0);
     };
 
     const navToTransaction = async () => {

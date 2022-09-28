@@ -310,12 +310,14 @@ export default defineComponent({
       await loadPriceData();
       void store.dispatch('chain/updateRamPrice');
     });
+
     watch(transactionId, async () => {
       await loadAccountData();
       await store.dispatch('account/updateRexData', {
         account: store.state.account.accountName
       });
     });
+
     return {
       MICRO_UNIT,
       KILO_UNIT,
