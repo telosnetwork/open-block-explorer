@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import * as moment from 'moment';
 
 export default defineComponent({
@@ -14,21 +14,25 @@ export default defineComponent({
       default: true
     }
   },
-  computed: {
-    friendlyDate(): string {
-      const actionTime = moment.utc(this.timestamp, 'YYYY-MM-DD HH:mm:ssZ');
-      if (this.showAge) {
+  setup(props) {
+    const friendlyDate = computed(() => {
+      const actionTime = moment.utc(props.timestamp, 'YYYY-MM-DD HH:mm:ssZ');
+      if (props.showAge) {
         return actionTime.fromNow();
       }
       return `${actionTime.format('YYYY-MM-DD h:mm:ss')}`;
-    },
-    tooltipDate(): string {
-      const actionTime = moment.utc(this.timestamp, 'YYYY-MM-DD HH:mm:ssZ');
-      if (!this.showAge) {
+    });
+    const tooltipDate = computed(() => {
+      const actionTime = moment.utc(props.timestamp, 'YYYY-MM-DD HH:mm:ssZ');
+      if (!props.showAge) {
         return actionTime.fromNow();
       }
       return `${actionTime.format('YYYY-MM-DD h:mm:ss')}`;
-    }
+    });
+    return {
+      friendlyDate,
+      tooltipDate
+    };
   }
 });
 </script>
