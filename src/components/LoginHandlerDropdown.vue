@@ -3,7 +3,7 @@ import { defineComponent, ref, computed } from 'vue';
 import Link from 'src/components/Transaction/AccountFormat.vue';
 import WalletModal from './WalletModal.vue';
 import { useStore } from 'src/store';
-import { getAuthenticators } from 'src/boot/ual';
+import { authenticators } from 'src/boot/ual';
 import { Authenticator } from 'universal-authenticator-library';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -20,7 +20,7 @@ export default defineComponent({
 
     const getAuthenticator = (): Authenticator => {
       const wallet = localStorage.getItem('autoLogin');
-      const idx = getAuthenticators.find(
+      const idx = authenticators.find(
         (auth) => auth.constructor.name === wallet
       );
       return idx;

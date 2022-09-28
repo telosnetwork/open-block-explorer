@@ -4,7 +4,7 @@ import LoginHandlerDropdown from './LoginHandlerDropdown.vue';
 import WalletModal from './WalletModal.vue';
 import { Authenticator } from 'universal-authenticator-library';
 import { useStore } from 'src/store';
-import { getAuthenticators } from 'src/boot/ual';
+import { authenticators } from 'src/boot/ual';
 
 export default defineComponent({
   name: 'LoginHandler',
@@ -19,9 +19,9 @@ export default defineComponent({
     onMounted(() => {
       const storedAccount = localStorage.getItem('account');
       if (storedAccount) {
-        void store.dispatch('account/setAccountName', storedAccount);
+        void store.commit('account/setAccountName', storedAccount);
         const ualName = localStorage.getItem('autoLogin');
-        const ual: Authenticator = getAuthenticators.find(
+        const ual: Authenticator = authenticators.find(
           (a) => a.getName() === ualName
         );
         void store.dispatch('account/login', {
