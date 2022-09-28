@@ -1,19 +1,17 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { AccountDetails, Token, Refund } from 'src/types';
-import { defineComponent, computed, ref } from 'vue';
+import { defineComponent, computed, ref, onMounted } from 'vue';
 import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/Resources/ResourcesDialog.vue';
 import RexDialog from 'src/components/Staking/StakingDialog.vue';
 import DateField from 'src/components/DateField.vue';
-import { mapActions } from 'vuex';
-import { date } from 'quasar';
+import { date, useQuasar } from 'quasar';
 import { copyToClipboard } from 'quasar';
 import { getChain } from 'src/config/ConfigManager';
+import { api } from 'src/api';
+import { useRouter } from 'vue-router';
 
 const chain = getChain();
 
@@ -32,164 +30,161 @@ export default defineComponent({
       required: true
     }
   },
-  data() {
-    return {
-      MICRO_UNIT: Math.pow(10, -6),
-      KILO_UNIT: Math.pow(10, 3),
-      cpu_used: 0,
-      cpu_max: 0,
-      net_used: 0,
-      net_max: 0,
-      ram_used: 0,
-      ram_max: 0,
-      creatingAccount: '',
-      liquid: '',
-      total: '',
-      totalValue: '',
-      refunding: '',
-      staked: '',
-      rex: '',
-      none: '',
-      system_account: 'eosio',
-      zero: 0.0,
-      radius: 44,
-      availableTokens: <Token[]>[]
-    };
-  },
   setup(props) {
     const store = useStore();
+    const $q = useQuasar();
+    const router = useRouter();
+
     const createTime = ref<string>('2019-01-01T00:00:00.000');
-    return {
-      createTime: createTime,
-      createTransaction: ref<string>(''),
-      openSendDialog: ref<boolean>(false),
-      openStakingDialog: ref<boolean>(false),
-      openRexDialog: ref<boolean>(false),
-      isAccount: computed((): boolean => {
-        return store.state.account.accountName === props.account;
-      }),
-      token: computed((): Token => store.state.chain.token),
-      setToken: (value: Token) => {
-        store.commit('chain/setToken', value);
-      },
-      createTimeFormat: computed((): string =>
-        date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
-      )
-    };
-  },
-  async mounted() {
-    await this.loadSystemToken();
-    this.none = `${this.zero.toFixed(this.token.precision)} ${
-      this.token.symbol
-    }`;
-    await this.loadAccountData();
-    await this.updateRexData({
-      account: this.$store.state.account.accountName
+    const MICRO_UNIT = ref(Math.pow(10, -6));
+    const KILO_UNIT = ref(Math.pow(10, 3));
+    const cpu_used = ref(0);
+    const cpu_max = ref(0);
+    const net_used = ref(0);
+    const net_max = ref(0);
+    const ram_used = ref(0);
+    const ram_max = ref(0);
+    const creatingAccount = ref('');
+    const liquid = ref('');
+    const total = ref('');
+    const totalValue = ref('');
+    const refunding = ref('');
+    const staked = ref('');
+    const rex = ref('');
+    const none = ref('');
+    const system_account = ref('eosio');
+    const zero = ref(0.0);
+    const radius = ref(44);
+    const availableTokens = ref<Token[]>([]);
+    const createTransaction = ref<string>('');
+    const openSendDialog = ref<boolean>(false);
+    const openStakingDialog = ref<boolean>(false);
+    const openRexDialog = ref<boolean>(false);
+
+    const isAccount = computed((): boolean => {
+      return store.state.account.accountName === props.account;
     });
-    await this.loadPriceData();
-    void this.$store.dispatch('chain/updateRamPrice');
-  },
-  methods: {
-    ...mapActions({ updateRexData: 'account/updateRexData' }),
-    async loadAccountData(): Promise<void> {
+    const token = computed((): Token => store.state.chain.token);
+    const createTimeFormat = computed((): string =>
+      date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
+    );
+
+    const setToken = (value: Token) => {
+      store.commit('chain/setToken', value);
+    };
+
+    const loadAccountData = async (): Promise<void> => {
       let data: AccountDetails;
       try {
-        data = await this.$api.getAccount(this.account);
-        this.$store.commit('account/setAccountData', data);
+        data = await api.getAccount(props.account);
+        store.commit('account/setAccountData', data);
       } catch (e) {
-        this.total = this.refunding = this.staked = this.rex = this.none;
-        this.$q.notify(`account ${this.account} not found!`);
+        total.value = refunding.value = staked.value = rex.value = none.value;
+        $q.notify(`account ${props.account} not found!`);
         return;
       }
       try {
-        const creatorData = await this.$api.getCreator(this.account);
-        this.creatingAccount = creatorData.creator;
-        this.createTime = creatorData.timestamp;
-        this.createTransaction = creatorData.trx_id;
+        const creatorData = (await api.getCreator(props.account)) as {
+          creator: string;
+          timestamp: string;
+          trx_id: string;
+        };
+        creatingAccount.value = creatorData.creator;
+        createTime.value = creatorData.timestamp;
+        createTransaction.value = creatorData.trx_id;
       } catch (e) {
-        this.$q.notify(`creator account for ${this.account} not found!`);
+        $q.notify(`creator account for ${props.account} not found!`);
       }
-      this.availableTokens = data.tokens;
+      availableTokens.value = data.tokens;
       const account = data.account;
-      this.ram_used = this.fixDec(account.ram_usage / this.KILO_UNIT);
-      this.ram_max = this.fixDec(account.ram_quota / this.KILO_UNIT);
-      this.cpu_used = this.fixDec(account.cpu_limit.used * this.MICRO_UNIT);
-      this.cpu_max = this.fixDec(account.cpu_limit.max * this.MICRO_UNIT);
-      this.net_used = this.fixDec(account.net_limit.used / this.KILO_UNIT);
-      this.net_max = this.fixDec(account.net_limit.max / this.KILO_UNIT);
-      this.liquid = this.getAmount(account.core_liquid_balance);
+      ram_used.value = fixDec(account.ram_usage / KILO_UNIT.value);
+      ram_max.value = fixDec(account.ram_quota / KILO_UNIT.value);
+      cpu_used.value = fixDec(account.cpu_limit.used * MICRO_UNIT.value);
+      cpu_max.value = fixDec(account.cpu_limit.max * MICRO_UNIT.value);
+      net_used.value = fixDec(account.net_limit.used / KILO_UNIT.value);
+      net_max.value = fixDec(account.net_limit.max / KILO_UNIT.value);
+      liquid.value = getAmount(account.core_liquid_balance);
       if (account.rex_info) {
         const liqNum = account.core_liquid_balance.split(' ')[0];
         const rexNum = account.rex_info.vote_stake.split(' ')[0];
         const totalString = (parseFloat(liqNum) + parseFloat(rexNum)).toFixed(
-          this.token.precision
+          token.value.precision
         );
-        this.total = `${totalString} ${this.token.symbol}`;
-        this.rex = account.rex_info.vote_stake;
+        total.value = `${totalString} ${token.value.symbol}`;
+        rex.value = account.rex_info.vote_stake;
       } else {
-        this.total = this.liquid;
-        this.rex = this.none;
+        total.value = liquid.value;
+        rex.value = none.value;
       }
-      this.refunding = this.formatTotalRefund(account.refund_request);
-      this.staked = account.voter_info
-        ? this.formatStaked(account.voter_info.staked)
-        : this.none;
-    },
-    async loadSystemToken(): Promise<void> {
-      if (this.token.symbol === '') {
-        const tokenList = await this.$api.getTokens(this.system_account);
-        const token = tokenList.find(
-          (token: Token) => token.contract === `${this.system_account}.token`
-        );
-        this.setToken(token);
-      }
-    },
-    fixDec(val: number): number {
+      refunding.value = formatTotalRefund(account.refund_request);
+      staked.value = account.voter_info
+        ? formatStaked(account.voter_info.staked)
+        : none.value;
+    };
+
+    const fixDec = (val: number): number => {
       return parseFloat(val.toFixed(3));
-    },
-    formatStaked(staked: number): string {
-      const stakedValue = (staked / Math.pow(10, this.token.precision)).toFixed(
-        this.token.precision
-      );
-      return `${stakedValue} ${this.token.symbol}`;
-    },
-    getAmount(property: undefined | string): string {
-      return property ? property : `${this.none}`;
-    },
-    async loadCreatorAccount(): Promise<void> {
-      await this.$router.push({
+    };
+
+    const loadSystemToken = async (): Promise<void> => {
+      if (token.value.symbol === '') {
+        const tokenList = await api.getTokens(system_account.value);
+        const token = tokenList.find(
+          (token: Token) => token.contract === `${system_account.value}.token`
+        );
+        setToken(token);
+      }
+    };
+
+    const formatStaked = (staked: number): string => {
+      const stakedValue = (
+        staked / Math.pow(10, token.value.precision)
+      ).toFixed(token.value.precision);
+      return `${stakedValue} ${token.value.symbol}`;
+    };
+
+    const getAmount = (property: undefined | string): string => {
+      return property ? property : `${none.value}`;
+    };
+
+    const loadCreatorAccount = async (): Promise<void> => {
+      await router.push({
         name: 'account',
         params: {
-          account: this.creatingAccount
+          account: creatingAccount.value
         }
       });
-      this.$router.go(0);
-    },
-    async loadCreatorTransaction(): Promise<void> {
-      await this.$router.push({
+      router.go(0);
+    };
+
+    const loadCreatorTransaction = async (): Promise<void> => {
+      await router.push({
         name: 'transaction',
         params: {
-          transaction: this.createTransaction
+          transaction: createTransaction.value
         }
       });
-      this.$router.go(0);
-    },
-    async loadPriceData(): Promise<void> {
+      router.go(0);
+    };
+
+    const loadPriceData = async (): Promise<void> => {
       const usdPrice: number = await chain.getUsdPrice();
 
-      const dollarAmount = usdPrice * parseFloat(this.total);
-      this.totalValue = `$${dollarAmount.toFixed(
+      const dollarAmount = usdPrice * parseFloat(total.value);
+      totalValue.value = `$${dollarAmount.toFixed(
         2
       )} (@ $${usdPrice}/${chain.getSymbol()})`;
-    },
-    formatTotalRefund(refund: Refund): string {
+    };
+
+    const formatTotalRefund = (refund: Refund): string => {
       const totalRefund = (
-        this.assetToAmount(refund?.cpu_amount, this.token.precision) +
-        this.assetToAmount(refund?.net_amount, this.token.precision)
+        assetToAmount(refund?.cpu_amount, token.value.precision) +
+        assetToAmount(refund?.net_amount, token.value.precision)
       ).toFixed(2);
-      return `${totalRefund} ${this.token.symbol}`;
-    },
-    assetToAmount(asset: string, decimals = -1): number {
+      return `${totalRefund} ${token.value.symbol}`;
+    };
+
+    const assetToAmount = (asset: string, decimals = -1): number => {
       try {
         let qty: string = asset.split(' ')[0];
         let val: number = parseFloat(qty);
@@ -198,11 +193,12 @@ export default defineComponent({
       } catch (error) {
         return 0;
       }
-    },
-    copy(value: string) {
+    };
+
+    const copy = (value: string) => {
       copyToClipboard(value)
         .then((): void => {
-          this.$q.notify({
+          $q.notify({
             color: 'green-4',
             textColor: 'white',
             message: 'Copied to clipboard',
@@ -210,14 +206,67 @@ export default defineComponent({
           });
         })
         .catch(() => {
-          this.$q.notify({
+          $q.notify({
             color: 'red-8',
             textColor: 'white',
             message: 'Could not copy',
             timeout: 1000
           });
         });
-    }
+    };
+
+    onMounted(async () => {
+      await loadSystemToken();
+      none.value = `${zero.value.toFixed(token.value.precision)} ${
+        token.value.symbol
+      }`;
+      await loadAccountData();
+      await store.dispatch('account/updateRexData', {
+        account: store.state.account.accountName
+      });
+      await loadPriceData();
+      void store.dispatch('chain/updateRamPrice');
+    });
+
+    return {
+      MICRO_UNIT,
+      KILO_UNIT,
+      cpu_used,
+      cpu_max,
+      net_used,
+      net_max,
+      ram_used,
+      ram_max,
+      creatingAccount,
+      liquid,
+      total,
+      totalValue,
+      refunding,
+      staked,
+      rex,
+      none,
+      system_account,
+      zero,
+      radius,
+      availableTokens,
+      createTime,
+      createTransaction,
+      openSendDialog,
+      openStakingDialog,
+      openRexDialog,
+      isAccount,
+      token,
+      createTimeFormat,
+      loadAccountData,
+      setToken,
+      fixDec,
+      loadSystemToken,
+      formatStaked,
+      loadCreatorAccount,
+      loadCreatorTransaction,
+      loadPriceData,
+      copy
+    };
   }
 });
 </script>
