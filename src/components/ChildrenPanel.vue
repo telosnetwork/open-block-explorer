@@ -1,6 +1,8 @@
 <script lang="ts">
+import { useQuasar } from 'quasar';
+import { api } from 'src/api';
 import { Action, NewAccountData } from 'src/types';
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 export default defineComponent({
   name: 'ChildrenPanel',
   components: {},
@@ -11,34 +13,37 @@ export default defineComponent({
       default: null
     }
   },
-  data() {
-    return {
-      children: []
-    };
-  },
-  async mounted() {
-    await this.loadAccountData();
-  },
-  methods: {
-    async loadAccountData(): Promise<void> {
+  setup(props) {
+    const $q = useQuasar();
+    const children = ref<string[]>([]);
+
+    const loadAccountData = async (): Promise<void> => {
       let data: Action[];
       try {
-        data = await this.$api.getChildren(this.account);
+        data = await api.getChildren(props.account);
       } catch (e) {
-        this.$q.notify(`Keys for account ${this.account} not found!`);
+        $q.notify(`Keys for account ${props.account} not found!`);
         return;
       }
-      this.children = data.map((el) =>
-        this.formatAccount((el.act.data as NewAccountData).newact, 'account')
+      children.value = data.map((el) =>
+        formatAccount((el.act.data as NewAccountData).newact, 'account')
       );
-    },
+    };
     // TODO Refactor
-    formatAccount(
+    const formatAccount = (
       name: string,
       type: 'account' | 'transaction' | 'block'
-    ): string {
+    ): string => {
       return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
-    }
+    };
+
+    onMounted(async () => {
+      await loadAccountData();
+    });
+    return {
+      children,
+      loadAccountData
+    };
   }
 });
 </script>
