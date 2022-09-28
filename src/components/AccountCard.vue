@@ -1,6 +1,6 @@
 <script lang="ts">
 import { AccountDetails, Token, Refund } from 'src/types';
-import { defineComponent, computed, ref, onMounted } from 'vue';
+import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
@@ -67,6 +67,9 @@ export default defineComponent({
     const token = computed((): Token => store.state.chain.token);
     const createTimeFormat = computed((): string =>
       date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
+    );
+    const transactionId = computed(
+      (): string => store.state.account.TransactionId
     );
 
     const setToken = (value: Token) => {
@@ -226,6 +229,13 @@ export default defineComponent({
       });
       await loadPriceData();
       void store.dispatch('chain/updateRamPrice');
+    });
+
+    watch(transactionId, async () => {
+      await loadAccountData();
+      await store.dispatch('account/updateRexData', {
+        account: store.state.account.accountName
+      });
     });
 
     return {
