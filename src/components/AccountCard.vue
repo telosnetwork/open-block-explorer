@@ -48,7 +48,6 @@ export default defineComponent({
       totalValue: '',
       refunding: '',
       staked: '',
-      rex: '',
       none: '',
       system_account: 'eosio',
       zero: 0.0,
@@ -59,8 +58,10 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
     const createTime = ref<string>('2019-01-01T00:00:00.000');
+    const rex = computed(() => store.state.account.coreRexBalance);
     return {
       createTime: createTime,
+      rex,
       createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
       openStakingDialog: ref<boolean>(false),
@@ -97,7 +98,7 @@ export default defineComponent({
         data = await this.$api.getAccount(this.account);
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
-        this.total = this.refunding = this.staked = this.rex = this.none;
+        this.total = this.refunding = this.staked = this.none;
         this.$q.notify(`account ${this.account} not found!`);
         return;
       }
@@ -125,10 +126,8 @@ export default defineComponent({
           this.token.precision
         );
         this.total = `${totalString} ${this.token.symbol}`;
-        this.rex = this.$store.state.account.coreRexBalance;
       } else {
         this.total = this.liquid;
-        this.rex = this.none;
       }
       this.refunding = this.formatTotalRefund(account.refund_request);
       this.staked = account.voter_info
