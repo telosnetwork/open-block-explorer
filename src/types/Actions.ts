@@ -100,6 +100,7 @@ export type AccountDetails = {
       proxied_vote_weight: number;
       is_proxy: number;
     };
+    self_delegated_bandwidth: { net_weight: string; cpu_weight: string };
   };
   actions: Action[];
   links: string[];

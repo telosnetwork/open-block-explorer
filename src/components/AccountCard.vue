@@ -59,9 +59,21 @@ export default defineComponent({
     const store = useStore();
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const rex = computed(() => store.state.account.coreRexBalance);
+    const token = computed((): Token => store.state.chain.token);
+    const liqNum = computed(
+      () => store.state.account.data.account.core_liquid_balance.split(' ')[0]
+    );
+    const totalString = computed(() => {
+      return (
+        (
+          parseFloat(liqNum.value) + parseFloat(rex.value.split(' ')[0])
+        ).toFixed(token.value.precision) + ` ${token.value.symbol}`
+      );
+    });
     return {
       createTime: createTime,
       rex,
+      totalString,
       createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
       openStakingDialog: ref<boolean>(false),
@@ -69,7 +81,7 @@ export default defineComponent({
       isAccount: computed((): boolean => {
         return store.state.account.accountName === props.account;
       }),
-      token: computed((): Token => store.state.chain.token),
+      token,
       setToken: (value: Token) => {
         store.commit('chain/setToken', value);
       },
@@ -121,10 +133,9 @@ export default defineComponent({
       this.liquid = this.getAmount(account.core_liquid_balance);
       if (account.rex_info) {
         const liqNum = account.core_liquid_balance.split(' ')[0];
-        const rexNum = account.rex_info.vote_stake.split(' ')[0];
-        const totalString = (parseFloat(liqNum) + parseFloat(rexNum)).toFixed(
-          this.token.precision
-        );
+        const totalString = (
+          parseFloat(liqNum) + parseFloat(this.rex.split(' ')[0])
+        ).toFixed(this.token.precision);
         this.total = `${totalString} ${this.token.symbol}`;
       } else {
         this.total = this.liquid;
@@ -176,7 +187,8 @@ export default defineComponent({
     async loadPriceData(): Promise<void> {
       const usdPrice: number = await chain.getUsdPrice();
 
-      const dollarAmount = usdPrice * parseFloat(this.total);
+      const dollarAmount =
+        usdPrice * parseFloat(this.totalString.split(' ')[0]);
       this.totalValue = `$${dollarAmount.toFixed(
         2
       )} (@ $${usdPrice}/${chain.getSymbol()})`;
@@ -261,7 +273,7 @@ export default defineComponent({
           tr
           tr
             td.text-left.total-label TOTAL
-            td.text-right.total-amount {{ total }}
+            td.text-right.total-amount {{ totalString }}
           tr.total-row
             td.text-left
             td.text-right.total-value {{ totalValue }}
