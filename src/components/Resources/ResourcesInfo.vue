@@ -27,6 +27,30 @@ export default defineComponent({
         store.state.account.data.account.ram_quota -
         store.state.account.data.account.ram_usage
     );
+    const delegatedResources = computed(() => {
+      return (
+        Number(
+          store.state.account.data.account.total_resources.cpu_weight.split(
+            ' '
+          )[0]
+        ) +
+        Number(
+          store.state.account.data.account.total_resources.net_weight.split(
+            ' '
+          )[0]
+        ) -
+        Number(
+          store.state.account.data.account.self_delegated_bandwidth.net_weight.split(
+            ' '
+          )[0]
+        ) -
+        Number(
+          store.state.account.data.account.self_delegated_bandwidth.cpu_weight.split(
+            ' '
+          )[0]
+        )
+      );
+    });
 
     function formatStaked(staked: number): string {
       const stakedValue = (
@@ -65,6 +89,7 @@ export default defineComponent({
       token,
       ramPrice,
       ramAvailable,
+      delegatedResources,
       formatStaked,
       formatTotalRefund
     };
@@ -94,7 +119,7 @@ export default defineComponent({
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light DELEGATED
-          .col-5.text-right.text-bold {{formatStaked(accountData.account?.voter_info?.staked)}}
+          .col-5.text-right.text-bold {{delegatedResources.toFixed(2) + ` ${token.symbol}`}}
         .row.q-pt-sm
           .col-7.text-weight-light REFUNDING
           .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}

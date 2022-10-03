@@ -73,7 +73,7 @@ export default defineComponent({
         return;
       }
       const data = {
-        from: this.stakingAccount.toLowerCase(),
+        from: this.$store.state.account.accountName.toLowerCase(),
         receiver: this.stakingAccount.toLowerCase(),
         stake_cpu_quantity: `${parseFloat(this.cpuTokens).toFixed(
           4
