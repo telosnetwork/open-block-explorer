@@ -97,7 +97,7 @@ export default defineComponent({
     }`;
     await this.loadAccountData();
     await this.updateRexData({
-      account: this.$store.state.account.accountName
+      account: this.account
     });
     await this.loadPriceData();
     void this.$store.dispatch('chain/updateRamPrice');
