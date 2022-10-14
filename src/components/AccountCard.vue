@@ -59,6 +59,7 @@ export default defineComponent({
     const store = useStore();
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const rex = computed(() => store.state.account.coreRexBalance);
+
     const resources = computed((): number => {
       return store.state.account?.data?.account?.total_resources
         ? Number(
@@ -109,6 +110,7 @@ export default defineComponent({
           parseFloat(liqNum.value) +
           resources.value +
           parseFloat(rex.value.split(' ')[0])
+
         ).toFixed(token.value.precision) + ` ${token.value.symbol}`
       );
     });
@@ -118,6 +120,7 @@ export default defineComponent({
       totalString,
       resources,
       delegatedResources,
+
       createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
       openStakingDialog: ref<boolean>(false),
@@ -181,6 +184,7 @@ export default defineComponent({
           parseFloat(liqNum) +
           this.resources +
           parseFloat(this.rex.split(' ')[0])
+
         ).toFixed(this.token.precision);
         this.total = `${totalString} ${this.token.symbol}`;
       } else {
