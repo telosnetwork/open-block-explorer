@@ -110,7 +110,6 @@ export default defineComponent({
           parseFloat(liqNum.value) +
           resources.value +
           parseFloat(rex.value.split(' ')[0])
-
         ).toFixed(token.value.precision) + ` ${token.value.symbol}`
       );
     });
@@ -184,7 +183,6 @@ export default defineComponent({
           parseFloat(liqNum) +
           this.resources +
           parseFloat(this.rex.split(' ')[0])
-
         ).toFixed(this.token.precision);
         this.total = `${totalString} ${this.token.symbol}`;
       } else {
