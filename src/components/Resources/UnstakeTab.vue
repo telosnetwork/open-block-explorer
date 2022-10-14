@@ -19,8 +19,8 @@ export default defineComponent({
     const store = useStore();
     const openTransaction = ref<boolean>(false);
     const stakingAccount = ref<string>(store.state.account.accountName || '');
-    const cpuTokens = ref<string>('0.0000');
-    const netTokens = ref<string>('0.0000');
+    const cpuTokens = ref<string>('');
+    const netTokens = ref<string>('');
     const netStake = computed(
       (): string => store.state.account.data.account.total_resources.net_weight
     );
@@ -29,20 +29,24 @@ export default defineComponent({
     );
 
     function formatDec() {
-      cpuTokens.value = Number(cpuTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: store.state.chain.token.precision,
-          minimumFractionDigits: store.state.chain.token.precision
-        })
-        .replace(/[^0-9.]/g, '');
-      netTokens.value = Number(netTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: store.state.chain.token.precision,
-          minimumFractionDigits: store.state.chain.token.precision
-        })
-        .replace(/[^0-9.]/g, '');
+      if (cpuTokens.value != '') {
+        cpuTokens.value = Number(cpuTokens.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: store.state.chain.token.precision,
+            minimumFractionDigits: store.state.chain.token.precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
+      if (netTokens.value != '') {
+        netTokens.value = Number(netTokens.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: store.state.chain.token.precision,
+            minimumFractionDigits: store.state.chain.token.precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
     }
 
     function assetToAmount(asset: string, decimals = -1): number {
@@ -123,11 +127,11 @@ export default defineComponent({
     .row.q-pb-md
       .col-6
         .row.justify-between.q-pb-sm REMOVE CPU
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= cpuStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= cpuStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
 
       .col-6.q-pl-md
         .row.justify-between.q-pb-sm REMOVE NET
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= netStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000'  v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= netStake && val >= 0  || 'Invalid amount.' ]" type="text" dense dark)
     .row
       .col-12.q-pt-md
         q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )
