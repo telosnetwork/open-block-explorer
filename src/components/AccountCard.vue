@@ -59,6 +59,46 @@ export default defineComponent({
     const store = useStore();
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const rex = computed(() => store.state.account.coreRexBalance);
+    const resources = computed((): number => {
+      return store.state.account?.data?.account?.total_resources
+        ? Number(
+            store.state.account.data.account.total_resources.cpu_weight.split(
+              ' '
+            )[0]
+          ) +
+            Number(
+              store.state.account.data.account.total_resources.net_weight.split(
+                ' '
+              )[0]
+            )
+        : 0;
+    });
+    const delegatedResources = computed(() => {
+      return store.state.account?.data?.account?.total_resources
+        ? (
+            Number(
+              store.state.account.data.account.total_resources.cpu_weight.split(
+                ' '
+              )[0]
+            ) +
+            Number(
+              store.state.account.data.account.total_resources.net_weight.split(
+                ' '
+              )[0]
+            ) -
+            Number(
+              store.state.account.data.account.self_delegated_bandwidth.net_weight.split(
+                ' '
+              )[0]
+            ) -
+            Number(
+              store.state.account.data.account.self_delegated_bandwidth.cpu_weight.split(
+                ' '
+              )[0]
+            )
+          ).toFixed(token.value.precision) + ` ${token.value.symbol}`
+        : `${token.value.symbol}`;
+    });
     const token = computed((): Token => store.state.chain.token);
     const liqNum = computed(
       () => store.state.account.data.account.core_liquid_balance.split(' ')[0]
@@ -66,7 +106,9 @@ export default defineComponent({
     const totalString = computed(() => {
       return (
         (
-          parseFloat(liqNum.value) + parseFloat(rex.value.split(' ')[0])
+          parseFloat(liqNum.value) +
+          resources.value +
+          parseFloat(rex.value.split(' ')[0])
         ).toFixed(token.value.precision) + ` ${token.value.symbol}`
       );
     });
@@ -74,6 +116,8 @@ export default defineComponent({
       createTime: createTime,
       rex,
       totalString,
+      resources,
+      delegatedResources,
       createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
       openStakingDialog: ref<boolean>(false),
@@ -134,7 +178,9 @@ export default defineComponent({
       if (account.rex_info) {
         const liqNum = account.core_liquid_balance.split(' ')[0];
         const totalString = (
-          parseFloat(liqNum) + parseFloat(this.rex.split(' ')[0])
+          parseFloat(liqNum) +
+          this.resources +
+          parseFloat(this.rex.split(' ')[0])
         ).toFixed(this.token.precision);
         this.total = `${totalString} ${this.token.symbol}`;
       } else {
@@ -279,17 +325,18 @@ export default defineComponent({
             td.text-right.total-value {{ totalValue }}
           tr
           tr
-            td.text-left REFUNDING
-            td.text-right {{ refunding }}
-          tr
             td.text-left LIQUID
             td.text-right {{ liquid }}
           tr
-            td.text-left STAKED BY OTHERS
-            td.text-right {{ staked }}
-          tr
             td.text-left STAKED
             td.text-right {{ rex }}
+          tr
+            td.text-left REFUNDING
+            td.text-right {{ refunding }}
+          tr
+            td.text-left DELEGATED BY OTHERS
+            td.text-right {{ delegatedResources }}
+          
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
     ResourcesDialog(v-model="openStakingDialog")
     RexDialog(v-model="openRexDialog" :availableTokens="availableTokens")
