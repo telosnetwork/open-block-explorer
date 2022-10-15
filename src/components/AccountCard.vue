@@ -59,7 +59,6 @@ export default defineComponent({
     const store = useStore();
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const rex = computed(() => store.state.account.coreRexBalance);
-
     const resources = computed((): number => {
       return store.state.account?.data?.account?.total_resources
         ? Number(
@@ -119,7 +118,6 @@ export default defineComponent({
       totalString,
       resources,
       delegatedResources,
-
       createTransaction: ref<string>(''),
       openSendDialog: ref<boolean>(false),
       openStakingDialog: ref<boolean>(false),
