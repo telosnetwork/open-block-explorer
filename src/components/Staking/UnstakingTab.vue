@@ -15,7 +15,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     let openTransaction = ref<boolean>(false);
-    const unstakeTokens = ref<string>('0.0000');
+    const unstakeTokens = ref<string>('');
     const symbol = ref<string>(chain.getSymbol());
     const transactionId = computed(
       (): string => store.state.account.TransactionId
@@ -38,13 +38,15 @@ export default defineComponent({
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
-      unstakeTokens.value = Number(unstakeTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: precision,
-          minimumFractionDigits: precision
-        })
-        .replace(/[^0-9.]/g, '');
+      if (unstakeTokens.value != '') {
+        unstakeTokens.value = Number(unstakeTokens.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: precision,
+            minimumFractionDigits: precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
     }
 
     async function unstake() {
@@ -107,7 +109,7 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-8 {{ `MATURED ${symbol}` }}
             .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{maturedRex}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="unstakeTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="unstakeTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label='"Unstake " + symbol' flat @click="unstake" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")

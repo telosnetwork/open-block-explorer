@@ -16,7 +16,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     let openTransaction = ref<boolean>(false);
-    const buyAmount = ref<string>('0.0000');
+    const buyAmount = ref<string>('');
     const buyOptions = ['TLOS', 'Bytes'];
     const symbol = ref<string>(chain.getSymbol());
     const buyOption = ref<string>(buyOptions[0]);
@@ -69,7 +69,7 @@ export default defineComponent({
             minimumFractionDigits: precision
           })
           .replace(/[^0-9.]/g, '');
-      } else {
+      } else if (buyAmount.value != '') {
         buyAmount.value = parseInt(buyAmount.value)
           .toString()
           .replace(/[^0-9.]/g, '');
@@ -175,7 +175,7 @@ export default defineComponent({
     .row
       .row.q-pb-sm.full-width
         .col-12 {{ `Amount of RAM to buy in ` + buyOption}}
-      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="buyAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= buyLimit() && val != '' || 'Invalid amount.' ]" type="text" dense dark)
+      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="buyAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= buyLimit() && val != '' || 'Invalid amount.' ]" type="text" dense dark)
     .row.q-pb-sm
       .text-weight-normal.text-right.text-grey-3 ≈ {{buyPreview}}
     .row

@@ -15,8 +15,8 @@ export default defineComponent({
     const stakingAccount = computed(
       (): string => store.state.account.accountName
     );
-    const cpuTokens = ref<string>('0.0000');
-    const netTokens = ref<string>('0.0000');
+    const cpuTokens = ref<string>('');
+    const netTokens = ref<string>('');
     const cpuWithdraw = ref<string>('0.0000');
     const netWithdraw = ref<string>('0.0000');
     const transactionId = ref<string>(store.state.account.TransactionId);
@@ -26,20 +26,24 @@ export default defineComponent({
     });
 
     function formatDec() {
-      cpuTokens.value = Number(cpuTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: store.state.chain.token.precision,
-          minimumFractionDigits: store.state.chain.token.precision
-        })
-        .replace(/[^0-9.]/g, '');
-      netTokens.value = Number(netTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: store.state.chain.token.precision,
-          minimumFractionDigits: store.state.chain.token.precision
-        })
-        .replace(/[^0-9.]/g, '');
+      if (cpuTokens.value != '') {
+        cpuTokens.value = Number(cpuTokens.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: store.state.chain.token.precision,
+            minimumFractionDigits: store.state.chain.token.precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
+      if (netTokens.value != '') {
+        netTokens.value = Number(netTokens.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: store.state.chain.token.precision,
+            minimumFractionDigits: store.state.chain.token.precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
     }
 
     async function stake() {
@@ -127,12 +131,12 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-9 TRANSFER CPU TO STAKING
             .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxCpuValue' v-ripple) {{accountData.account.total_resources.cpu_weight}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.total_resources.cpu_weight)  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.total_resources.cpu_weight)  || 'Invalid amount.' ]" type="text" dense dark)
           .row
           .row.q-pb-sm.full-width
             .col-9 TRANSFER NET TO STAKING
             .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxNetValue' v-ripple) {{accountData.account.total_resources.net_weight}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(accountData.account.total_resources.net_weight) || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(accountData.account.total_resources.net_weight) || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Stake TLOS" flat @click="stake" )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
