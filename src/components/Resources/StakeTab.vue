@@ -22,24 +22,28 @@ export default defineComponent({
     const accountTotal = computed(
       (): string => store.state.account.data.account?.core_liquid_balance
     );
-    const cpuTokens = ref<string>('0.0000');
-    const netTokens = ref<string>('0.0000');
+    const cpuTokens = ref<string>('');
+    const netTokens = ref<string>('');
 
     function formatDec() {
-      cpuTokens.value = Number(cpuTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: store.state.chain.token.precision,
-          minimumFractionDigits: store.state.chain.token.precision
-        })
-        .replace(/[^0-9.]/g, '');
-      netTokens.value = Number(netTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: store.state.chain.token.precision,
-          minimumFractionDigits: store.state.chain.token.precision
-        })
-        .replace(/[^0-9.]/g, '');
+      if (cpuTokens.value != '') {
+        cpuTokens.value = Number(cpuTokens.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: store.state.chain.token.precision,
+            minimumFractionDigits: store.state.chain.token.precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
+      if (netTokens.value != '') {
+        netTokens.value = Number(netTokens.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: store.state.chain.token.precision,
+            minimumFractionDigits: store.state.chain.token.precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
     }
 
     function assetToAmount(asset: string, decimals = -1): number {
@@ -122,15 +126,15 @@ export default defineComponent({
         .row.justify-between.q-pb-sm CPU/NET Receiver
           q-space
           .text-grey-3 Defaults to selected account
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+        q-input.full-width(standout="bg-deep-purple-2 text-white" dense  dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row.q-py-md
       .col-6
         .row.justify-between.q-pb-sm ADD CPU
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 || 'Invalid amount.' ]" type="text" dense dark)
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 || 'Invalid amount.' ]" type="text" dense dark)
 
       .col-6.q-pl-md
         .row.justify-between.q-pb-sm ADD NET
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 ||'Invalid amount.' ]" type="text" dense dark)
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 ||'Invalid amount.' ]" type="text" dense dark)
     .row
       .col-12.q-pt-md
         q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )

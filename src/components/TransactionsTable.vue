@@ -194,7 +194,7 @@ export default defineComponent({
         row.action.act.name.includes(this.actionsFilter)
       );
       this.filteredRows = this.filteredRows.filter((row) =>
-        JSON.stringify(row.data).includes(this.tokenFilter)
+        JSON.stringify(row.data).includes(this.tokenFilter.toUpperCase())
       );
       if (!!this.fromDateFilter && !!this.toDateFilter) {
         this.filteredRows = this.filteredRows.filter((item) => {
@@ -221,10 +221,10 @@ div.row.col-12.q-mt-xs.justify-center.text-left
       div.col-auto.row.flex.filter-buttons
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
           color="primary"
-          label="Actions")
+          label="Search")
           .q-pa-md.dropdown-filter
             .row
-              q-input(filled dense v-model='actionsFilter' label="Actions")
+              q-input(filled dense v-model='actionsFilter' label="Search")
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
           persistent
           color="primary"

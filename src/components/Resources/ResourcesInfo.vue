@@ -118,7 +118,8 @@ export default defineComponent({
           .col-5.text-right.text-bold {{ramAvailable}} Bytes
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
-          .col-7.text-weight-light DELEGATED
+          .col-7.text-weight-light DELEGATED BY OTHERS
+
           .col-5.text-right.text-bold {{delegatedResources.toFixed(2) + ` ${token.symbol}`}}
         .row.q-pt-sm
           .col-7.text-weight-light REFUNDING

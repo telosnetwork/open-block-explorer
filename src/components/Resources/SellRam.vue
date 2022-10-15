@@ -15,7 +15,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     let openTransaction = ref<boolean>(false);
-    const sellAmount = ref<string>('0');
+    const sellAmount = ref('');
     const symbol = ref<string>(chain.getSymbol());
     const transactionId = computed(
       (): string => store.state.account.TransactionId
@@ -95,7 +95,7 @@ export default defineComponent({
     .row
       .row.q-pb-sm.full-width
         .col-12 {{ `Amount of RAM to sell in Bytes` }}
-      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sellAmount" :lazy-rules='true' :rules="[ val => val >= 0  && val <= ramAvailable && val != ''  || 'Invalid amount.' ]" type="text" dense dark)
+      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="sellAmount" :lazy-rules='true' :rules="[ val => val >= 0  && val <= ramAvailable && val != ''  || 'Invalid amount.' ]" type="text" dense dark)
     .row.q-pb-sm
       .text-weight-normal.text-right.text-grey-3 ≈ {{sellPreview}}
     .row
