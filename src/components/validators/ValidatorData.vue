@@ -25,7 +25,10 @@ export default defineComponent({
     const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
     const balance = computed(
-      () => store.state.account.data?.account?.core_liquid_balance || 0
+      () =>
+        (Number(
+          store.state.account.data?.account?.voter_info.last_vote_weight
+        ).toFixed(2) || '0') + ` ${symbol}`
     );
     const activecount = computed(() => {
       if (store.state.chain.producers.length > 42) return 42;
@@ -234,7 +237,7 @@ div
       .col-md-4.col-sm-12.col-xs-12(v-if="accountValid")
         q-card(flat).full-height.card-gradient
           q-card-section.card-gradient
-            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{ `YOUR AVAILABLE ${symbol}` }}
+            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{ `YOUR AVAILABLE VOTING ${symbol}` }}
             .row.full-width.justify-center.text-h5 {{ balance }}
             .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{account}}
           q-separator(color="primary" size="2px")
