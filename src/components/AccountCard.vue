@@ -59,6 +59,7 @@ export default defineComponent({
     const store = useStore();
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const rex = computed(() => store.state.account.coreRexBalance);
+    const token = computed((): Token => store.state.chain.token);
     const resources = computed((): number => {
       return store.state.account?.data?.account?.total_resources
         ? Number(
@@ -87,19 +88,18 @@ export default defineComponent({
               )[0]
             ) -
             Number(
-              store.state.account.data.account.self_delegated_bandwidth.net_weight.split(
+              store.state.account.data.account?.self_delegated_bandwidth?.net_weight.split(
                 ' '
-              )[0]
+              )[0] || 0
             ) -
             Number(
-              store.state.account.data.account.self_delegated_bandwidth.cpu_weight.split(
+              store.state.account.data.account?.self_delegated_bandwidth?.cpu_weight.split(
                 ' '
-              )[0]
+              )[0] || 0
             )
           ).toFixed(token.value.precision) + ` ${token.value.symbol}`
         : `${token.value.symbol}`;
     });
-    const token = computed((): Token => store.state.chain.token);
     const liqNum = computed(
       () => store.state.account.data.account.core_liquid_balance.split(' ')[0]
     );
@@ -194,6 +194,7 @@ export default defineComponent({
     async loadSystemToken(): Promise<void> {
       if (this.token.symbol === '') {
         const tokenList = await this.$api.getTokens(this.system_account);
+        console.log(tokenList);
         const token = tokenList.find(
           (token: Token) => token.contract === `${this.system_account}.token`
         );
@@ -243,7 +244,7 @@ export default defineComponent({
       const totalRefund = (
         this.assetToAmount(refund?.cpu_amount, this.token.precision) +
         this.assetToAmount(refund?.net_amount, this.token.precision)
-      ).toFixed(2);
+      ).toFixed(4);
       return `${totalRefund} ${this.token.symbol}`;
     },
     assetToAmount(asset: string, decimals = -1): number {
