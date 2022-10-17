@@ -99,8 +99,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       }
     ).rows[0];
     const rexFundBalance =
-      rexfund && rexfund.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
-    commit('setRexFund', rexFundBalance);
+      rexfund && rexfund.balance ? Number(rexfund.balance.split(' ')[0]) : 0;
     const rexbal = rexbalRows.rows[0];
     const rexBalance =
       rexbal && rexbal.rex_balance
@@ -110,7 +109,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
     const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
     commit('setTlosRexRatio', tlosRexRatio);
-    let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
+    let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0;
     coreBalance += rexFundBalance;
 
     let savingsRex = 0;
@@ -253,41 +252,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
           rex: `${rexToUnstake} REX`
         }
       },
-      {
-        account: 'eosio',
-        name: 'withdraw',
-        authorization: [
-          {
-            actor: state.accountName,
-            permission: 'active'
-          }
-        ],
-        data: {
-          owner: state.accountName,
-          amount: quantityStr
-        }
-      }
-    ];
-    try {
-      transaction = await state.user.signTransaction(
-        {
-          actions
-        },
-        {
-          blocksBehind: 3,
-          expireSeconds: 180
-        }
-      );
-      commit('setTransaction', transaction.transactionId);
-    } catch (e) {
-      commit('setTransactionError', e);
-    }
-  },
-  async unstakeRexFund({ commit, state }, { amount }) {
-    let transaction = null;
-    const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
-
-    const actions = [
       {
         account: 'eosio',
         name: 'withdraw',
