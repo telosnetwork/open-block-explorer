@@ -5,8 +5,6 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 
-const chain = getChain();
-
 export default defineComponent({
   name: 'SellRam',
   components: {
@@ -14,6 +12,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const chain = getChain();
     let openTransaction = ref<boolean>(false);
     const sellAmount = ref('');
     const symbol = ref<string>(chain.getSymbol());
@@ -30,7 +29,7 @@ export default defineComponent({
       () =>
         ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
           4
-        ) + ' TLOS'
+        ) + ` ${symbol.value}`
     );
     const ramAvailable = computed(
       () =>
