@@ -40,7 +40,7 @@ export function state(): AccountStateInterface {
     data: {
       account: {
         account_name: '',
-        core_liquid_balance: '0.0000 TLOS'
+        core_liquid_balance: '0.0000'
       },
       tokens: [],
       actions: []
