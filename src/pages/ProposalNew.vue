@@ -196,7 +196,6 @@ q-page(padding)
               @click="onAddAction")
         q-tab-panel(name="batch")
           ProposalUploadCSV(
-            :proposer="formData.proposer"
             @actions="onUploadCSV"
           )
 
