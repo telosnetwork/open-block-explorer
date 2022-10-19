@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, PropType, ref } from 'vue';
 import { Token, AccountDetails } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
@@ -11,9 +11,9 @@ import UnstakingTab from './UnstakingTab.vue';
 import HistoryTab from './HistoryTab.vue';
 import SavingsTab from './SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
+import { useStore } from 'src/store';
 
-const chain = getChain();
-const symbol = chain.getSymbol();
+const symbol = getChain().getSymbol();
 
 export default defineComponent({
   name: 'StakingDialog',
@@ -34,8 +34,6 @@ export default defineComponent({
         amount: 0,
         contract: 'eosio.token'
       } as Token,
-      transactionId: null,
-      transactionError: null,
       sendDialog: false
     };
   },
@@ -46,12 +44,26 @@ export default defineComponent({
     }
   },
   setup() {
+    const store = useStore();
+    const rexfund = computed(() => store.state.account.rexfund || 0);
+    const symbol = computed(() => store.state.chain.token.symbol);
+    const transactionId = ref<string>(null);
+    const transactionError = ref<string>(null);
+
+    const withdrawRexFund = () => {
+      void store.dispatch('account/unstakeRexFund', { amount: rexfund.value });
+    };
     return {
       openCoinDialog: ref<boolean>(false),
       recievingAccount: ref<string>(''),
       sendAmount: ref<string>('0.0000'),
       memo: ref<string>(''),
       tab: ref('stake'),
+      rexfund,
+      symbol,
+      transactionError,
+      transactionId,
+      withdrawRexFund,
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
   },
@@ -81,7 +93,7 @@ export default defineComponent({
           })
         ).transactionId as string;
       } catch (e) {
-        this.transactionError = e;
+        this.transactionError = e as string;
       }
     },
     setDefaults() {
@@ -94,20 +106,10 @@ export default defineComponent({
     updateSelectedCoin(token: Token): void {
       this.sendToken = token;
     },
-    resetForm() {
-      this.transactionId = null;
-      this.transactionError = null;
-      this.sendToken = {
-        symbol,
-        precision: 4,
-        amount: 0,
-        contract: 'eosio.token'
-      };
-    },
     async navToTransaction() {
       await this.$router.push({
         name: 'transaction',
-        params: { transaction: this.transactionId as string }
+        params: { transaction: this.transactionId }
       });
       this.$router.go(0);
     },
@@ -138,6 +140,11 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
           .text-h4.q-pb-md.inline-block.color-grey-3.inline Staking (REX)
         .q-pa-sm
           StakingInfo
+          .q-pt-lg.q-pl-lg(v-if='rexfund > 0')
+            .row.q-col-gutter-md.items-center
+              .col-auto.text-h6.text-white REX fund: {{rexfund}} {{symbol}}
+              .col-auto
+                q-btn.full-width.button-accent(label='Withdraw' flat @click="withdrawRexFund" )
           .q-pt-lg.text-grey-3.text-weight-light
             q-tabs.text-grey-5.tab-text(
               v-model="tab"
