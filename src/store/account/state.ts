@@ -25,6 +25,7 @@ export interface AccountStateInterface {
   maturedRex: string;
   savingsRex: string;
   tlosRexRatio: number;
+  rexfund: number;
   authenticatorName: string;
 }
 
@@ -40,7 +41,7 @@ export function state(): AccountStateInterface {
     data: {
       account: {
         account_name: '',
-        core_liquid_balance: '0.0000 TLOS'
+        core_liquid_balance: '0.0000'
       },
       tokens: [],
       actions: []
@@ -52,11 +53,12 @@ export function state(): AccountStateInterface {
     rexbal: {} as Rexbal,
     vote: [],
     abi: { abi: null } as ABI,
-    coreRexBalance: `0 ${chain.getSymbol()}`,
-    maturingRex: `0 ${chain.getSymbol()}`,
-    maturedRex: `0 ${chain.getSymbol()}`,
-    savingsRex: `0 ${chain.getSymbol()}`,
+    coreRexBalance: `0.0000 ${chain.getSymbol()}`,
+    maturingRex: `0.0000 ${chain.getSymbol()}`,
+    maturedRex: `0.0000 ${chain.getSymbol()}`,
+    savingsRex: `0.0000 ${chain.getSymbol()}`,
     tlosRexRatio: 1,
+    rexfund: 0,
     authenticatorName: null
   };
 }

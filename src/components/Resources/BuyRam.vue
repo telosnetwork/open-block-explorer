@@ -17,8 +17,8 @@ export default defineComponent({
     const store = useStore();
     let openTransaction = ref<boolean>(false);
     const buyAmount = ref<string>('');
-    const buyOptions = ['TLOS', 'Bytes'];
     const symbol = ref<string>(chain.getSymbol());
+    const buyOptions = [symbol.value, 'Bytes'];
     const buyOption = ref<string>(buyOptions[0]);
     const transactionId = computed(
       (): string => store.state.account.TransactionId
@@ -164,9 +164,9 @@ export default defineComponent({
 .staking-form
   q-card-section.text-grey-3
     .row.q-col-gutter-md
-      .text-weight-bold.text-right.text-grey-3 Buy in TLOS or Bytes?
+      .text-weight-bold.text-right.text-grey-3 Buy in {{symbol}} or Bytes?
     .row.q-col-gutter-md.q-pb-md
-      q-radio(v-model="buyOption" dark color="white" val="TLOS" label="TLOS")
+      q-radio(v-model="buyOption" dark color="white" :val="symbol" :label="symbol")
       q-radio(v-model="buyOption" dark color="white" val="Bytes" label="Bytes")
     .row
       .col-12

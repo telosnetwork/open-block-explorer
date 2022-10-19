@@ -37,7 +37,7 @@ export default defineComponent({
     return {
       openCoinDialog: ref<boolean>(false),
       recievingAccount: ref<string>(''),
-      sendAmount: ref<string>('0.0000'),
+      sendAmount: ref<string>(''),
       memo: ref<string>(''),
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
@@ -108,13 +108,15 @@ export default defineComponent({
     },
     formatDec() {
       let amount = Number(this.sendAmount);
-      this.sendAmount = amount
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: this.sendToken.precision,
-          minimumFractionDigits: this.sendToken.precision
-        })
-        .replace(/,/g, '');
+      if (this.sendAmount != '') {
+        this.sendAmount = amount
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: this.sendToken.precision,
+            minimumFractionDigits: this.sendToken.precision
+          })
+          .replace(/,/g, '');
+      }
       this.sendAmount = this.sendAmount.replace(/[^0-9.]/g, '');
     },
     setMaxValue() {
@@ -158,7 +160,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                   div AMOUNT
                   q-space
                   .color-grey-3.text-weight-bold.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{sendToken.amount}} AVAILABLE
-                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken.amount || "invalid amount" ]' type="text" dense dark)
+                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken.amount || "invalid amount" ]' type="text" dense dark)
             .row
               .col-12
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
