@@ -125,7 +125,7 @@ export default defineComponent({
           .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
         .row.q-pt-sm
           .col-7.text-weight-light RAM PRICE
-          .col-5.text-right.text-bold {{ramPrice}} TLOS/KB
+          .col-5.text-right.text-bold {{ramPrice}} {{token.symbol}}/KB
 
 </template>
 

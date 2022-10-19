@@ -3,6 +3,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
   name: 'StakeFromNetCpu',
@@ -12,6 +13,8 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const openTransaction = ref<boolean>(false);
+    const chain = getChain();
+    const symbol = ref<string>(chain.getSymbol());
     const stakingAccount = computed(
       (): string => store.state.account.accountName
     );
@@ -106,6 +109,7 @@ export default defineComponent({
       stakingAccount,
       cpuTokens,
       netTokens,
+      symbol,
       cpuWithdraw,
       netWithdraw,
       transactionId,
@@ -138,7 +142,7 @@ export default defineComponent({
             .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxNetValue' v-ripple) {{accountData.account.total_resources.net_weight}}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(accountData.account.total_resources.net_weight) || 'Invalid amount.' ]" type="text" dense dark)
         .row
-          q-btn.full-width.button-accent(label="Stake TLOS" flat @click="stake" )
+          q-btn.full-width.button-accent(:label=" 'Stake ' + symbol" flat @click="stake" )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
