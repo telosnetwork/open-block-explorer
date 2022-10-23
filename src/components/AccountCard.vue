@@ -417,7 +417,7 @@ export default defineComponent({
           tr
             td.text-left DELEGATED BY OTHERS
             td.text-right {{ delegatedResources }}
-          
+
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
     ResourcesDialog(v-model="openStakingDialog")
     RexDialog(v-model="openRexDialog" :availableTokens="availableTokens")
