@@ -40,14 +40,18 @@ export default defineComponent({
           )[0]
         ) -
         Number(
-          store.state.account.data.account.self_delegated_bandwidth.net_weight.split(
-            ' '
-          )[0]
+          store.state.account.data.account?.self_delegated_bandwidth?.net_weight
+            ? store.state.account.data.account.self_delegated_bandwidth.net_weight.split(
+                ' '
+              )[0]
+            : '0'
         ) -
         Number(
-          store.state.account.data.account.self_delegated_bandwidth.cpu_weight.split(
-            ' '
-          )[0]
+          store.state.account.data.account?.self_delegated_bandwidth?.cpu_weight
+            ? store.state.account.data.account.self_delegated_bandwidth.cpu_weight.split(
+                ' '
+              )[0]
+            : '0'
         )
       );
     });
