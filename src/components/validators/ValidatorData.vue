@@ -27,7 +27,9 @@ export default defineComponent({
     const balance = computed(
       () =>
         (Number(
-          store.state.account.data?.account?.voter_info.last_vote_weight
+          store.state.account.data?.account?.voter_info?.last_stake
+            ? store.state.account.data?.account.voter_info.last_stake / 10000
+            : 0
         ).toFixed(2) || '0') + ` ${symbol}`
     );
     const activecount = computed(() => {
@@ -70,9 +72,11 @@ export default defineComponent({
         const voterInfo = data.account.voter_info;
         if (!voterInfo) return;
         producerVotes.value = voterInfo?.producers;
-        lastWeight.value = parseFloat(voterInfo.last_vote_weight).toFixed(2);
-        lastStaked.value = voterInfo.last_stake;
-        stakedAmount.value = voterInfo.staked;
+        lastWeight.value = parseFloat(
+          voterInfo?.last_vote_weight || '0.0000'
+        ).toFixed(2);
+        lastStaked.value = voterInfo?.last_stake || 0.0;
+        stakedAmount.value = voterInfo.staked || 0.0;
       }
     }
     function assetToAmount(asset: string, decimals = -1): number {
