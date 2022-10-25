@@ -124,21 +124,23 @@ export default defineComponent({
       net_max.value = fixDec(account.net_limit.max / KILO_UNIT.value);
       liquid.value = getAmount(account.core_liquid_balance);
       liqNum.value = getAmount(account.core_liquid_balance);
-      resources.value = account?.total_resources
-        ? Number(account.total_resources.cpu_weight.split(' ')[0]) +
-          Number(account.total_resources.net_weight.split(' ')[0])
+      resources.value = account?.self_delegated_bandwidth
+        ? Number(account.self_delegated_bandwidth.cpu_weight.split(' ')[0]) +
+          Number(account.self_delegated_bandwidth.net_weight.split(' ')[0])
         : 0;
+      const delegatedNum =
+        Number(account.total_resources.cpu_weight.split(' ')[0]) +
+        Number(account.total_resources.net_weight.split(' ')[0]) -
+        Number(
+          account?.self_delegated_bandwidth?.net_weight.split(' ')[0] || 0
+        ) -
+        Number(
+          account?.self_delegated_bandwidth?.cpu_weight.split(' ')[0] || 0
+        );
       delegatedResources.value = account?.total_resources
-        ? (
-            Number(account.total_resources.cpu_weight.split(' ')[0]) +
-            Number(account.total_resources.net_weight.split(' ')[0]) -
-            Number(
-              account?.self_delegated_bandwidth?.net_weight.split(' ')[0] || 0
-            ) -
-            Number(
-              account?.self_delegated_bandwidth?.cpu_weight.split(' ')[0] || 0
-            )
-          ).toFixed(token.value.precision) + ` ${token.value.symbol}`
+        ? (delegatedNum > 0 ? delegatedNum : 0.0).toFixed(
+            token.value.precision
+          ) + ` ${token.value.symbol}`
         : `${token.value.symbol}`;
       if (account.rex_info) {
         const liqNum = account.core_liquid_balance.split(' ')[0];
@@ -218,7 +220,9 @@ export default defineComponent({
       if (token.value.symbol === '') {
         const tokenList = await api.getTokens(system_account.value);
         const token = tokenList.find(
-          (token: Token) => token.contract === `${system_account.value}.token`
+          (token: Token) =>
+            token.contract === `${system_account.value}.token` &&
+            token.symbol === chain.getSymbol()
         );
         setToken(token);
       }
