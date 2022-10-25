@@ -152,7 +152,6 @@ export default defineComponent({
       } else {
         total.value = liquid.value;
       }
-      console.log('here');
       refunding.value = formatTotalRefund(account.refund_request);
       staked.value = account.voter_info
         ? formatStaked(account.voter_info.staked)
