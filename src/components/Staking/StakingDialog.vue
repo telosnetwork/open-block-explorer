@@ -50,8 +50,11 @@ export default defineComponent({
     const transactionId = ref<string>(null);
     const transactionError = ref<string>(null);
 
-    const withdrawRexFund = () => {
-      void store.dispatch('account/unstakeRexFund', { amount: rexfund.value });
+    const withdrawRexFund = async () => {
+      await store.dispatch('account/unstakeRexFund', { amount: rexfund.value });
+      void store.dispatch('account/updateRexData', {
+        account: store.state.account.accountName
+      });
     };
     return {
       openCoinDialog: ref<boolean>(false),
@@ -142,7 +145,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
           StakingInfo
           .q-pt-lg.q-pl-lg(v-if='rexfund > 0')
             .row.q-col-gutter-md.items-center
-              .col-auto.text-h6.text-white REX fund: {{rexfund}} {{symbol}}
+              .col-auto.text-h6.text-white REX fund: {{rexfund.toFixed(4)}} {{symbol}}
               .col-auto
                 q-btn.full-width.button-accent(label='Withdraw' flat @click="withdrawRexFund" )
           .q-pt-lg.text-grey-3.text-weight-light
