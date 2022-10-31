@@ -93,6 +93,7 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
+      debugger;
       let data: AccountDetails;
       try {
         data = await api.getAccount(props.account);
@@ -316,6 +317,13 @@ export default defineComponent({
         account: store.state.account.accountName
       });
     });
+    watch(
+      () => props.account,
+      async () => {
+        await loadAccountData();
+      }
+    );
+
     return {
       MICRO_UNIT,
       KILO_UNIT,
