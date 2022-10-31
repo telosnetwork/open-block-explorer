@@ -93,7 +93,6 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
-      debugger;
       let data: AccountDetails;
       try {
         data = await api.getAccount(props.account);
