@@ -98,3 +98,8 @@ module.exports = {
   setupFiles: ['<rootDir>/jest.init.js'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue']
 };
+
+// process.env = Object.assign(process.env, {
+//   env_name: 'dev',
+//   another_var: 'abc123',
+// });
