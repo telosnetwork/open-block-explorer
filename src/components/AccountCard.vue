@@ -18,7 +18,7 @@ import { date, useQuasar } from 'quasar';
 import { copyToClipboard } from 'quasar';
 import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
 
 const chain = getChain();
@@ -41,7 +41,6 @@ export default defineComponent({
     const store = useStore();
     const $q = useQuasar();
     const router = useRouter();
-    const route = useRoute();
     const token = computed((): Token => store.state.chain.token);
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const MICRO_UNIT = ref(Math.pow(10, -6));
@@ -71,7 +70,6 @@ export default defineComponent({
     const isAccount = computed((): boolean => {
       return store.state.account.accountName === props.account;
     });
-    const propsAccount = computed(() => props.account);
     const resources = ref<number>(0.0);
     const delegatedResources = ref<string>('0.0000');
     const rex = ref<string>('0.0000 ' + token.value.symbol);
@@ -317,9 +315,6 @@ export default defineComponent({
       await store.dispatch('account/updateRexData', {
         account: store.state.account.accountName
       });
-    });
-    watch(propsAccount, () => {
-      void loadAccountData();
     });
     return {
       MICRO_UNIT,
