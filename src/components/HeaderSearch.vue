@@ -4,11 +4,13 @@ import { useRouter } from 'vue-router';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
 import { isValidHex } from 'src/utils/stringValidator';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'HeaderSearch',
   setup() {
     const router = useRouter();
+    const $q = useQuasar();
 
     const inputValue = ref('');
     const options = ref<OptionsObj[]>([]);
@@ -162,13 +164,18 @@ export default defineComponent({
         });
         router.go(0);
       } else if (inputValue.value.length <= 12) {
-        await router.push({
-          name: 'account',
-          params: {
-            account: inputValue.value
-          }
-        });
-        router.go(0);
+        try {
+          await api.getAccount(inputValue.value.toLowerCase());
+          await router.push({
+            name: 'account',
+            params: {
+              account: inputValue.value.toLowerCase()
+            }
+          });
+          router.go(0);
+        } catch (error) {
+          $q.notify(`account ${inputValue.value} not found!`);
+        }
       }
       const option = optionsRaw.find((item) => item.label === inputValue.value);
       const to = option ? option.to : optionsRaw[1].to;
