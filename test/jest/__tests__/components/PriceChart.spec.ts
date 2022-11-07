@@ -49,10 +49,10 @@ describe('PriceChart', () => {
     jest.clearAllMocks();
   });
   describe('mounted', () => {
-    it('calls setExchangeStats', () => {
+    it('calls fetchPriceChartData', () => {
       const methodSpy = jest.spyOn(
         PriceChart.methods as any,
-        'setExchangeStats'
+        'fetchPriceChartData'
       );
       const wrapper = shallowMount(PriceChart);
 
@@ -61,16 +61,16 @@ describe('PriceChart', () => {
       });
     });
 
-    it('calls setPriceHistory', () => {
-      const methodSpy = jest.spyOn(
-        PriceChart.methods as any,
-        'setPriceHistory'
-      );
-      const wrapper = shallowMount(PriceChart);
+    // it('calls setPriceHistory', () => {
+    //   const methodSpy = jest.spyOn(
+    //     PriceChart.methods as any,
+    //     'setPriceHistory'
+    //   );
+    //   const wrapper = shallowMount(PriceChart);
 
-      wrapper.vm.$nextTick(() => {
-        expect(methodSpy).toHaveBeenCalled();
-      });
-    });
+    //   wrapper.vm.$nextTick(() => {
+    //     expect(methodSpy).toHaveBeenCalled();
+    //   });
+    // });
   });
 });

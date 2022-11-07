@@ -95,10 +95,9 @@ module.exports = {
       'jest-transform-stub'
   },
   transformIgnorePatterns: [`node_modules/(?!(${esModules}))`],
-  setupFiles: ['<rootDir>/jest.init.js'],
+  setupFiles: ['<rootDir>/jest.init.js', '<rootDir>/test/jest/setEnvVars.ts'],
   snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue']
 };
-
 // process.env = Object.assign(process.env, {
 //   env_name: 'dev',
 //   another_var: 'abc123',
