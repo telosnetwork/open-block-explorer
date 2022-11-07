@@ -45,9 +45,11 @@ describe('PriceChart', () => {
     mock.mockResolvedValueOnce(mockExchangeStats);
     mock.mockResolvedValueOnce(mockHistoryData);
   });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
+
   describe('mounted', () => {
     it('calls fetchPriceChartData', () => {
       const methodSpy = jest.spyOn(
@@ -60,17 +62,18 @@ describe('PriceChart', () => {
         expect(methodSpy).toHaveBeenCalled();
       });
     });
+  });
 
-    // it('calls setPriceHistory', () => {
-    //   const methodSpy = jest.spyOn(
-    //     PriceChart.methods as any,
-    //     'setPriceHistory'
-    //   );
-    //   const wrapper = shallowMount(PriceChart);
+  describe('methods', () => {
+    describe('formatPercentage', () => {
+      it('returns value rounded to 2 decimals as a % string', () => {
+        const testVal = 123.456;
+        const expected = '123.46 %';
+        const wrapper = shallowMount(PriceChart);
+        const received = wrapper.vm.formatPercentage(testVal);
 
-    //   wrapper.vm.$nextTick(() => {
-    //     expect(methodSpy).toHaveBeenCalled();
-    //   });
-    // });
+        expect(received).toBe(expected);
+      });
+    });
   });
 });
