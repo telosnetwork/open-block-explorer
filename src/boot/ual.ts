@@ -78,8 +78,7 @@ export default boot(({ app }) => {
     }
     return {
       accountName,
-      permission,
-      requestPermission: permission
+      permission
     };
   }
 
