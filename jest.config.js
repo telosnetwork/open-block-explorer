@@ -35,7 +35,7 @@ module.exports = {
     global: {
       branches: 0,
       functions: 2,
-      lines: 10,
+      lines: 100,
       statements: 10
     },
     './src/components/': {
