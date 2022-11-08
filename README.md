@@ -1,6 +1,8 @@
 # 'OBE' (open-block-explorer)
-![Alt](https://repobeats.axiom.co/api/embed/941f4d4cdc848b95f1ae663fadd142bdda4499f3.svg "Repobeats analytics image")
 
+Telos Main Net: [https://explorer.telos.net](https://explorer.telos.net)  [![Netlify Status](https://api.netlify.com/api/v1/badges/dc86b4ba-d574-4594-8f3c-88976edea863/deploy-status)](https://app.netlify.com/sites/open-block-explorer/deploys)
+
+Telos Test Net: [https://explorer-test.telos.net](https://explorer-test.telos.net) [![Netlify Status](https://api.netlify.com/api/v1/badges/8a778d87-a057-472f-ab3b-07d978faafaa/deploy-status)](https://app.netlify.com/sites/open-block-explorer-dev/deploys)  
 
 ## Introduction
 
@@ -39,14 +41,9 @@ Following, excelent products can be taken as reference points for further featur
 - [EOSX](https://telos.eosx.io/)
 - [AJOR](https://ajor.io/)
 
+## Recent Contributions
 
-## Currently in development  
-
-Telos Mainnet: [https://explorer.telos.net](https://explorer.telos.net)  [![Netlify Status](https://api.netlify.com/api/v1/badges/dc86b4ba-d574-4594-8f3c-88976edea863/deploy-status)](https://app.netlify.com/sites/open-block-explorer/deploys)
-
-
-Telos Testnet: [https://explorer-test.telos.net](https://explorer-test.telos.net) [![Netlify Status](https://api.netlify.com/api/v1/badges/8a778d87-a057-472f-ab3b-07d978faafaa/deploy-status)](https://app.netlify.com/sites/open-block-explorer-dev/deploys)  
-
+![Alt](https://repobeats.axiom.co/api/embed/941f4d4cdc848b95f1ae663fadd142bdda4499f3.svg "Repobeats analytics image")
 
 ## Installation 
 
