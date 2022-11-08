@@ -56,6 +56,7 @@ export default defineComponent({
   methods: {
     isValidAccount,
     async sendTransaction(): Promise<void> {
+      console.log('##########', this.account);
       const actionAccount = this.sendToken.contract;
       const data = {
         from: this.account as string,
