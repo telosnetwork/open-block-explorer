@@ -1,4 +1,6 @@
 # 'OBE' (open-block-explorer)
+![Alt](https://repobeats.axiom.co/api/embed/941f4d4cdc848b95f1ae663fadd142bdda4499f3.svg "Repobeats analytics image")
+
 
 ## Introduction
 
@@ -110,5 +112,5 @@ app running at localhost:4000
 [Vue 3 documenation](https://v3.vuejs.org/)  
 [Testing Quasar with Jest](https://github.com/quasarframework/quasar-testing/tree/next/packages/unit-jest)
 
-### Key Contributors
+
 
