@@ -15,6 +15,8 @@ import { mount } from '@vue/test-utils';
 import SendDialog from 'src/components/SendDialog.vue';
 import { Token } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { Store } from 'vuex';
+import { state } from 'src/store/contract/state';
 
 const chain = getChain();
 installQuasarPlugin();
@@ -30,16 +32,38 @@ const $router = {
   go
 };
 
+// const commit = jest.fn();
+
+// const $store = {
+//   commit
+// };
+
+const getters = {
+  accountName: () => 'testaccount'
+};
+
+const store = new Store({
+  modules: {
+    account: {
+      state: {},
+      actions: {},
+      namespaced: true,
+      getters: {
+        accountName: () => 'testAccount'
+      }
+    }
+  }
+});
+
 const storeMock = Object.freeze({
-  state: {},
-  actions: {},
-  namespaced: true,
-  getters: {
-    language: () => {
-      return 'en';
-    },
-    'account/accountName': () => {
-      return '';
+  modules: {
+    account: {
+      state: { accountName: 'testAccount'},
+      actions: {},
+      namespaced: true,
+      getters: {
+        accountName: () => 'testAccount'
+      }
     }
   }
 });
@@ -75,6 +99,7 @@ describe('SendDialog', () => {
     wrapper = setMount();
     wrapper.vm.$ual = $ual as any;
     wrapper.vm.$router = $router as any;
+    // wrapper.vm.$store = $store as any;
   });
   afterEach(() => {
     jest.clearAllMocks();
@@ -93,6 +118,24 @@ describe('SendDialog', () => {
     });
   });
   describe('methods', () => {
+    describe('sendTransaction', () => {
+      // eslint-disable-next-line jest/no-disabled-tests
+      it.skip('retains default token if no other available tokens', async () => {
+        wrapper.vm.signTransaction = jest.fn(() => {
+          return { transactionId: 'testId' };
+        });
+        wrapper.vm.sendToken.contract = 'testcontract';
+        wrapper.vm.recievingAccount = 'recaccount';
+        wrapper.vm.sendAmount = 123.45;
+        wrapper.vm.sendToken.symbol = 'XXXX';
+        wrapper.vm.memo = 'test memo';
+        await wrapper.vm.sendTransaction();
+        expect(wrapper.vm.$store.commit).toHaveBeenCalledWith(
+          'account/setTransaction',
+          'XXXX'
+        );
+      });
+    });
     describe('setDefaults', () => {
       it('retains default token if no other available tokens', () => {
         wrapper.vm.setDefaults();
@@ -131,11 +174,6 @@ describe('SendDialog', () => {
         wrapper.vm.transactionId = '123';
         wrapper.vm.resetForm();
         expect(wrapper.vm.transactionId).toBeNull();
-      });
-      it('sets transactionError to null', () => {
-        wrapper.vm.transactionError = 'error';
-        wrapper.vm.resetForm();
-        expect(wrapper.vm.transactionError).toBeNull();
       });
       it('sets defaultToken values to null', () => {
         wrapper.vm.sendToken = mockToken;
@@ -183,6 +221,23 @@ describe('SendDialog', () => {
         wrapper.vm.transactionError = null;
         wrapper.vm.transactionId = 'id';
         expect(wrapper.vm.transactionForm).toBe(false);
+      });
+    });
+    describe('validated', () => {
+      it('returns true if both send amount and receiving account exists', () => {
+        wrapper.vm.sendAmount = 0.0001;
+        wrapper.vm.recievingAccount = 'testaccount';
+        expect(wrapper.vm.validated).toBe(true);
+      });
+      it('returns false if send amount > 0 but no receiving account exists', () => {
+        wrapper.vm.sendAmount = 0.0001;
+        wrapper.vm.recievingAccount = '';
+        expect(wrapper.vm.validated).toBe(false);
+      });
+      it('returns false if send amount <= 0', () => {
+        wrapper.vm.sendAmount = 0.0;
+        wrapper.vm.recievingAccount = 'testaccount';
+        expect(wrapper.vm.validated).toBe(false);
       });
     });
   });
