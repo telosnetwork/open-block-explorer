@@ -3,7 +3,6 @@ import { Chain } from '../types/Chain';
 import { LocalStorage } from 'quasar';
 
 export function getChain(): Chain {
-  debugger;
   return ConfigManager.get().getCurrentChain();
 }
 
