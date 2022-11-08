@@ -15,8 +15,6 @@ import { mount } from '@vue/test-utils';
 import SendDialog from 'src/components/SendDialog.vue';
 import { Token } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
-import { Store } from 'vuex';
-import { state } from 'src/store/contract/state';
 
 const chain = getChain();
 installQuasarPlugin();
@@ -32,33 +30,11 @@ const $router = {
   go
 };
 
-// const commit = jest.fn();
-
-// const $store = {
-//   commit
-// };
-
-const getters = {
-  accountName: () => 'testaccount'
-};
-
-const store = new Store({
-  modules: {
-    account: {
-      state: {},
-      actions: {},
-      namespaced: true,
-      getters: {
-        accountName: () => 'testAccount'
-      }
-    }
-  }
-});
-
 const storeMock = Object.freeze({
+  //new Store({})
   modules: {
     account: {
-      state: { accountName: 'testAccount'},
+      state: { accountName: 'testAccount' },
       actions: {},
       namespaced: true,
       getters: {
@@ -99,7 +75,6 @@ describe('SendDialog', () => {
     wrapper = setMount();
     wrapper.vm.$ual = $ual as any;
     wrapper.vm.$router = $router as any;
-    // wrapper.vm.$store = $store as any;
   });
   afterEach(() => {
     jest.clearAllMocks();
