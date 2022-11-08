@@ -4,7 +4,7 @@ Telos Main Net: [https://explorer.telos.net](https://explorer.telos.net)  [![Net
 
 Telos Test Net: [https://explorer-test.telos.net](https://explorer-test.telos.net) [![Netlify Status](https://api.netlify.com/api/v1/badges/8a778d87-a057-472f-ab3b-07d978faafaa/deploy-status)](https://app.netlify.com/sites/open-block-explorer-dev/deploys)  
 
-## Introduction
+## About
 
 The Open Block Explorer (OBE) is the first OPEN SOURCE block explorer that is designed to support all AntelopeIO-based blockchains. This includes, amongst others, the following public and private chains: Telos, EOS, WAX, Ultra, Proton, UX and FIO.
 
