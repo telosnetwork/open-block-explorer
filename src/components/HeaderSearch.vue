@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, toRaw, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
@@ -141,19 +141,26 @@ export default defineComponent({
       }
     }
 
-    async function handleGoTo() {
-      const optionsRaw = toRaw(options.value);
-
+    async function handleGoTo(path?: string) {
       if (!inputValue.value) {
         return;
       }
 
+      // if clicked/selected from dropdown search results
+      if (typeof path === 'string') {
+        await router.push(path);
+        router.go(0);
+      }
+
+      // transaction validation
       if (isValidHex(inputValue.value) && inputValue.value.length == 64) {
         await router.push({
           name: 'transaction',
           params: { transaction: inputValue.value }
         });
         router.go(0);
+
+        // key validation
       } else if (
         (inputValue.value.length == 53 && inputValue.value.startsWith('EOS')) ||
         (inputValue.value.length == 57 && inputValue.value.startsWith('PUB_K1'))
@@ -163,7 +170,9 @@ export default defineComponent({
           params: { key: inputValue.value }
         });
         router.go(0);
-      } else if (inputValue.value.length <= 12) {
+
+        // default to 'account'
+      } else if (inputValue.value.length <= 13) {
         try {
           await api.getAccount(inputValue.value.toLowerCase());
           await router.push({
@@ -172,16 +181,13 @@ export default defineComponent({
               account: inputValue.value.toLowerCase()
             }
           });
+          debugger;
           router.go(0);
+          return;
         } catch (error) {
           $q.notify(`account ${inputValue.value} not found!`);
         }
       }
-      const option = optionsRaw.find((item) => item.label === inputValue.value);
-      const to = option ? option.to : optionsRaw[1].to;
-
-      await router.push(to);
-      router.go(0);
     }
 
     return {
@@ -223,7 +229,7 @@ q-select(
 
   template(#option="scope")
     q-item-label(v-if="scope.opt.isHeader" header) {{ scope.opt.label }}
-    q-item(v-else v-bind="scope.itemProps" exact @click="handleGoTo" clickable)
+    q-item(v-else v-bind="scope.itemProps" exact @click="handleGoTo(scope.opt.to)" clickable)
       q-item-section
         q-item-label {{ scope.opt.label }}
 </template>
