@@ -181,7 +181,6 @@ export default defineComponent({
               account: inputValue.value.toLowerCase()
             }
           });
-          debugger;
           router.go(0);
           return;
         } catch (error) {
