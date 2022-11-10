@@ -9,7 +9,7 @@ import {
 } from 'vue';
 import { useStore } from 'src/store';
 import { Action, TransferData } from 'src/types';
-import AccountFormatter from 'src/components/Transaction/AccountFormat.vue';
+import AccountFormatter from 'src/components/Transaction/AccountFormatter.vue';
 
 export default defineComponent({
   name: 'TransactionsTable',

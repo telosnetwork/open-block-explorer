@@ -2,7 +2,7 @@
 import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
 import { defineComponent, PropType } from 'vue';
 import DateField from 'src/components/DateField.vue';
-import AccountFormatter from 'src/components/Transaction/AccountFormat.vue';
+import AccountFormatter from 'src/components/Transaction/AccountFormatter.vue';
 import ActionFormatter from 'src/components/Transaction/ActionFormat.vue';
 import DataFormatter from 'src/components/Transaction/DataFormat.vue';
 
