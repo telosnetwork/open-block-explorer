@@ -24,12 +24,15 @@ import {
   getKeyAccounts,
   getProducerSchedule
 } from './hyperion'; //  e.g. './new-service' method name stays the same
+
 import {
   getTableRows,
   getTokenBalances,
   deserializeActionData,
   serializeActionData
 } from './eosio_core';
+
+import { getApy } from './telosApi';
 
 export const api = {
   getAccount,
@@ -53,5 +56,6 @@ export const api = {
   getKeyAccounts,
   deserializeActionData,
   serializeActionData,
-  getProducerSchedule
+  getProducerSchedule,
+  getApy
 };
