@@ -1,12 +1,14 @@
 import axios from 'axios';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
 
 const MAX_REQUESTS_COUNT = 5;
 const INTERVAL_MS = 10;
 let PENDING_REQUESTS = 0;
 
-const telosApi = axios.create({
-  baseURL: process.env.TELOS_API_ENDPOINT
-});
+const chain: Chain = getChain();
+
+const telosApi = axios.create({ baseURL: chain.getApiEndpoint() });
 
 telosApi.interceptors.request.use(function (config) {
   return new Promise((resolve) => {

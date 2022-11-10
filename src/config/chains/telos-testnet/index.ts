@@ -33,6 +33,7 @@ const RPC_ENDPOINT = {
   host: 'testnet.telos.net',
   port: 443
 };
+const API_ENDPOINT = 'http://api-dev.telos.net/v1';
 const DISPLAY_MAP = false;
 const THEME = {
   primary: '#571aff',
@@ -70,6 +71,10 @@ export default class TelosTestnet extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getApiEndpoint(): string {
+    return API_ENDPOINT;
   }
 
   getS3ProducerBucket(): string {
