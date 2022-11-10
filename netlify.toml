@@ -2,7 +2,7 @@
   from = "/*"
   to = "/"
   status = 200
-  
+
 [build]
   publish = "dist/spa"
   command = "quasar build"
@@ -22,6 +22,8 @@
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
   # SHOW_SIDEBAR = "true"
   CHAIN_NAME = "telos"
+  TELOS_API_ENDPOINT="http://api.telos.net/v1"
+
 
 [context.develop.environment]
   APP_NAME = "Telos Testnet Block Explorer"
@@ -38,7 +40,9 @@
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
   # SHOW_SIDEBAR = "true"
   CHAIN_NAME = "telos-testnet"
-  
+  TELOS_API_ENDPOINT="http://api-dev.telos.net/v1"
+
+
 [context.deploy-preview.environment]
   APP_NAME = "Telos Block Explorer"
   NODE_VERSION = "14"
@@ -54,3 +58,5 @@
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
   # SHOW_SIDEBAR = "true"
   CHAIN_NAME = "telos"
+  TELOS_API_ENDPOINT="http://api.telos.net/v1"
+

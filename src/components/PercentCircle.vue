@@ -69,23 +69,23 @@ export default defineComponent({
 <template lang="pug">
 div.chart-container
   svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`${-offset * 6} ${-offset / 2} ${containerWidth} ${containerWidth}`" )
-    path.circle-bg( 
+    path.circle-bg(
       :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
     )
-    path.circle( 
+    path.circle(
       :stroke-dasharray="dashArray"
       :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
       :stroke='strokeColor'
       :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1, 'stroke' : !Number.isNaN(formatResourcePercent) && Number(formatResourcePercent) > 80 ? 'red' : 'white' }"
     )
-    text.text.label( 
+    text.text.label(
       x="18"
       :y="radius - offset"
-    ) {{ label }} 
+    ) {{ label }}
     text.text.percentage(
       v-if='!Number.isNaN(formatResourcePercent)'
       x="20"
-      :y="radius + 12" 
+      :y="radius + 12"
     ) {{ formatResourcePercent }}%
   p.text.usage USED: {{ this.fraction }} {{ this.unit }}
   p.text.usage TOTAL: {{ this.total }} {{ this.unit }}

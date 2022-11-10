@@ -20,7 +20,8 @@ describe('PercentCircle', () => {
   beforeEach(() => {
     wrapper = mount(PercentCircle as unknown, {
       props: {
-        percentage: 50,
+        fraction: 50,
+        total: 100,
         label: 'test2',
         radius: 10
       }
@@ -46,7 +47,8 @@ describe('PercentCircle', () => {
       });
       it('sets color to "red" if usage >= 90', async () => {
         await wrapper.setProps({
-          percentage: 90
+          fraction: 90,
+          total: 100
         });
         expect(wrapper.vm.strokeColor).toBe('red');
       });
@@ -59,9 +61,9 @@ describe('PercentCircle', () => {
       });
     });
     describe('dashArray', () => {
-      it('returnsthe scaled path based on radius', () => {
+      it('returns the scaled path based on radius', () => {
         const circ = wrapper.vm.circumference;
-        const scaled = (wrapper.vm.percentage / 100) * circ;
+        const scaled = (wrapper.vm.fraction / 100) * circ;
         expect(wrapper.vm.dashArray).toBe(`${scaled}, ${circ as string}`);
       });
     });

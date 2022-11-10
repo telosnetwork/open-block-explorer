@@ -11,6 +11,7 @@ export interface Chain {
   getChainId(): string;
   getRPCEndpoint(): RpcEndpoint;
   getHyperionEndpoint(): string;
+  getApiEndpoint(): string;
   getS3ProducerBucket(): string;
   getPriceData(): Promise<PriceChartData>;
   getUsdPrice(): Promise<number>;
