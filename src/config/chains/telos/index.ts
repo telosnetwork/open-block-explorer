@@ -33,6 +33,7 @@ const RPC_ENDPOINT = {
   host: 'mainnet.telos.net',
   port: 443
 };
+const API_ENDPOINT = 'http://api.telos.net/v1';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
 const THEME = {
@@ -71,6 +72,10 @@ export default class Telos extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getApiEndpoint(): string {
+    return API_ENDPOINT;
   }
 
   getS3ProducerBucket(): string {
