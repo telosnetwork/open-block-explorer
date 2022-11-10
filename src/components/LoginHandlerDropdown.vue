@@ -1,13 +1,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapActions, mapMutations } from 'vuex';
-import Link from 'src/components/Transaction/AccountFormatter.vue';
 import WalletModal from './WalletModal.vue';
 
 export default defineComponent({
   name: 'LoginHandlerDropdown',
   props: ['account'],
-  components: { Link, WalletModal },
+  components: { WalletModal },
   data() {
     return {
       accounts: [this.account],

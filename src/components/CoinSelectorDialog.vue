@@ -3,7 +3,7 @@ import { defineComponent, PropType } from 'vue';
 import { Token } from 'src/types';
 
 export default defineComponent({
-  name: 'SendDialog',
+  name: 'CoinSelectorDialog',
   props: {
     availableTokens: {
       required: true,

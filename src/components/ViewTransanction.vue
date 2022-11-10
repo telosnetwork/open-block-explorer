@@ -3,7 +3,7 @@ import { defineComponent, computed } from 'vue';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'SendDialog',
+  name: 'ViewTransaction',
   props: {
     message: {
       type: String,
@@ -43,13 +43,13 @@ q-dialog
   .Card
     q-card-section(v-if='Id')
       .row
-        .col-12 
+        .col-12
           .row
             .text-h6 {{msg}}
-          .row.ellipsis-overflow.q-pt-lg.q-pl-md(@click='navToTransaction') {{ Id }}            
+          .row.ellipsis-overflow.q-pt-lg.q-pl-md(@click='navToTransaction') {{ Id }}
     q-card-section(v-else)
       .row
-        .col-12 
+        .col-12
           .row Transaction Failed: {{ transactionE }}
     q-card-actions(align="right" class="text-primary")
       q-btn(flat label="Close" @click="reset" v-close-popup text-color="grey-3")
