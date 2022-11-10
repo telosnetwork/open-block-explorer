@@ -32,7 +32,7 @@ export default defineComponent({
       const totalRefund = (
         assetToAmount(refund?.cpu_amount, token.value.precision) +
         assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(2);
+      ).toFixed(4);
       return `${totalRefund} ${token.value.symbol}`;
     }
 
@@ -153,10 +153,10 @@ export default defineComponent({
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-6 CPU
-            .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.cpu_amount || '0'}}
+            .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.cpu_amount || '0.0000'}}
           .row.q-pt-md
             .col-6 NET
-            .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.net_amount || '0'}}
+            .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.net_amount || '0.0000'}}
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-7 {{refundCountdown()}}
@@ -166,7 +166,7 @@ export default defineComponent({
             .col-7.q-pt-sm Refund
               q-icon(class="q-ml-xs" name="far fa-question-circle")
                 q-tooltip(anchor="top middle" self="center middle" class="bg-deep-purple-12") If it has been more than 72 hours since your unstake transaction. Click on Refund to claim your tokens.
-                  
+
             .col-5.text-right.grey-3
               q-btn.full-width.button-accent(label="Refund" flat @click="sendTransaction" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")

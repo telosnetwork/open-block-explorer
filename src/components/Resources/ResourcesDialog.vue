@@ -36,10 +36,10 @@ q-dialog( :persistent='true' maximized)
           img.send-img.q-pr-md( src="~assets/cpu.svg" style="height: 60px; max-width: 60px")
           .text-h4.q-pb-md.inline-block.color-grey-3.inline Manage Resources
         .q-pa-sm
-          stakingInfo
+          StakingInfo
           .q-pt-lg
             q-tabs.text-grey-5.tab-text(
-              v-model="tab" 
+              v-model="tab"
               dense class="text-grey"
               indicator-color="grey-3"
               active-color="grey-3"
@@ -48,7 +48,7 @@ q-dialog( :persistent='true' maximized)
               :breakpoint="0"
               no-caps)
 
-              q-tab(name="stake" label="Add CPU/NET") 
+              q-tab(name="stake" label="Add CPU/NET")
               q-tab(name="unstake" label="Remove CPU/NET")
               q-tab(name="refund" label="Refund CPU/NET")
               q-tab(name="buyram" label="Buy RAM")
@@ -65,7 +65,7 @@ q-dialog( :persistent='true' maximized)
 
               q-tab-panel(name="refund")
                 refundTab
-              
+
               q-tab-panel(name="buyram")
                 BuyRam
 
