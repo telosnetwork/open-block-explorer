@@ -293,7 +293,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             p.panel-title {{ tableTitle }}
           q-space
           .col
-            q-toggle(v-model="showAge" left-label label="Show Age")
+            q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
         template( v-slot:body-cell-transaction="props")
           q-td( :props="props" )
             AccountFormat(:account="props.value.id" :type="props.value.type")
