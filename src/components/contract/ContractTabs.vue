@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue';
-import Tables from './Tables.vue';
-import Actions from './Actions.vue';
+import ContractTables from './ContractTables.vue';
+import ContractActions from './ContractActions.vue';
 import JsonViewer from 'vue-json-viewer';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
@@ -27,7 +27,7 @@ export default defineComponent({
 
     return { tab, abi };
   },
-  components: { Tables, Actions, JsonViewer }
+  components: { ContractTables, ContractActions, JsonViewer }
 });
 </script>
 
@@ -42,9 +42,9 @@ export default defineComponent({
       q-tab( name="abi" label="ABI" )
     q-tab-panels(v-model="tab").col-12
       q-tab-panel(name="tables")
-        Tables
+        ContractTables
       q-tab-panel(name="actions")
-        Actions
+        ContractActions
       q-tab-panel(name="abi")
         q-card(
           flat

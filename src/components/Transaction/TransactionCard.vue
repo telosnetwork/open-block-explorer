@@ -2,11 +2,11 @@
 import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
-import Link from 'src/components/Transaction/AccountFormatter.vue';
+import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 
 export default defineComponent({
-  name: 'TransactionsCard',
-  components: { Link },
+  name: 'TransactionCard',
+  components: { AccountFormat },
   setup() {
     const store = useStore();
     return {
@@ -84,7 +84,7 @@ export default defineComponent({
             .col-xs-12.col-sm-6
               .text-body1.text-weight-medium.text-uppercase Block number
             .col-xs-12.col-sm-6.text-right.text-bold
-              Link(:account='blockNum' type='block')
+              AccountFormat(:account='blockNum' type='block')
               q-btn( @click="copy(blockNum)" flat round color="black" icon="content_copy" size='sm')
         q-separator(inset).card-separator
         q-card-section

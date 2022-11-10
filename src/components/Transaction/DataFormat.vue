@@ -1,11 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, toRef, onMounted } from 'vue';
 import { TransferData } from 'src/types';
-import AccountFormatter from 'src/components/Transaction/AccountFormatter.vue';
+import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 /* eslint-disable */
 export default defineComponent({
-  name: 'TransactionsTable',
-  components: { AccountFormatter },
+  name: 'DataFormat',
+  components: { AccountFormat },
   props: {
     actionName: {
       type: String,
@@ -17,6 +17,7 @@ export default defineComponent({
     }
   },
   setup(props) {
+    debugger;
     const actionName = toRef(props, 'actionName');
     const actionData = toRef(props, 'actionData');
     const transferData = ref<TransferData>({} as TransferData);
@@ -26,12 +27,14 @@ export default defineComponent({
     const maxHeight = ref(200);
 
     onMounted(() => {
+      debugger;
       if (actionName.value === 'transfer') {
         transferData.value = actionData.value as TransferData;
       }
     });
 
     function formatGeneralData(data: any): any[] {
+      debugger;
       var dict: any[] = [];
       for (let key in data) {
         if (data[key] instanceof Object) {
@@ -65,6 +68,7 @@ export default defineComponent({
     }
 
     function isAccount(data: string): boolean {
+      debugger;
       const accountRegEx = [
         'account',
         'to',
@@ -105,9 +109,9 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
   .row(v-if="actionName === 'transfer'" ref="dataBox")
     .col-12
       span.text-bold
-        AccountFormatter(:account="transferData.from" type="account")
+        AccountFormat(:account="transferData.from" type="account")
       span.text-bold &nbsp; → &nbsp;
-        AccountFormatter(:account="transferData.to" type="account") &nbsp;
+        AccountFormat(:account="transferData.to" type="account") &nbsp;
       span.text-bold {{ ' ' + transferData.quantity}}
     .col-12
     .memo-card
@@ -117,7 +121,7 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
     .col-12( v-for="val in formatGeneralData(data)" :key="val.key")
       .text-weight-bold {{val.key}} :
         span.text-weight-regular(v-if="isAccount(val.key)")
-          AccountFormatter(:account="val.value" type="account") &nbsp;
+          AccountFormat(:account="val.value" type="account") &nbsp;
         span.text-weight-regular(v-else) {{val.value}} &nbsp;
 .row(v-if="isOverflowing")
   q-btn.full-width( flat size="xs" :icon="showOverflow ? 'expand_less' : 'expand_more'" @click="toggleOverflow")

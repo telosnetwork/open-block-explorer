@@ -91,7 +91,7 @@ const vector = new VectorLayer({
 });
 
 export default defineComponent({
-  name: 'PageIndex',
+  name: 'Map',
   components: {
     Map,
     View
