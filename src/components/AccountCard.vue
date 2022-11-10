@@ -41,7 +41,6 @@ export default defineComponent({
     const store = useStore();
     const $q = useQuasar();
     const router = useRouter();
-    const route = useRoute();
     const token = computed((): Token => store.state.chain.token);
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const MICRO_UNIT = ref(Math.pow(10, -6));
