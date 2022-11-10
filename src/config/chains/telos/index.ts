@@ -9,7 +9,7 @@
 # NETWORK_EVM_CONTRACT=eosio.evm
 # NETWORK_EVM_CHAIN_ID=40
 # HYPERION_ENDPOINT=https://telos.caleos.io
-# TELOS_API_ENDPOINT=http://api.telos.net/v1
+# TELOS_API_ENDPOINT=https://api.telos.net/v1
 
  */
 
@@ -33,7 +33,7 @@ const RPC_ENDPOINT = {
   host: 'mainnet.telos.net',
   port: 443
 };
-const API_ENDPOINT = 'http://api.telos.net/v1';
+const API_ENDPOINT = 'https://api.telos.net/v1';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
 const THEME = {
