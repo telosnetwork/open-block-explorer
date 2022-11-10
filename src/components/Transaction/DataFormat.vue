@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, toRef, onMounted } from 'vue';
 import { TransferData } from 'src/types';
-import AccountFormatter from 'src/components/Transaction/AccountFormat.vue';
+import AccountFormatter from 'src/components/Transaction/AccountFormatter.vue';
 /* eslint-disable */
 export default defineComponent({
   name: 'TransactionsTable',
@@ -104,7 +104,7 @@ export default defineComponent({
 div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : `max-height: ${maxHeight}px`")
   .row(v-if="actionName === 'transfer'" ref="dataBox")
     .col-12
-      span.text-bold 
+      span.text-bold
         AccountFormatter(:account="transferData.from" type="account")
       span.text-bold &nbsp; → &nbsp;
         AccountFormatter(:account="transferData.to" type="account") &nbsp;
@@ -115,9 +115,9 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
       .memo-card-memo {{transferData.memo}}
   .row(v-else ref="dataBox")
     .col-12( v-for="val in formatGeneralData(data)" :key="val.key")
-      .text-weight-bold {{val.key}} : 
+      .text-weight-bold {{val.key}} :
         span.text-weight-regular(v-if="isAccount(val.key)")
-          AccountFormatter(:account="val.value" type="account") &nbsp; 
+          AccountFormatter(:account="val.value" type="account") &nbsp;
         span.text-weight-regular(v-else) {{val.value}} &nbsp;
 .row(v-if="isOverflowing")
   q-btn.full-width( flat size="xs" :icon="showOverflow ? 'expand_less' : 'expand_more'" @click="toggleOverflow")
