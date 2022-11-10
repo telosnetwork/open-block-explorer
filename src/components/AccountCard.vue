@@ -18,7 +18,7 @@ import { date, useQuasar } from 'quasar';
 import { copyToClipboard } from 'quasar';
 import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
 
 const chain = getChain();
@@ -41,6 +41,7 @@ export default defineComponent({
     const store = useStore();
     const $q = useQuasar();
     const router = useRouter();
+    const route = useRoute();
     const token = computed((): Token => store.state.chain.token);
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const MICRO_UNIT = ref(Math.pow(10, -6));
@@ -93,6 +94,7 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
+      void updateRexBalance();
       let data: AccountDetails;
       try {
         data = await api.getAccount(props.account);
@@ -210,6 +212,8 @@ export default defineComponent({
       coreBalance += rexFundBalance;
       if (rexbalRows.rows.length > 0) {
         rex.value = coreBalance.toFixed(4) + ` ${token.value.symbol}`;
+      } else {
+        rex.value = `0.000 ${token.value.symbol}`;
       }
     };
     const fixDec = (val: number): number => {
@@ -298,7 +302,6 @@ export default defineComponent({
         });
     };
     onMounted(async () => {
-      void updateRexBalance();
       await loadSystemToken();
       none.value = `${zero.value.toFixed(token.value.precision)} ${
         token.value.symbol
@@ -316,6 +319,12 @@ export default defineComponent({
         account: store.state.account.accountName
       });
     });
+    watch(
+      () => props.account,
+      async () => {
+        await loadAccountData();
+      }
+    );
     return {
       MICRO_UNIT,
       KILO_UNIT,
