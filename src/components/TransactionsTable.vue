@@ -16,7 +16,7 @@ export default defineComponent({
   },
   props: {
     account: {
-      type: String,
+      type: String || null,
       required: false,
       default: null
     },
