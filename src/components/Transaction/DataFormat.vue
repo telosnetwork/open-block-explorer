@@ -17,7 +17,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    debugger;
     const actionName = toRef(props, 'actionName');
     const actionData = toRef(props, 'actionData');
     const transferData = ref<TransferData>({} as TransferData);
@@ -26,15 +25,11 @@ export default defineComponent({
     const showOverflow = ref(false);
     const maxHeight = ref(200);
 
-    onMounted(() => {
-      debugger;
-      if (actionName.value === 'transfer') {
-        transferData.value = actionData.value as TransferData;
-      }
-    });
+    if (actionName.value === 'transfer') {
+      transferData.value = actionData.value as TransferData;
+    }
 
     function formatGeneralData(data: any): any[] {
-      debugger;
       var dict: any[] = [];
       for (let key in data) {
         if (data[key] instanceof Object) {
@@ -68,7 +63,6 @@ export default defineComponent({
     }
 
     function isAccount(data: string): boolean {
-      debugger;
       const accountRegEx = [
         'account',
         'to',
