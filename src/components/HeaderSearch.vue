@@ -38,7 +38,11 @@ export default defineComponent({
 
     watch(waitToSearch, async (currentValue) => {
       if (!currentValue) {
-        const queryValue = inputValue.value.toLowerCase();
+        const queryValue = inputValue.value
+          .toLowerCase()
+          // remove leading and trailing spaces and periods from search input
+          .replace(/^[\s.]+|[\s.]+$/g, '');
+
         options.value = [];
 
         await Promise.all([
