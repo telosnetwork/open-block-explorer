@@ -12,7 +12,7 @@ import { getChain } from 'src/config/ConfigManager';
 const chain = getChain();
 
 export default defineComponent({
-  name: 'Validator',
+  name: 'ValidatorData',
   components: {
     ValidatorDataTable,
     ViewTransaction,
