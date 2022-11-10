@@ -58,13 +58,13 @@ q-dialog( :persistent='true' maximized)
 
             q-tab-panels(v-model="tab" class="tab-panel")
               q-tab-panel(name="stake")
-                stakingTab
+                StakingTab
 
               q-tab-panel(name="unstake")
-                unstakingTab
+                UnstakingTab
 
               q-tab-panel(name="refund")
-                refundTab
+                RefundTab
 
               q-tab-panel(name="buyram")
                 BuyRam
