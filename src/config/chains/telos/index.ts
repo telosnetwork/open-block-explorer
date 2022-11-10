@@ -9,7 +9,7 @@
 # NETWORK_EVM_CONTRACT=eosio.evm
 # NETWORK_EVM_CHAIN_ID=40
 # HYPERION_ENDPOINT=https://telos.caleos.io
-# TELOS_API_ENDPOINT=http://app.telos.net
+# TELOS_API_ENDPOINT=http://api.telos.net/v1
 
  */
 
