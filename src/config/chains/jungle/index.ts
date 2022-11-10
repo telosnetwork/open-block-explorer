@@ -8,7 +8,7 @@ NETWORK_EVM_ENDPOINT=https://testnet.telos.caleos.io
 NETWORK_EVM_CONTRACT=eosio.evm
 NETWORK_EVM_CHAIN_ID=41
 HYPERION_ENDPOINT=https://testnet.telos.caleos.io
-TELOS_API_ENDPOINT=http://app-dev.telos.net
+TELOS_API_ENDPOINT=http://api-dev.telos.net/v1
 
 # TELOS_API_ENDPOINT=localhost:9999/v1
 APP_NAME=OBE
@@ -33,6 +33,7 @@ const RPC_ENDPOINT = {
   host: 'jungle.eosusa.news',
   port: 443
 };
+const API_ENDPOINT = 'http://example.com';
 const DISPLAY_MAP = true;
 const THEME = {};
 
@@ -51,6 +52,10 @@ export default class TelosTestnet extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getApiEndpoint(): string {
+    return API_ENDPOINT;
   }
 
   getS3ProducerBucket(): string {

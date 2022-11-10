@@ -6,6 +6,8 @@ import AccountFormatter from 'src/components/Transaction/AccountFormat.vue';
 import ActionFormatter from 'src/components/Transaction/ActionFormat.vue';
 import DataFormatter from 'src/components/Transaction/DataFormat.vue';
 
+const FIVE_SECONDS = 5000;
+
 export default defineComponent({
   name: 'TransactionsTable',
   components: {
@@ -16,7 +18,7 @@ export default defineComponent({
   },
   props: {
     account: {
-      type: String,
+      type: String || null,
       required: false,
       default: null
     },
@@ -83,8 +85,10 @@ export default defineComponent({
   async mounted() {
     await this.loadTableData();
     this.interval = window.setInterval(() => {
-      if (this.account == null) void this.loadTableData();
-    }, 5000);
+      //only automatically refresh data on first page, disable on page navigation
+      if (this.account == null && this.paginationSettings.page === 1)
+        void this.loadTableData();
+    }, FIVE_SECONDS);
   },
   beforeUnmount() {
     clearInterval(this.interval);
