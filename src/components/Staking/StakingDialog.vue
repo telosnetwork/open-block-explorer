@@ -129,7 +129,8 @@ export default defineComponent({
   },
   async mounted() {
     try {
-      this.apy = `${await this.$api.getApy()}%`;
+      const apyValue = await this.$api.getApy();
+      this.apy = `${apyValue}%`;
     } catch (e) {
       console.error(e);
     }
