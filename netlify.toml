@@ -22,7 +22,7 @@
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
   # SHOW_SIDEBAR = "true"
   CHAIN_NAME = "telos"
-  TELOS_API_ENDPOINT="http://api.telos.net/v1"
+  TELOS_API_ENDPOINT="https://api.telos.net/v1"
 
 
 [context.develop.environment]
@@ -40,7 +40,7 @@
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
   # SHOW_SIDEBAR = "true"
   CHAIN_NAME = "telos-testnet"
-  TELOS_API_ENDPOINT="http://api-dev.telos.net/v1"
+  TELOS_API_ENDPOINT="https://api-dev.telos.net/v1"
 
 
 [context.deploy-preview.environment]
@@ -58,5 +58,5 @@
   PRODUCER_BUCKET_URL="https://telos-producer-validation.s3.amazonaws.com"
   # SHOW_SIDEBAR = "true"
   CHAIN_NAME = "telos"
-  TELOS_API_ENDPOINT="http://api.telos.net/v1"
+  TELOS_API_ENDPOINT="https://api.telos.net/v1"
 
