@@ -89,9 +89,7 @@ WalletModal( v-model='showModal')
   width: 110px
   margin: 15px
 .connect-button
-  width: 60%
-  min-width: 120px
-  max-width: 140px
+  width: fit-content
   height: 40px
   text-transform: lowercase
 .buttons-container
