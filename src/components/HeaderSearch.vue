@@ -38,10 +38,7 @@ export default defineComponent({
 
     watch(waitToSearch, async (currentValue) => {
       if (!currentValue) {
-        const queryValue = inputValue.value
-          .toLowerCase()
-          // remove leading and trailing spaces and periods from search input
-          .replace(/^[\s.]+|[\s.]+$/g, '');
+        const queryValue = inputValue.value.toLowerCase();
 
         options.value = [];
 
@@ -50,7 +47,6 @@ export default defineComponent({
           searchProposals(queryValue),
           searchTransactions(queryValue)
         ]);
-
         isLoading.value = false;
       }
     });
@@ -60,7 +56,7 @@ export default defineComponent({
         const request = {
           code: 'eosio',
           limit: 5,
-          lower_bound: value,
+          lower_bound: cleanSearchInput(value),
           table: 'userres',
           upper_bound: value.padEnd(12, 'z')
         };
@@ -83,11 +79,13 @@ export default defineComponent({
           }
 
           accounts.forEach((user) => {
-            options.value.push({
-              label: user.payer,
-              to: `/account/${user.payer}`,
-              isHeader: false
-            });
+            if (user.payer.includes(value)) {
+              options.value.push({
+                label: user.payer,
+                to: `/account/${user.payer}`,
+                isHeader: false
+              });
+            }
           });
         }
       } catch (error) {
@@ -97,8 +95,9 @@ export default defineComponent({
 
     async function searchProposals(value: string): Promise<void> {
       try {
-        const { proposals } = await api.getProposals({ proposal: value });
-
+        const { proposals } = await api.getProposals({
+          proposal: value
+        });
         if (proposals.length > 0) {
           options.value.push({
             label: 'Proposals',
@@ -117,6 +116,11 @@ export default defineComponent({
       } catch (error) {
         return;
       }
+    }
+
+    function cleanSearchInput(value: string): string {
+      // remove leading and trailing spaces and periods from search input for query
+      return value.replace(/^[\s.]+|[\s.]+$/g, '');
     }
 
     async function searchTransactions(value: string): Promise<void> {
