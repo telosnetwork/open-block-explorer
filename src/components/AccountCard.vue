@@ -93,6 +93,7 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
+      void updateRexBalance();
       let data: AccountDetails;
       try {
         data = await api.getAccount(props.account);
@@ -210,6 +211,8 @@ export default defineComponent({
       coreBalance += rexFundBalance;
       if (rexbalRows.rows.length > 0) {
         rex.value = coreBalance.toFixed(4) + ` ${token.value.symbol}`;
+      } else {
+        rex.value = `0.000 ${token.value.symbol}`;
       }
     };
     const fixDec = (val: number): number => {
@@ -298,7 +301,6 @@ export default defineComponent({
         });
     };
     onMounted(async () => {
-      void updateRexBalance();
       await loadSystemToken();
       none.value = `${zero.value.toFixed(token.value.precision)} ${
         token.value.symbol
@@ -316,6 +318,12 @@ export default defineComponent({
         account: store.state.account.accountName
       });
     });
+    watch(
+      () => props.account,
+      async () => {
+        await loadAccountData();
+      }
+    );
     return {
       MICRO_UNIT,
       KILO_UNIT,

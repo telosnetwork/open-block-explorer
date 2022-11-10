@@ -7,7 +7,7 @@ import { TableIndexType } from 'src/types/Api';
 import { PaginationSettings } from 'src/types';
 /* eslint-disable */
 export default defineComponent({
-  name: 'ContractTable',
+  name: 'ContractTables',
   setup() {
     const store = useStore();
     const options = computed(() =>

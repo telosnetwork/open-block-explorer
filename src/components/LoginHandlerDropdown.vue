@@ -1,13 +1,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapActions, mapMutations } from 'vuex';
-import Link from 'src/components/Transaction/AccountFormat.vue';
 import WalletModal from './WalletModal.vue';
 
 export default defineComponent({
   name: 'LoginHandlerDropdown',
   props: ['account'],
-  components: { Link, WalletModal },
+  components: { WalletModal },
   data() {
     return {
       accounts: [this.account],
@@ -89,9 +88,7 @@ WalletModal( v-model='showModal')
   width: 110px
   margin: 15px
 .connect-button
-  width: 60%
-  min-width: 120px
-  max-width: 140px
+  width: fit-content
   height: 40px
   text-transform: lowercase
 .buttons-container

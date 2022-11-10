@@ -7,7 +7,7 @@ import { useStore } from 'src/store';
 import { AccountDetails, Token, Refund } from 'src/types';
 
 export default defineComponent({
-  name: 'StakingInfo',
+  name: 'ResourcesInfo',
   setup() {
     const store = useStore();
     const openCoinDialog = ref<boolean>(false);

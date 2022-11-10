@@ -9,11 +9,11 @@ import {
 } from 'vue';
 import { useStore } from 'src/store';
 import { Action, TransferData } from 'src/types';
-import AccountFormatter from 'src/components/Transaction/AccountFormat.vue';
+import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 
 export default defineComponent({
-  name: 'TransactionsTable',
-  components: { AccountFormatter },
+  name: 'ActionFormat',
+  components: { AccountFormat },
   props: {
     action: {
       type: Object as PropType<Action>,
@@ -53,7 +53,7 @@ export default defineComponent({
 <template lang="pug">
 div(:class="'action '+ divClass" v-if="tx.act.name === 'transfer'") {{divContent}}
 div(v-else class="action action-general")
-  AccountFormatter(:account="tx.act.account" type="account")
+  AccountFormat(:account="tx.act.account" type="account")
   span.inline &nbsp; → &nbsp;{{tx.act.name}}
 </template>
 
