@@ -83,7 +83,9 @@ export default defineComponent({
   async mounted() {
     await this.loadTableData();
     this.interval = window.setInterval(() => {
-      if (this.account == null) void this.loadTableData();
+      //only automatically refresh data on first page, disable on page navigation
+      if (this.account == null && this.paginationSettings.page === 1)
+        void this.loadTableData();
     }, 5000);
   },
   beforeUnmount() {
