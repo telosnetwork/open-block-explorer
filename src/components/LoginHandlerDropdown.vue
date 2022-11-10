@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mapActions, mapMutations } from 'vuex';
-import Link from 'src/components/Transaction/AccountFormat.vue';
+import Link from 'src/components/Transaction/AccountFormatter.vue';
 import WalletModal from './WalletModal.vue';
 
 export default defineComponent({
