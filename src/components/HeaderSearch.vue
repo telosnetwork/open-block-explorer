@@ -33,7 +33,7 @@ export default defineComponent({
 
       waitToSearch.value = setTimeout(() => {
         waitToSearch.value = null;
-      }, 1000);
+      }, 50);
     });
 
     watch(waitToSearch, async (currentValue) => {
