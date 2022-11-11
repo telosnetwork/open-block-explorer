@@ -17,9 +17,13 @@ export default defineComponent({
     const isLoading = ref(false);
 
     watch(inputValue, async () => {
+      if (inputValue.value === '') {
+        options.value = [];
+        return;
+      }
+
       isLoading.value = true;
       const queryValue = inputValue.value.toLowerCase();
-      options.value = [];
 
       await Promise.all([
         searchAccounts(queryValue),
@@ -35,9 +39,6 @@ export default defineComponent({
     async function searchAccounts(value: string): Promise<OptionsObj[]> {
       try {
         const results = [] as OptionsObj[];
-        if (value === '') {
-          return results;
-        }
         const request = {
           code: 'eosio',
           limit: 5,
@@ -82,9 +83,6 @@ export default defineComponent({
     async function searchProposals(value: string): Promise<OptionsObj[]> {
       try {
         const results = [] as OptionsObj[];
-        if (value === '') {
-          return results;
-        }
         const { proposals } = await api.getProposals({
           proposal: value
         });
@@ -117,7 +115,7 @@ export default defineComponent({
     async function searchTransactions(value: string): Promise<OptionsObj[]> {
       const results = [] as OptionsObj[];
 
-      if (value.length !== 64 || value === '') {
+      if (value.length !== 64) {
         return results;
       }
 
