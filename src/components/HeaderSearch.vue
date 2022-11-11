@@ -16,43 +16,28 @@ export default defineComponent({
     const options = ref<OptionsObj[]>([]);
     const isLoading = ref(false);
 
-    const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
-
-    watch(inputValue, (currentValue) => {
+    watch(inputValue, async () => {
       isLoading.value = true;
+      const queryValue = inputValue.value.toLowerCase();
+      options.value = [];
 
-      if (waitToSearch.value) {
-        clearTimeout(waitToSearch.value);
-      }
+      await Promise.all([
+        searchAccounts(queryValue),
+        searchProposals(queryValue),
+        searchTransactions(queryValue)
+      ]).then((results) => {
+        options.value = ([] as OptionsObj[]).concat.apply([], results);
+      });
 
-      if (currentValue === '') {
-        options.value = [];
-        isLoading.value = false;
-        return;
-      }
-
-      waitToSearch.value = setTimeout(() => {
-        waitToSearch.value = null;
-      }, 50);
+      isLoading.value = false;
     });
 
-    watch(waitToSearch, async (currentValue) => {
-      if (!currentValue) {
-        const queryValue = inputValue.value.toLowerCase();
-
-        options.value = [];
-
-        await Promise.all([
-          searchAccounts(queryValue),
-          searchProposals(queryValue),
-          searchTransactions(queryValue)
-        ]);
-        isLoading.value = false;
-      }
-    });
-
-    async function searchAccounts(value: string): Promise<void> {
+    async function searchAccounts(value: string): Promise<OptionsObj[]> {
       try {
+        const results = [] as OptionsObj[];
+        if (value === '') {
+          return results;
+        }
         const request = {
           code: 'eosio',
           limit: 5,
@@ -63,7 +48,7 @@ export default defineComponent({
         const accounts = await api.getTableByScope(request);
 
         if (accounts.length > 0) {
-          options.value.push({
+          results.push({
             label: 'Accounts',
             to: '',
             isHeader: true
@@ -71,7 +56,7 @@ export default defineComponent({
 
           // because the get table by scope for userres does not include eosio account
           if ('eosio'.includes(value)) {
-            options.value.push({
+            results.push({
               label: 'eosio',
               to: '/account/eosio',
               isHeader: false
@@ -80,7 +65,7 @@ export default defineComponent({
 
           accounts.forEach((user) => {
             if (user.payer.includes(value)) {
-              options.value.push({
+              results.push({
                 label: user.payer,
                 to: `/account/${user.payer}`,
                 isHeader: false
@@ -88,31 +73,37 @@ export default defineComponent({
             }
           });
         }
+        return results;
       } catch (error) {
         return;
       }
     }
 
-    async function searchProposals(value: string): Promise<void> {
+    async function searchProposals(value: string): Promise<OptionsObj[]> {
       try {
+        const results = [] as OptionsObj[];
+        if (value === '') {
+          return results;
+        }
         const { proposals } = await api.getProposals({
           proposal: value
         });
         if (proposals.length > 0) {
-          options.value.push({
+          results.push({
             label: 'Proposals',
             to: '',
             isHeader: true
           });
 
           proposals.forEach((item) => {
-            options.value.push({
+            results.push({
               label: item.proposal_name,
               to: `/proposal/${item.proposal_name}`,
               isHeader: false
             });
           });
         }
+        return results;
       } catch (error) {
         return;
       }
@@ -123,27 +114,30 @@ export default defineComponent({
       return value.replace(/^[\s.]+|[\s.]+$/g, '');
     }
 
-    async function searchTransactions(value: string): Promise<void> {
-      if (value.length !== 64) {
-        return;
+    async function searchTransactions(value: string): Promise<OptionsObj[]> {
+      const results = [] as OptionsObj[];
+
+      if (value.length !== 64 || value === '') {
+        return results;
       }
 
       try {
         const transactions = await api.getTransaction(value);
 
         if (transactions?.actions) {
-          options.value.push({
+          results.push({
             label: 'Transactions',
             to: '',
             isHeader: true
           });
 
-          options.value.push({
+          results.push({
             label: value,
             to: `/transaction/${value}`,
             isHeader: false
           });
         }
+        return results;
       } catch (error) {
         return;
       }
