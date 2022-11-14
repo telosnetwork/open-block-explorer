@@ -1,63 +1,59 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { mapActions, mapMutations } from 'vuex';
 import WalletModal from './WalletModal.vue';
+import { useStore } from 'src/store';
+import { authenticators } from 'src/boot/ual';
+import { Authenticator } from 'universal-authenticator-library';
+import { useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'LoginHandlerDropdown',
-  props: ['account'],
   components: { WalletModal },
-  data() {
-    return {
-      accounts: [this.account],
-      showModal: false
-    };
-  },
-  computed: {
-    disconnectLabel(): string {
-      return this.accounts.length > 1 ? 'Disconnect all' : 'Disconnect';
-    }
-  },
-  methods: {
-    ...mapMutations({
-      setAccountName: 'account/setAccountName',
-      setUser: 'account/setUser',
-      setIsAuthenticaed: 'account/setIsAuthenticated',
-      setAuthenticatorName: 'account/setAuthenticatorName'
-    }),
-    ...mapActions({ logout: 'account/logout' }),
-    getAuthenticator() {
+  setup() {
+    const store = useStore();
+    const route = useRoute();
+    const router = useRouter();
+
+    const account = computed(() => store.state.account.accountName);
+    const showModal = ref(false);
+
+    const getAuthenticator = (): Authenticator => {
       const wallet = localStorage.getItem('autoLogin');
-      const availAuthenticators =
-        this.$ual.getAuthenticators().availableAuthenticators;
-      const idx = availAuthenticators.findIndex(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      const idx = authenticators.find(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         (auth) => auth.constructor.name === wallet
       );
-      return availAuthenticators[idx];
-    },
-    async onLogout(): Promise<void> {
-      const authenticator = this.getAuthenticator();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return idx;
+    };
+
+    const onLogout = async (): Promise<void> => {
+      const authenticator = getAuthenticator();
       try {
         authenticator && (await authenticator.logout());
-        this.clearAccount();
+        clearAccount();
       } catch (error) {
         console.log('Authenticator logout error', error);
-        this.clearAccount();
+        clearAccount();
       }
 
-      if (this.$route.path !== '/') {
-        await this.$router.push({ path: '/' });
+      if (route.path !== '/') {
+        await router.push({ path: '/' });
       }
-    },
-    clearAccount(): void {
-      // TODO: only remove what is related to login, localStorage has other uses
-      localStorage.clear();
-      this.setIsAuthenticaed(false);
-      this.setAccountName('');
-      this.setAuthenticatorName(null);
-      this.setUser(null);
-      this.$router.go(0);
-    }
+    };
+
+    const clearAccount = (): void => {
+      void store.dispatch('account/logout');
+      router.go(0);
+    };
+    return {
+      account,
+      showModal,
+      disconnectLabel: 'Disconnect',
+      onLogout
+    };
   }
 });
 </script>
@@ -65,7 +61,7 @@ export default defineComponent({
 q-btn-dropdown.connect-button( color='primary' :label='account' :content-style="{ backgroundColor: '#172c6c' }")
   q-card.buttons-container
     q-card-section
-      .row(v-for='account in accounts')
+      .row
         .col-12
           a.text-white(:href=" '/account/' + account" class="hover-dec") {{account}}
         //- .col-2
