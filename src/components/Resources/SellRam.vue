@@ -5,8 +5,6 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 
-const chain = getChain();
-
 export default defineComponent({
   name: 'SellRam',
   components: {
@@ -14,8 +12,9 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const chain = getChain();
     let openTransaction = ref<boolean>(false);
-    const sellAmount = ref<string>('0');
+    const sellAmount = ref('');
     const symbol = ref<string>(chain.getSymbol());
     const transactionId = computed(
       (): string => store.state.account.TransactionId
@@ -30,7 +29,7 @@ export default defineComponent({
       () =>
         ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
           4
-        ) + ' TLOS'
+        ) + ` ${symbol.value}`
     );
     const ramAvailable = computed(
       () =>
@@ -95,7 +94,7 @@ export default defineComponent({
     .row
       .row.q-pb-sm.full-width
         .col-12 {{ `Amount of RAM to sell in Bytes` }}
-      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="sellAmount" :lazy-rules='true' :rules="[ val => val >= 0  && val <= ramAvailable && val != ''  || 'Invalid amount.' ]" type="text" dense dark)
+      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="sellAmount" :lazy-rules='true' :rules="[ val => val >= 0  && val <= ramAvailable && val != ''  || 'Invalid amount.' ]" type="text" dense dark)
     .row.q-pb-sm
       .text-weight-normal.text-right.text-grey-3 ≈ {{sellPreview}}
     .row

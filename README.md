@@ -1,18 +1,23 @@
 # 'OBE' (open-block-explorer)
 
-## Introduction
+Telos Main Net: [https://explorer.telos.net](https://explorer.telos.net)  [![Netlify Status](https://api.netlify.com/api/v1/badges/dc86b4ba-d574-4594-8f3c-88976edea863/deploy-status)](https://app.netlify.com/sites/open-block-explorer/deploys)
 
-The Open Block Explorer (OBE) is the first OPEN SOURCE block explorer that is designed to support all EOSIO-based blockchains. This includes, amongst others, the following public and private chains: Telos, EOS, WAX, Ultra, Proton, UX and FIO.
+Telos Test Net: [https://explorer-test.telos.net](https://explorer-test.telos.net) [![Netlify Status](https://api.netlify.com/api/v1/badges/8a778d87-a057-472f-ab3b-07d978faafaa/deploy-status)](https://app.netlify.com/sites/open-block-explorer-dev/deploys)  
 
-Currently, the most-utilized Telos and EOSIO-based block explorers are feature-rich but _closed source_. This is problematic as it creates a central point of control (and failure), with no easy remedy, should those services be discontinued or otherwise restricted, essentially holding applications hostage that depend on those api endpoints for data and simultaneously abandoning users that rely on such services. This is the antithesis of decentralization.  By developing an open-source explorer with an API utilizing an _identical_ endpoint convention, _anyone_ can clone and operate their own explorer and/or api without fear of losing service or access.
+## About
 
-Because creating multiple versions of closed-source block explorers is a poor use of development resources for the EOSIO community, Telos has undertaken the task of developing an open-source, feature-rich block explorer that _any_ EOSIO blockchain may deploy. The OBE-Project was kickstarted with resources of the [Telos Core Developers (TCD)](https://www.telos.net) (Strategy/Architecture: Douglas Horn [GoodBlock](https://goodblock.io), Technical Design: Jesse Schulman [CalEOS](https://caleos.io) and Project Direction: Kersten Wirth) and further resources of the Telos Block Providers [Persiantelos](https://persiantelos.com) and [nodenode](https://www.nodenode.org) (Lead by Rami James who is recognized for his UX/UI work for the EOS signer and wallet [Scatter](https://github.com/GetScatter)). 
+The Open Block Explorer (OBE) is the first OPEN SOURCE block explorer that is designed to support all AntelopeIO-based blockchains. This includes, amongst others, the following public and private chains: Telos, EOS, WAX, Ultra, Proton, UX and FIO.
 
-This project's aim is to contribute valuable code to the entire community. We are eager to accept useful pull requests, and welcome users and developers alike to submit feature requests and bug reports. While the first iterations are driven by the Telos Core Developers team, we are welcoming _anybody_ who wishes to contribute and actively develop this open source solution for the EOSIO ecosystem!
+Currently, the most-utilized Telos and AntelopeIO-based block explorers are feature-rich but _closed source_. This is problematic as it creates a central point of control (and failure), with no easy remedy, should those services be discontinued or otherwise restricted, essentially holding applications hostage that depend on those api endpoints for data and simultaneously abandoning users that rely on such services. This is the antithesis of decentralization.  By developing an open-source explorer with an API utilizing an _identical_ endpoint convention, _anyone_ can clone and operate their own explorer and/or api without fear of losing service or access.
+
+Because creating multiple versions of closed-source block explorers is a poor use of development resources for the Antelope community, Telos has undertaken the task of developing an open-source, feature-rich block explorer that _any_ Antelope blockchain may deploy. The OBE-Project was kickstarted with resources of the [Telos Core Developers (TCD)](https://www.telos.net) (Strategy/Architecture: Douglas Horn [GoodBlock](https://goodblock.io), Technical Design: Jesse Schulman [CalEOS](https://caleos.io) and Project Direction: Kersten Wirth) and further resources of the Telos Block Providers [Persiantelos](https://persiantelos.com) and [nodenode](https://www.nodenode.org) (Lead by Rami James who is recognized for his UX/UI work for the 
+signer and wallet [Scatter](https://github.com/GetScatter)). 
+
+This project's aim is to contribute valuable code to the entire community. We are eager to accept useful pull requests, and welcome users and developers alike to submit feature requests and bug reports. While the first iterations are driven by the Telos Core Developers team, we are welcoming _anybody_ who wishes to contribute and actively develop this open source solution for the AntelopeIO ecosystem!
 
 ## Functional reference products
 
-EOSIO based chains require specific components, of which various are historically managed within the various block explorers.
+AntelopeIO based chains require specific components, of which various are historically managed within the various block explorers.
 
 This includes following key features:
 
@@ -36,14 +41,9 @@ Following, excelent products can be taken as reference points for further featur
 - [EOSX](https://telos.eosx.io/)
 - [AJOR](https://ajor.io/)
 
+## Recent Contributions
 
-## Currently in development  
-
-Telos Mainnet: [https://explorer.telos.net](https://explorer.telos.net)  [![Netlify Status](https://api.netlify.com/api/v1/badges/dc86b4ba-d574-4594-8f3c-88976edea863/deploy-status)](https://app.netlify.com/sites/open-block-explorer/deploys)
-
-
-Telos Testnet: [https://explorer-test.telos.net](https://explorer-test.telos.net) [![Netlify Status](https://api.netlify.com/api/v1/badges/8a778d87-a057-472f-ab3b-07d978faafaa/deploy-status)](https://app.netlify.com/sites/open-block-explorer-dev/deploys)  
-
+![Alt](https://repobeats.axiom.co/api/embed/941f4d4cdc848b95f1ae663fadd142bdda4499f3.svg "Repobeats analytics image")
 
 ## Installation 
 
@@ -109,5 +109,5 @@ app running at localhost:4000
 [Vue 3 documenation](https://v3.vuejs.org/)  
 [Testing Quasar with Jest](https://github.com/quasarframework/quasar-testing/tree/next/packages/unit-jest)
 
-### Key Contributors
+
 

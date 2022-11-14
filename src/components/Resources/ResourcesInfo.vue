@@ -7,7 +7,7 @@ import { useStore } from 'src/store';
 import { AccountDetails, Token, Refund } from 'src/types';
 
 export default defineComponent({
-  name: 'StakingInfo',
+  name: 'ResourcesInfo',
   setup() {
     const store = useStore();
     const openCoinDialog = ref<boolean>(false);
@@ -20,13 +20,43 @@ export default defineComponent({
       return store.state?.account.data;
     });
     const ramPrice = computed((): string => {
-      return store.state?.chain.ram_price;
+      return store.state?.chain.ram_price === '0'
+        ? '0.0000'
+        : store.state.chain.ram_price;
     });
     const ramAvailable = computed(
       () =>
         store.state.account.data.account.ram_quota -
         store.state.account.data.account.ram_usage
     );
+    const delegatedResources = computed(() => {
+      return (
+        Number(
+          store.state.account.data.account.total_resources.cpu_weight.split(
+            ' '
+          )[0]
+        ) +
+        Number(
+          store.state.account.data.account.total_resources.net_weight.split(
+            ' '
+          )[0]
+        ) -
+        Number(
+          store.state.account.data.account?.self_delegated_bandwidth?.net_weight
+            ? store.state.account.data.account.self_delegated_bandwidth.net_weight.split(
+                ' '
+              )[0]
+            : '0'
+        ) -
+        Number(
+          store.state.account.data.account?.self_delegated_bandwidth?.cpu_weight
+            ? store.state.account.data.account.self_delegated_bandwidth.cpu_weight.split(
+                ' '
+              )[0]
+            : '0'
+        )
+      );
+    });
 
     function formatStaked(staked: number): string {
       const stakedValue = (
@@ -39,7 +69,7 @@ export default defineComponent({
       const totalRefund = (
         assetToAmount(refund?.cpu_amount, token.value.precision) +
         assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(2);
+      ).toFixed(4);
       return `${totalRefund} ${token.value.symbol}`;
     }
 
@@ -65,6 +95,7 @@ export default defineComponent({
       token,
       ramPrice,
       ramAvailable,
+      delegatedResources,
       formatStaked,
       formatTotalRefund
     };
@@ -93,14 +124,14 @@ export default defineComponent({
           .col-5.text-right.text-bold {{ramAvailable}} Bytes
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
-          .col-7.text-weight-light DELEGATED
-          .col-5.text-right.text-bold {{formatStaked(accountData.account?.voter_info?.staked)}}
+          .col-7.text-weight-light DELEGATED BY OTHERS
+          .col-5.text-right.text-bold {{delegatedResources.toFixed(4) + ` ${token.symbol}`}}
         .row.q-pt-sm
           .col-7.text-weight-light REFUNDING
           .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
         .row.q-pt-sm
           .col-7.text-weight-light RAM PRICE
-          .col-5.text-right.text-bold {{ramPrice}} TLOS/KB
+          .col-5.text-right.text-bold {{ramPrice}} {{token.symbol}}/KB
 
 </template>
 

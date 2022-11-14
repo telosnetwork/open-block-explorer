@@ -1,78 +1,70 @@
 <template lang="pug">
-a(
-  href="/examples/msig-transfer-batch.csv"
-  target="_blank"
-  style="text-decoration:none"
-  download
-)
-  q-btn(
-    outline
-    padding="sm md"
-    color="white"
-    text-color="primary"
-    label="Download example")
-
-q-uploader(
-  label="eosio.token:transfer"
-  accept=".csv"
-  style="width: 100%"
-).q-mt-md
-  template(#header="scope")
-    div.row.no-wrap.items-center.q-pa-sm.q-gutter-xs
-      q-spinner(v-if="scope.isUploading").q-uploader__spinner
-      div.col
-        div.q-uploader__title Upload CSV (eosio.token:transfer only)
-        div.q-uploader__subtitle Download the example and fill in the information
-
-      q-btn(
-        v-if="scope.canAddFiles"
-        type="a"
-        icon="add_box"
-        @click="scope.pickFiles"
-        round
-        dense
-        flat
+ol.q-px-lg
+  li.text-subtitle1.q-mb-md Download the example
+    div.q-mt-xs
+      a(
+        href="/examples/msig-transfer-batch.csv"
+        target="_blank"
+        style="text-decoration:none"
+        download
       )
-        q-uploader-add-trigger
-        q-tooltip Pick Files
+        q-btn(
+          outline
+          padding="sm md"
+          color="white"
+          text-color="primary"
+          label="Download example")
 
-      q-btn(
-        v-if="scope.canUpload"
-        icon="cloud_upload"
-        @click="() => {onUploadCSV(scope.queuedFiles, scope.removeQueuedFiles);}"
-        round
-        dense
-        flat
-      )
-        q-tooltip Upload Files
+  li.text-subtitle1.q-mb-md Edit the example csv
+    ul.text-body2.text-grey-8.q-px-md.q-mt-xs
+      li The quantity token must be uppercase
+      li Must have one space between the value and the token
+      li The decimal values must be separated with a dot
+      li The memo is optional
+    code.block.q-mt-md.q-py-sm.q-px-md.bg-grey-3.text-body1.rounded-borders.
+      payingaccount, receivingaccount, 0.1 TLOS, The memo
 
-      q-btn(
-        v-if="scope.isUploading"
-        icon="clear"
-        @click="scope.abort"
-        round
-        dense
-        flat
-      )
-        q-tooltip Abort Upload
+  li.text-subtitle1 Upload the example csv
+    q-file(
+      outlined
+      dense
+      hide-bottom-space
+      label="Select the CSV File"
+      accept=".csv"
+      max-files="1"
+      v-model="file"
+    ).q-mt-xs
+      template(#append)
+        q-icon(
+          v-if="file !== null"
+          name="close"
+          @click.stop.prevent="file = null"
+          class="cursor-pointer"
+        )
+
+      template(#after)
+        q-btn(
+          outline
+          padding="sm md"
+          color="white"
+          text-color="primary"
+          label="Upload"
+          @click="handleUploadCSV"
+          :disabled="file === null"
+        )
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import csvToJson from 'csvtojson';
 import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'ProposalUploadCSV',
-  props: {
-    proposer: {
-      type: String,
-      required: true
-    }
-  },
   emits: ['actions'],
-  setup(props, context) {
+  setup(_, context) {
     const $q = useQuasar();
+    const file = ref<File | null>(null);
 
     function handleError(message: string) {
       $q.notify({
@@ -88,8 +80,8 @@ export default defineComponent({
     }
 
     /* eslint-disable */
-    async function onUploadCSV(files: File[], removeFiles: () => void) {
-      const csvString = await files[0].text();
+    async function handleUploadCSV() {
+      const csvString = await file.value.text();
       const result: any = await csvToJson().fromString(csvString);
 
       if (result.length === 0) {
@@ -112,7 +104,7 @@ export default defineComponent({
           name: 'transfer',
           authorization: [
             {
-              actor: props.proposer,
+              actor: item.from,
               permission: 'active'
             }
           ],
@@ -121,12 +113,13 @@ export default defineComponent({
       });
 
       context.emit('actions', actions)
-      removeFiles();
+      file.value = null;
     }
     /* eslint-enable */
 
     return {
-      onUploadCSV
+      handleUploadCSV,
+      file
     };
   }
 });

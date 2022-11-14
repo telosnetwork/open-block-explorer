@@ -31,7 +31,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       const account = users[0];
       const permission = (account as unknown as { requestPermission: string })
         .requestPermission;
-      commit('setAccountPermission', permission);
+      commit('setAccountPermission', permission || 'active');
       const accountName = await account.getAccountName();
       commit('setUser', account);
       commit('setIsAuthenticated', true);
@@ -95,6 +95,26 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     } as GetTableRowsParams;
     const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
       .rows[0];
+    const paramsrexfund = {
+      code: 'eosio',
+      limit: '1',
+      lower_bound: account as TableIndexType,
+      scope: 'eosio',
+      table: 'rexfund',
+      reverse: false,
+      upper_bound: account as TableIndexType
+    } as GetTableRowsParams;
+    const rexfund = (
+      (await api.getTableRows(paramsrexfund)) as {
+        rows: {
+          owner: string;
+          balance: string;
+        }[];
+      }
+    ).rows[0];
+    const rexFundBalance =
+      rexfund && rexfund.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
+    commit('setRexFund', rexFundBalance);
     const rexbal = rexbalRows.rows[0];
     const rexBalance =
       rexbal && rexbal.rex_balance
@@ -104,7 +124,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
     const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
     commit('setTlosRexRatio', tlosRexRatio);
-    const coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0;
+    let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
+    coreBalance += rexFundBalance;
 
     let savingsRex = 0;
     let maturedRex = rexbal
@@ -150,7 +171,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: data as unknown
@@ -181,7 +202,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -195,7 +216,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -238,7 +259,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -252,7 +273,42 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
+          }
+        ],
+        data: {
+          owner: state.accountName,
+          amount: quantityStr
+        }
+      }
+    ];
+    try {
+      transaction = await state.user.signTransaction(
+        {
+          actions
+        },
+        {
+          blocksBehind: 3,
+          expireSeconds: 180
+        }
+      );
+      commit('setTransaction', transaction.transactionId);
+    } catch (e) {
+      commit('setTransactionError', e);
+    }
+  },
+  async unstakeRexFund({ commit, state }, { amount }) {
+    let transaction = null;
+    const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
+
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'withdraw',
+        authorization: [
+          {
+            actor: state.accountName,
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -287,7 +343,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -324,7 +380,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -401,7 +457,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -538,7 +594,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -573,7 +629,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {

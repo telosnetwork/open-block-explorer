@@ -4,7 +4,7 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 
 export default defineComponent({
-  name: 'Actions',
+  name: 'ContractActions',
   components: { ViewTransaction },
   setup() {
     const memo = ref<Record<string, unknown>>({});

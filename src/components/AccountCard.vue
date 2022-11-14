@@ -1,5 +1,12 @@
 <script lang="ts">
-import { AccountDetails, Token, Refund } from 'src/types';
+import {
+  AccountDetails,
+  Token,
+  Refund,
+  GetTableRowsParams,
+  RexbalRows,
+  RexPoolRows
+} from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
@@ -12,9 +19,9 @@ import { copyToClipboard } from 'quasar';
 import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
 import { useRouter } from 'vue-router';
+import { TableIndexType } from 'src/types/Api';
 
 const chain = getChain();
-
 export default defineComponent({
   name: 'AccountCard',
   components: {
@@ -34,7 +41,6 @@ export default defineComponent({
     const store = useStore();
     const $q = useQuasar();
     const router = useRouter();
-
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const MICRO_UNIT = ref(Math.pow(10, -6));
     const KILO_UNIT = ref(Math.pow(10, 3));
@@ -45,38 +51,49 @@ export default defineComponent({
     const ram_used = ref(0);
     const ram_max = ref(0);
     const creatingAccount = ref('');
-    const liquid = ref('');
+    const liquid = ref<string>('0.0000');
     const total = ref('');
     const totalValue = ref('');
-    const refunding = ref('');
-    const staked = ref('');
-    const rex = ref('');
+    const refunding = ref<string>('0.0000');
+    const staked = ref<string>('0.0000');
     const none = ref('');
     const system_account = ref('eosio');
     const zero = ref(0.0);
     const radius = ref(44);
     const availableTokens = ref<Token[]>([]);
     const createTransaction = ref<string>('');
+    const token = computed((): Token => store.state.chain.token);
+    const accountExists = ref<boolean>(true);
     const openSendDialog = ref<boolean>(false);
     const openStakingDialog = ref<boolean>(false);
     const openRexDialog = ref<boolean>(false);
-
     const isAccount = computed((): boolean => {
       return store.state.account.accountName === props.account;
     });
-    const token = computed((): Token => store.state.chain.token);
+    const resources = ref<number>(0.0);
+    const delegatedResources = ref<string>('0.0000');
+    const rex = ref<string>('0.0000 ' + token.value.symbol);
+    const liqNum = ref<string>('0.0000');
+    const totalString = computed(() => {
+      return (
+        (
+          parseFloat(liqNum.value) +
+          resources.value +
+          parseFloat(rex.value.split(' ')[0])
+        ).toFixed(token.value.precision) + ` ${token.value.symbol}`
+      );
+    });
     const createTimeFormat = computed((): string =>
       date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
     );
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
-
     const setToken = (value: Token) => {
       store.commit('chain/setToken', value);
     };
-
     const loadAccountData = async (): Promise<void> => {
+      void updateRexBalance();
       let data: AccountDetails;
       try {
         data = await api.getAccount(props.account);
@@ -84,6 +101,7 @@ export default defineComponent({
       } catch (e) {
         total.value = refunding.value = staked.value = rex.value = none.value;
         $q.notify(`account ${props.account} not found!`);
+        accountExists.value = false;
         return;
       }
       try {
@@ -107,6 +125,25 @@ export default defineComponent({
       net_used.value = fixDec(account.net_limit.used / KILO_UNIT.value);
       net_max.value = fixDec(account.net_limit.max / KILO_UNIT.value);
       liquid.value = getAmount(account.core_liquid_balance);
+      liqNum.value = getAmount(account.core_liquid_balance);
+      resources.value = account?.self_delegated_bandwidth
+        ? Number(account.self_delegated_bandwidth.cpu_weight.split(' ')[0]) +
+          Number(account.self_delegated_bandwidth.net_weight.split(' ')[0])
+        : 0;
+      const delegatedNum =
+        Number(account.total_resources.cpu_weight.split(' ')[0]) +
+        Number(account.total_resources.net_weight.split(' ')[0]) -
+        Number(
+          account?.self_delegated_bandwidth?.net_weight.split(' ')[0] || 0
+        ) -
+        Number(
+          account?.self_delegated_bandwidth?.cpu_weight.split(' ')[0] || 0
+        );
+      delegatedResources.value = account?.total_resources
+        ? (delegatedNum > 0 ? delegatedNum : 0.0).toFixed(
+            token.value.precision
+          ) + ` ${token.value.symbol}`
+        : `${token.value.symbol}`;
       if (account.rex_info) {
         const liqNum = account.core_liquid_balance.split(' ')[0];
         const rexNum = account.rex_info.vote_stake.split(' ')[0];
@@ -122,18 +159,75 @@ export default defineComponent({
       refunding.value = formatTotalRefund(account.refund_request);
       staked.value = account.voter_info
         ? formatStaked(account.voter_info.staked)
-        : none.value;
+        : none.value + ` ${token.value.symbol}`;
     };
-
+    const updateRexBalance = async () => {
+      const paramsrexbal = {
+        code: 'eosio',
+        limit: '2',
+        lower_bound: props.account as unknown as TableIndexType,
+        scope: 'eosio',
+        table: 'rexbal',
+        reverse: false,
+        upper_bound: props.account as unknown as TableIndexType
+      } as GetTableRowsParams;
+      const rexbalRows = (await api.getTableRows(paramsrexbal)) as RexbalRows;
+      const paramsrexpool = {
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'rexpool',
+        json: true,
+        reverse: false
+      } as GetTableRowsParams;
+      const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
+        .rows[0];
+      const paramsrexfund = {
+        code: 'eosio',
+        limit: '1',
+        lower_bound: props.account as unknown as TableIndexType,
+        scope: 'eosio',
+        table: 'rexfund',
+        reverse: false,
+        upper_bound: props.account as unknown as TableIndexType
+      } as GetTableRowsParams;
+      const rexfund = (
+        (await api.getTableRows(paramsrexfund)) as {
+          rows: {
+            owner: string;
+            balance: string;
+          }[];
+        }
+      ).rows[0];
+      const rexFundBalance =
+        rexfund && rexfund.balance
+          ? Number(rexfund.balance.split(' ')[0])
+          : 0.0;
+      const rexbal = rexbalRows.rows[0];
+      const rexBalance =
+        rexbal && rexbal.rex_balance
+          ? parseFloat(rexbal.rex_balance.split(' ')[0])
+          : 0;
+      const totalRex = Number(rexpool.total_rex.split(' ')[0]);
+      const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
+      const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
+      let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
+      coreBalance += rexFundBalance;
+      if (rexbalRows.rows.length > 0) {
+        rex.value = coreBalance.toFixed(4) + ` ${token.value.symbol}`;
+      } else {
+        rex.value = `0.000 ${token.value.symbol}`;
+      }
+    };
     const fixDec = (val: number): number => {
       return parseFloat(val.toFixed(3));
     };
-
     const loadSystemToken = async (): Promise<void> => {
       if (token.value.symbol === '') {
         const tokenList = await api.getTokens(system_account.value);
         const token = tokenList.find(
-          (token: Token) => token.contract === `${system_account.value}.token`
+          (token: Token) =>
+            token.contract === `${system_account.value}.token` &&
+            token.symbol === chain.getSymbol()
         );
         setToken(token);
       }
@@ -183,10 +277,9 @@ export default defineComponent({
       const totalRefund = (
         assetToAmount(refund?.cpu_amount, token.value.precision) +
         assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(2);
+      ).toFixed(4);
       return `${totalRefund} ${token.value.symbol}`;
     };
-
     const assetToAmount = (asset: string, decimals = -1): number => {
       try {
         let qty: string = asset.split(' ')[0];
@@ -237,7 +330,12 @@ export default defineComponent({
         account: store.state.account.accountName
       });
     });
-
+    watch(
+      () => props.account,
+      async () => {
+        await loadAccountData();
+      }
+    );
     return {
       MICRO_UNIT,
       KILO_UNIT,
@@ -264,9 +362,13 @@ export default defineComponent({
       openSendDialog,
       openStakingDialog,
       openRexDialog,
+      delegatedResources,
       isAccount,
       token,
       createTimeFormat,
+      totalString,
+      resources,
+      accountExists,
       loadAccountData,
       setToken,
       fixDec,
@@ -283,7 +385,7 @@ export default defineComponent({
 
 <template lang="pug">
 .q-pa-md
-  q-card.account-card
+  q-card.account-card(v-if='accountExists')
     q-card-section.resources-container
       .inline-section
         .row.justify-center.full-height.items-center
@@ -321,26 +423,34 @@ export default defineComponent({
           tr
           tr
             td.text-left.total-label TOTAL
-            td.text-right.total-amount {{ total }}
+            td.text-right.total-amount {{ totalString }}
           tr.total-row
             td.text-left
             td.text-right.total-value {{ totalValue }}
           tr
           tr
-            td.text-left REFUNDING
-            td.text-right {{ refunding }}
-          tr
             td.text-left LIQUID
             td.text-right {{ liquid }}
           tr
-            td.text-left STAKED BY OTHERS
-            td.text-right {{ staked }}
-          tr
             td.text-left STAKED
             td.text-right {{ rex }}
+          tr
+            td.text-left REFUNDING
+            td.text-right {{ refunding }}
+          tr
+            td.text-left DELEGATED BY OTHERS
+            td.text-right {{ delegatedResources }}
+
     sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
     ResourcesDialog(v-model="openStakingDialog")
     RexDialog(v-model="openRexDialog" :availableTokens="availableTokens")
+
+  q-card.account-card(v-else)
+    q-card-section.resources-container
+      .inline-section
+        .row.justify-center.full-height.items-center
+          .col-8
+          .text-title.text-center Sorry, the account {{ account }} could not be found.
 </template>
 
 <style lang="sass" scoped>

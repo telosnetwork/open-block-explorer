@@ -15,7 +15,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     let openTransaction = ref<boolean>(false);
-    const stakeTokens = ref<string>('0.0000');
+    const stakeTokens = ref<string>('');
     const symbol = ref<string>(chain.getSymbol());
     const transactionId = computed(
       (): string => store.state.account.TransactionId
@@ -38,13 +38,15 @@ export default defineComponent({
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
-      stakeTokens.value = Number(stakeTokens.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: precision,
-          minimumFractionDigits: precision
-        })
-        .replace(/[^0-9.]/g, '');
+      if (stakeTokens.value != '') {
+        stakeTokens.value = Number(stakeTokens.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: precision,
+            minimumFractionDigits: precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
     }
 
     async function stake() {
@@ -108,7 +110,7 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-8 {{ `LIQUID ${symbol}` }}
             .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{accountData.account.core_liquid_balance}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="stakeTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="stakeTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label='"Stake " + symbol' flat @click="stake" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, PropType, ref } from 'vue';
 import { Token, AccountDetails } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
@@ -11,9 +11,9 @@ import UnstakingTab from './UnstakingTab.vue';
 import HistoryTab from './HistoryTab.vue';
 import SavingsTab from './SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
+import { useStore } from 'src/store';
 
-const chain = getChain();
-const symbol = chain.getSymbol();
+const symbol = getChain().getSymbol();
 
 export default defineComponent({
   name: 'StakingDialog',
@@ -34,9 +34,8 @@ export default defineComponent({
         amount: 0,
         contract: 'eosio.token'
       } as Token,
-      transactionId: null,
-      transactionError: null,
-      sendDialog: false
+      sendDialog: false,
+      apy: '--'
     };
   },
   props: {
@@ -46,12 +45,29 @@ export default defineComponent({
     }
   },
   setup() {
+    const store = useStore();
+    const rexfund = computed(() => store.state.account.rexfund || 0);
+    const symbol = computed(() => store.state.chain.token.symbol);
+    const transactionId = ref<string>(null);
+    const transactionError = ref<string>(null);
+
+    const withdrawRexFund = async () => {
+      await store.dispatch('account/unstakeRexFund', { amount: rexfund.value });
+      void store.dispatch('account/updateRexData', {
+        account: store.state.account.accountName
+      });
+    };
     return {
       openCoinDialog: ref<boolean>(false),
       recievingAccount: ref<string>(''),
       sendAmount: ref<string>('0.0000'),
       memo: ref<string>(''),
       tab: ref('stake'),
+      rexfund,
+      symbol,
+      transactionError,
+      transactionId,
+      withdrawRexFund,
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
   },
@@ -81,7 +97,7 @@ export default defineComponent({
           })
         ).transactionId as string;
       } catch (e) {
-        this.transactionError = e;
+        this.transactionError = e as string;
       }
     },
     setDefaults() {
@@ -94,20 +110,10 @@ export default defineComponent({
     updateSelectedCoin(token: Token): void {
       this.sendToken = token;
     },
-    resetForm() {
-      this.transactionId = null;
-      this.transactionError = null;
-      this.sendToken = {
-        symbol,
-        precision: 4,
-        amount: 0,
-        contract: 'eosio.token'
-      };
-    },
     async navToTransaction() {
       await this.$router.push({
         name: 'transaction',
-        params: { transaction: this.transactionId as string }
+        params: { transaction: this.transactionId }
       });
       this.$router.go(0);
     },
@@ -122,13 +128,19 @@ export default defineComponent({
     }
   },
   async mounted() {
+    try {
+      const apyValue = await this.$api.getApy();
+      this.apy = `${apyValue}%`;
+    } catch (e) {
+      console.error(e);
+    }
     await this.loadAccountData();
   }
 });
 </script>
 
 <template lang="pug">
-q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
+q-dialog( @show='setDefaults' :persistent='true' maximized)
   q-card.rexCard
     .row.justify-center.q-pt-xl.full-height.full-width
       .absolute-top-right
@@ -136,8 +148,14 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
         .row.q-pl-sm
           .text-h4.q-pb-md.inline-block.color-grey-3.inline Staking (REX)
+          .text-h5.q-pb-md.inline-block.color-grey-3.inline.float-right APY: {{ apy }}
         .q-pa-sm
           StakingInfo
+          .q-pt-lg.q-pl-lg(v-if='rexfund > 0')
+            .row.q-col-gutter-md.items-center
+              .col-auto.text-h6.text-white REX fund: {{rexfund.toFixed(4)}} {{symbol}}
+              .col-auto
+                q-btn.full-width.button-accent(label='Withdraw' flat @click="withdrawRexFund" )
           .q-pt-lg.text-grey-3.text-weight-light
             q-tabs.text-grey-5.tab-text(
               v-model="tab"
@@ -223,4 +241,9 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
 .q-tab-panel
   padding-left: 0 !important
   padding-right: 0 !important
+
+.float-right
+  margin-left: auto
+  margin-top: auto
+  padding-right: 8px
 </style>

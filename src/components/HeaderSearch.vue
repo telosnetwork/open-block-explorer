@@ -1,67 +1,55 @@
 <script lang="ts">
-import { defineComponent, ref, toRaw, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
 import { isValidHex } from 'src/utils/stringValidator';
+import { useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'HeaderSearch',
   setup() {
     const router = useRouter();
+    const $q = useQuasar();
 
     const inputValue = ref('');
     const options = ref<OptionsObj[]>([]);
     const isLoading = ref(false);
 
-    const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
-
-    watch(inputValue, (currentValue) => {
-      isLoading.value = true;
-
-      if (waitToSearch.value) {
-        clearTimeout(waitToSearch.value);
-      }
-
-      if (currentValue === '') {
+    watch(inputValue, async () => {
+      if (inputValue.value === '') {
         options.value = [];
-        isLoading.value = false;
         return;
       }
 
-      waitToSearch.value = setTimeout(() => {
-        waitToSearch.value = null;
-      }, 1000);
+      isLoading.value = true;
+      const queryValue = inputValue.value.toLowerCase();
+
+      await Promise.all([
+        searchAccounts(queryValue),
+        searchProposals(queryValue),
+        searchTransactions(queryValue)
+      ]).then((results) => {
+        options.value = ([] as OptionsObj[]).concat.apply([], results);
+      });
+
+      isLoading.value = false;
     });
 
-    watch(waitToSearch, async (currentValue) => {
-      if (!currentValue) {
-        const queryValue = inputValue.value.toLowerCase();
-        options.value = [];
-
-        await Promise.all([
-          searchAccounts(queryValue),
-          searchProposals(queryValue),
-          searchTransactions(queryValue)
-        ]);
-
-        isLoading.value = false;
-      }
-    });
-
-    async function searchAccounts(value: string): Promise<void> {
+    async function searchAccounts(value: string): Promise<OptionsObj[]> {
       try {
+        const results = [] as OptionsObj[];
         const request = {
           code: 'eosio',
           limit: 5,
-          lower_bound: value,
+          lower_bound: cleanSearchInput(value),
           table: 'userres',
           upper_bound: value.padEnd(12, 'z')
         };
         const accounts = await api.getTableByScope(request);
 
         if (accounts.length > 0) {
-          options.value.push({
+          results.push({
             label: 'Accounts',
             to: '',
             isHeader: true
@@ -69,7 +57,7 @@ export default defineComponent({
 
           // because the get table by scope for userres does not include eosio account
           if ('eosio'.includes(value)) {
-            options.value.push({
+            results.push({
               label: 'eosio',
               to: '/account/eosio',
               isHeader: false
@@ -77,81 +65,102 @@ export default defineComponent({
           }
 
           accounts.forEach((user) => {
-            options.value.push({
-              label: user.payer,
-              to: `/account/${user.payer}`,
-              isHeader: false
-            });
+            if (user.payer.includes(value)) {
+              results.push({
+                label: user.payer,
+                to: `/account/${user.payer}`,
+                isHeader: false
+              });
+            }
           });
         }
+        return results;
       } catch (error) {
         return;
       }
     }
 
-    async function searchProposals(value: string): Promise<void> {
+    async function searchProposals(value: string): Promise<OptionsObj[]> {
       try {
-        const { proposals } = await api.getProposals({ proposal: value });
-
+        const results = [] as OptionsObj[];
+        const { proposals } = await api.getProposals({
+          proposal: value
+        });
         if (proposals.length > 0) {
-          options.value.push({
+          results.push({
             label: 'Proposals',
             to: '',
             isHeader: true
           });
 
           proposals.forEach((item) => {
-            options.value.push({
+            results.push({
               label: item.proposal_name,
               to: `/proposal/${item.proposal_name}`,
               isHeader: false
             });
           });
         }
+        return results;
       } catch (error) {
         return;
       }
     }
 
-    async function searchTransactions(value: string): Promise<void> {
+    function cleanSearchInput(value: string): string {
+      // remove leading and trailing spaces and periods from search input for query
+      return value.replace(/^[\s.]+|[\s.]+$/g, '');
+    }
+
+    async function searchTransactions(value: string): Promise<OptionsObj[]> {
+      const results = [] as OptionsObj[];
+
       if (value.length !== 64) {
-        return;
+        return results;
       }
 
       try {
         const transactions = await api.getTransaction(value);
 
         if (transactions?.actions) {
-          options.value.push({
+          results.push({
             label: 'Transactions',
             to: '',
             isHeader: true
           });
 
-          options.value.push({
+          results.push({
             label: value,
             to: `/transaction/${value}`,
             isHeader: false
           });
         }
+        return results;
       } catch (error) {
         return;
       }
     }
 
-    async function handleGoTo() {
-      const optionsRaw = toRaw(options.value);
-
+    async function handleGoTo(path?: string) {
       if (!inputValue.value) {
         return;
       }
 
+      // if clicked/selected from dropdown search results
+      if (typeof path === 'string') {
+        await router.push(path);
+        router.go(0);
+      }
+
+      // transaction validation
       if (isValidHex(inputValue.value) && inputValue.value.length == 64) {
         await router.push({
           name: 'transaction',
           params: { transaction: inputValue.value }
         });
         router.go(0);
+
+        // key validation
       } else if (
         (inputValue.value.length == 53 && inputValue.value.startsWith('EOS')) ||
         (inputValue.value.length == 57 && inputValue.value.startsWith('PUB_K1'))
@@ -161,20 +170,23 @@ export default defineComponent({
           params: { key: inputValue.value }
         });
         router.go(0);
-      } else if (inputValue.value.length <= 12) {
-        await router.push({
-          name: 'account',
-          params: {
-            account: inputValue.value
-          }
-        });
-        router.go(0);
-      }
-      const option = optionsRaw.find((item) => item.label === inputValue.value);
-      const to = option ? option.to : optionsRaw[1].to;
 
-      await router.push(to);
-      router.go(0);
+        // default to 'account'
+      } else if (inputValue.value.length <= 13) {
+        try {
+          await api.getAccount(inputValue.value.toLowerCase());
+          await router.push({
+            name: 'account',
+            params: {
+              account: inputValue.value.toLowerCase()
+            }
+          });
+          router.go(0);
+          return;
+        } catch (error) {
+          $q.notify(`account ${inputValue.value} not found!`);
+        }
+      }
     }
 
     return {
@@ -216,7 +228,7 @@ q-select(
 
   template(#option="scope")
     q-item-label(v-if="scope.opt.isHeader" header) {{ scope.opt.label }}
-    q-item(v-else v-bind="scope.itemProps" exact @click="handleGoTo" clickable)
+    q-item(v-else v-bind="scope.itemProps" exact @click="handleGoTo(scope.opt.to)" clickable)
       q-item-section
         q-item-label {{ scope.opt.label }}
 </template>

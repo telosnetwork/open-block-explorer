@@ -12,7 +12,7 @@ import { getChain } from 'src/config/ConfigManager';
 const chain = getChain();
 
 export default defineComponent({
-  name: 'Validator',
+  name: 'ValidatorData',
   components: {
     ValidatorDataTable,
     ViewTransaction,
@@ -25,7 +25,12 @@ export default defineComponent({
     const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
     const balance = computed(
-      () => store.state.account.data?.account?.core_liquid_balance || 0
+      () =>
+        (Number(
+          store.state.account.data?.account?.voter_info?.last_stake
+            ? store.state.account.data?.account.voter_info.last_stake / 10000
+            : 0
+        ).toFixed(2) || '0') + ` ${symbol}`
     );
     const activecount = computed(() => {
       if (store.state.chain.producers.length > 42) return 42;
@@ -67,9 +72,11 @@ export default defineComponent({
         const voterInfo = data.account.voter_info;
         if (!voterInfo) return;
         producerVotes.value = voterInfo?.producers;
-        lastWeight.value = parseFloat(voterInfo.last_vote_weight).toFixed(2);
-        lastStaked.value = voterInfo.last_stake;
-        stakedAmount.value = voterInfo.staked;
+        lastWeight.value = parseFloat(
+          voterInfo?.last_vote_weight || '0.0000'
+        ).toFixed(2);
+        lastStaked.value = voterInfo?.last_stake || 0.0;
+        stakedAmount.value = voterInfo.staked || 0.0;
       }
     }
     function assetToAmount(asset: string, decimals = -1): number {
@@ -234,7 +241,7 @@ div
       .col-md-4.col-sm-12.col-xs-12(v-if="accountValid")
         q-card(flat).full-height.card-gradient
           q-card-section.card-gradient
-            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{ `YOUR AVAILABLE ${symbol}` }}
+            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{ `YOUR AVAILABLE VOTING ${symbol}` }}
             .row.full-width.justify-center.text-h5 {{ balance }}
             .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{account}}
           q-separator(color="primary" size="2px")

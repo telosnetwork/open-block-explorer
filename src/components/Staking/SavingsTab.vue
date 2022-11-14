@@ -15,8 +15,8 @@ export default defineComponent({
     const stakingAccount = computed(
       (): string => store.state.account.accountName
     );
-    const toSavingAmount = ref<string>('0.0000');
-    const fromSavingAmount = ref<string>('0.0000');
+    const toSavingAmount = ref<string>('');
+    const fromSavingAmount = ref<string>('');
     const transactionId = ref<string>(store.state.account.TransactionId);
     const transactionError = ref<unknown>(store.state.account.TransactionError);
     const accountData = computed((): AccountDetails => {
@@ -30,21 +30,24 @@ export default defineComponent({
     });
 
     function formatDec() {
-      toSavingAmount.value = Number(toSavingAmount.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: store.state.chain.token.precision,
-          minimumFractionDigits: store.state.chain.token.precision
-        })
-        .replace(/[^0-9.]/g, '');
-
-      fromSavingAmount.value = Number(fromSavingAmount.value)
-        .toLocaleString('en-US', {
-          style: 'decimal',
-          maximumFractionDigits: store.state.chain.token.precision,
-          minimumFractionDigits: store.state.chain.token.precision
-        })
-        .replace(/[^0-9.]/g, '');
+      if (toSavingAmount.value != '') {
+        toSavingAmount.value = Number(toSavingAmount.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: store.state.chain.token.precision,
+            minimumFractionDigits: store.state.chain.token.precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
+      if (fromSavingAmount.value != '') {
+        fromSavingAmount.value = Number(fromSavingAmount.value)
+          .toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: store.state.chain.token.precision,
+            minimumFractionDigits: store.state.chain.token.precision
+          })
+          .replace(/[^0-9.]/g, '');
+      }
     }
 
     async function moveToSavings() {
@@ -128,7 +131,7 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-9 STAKE TO SAVINGS
             .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxSavingsValue' v-ripple) {{maturedRex}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="toSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="toSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Move To Savings" flat @click="moveToSavings" )
       .col-12.q-pt-xl
@@ -136,7 +139,7 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-9 UNSTAKE FROM SAVINGS
             .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxWithdrawValue' v-ripple) {{rexSavings}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' v-model="fromSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="fromSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Withdraw from Savings" flat @click="moveFromSavings" )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
