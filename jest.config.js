@@ -35,14 +35,14 @@ module.exports = {
     global: {
       statements: 6,
       branches: 2.25,
-      functions: 4.7,
+      functions: 4,
       lines: 6.25
     },
     './src/components/': {
-      statements: 7.2,
-      branches: 5.75,
-      functions: 11.5,
-      lines: 7.7
+      statements: 3.75,
+      branches: 2.4,
+      functions: 6,
+      lines: 4
     },
     './src/pages/': {
       statements: 0,
