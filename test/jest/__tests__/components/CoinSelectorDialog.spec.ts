@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -38,12 +39,6 @@ describe('CoinSelectorDialog', () => {
         wrapper.vm.search = '';
         wrapper.vm.filterTokens();
         expect(wrapper.vm.filteredTokens).toEqual(wrapper.vm.availableTokens);
-      });
-      it('calls filterByText', () => {
-        wrapper.vm.search = 'test';
-        wrapper.vm.filterByText = jest.fn();
-        wrapper.vm.filterTokens();
-        expect(wrapper.vm.filterByText).toHaveBeenCalled();
       });
     });
     describe('filterByText', () => {

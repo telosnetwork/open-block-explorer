@@ -1,40 +1,41 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { defineComponent, ref, onMounted, computed } from 'vue';
 import LoginHandlerDropdown from './LoginHandlerDropdown.vue';
 import WalletModal from './WalletModal.vue';
 import { Authenticator } from 'universal-authenticator-library';
+import { useStore } from 'src/store';
+import { authenticators } from 'src/boot/ual';
 
 export default defineComponent({
   name: 'LoginHandler',
   components: { LoginHandlerDropdown, WalletModal },
-  data() {
+  setup() {
+    const store = useStore();
+
+    const showDropdown = ref(false);
+    const showModal = ref(false);
+    const account = computed(() => store.state.account.accountName);
+
+    onMounted(() => {
+      const storedAccount = localStorage.getItem('account');
+      if (storedAccount) {
+        void store.commit('account/setAccountName', storedAccount);
+        const ualName = localStorage.getItem('autoLogin');
+        const ual: Authenticator = authenticators.find(
+          (a) => a.getName() === ualName
+        );
+        void store.dispatch('account/login', {
+          account: storedAccount,
+          authenticator: ual
+        });
+      }
+    });
+
     return {
-      showDropdown: false,
-      showModal: false
+      showDropdown,
+      showModal,
+      account
     };
-  },
-  mounted() {
-    const storedAccount = localStorage.getItem('account');
-    if (storedAccount) {
-      this.setAccountName(storedAccount);
-      const ualName = localStorage.getItem('autoLogin');
-      const ual: Authenticator = this.$ual
-        .getAuthenticators()
-        .availableAuthenticators.find((a) => a.getName() === ualName);
-      void this.login({ account: storedAccount, authenticator: ual });
-    }
-  },
-  computed: {
-    ...mapGetters({ account: 'account/accountName' })
-  },
-  methods: {
-    ...mapMutations({
-      setAccountName: 'account/setAccountName'
-    }),
-    ...mapActions({
-      login: 'account/login'
-    })
   }
 });
 </script>

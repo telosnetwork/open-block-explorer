@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, ref, watch } from 'vue';
 import { Token } from 'src/types';
 
 export default defineComponent({
@@ -14,36 +14,41 @@ export default defineComponent({
       required: true
     }
   },
-  data() {
-    return {
-      search: '',
-      filteredTokens: new Array<Token>()
+  setup(props) {
+    const search = ref('');
+    const filteredTokens = ref<Token[]>([]);
+
+    const filterTokens = () => {
+      if (search.value.length > 0) {
+        filterByText(tokensWithBalance());
+      } else filteredTokens.value = tokensWithBalance();
     };
-  },
-  watch: {
-    search() {
-      this.filterTokens();
-    }
-  },
-  methods: {
-    filterTokens() {
-      if (this.search.length > 0) {
-        this.filterByText(this.tokensWithBalance());
-      } else this.filteredTokens = this.tokensWithBalance();
-    },
-    filterByText(tokens: Token[]) {
-      this.filteredTokens = tokens.filter((token) => {
+
+    const filterByText = (tokens: Token[]) => {
+      filteredTokens.value = tokens.filter((token) => {
         return (
-          token.symbol.toLowerCase().includes(this.search.toLowerCase()) ||
-          token.contract.toLowerCase().includes(this.search.toLowerCase())
+          token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
+          token.contract.toLowerCase().includes(search.value.toLowerCase())
         );
       });
-    },
-    tokensWithBalance() {
-      return this.availableTokens.filter((token) => {
+    };
+
+    const tokensWithBalance = () => {
+      return props.availableTokens.filter((token) => {
         return token.amount > 0;
       });
-    }
+    };
+
+    watch(search, () => {
+      void filterTokens();
+    });
+
+    return {
+      search,
+      filteredTokens,
+      filterTokens,
+      filterByText
+    };
   }
 });
 </script>
@@ -62,7 +67,7 @@ q-dialog.dialogContainer(@show='filterTokens')
     q-separator
     q-list.dialogList
       q-item(v-for="token in filteredTokens"
-        :key="`${token.chain}-${token.contract}-${token.symbol}`"
+        :key="`${token.contract}-${token.symbol}`"
         clickable
         v-close-popup
         @click="updateSelectedCoin(token);")

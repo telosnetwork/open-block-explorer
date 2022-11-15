@@ -93,24 +93,6 @@ describe('SendDialog', () => {
     });
   });
   describe('methods', () => {
-    describe('sendTransaction', () => {
-      // eslint-disable-next-line jest/no-disabled-tests
-      it.skip('retains default token if no other available tokens', async () => {
-        wrapper.vm.signTransaction = jest.fn(() => {
-          return { transactionId: 'testId' };
-        });
-        wrapper.vm.sendToken.contract = 'testcontract';
-        wrapper.vm.recievingAccount = 'recaccount';
-        wrapper.vm.sendAmount = 123.45;
-        wrapper.vm.sendToken.symbol = 'XXXX';
-        wrapper.vm.memo = 'test memo';
-        await wrapper.vm.sendTransaction();
-        expect(wrapper.vm.$store.commit).toHaveBeenCalledWith(
-          'account/setTransaction',
-          'XXXX'
-        );
-      });
-    });
     describe('setDefaults', () => {
       it('retains default token if no other available tokens', () => {
         wrapper.vm.setDefaults();
