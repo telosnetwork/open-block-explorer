@@ -19,10 +19,12 @@ export default defineComponent({
 
     const getAuthenticator = (): Authenticator => {
       const wallet = localStorage.getItem('autoLogin');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       const idx = authenticators.find(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         (auth) => auth.constructor.name === wallet
       );
-
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return idx;
     };
 
