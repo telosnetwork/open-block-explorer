@@ -212,7 +212,7 @@ q-select(
   color="white"
   :loading="isLoading"
   :model-value="inputValue"
-  @input-value="(value: string) => inputValue = value"
+  @input-value="(value) => inputValue = value"
   @keyup.enter="handleGoTo"
   :options="options"
   :option-disable="(item) => item.isHeader"

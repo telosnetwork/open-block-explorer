@@ -12,7 +12,7 @@ div.row.q-col-gutter-md.q-mb-md
       label="Actor"
       :loading="isLoading"
       :model-value="actorValue"
-      @input-value="(value: string) => actorValue = value"
+      @input-value="(value) => actorValue = value"
       :options="actorsOptions"
       :rules="[value => !!value || 'Field is required', (value) => isLoading || actorsOptions.includes(value) || 'Field invalid']"
       reactive-rules
@@ -225,12 +225,9 @@ export default defineComponent({
       actorValue,
       permissionValue,
       isActorError,
-
       requiredAccounts,
-
       actorsOptions,
       permissionsOptions,
-
       isLoading
     };
   }
