@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { mapActions, mapMutations } from 'vuex';
 import WalletModal from './WalletModal.vue';
 import { useStore } from 'src/store';
 import { authenticators } from 'src/boot/ual';
