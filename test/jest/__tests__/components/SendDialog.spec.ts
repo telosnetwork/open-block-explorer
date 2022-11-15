@@ -31,15 +31,15 @@ const $router = {
 };
 
 const storeMock = Object.freeze({
-  state: {},
-  actions: {},
-  namespaced: true,
-  getters: {
-    language: () => {
-      return 'en';
-    },
-    'account/accountName': () => {
-      return '';
+  //new Store({})
+  modules: {
+    account: {
+      state: { accountName: 'testAccount' },
+      actions: {},
+      namespaced: true,
+      getters: {
+        accountName: () => 'testAccount'
+      }
     }
   }
 });
@@ -93,6 +93,24 @@ describe('SendDialog', () => {
     });
   });
   describe('methods', () => {
+    describe('sendTransaction', () => {
+      // eslint-disable-next-line jest/no-disabled-tests
+      it.skip('retains default token if no other available tokens', async () => {
+        wrapper.vm.signTransaction = jest.fn(() => {
+          return { transactionId: 'testId' };
+        });
+        wrapper.vm.sendToken.contract = 'testcontract';
+        wrapper.vm.recievingAccount = 'recaccount';
+        wrapper.vm.sendAmount = 123.45;
+        wrapper.vm.sendToken.symbol = 'XXXX';
+        wrapper.vm.memo = 'test memo';
+        await wrapper.vm.sendTransaction();
+        expect(wrapper.vm.$store.commit).toHaveBeenCalledWith(
+          'account/setTransaction',
+          'XXXX'
+        );
+      });
+    });
     describe('setDefaults', () => {
       it('retains default token if no other available tokens', () => {
         wrapper.vm.setDefaults();
@@ -131,11 +149,6 @@ describe('SendDialog', () => {
         wrapper.vm.transactionId = '123';
         wrapper.vm.resetForm();
         expect(wrapper.vm.transactionId).toBeNull();
-      });
-      it('sets transactionError to null', () => {
-        wrapper.vm.transactionError = 'error';
-        wrapper.vm.resetForm();
-        expect(wrapper.vm.transactionError).toBeNull();
       });
       it('sets defaultToken values to null', () => {
         wrapper.vm.sendToken = mockToken;
@@ -183,6 +196,23 @@ describe('SendDialog', () => {
         wrapper.vm.transactionError = null;
         wrapper.vm.transactionId = 'id';
         expect(wrapper.vm.transactionForm).toBe(false);
+      });
+    });
+    describe('validated', () => {
+      it('returns true if both send amount and receiving account exists', () => {
+        wrapper.vm.sendAmount = 0.0001;
+        wrapper.vm.recievingAccount = 'testaccount';
+        expect(wrapper.vm.validated).toBe(true);
+      });
+      it('returns false if send amount > 0 but no receiving account exists', () => {
+        wrapper.vm.sendAmount = 0.0001;
+        wrapper.vm.recievingAccount = '';
+        expect(wrapper.vm.validated).toBe(false);
+      });
+      it('returns false if send amount <= 0', () => {
+        wrapper.vm.sendAmount = 0.0;
+        wrapper.vm.recievingAccount = 'testaccount';
+        expect(wrapper.vm.validated).toBe(false);
       });
     });
   });

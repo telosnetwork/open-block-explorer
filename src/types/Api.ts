@@ -83,4 +83,5 @@ export type ApiClient = {
   getTableByScope: (data: unknown) => Promise<TableByScope[]>;
   getBlock: (block: string) => Promise<Block>;
   getActions: (address: string, filter: string) => Promise<Get_actions>;
+  getApy: () => Promise<string>;
 };

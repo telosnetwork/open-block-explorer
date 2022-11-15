@@ -32,7 +32,16 @@ q-page(padding)
               v-model="formData.proposal_name"
               label="Proposal Name"
               maxlength="13"
-              :rules="[value => !!value || 'Field is required']")
+              :rules="[value => !!value || 'Field is required', value=> /(^[a-z1-5.]{1,11}[a-z1-5]$)|(^[a-z1-5.]{12}[a-j1-5]$)/.test(value) || 'Must be up to 12 characters (a-z, 1-5, .) and cannot end with a .']")
+                template(#append)
+                  q-icon(name="info")
+                  q-tooltip.text-body2
+                    ul.q-px-lg.q-py-none
+                      li Minimum of 2 characters
+                      li Maximum of 13 characters
+                      li First 12 characters can be “a-z” or “1-5" or “.”
+                      li 13th character can only be “a-j” or “1-5”
+                      li Last character can not be “.”
           div.col-12.col-sm-6
             q-input(
               outlined

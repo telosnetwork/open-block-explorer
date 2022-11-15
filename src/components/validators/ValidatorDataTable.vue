@@ -26,11 +26,19 @@ export default defineComponent({
     const query = route.query;
     const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
+    const producers = computed(() =>
+      [...store.state.chain.producers].map((val) => val.owner)
+    );
     const currentVote = computed(() => {
-      let votes = store.state.account.vote;
+      let votes = [...store.state.account.vote];
       if (query['vote']) {
         return votes.concat(query['vote'] as string);
       }
+      votes.forEach((vote, index) => {
+        if (!producers.value.includes(vote)) {
+          votes.splice(index, 1);
+        }
+      });
       return votes;
     });
     const selection = ref<string[]>([]);
@@ -94,6 +102,11 @@ export default defineComponent({
     }
 
     function updateVote(val: string[]) {
+      val.forEach((vote, index) => {
+        if (!producers.value.includes(vote)) {
+          val.splice(index, 1);
+        }
+      });
       store.commit('account/setVote', val);
     }
 

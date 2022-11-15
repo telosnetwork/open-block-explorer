@@ -2,21 +2,23 @@
 import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
 import { defineComponent, PropType } from 'vue';
 import DateField from 'src/components/DateField.vue';
-import AccountFormatter from 'src/components/Transaction/AccountFormat.vue';
-import ActionFormatter from 'src/components/Transaction/ActionFormat.vue';
-import DataFormatter from 'src/components/Transaction/DataFormat.vue';
+import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
+import ActionFormat from 'src/components/Transaction/ActionFormat.vue';
+import DataFormat from 'src/components/Transaction/DataFormat.vue';
+
+const FIVE_SECONDS = 5000;
 
 export default defineComponent({
   name: 'TransactionsTable',
   components: {
     DateField,
-    AccountFormatter,
-    ActionFormatter,
-    DataFormatter
+    AccountFormat,
+    ActionFormat,
+    DataFormat
   },
   props: {
     account: {
-      type: String,
+      type: String || null,
       required: false,
       default: null
     },
@@ -83,8 +85,10 @@ export default defineComponent({
   async mounted() {
     await this.loadTableData();
     this.interval = window.setInterval(() => {
-      if (this.account == null) void this.loadTableData();
-    }, 5000);
+      //only automatically refresh data on first page, disable on page navigation
+      if (this.account == null && this.paginationSettings.page === 1)
+        void this.loadTableData();
+    }, FIVE_SECONDS);
   },
   beforeUnmount() {
     clearInterval(this.interval);
@@ -289,20 +293,20 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             p.panel-title {{ tableTitle }}
           q-space
           .col
-            q-toggle(v-model="showAge" left-label label="Show Age")
+            q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
         template( v-slot:body-cell-transaction="props")
           q-td( :props="props" )
-            AccountFormatter(:account="props.value.id" :type="props.value.type")
+            AccountFormat(:account="props.value.id" :type="props.value.type")
         template( v-slot:body-cell-timestamp="props")
           q-td( :props="props" )
             DateField( :timestamp="props.value", :showAge='showAge' )
         template( v-slot:body-cell-action="props")
           q-td( :props="props" )
             .row.justify-left.text-weight-light
-              ActionFormatter(:action="props.value")
+              ActionFormat(:action="props.value")
         template( v-slot:body-cell-data="props")
           q-td( :props="props"  )
-            DataFormatter(:actionData="props.value.data" :actionName="props.value.name ")
+            DataFormat(:actionData="props.value.data" :actionName="props.value.name ")
         template( v-slot:pagination="scope")
           div.row.col-12.q-mt-md.q-mb-xl()
           div.col-1(align="left")

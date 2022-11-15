@@ -2,11 +2,11 @@
 import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
-import Link from 'src/components/Transaction/AccountFormat.vue';
+import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 
 export default defineComponent({
-  name: 'TransactionsCard',
-  components: { Link },
+  name: 'TransactionCard',
+  components: { AccountFormat },
   setup() {
     const store = useStore();
     return {
@@ -67,7 +67,7 @@ export default defineComponent({
       .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
         q-card-section.q-pl-md
           div(class="text-h4 text-bold") Transaction
-        
+
         q-card-section.q-pt-none
           .row.items-center
             .col-11.text-bold.ellipsis {{transaction}}
@@ -83,8 +83,8 @@ export default defineComponent({
           .row
             .col-xs-12.col-sm-6
               .text-body1.text-weight-medium.text-uppercase Block number
-            .col-xs-12.col-sm-6.text-right.text-bold 
-              Link(:account='blockNum' type='block')
+            .col-xs-12.col-sm-6.text-right.text-bold
+              AccountFormat(:account='blockNum' type='block')
               q-btn( @click="copy(blockNum)" flat round color="black" icon="content_copy" size='sm')
         q-separator(inset).card-separator
         q-card-section
@@ -97,7 +97,7 @@ export default defineComponent({
           .row
             .col-xs-12.col-sm-6
               .text-body1.text-weight-medium.text-uppercase Status
-            .col-xs-12.col-sm-6.text-right.text-bold 
+            .col-xs-12.col-sm-6.text-right.text-bold
               q-badge(transparent align="middle" color="purple-2" text-color="black").text-bold {{executed ? 'EXECUTED' : 'PENDING'}}
               q-badge.q-ml-sm( v-if="irreversable" transparent align="middle" color="deep-orange-2" text-color="black").text-bold {{'IRREVERSIBLE'}}
         q-separator(inset).card-separator

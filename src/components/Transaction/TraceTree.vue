@@ -2,12 +2,12 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { Action, TreeNode } from 'src/types';
-import ActionFormatter from 'src/components/Transaction/ActionFormat.vue';
-import DataFormatter from 'src/components/Transaction/DataFormat.vue';
+import ActionFormat from 'src/components/Transaction/ActionFormat.vue';
+import DataFormat from 'src/components/Transaction/DataFormat.vue';
 
 export default defineComponent({
-  name: 'TransactionsTable',
-  components: { ActionFormatter, DataFormatter },
+  name: 'TraceTree',
+  components: { ActionFormat, DataFormat },
   setup() {
     const store = useStore();
     const account = computed((): string => store.state.account.accountName);
@@ -74,7 +74,7 @@ export default defineComponent({
       :nodes="getTree(actions)"
       node-key="label"
       default-expand-all)
-    
+
       template(v-slot:default-header="prop")
         .row.items-center
           .text-weight-bold.text-primary {{ prop.node.label }}
@@ -84,14 +84,14 @@ export default defineComponent({
             .text-weight-bold {{ prop.node.account }}
           .col-xs-12.col-md-3
             .row.justify-left.text-weight-light
-              actionFormatter(:action="prop.node.action")
+              ActionFormat(:action="prop.node.action")
           .col-xs-12.col-md-3
             div(v-for="authorization in prop.node.authorization" :key="authorization.account")
               .text-weight-bold {{ authorization.actor }}
               .text-weight-light @{{ authorization.permission }}
           .col-xs-12.col-md-3
             .row.justify-left.text-weight-light
-              dataFormatter(:actionData="prop.node.data" :actionName="prop.node.name ")
+              DataFormat(:actionData="prop.node.data" :actionName="prop.node.name ")
 
       template(v-slot:header-notification="prop")
         .row.items-center.full-width.bordered.q-col-gutter-sm
@@ -101,14 +101,14 @@ export default defineComponent({
               .text-weight-bold {{ notification }}
           .col-xs-12.col-md-3
             .row.justify-left.text-weight-light
-              actionFormatter(:action="prop.node.action")
+              ActionFormat(:action="prop.node.action")
           .col-xs-12.col-md-3
             div(v-for="authorization in prop.node.authorization" :key="authorization.account")
               .text-weight-bold {{ authorization.actor }}
               .text-weight-light @{{ authorization.permission }}
           .col-xs-12.col-md-3
-            dataFormatter(:actionData="prop.node.data" :actionName="prop.node.name ")
-    
+            DataFormat(:actionData="prop.node.data" :actionName="prop.node.name ")
+
 
 </template>
 

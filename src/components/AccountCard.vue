@@ -41,7 +41,6 @@ export default defineComponent({
     const store = useStore();
     const $q = useQuasar();
     const router = useRouter();
-    const token = computed((): Token => store.state.chain.token);
     const createTime = ref<string>('2019-01-01T00:00:00.000');
     const MICRO_UNIT = ref(Math.pow(10, -6));
     const KILO_UNIT = ref(Math.pow(10, 3));
@@ -63,6 +62,7 @@ export default defineComponent({
     const radius = ref(44);
     const availableTokens = ref<Token[]>([]);
     const createTransaction = ref<string>('');
+    const token = computed((): Token => store.state.chain.token);
     const accountExists = ref<boolean>(true);
     const openSendDialog = ref<boolean>(false);
     const openStakingDialog = ref<boolean>(false);
@@ -93,11 +93,13 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
+      void updateRexBalance();
       let data: AccountDetails;
       try {
         data = await api.getAccount(props.account);
         store.commit('account/setAccountData', data);
       } catch (e) {
+        total.value = refunding.value = staked.value = rex.value = none.value;
         $q.notify(`account ${props.account} not found!`);
         accountExists.value = false;
         return;
@@ -149,8 +151,10 @@ export default defineComponent({
           token.value.precision
         );
         total.value = `${totalString} ${token.value.symbol}`;
+        rex.value = account.rex_info.vote_stake;
       } else {
         total.value = liquid.value;
+        rex.value = none.value;
       }
       refunding.value = formatTotalRefund(account.refund_request);
       staked.value = account.voter_info
@@ -210,6 +214,8 @@ export default defineComponent({
       coreBalance += rexFundBalance;
       if (rexbalRows.rows.length > 0) {
         rex.value = coreBalance.toFixed(4) + ` ${token.value.symbol}`;
+      } else {
+        rex.value = `0.000 ${token.value.symbol}`;
       }
     };
     const fixDec = (val: number): number => {
@@ -226,15 +232,18 @@ export default defineComponent({
         setToken(token);
       }
     };
+
     const formatStaked = (staked: number): string => {
       const stakedValue = (
         staked / Math.pow(10, token.value.precision)
       ).toFixed(token.value.precision);
       return `${stakedValue} ${token.value.symbol}`;
     };
+
     const getAmount = (property: undefined | string): string => {
       return property ? property : `${none.value}`;
     };
+
     const loadCreatorAccount = async (): Promise<void> => {
       await router.push({
         name: 'account',
@@ -244,6 +253,7 @@ export default defineComponent({
       });
       router.go(0);
     };
+
     const loadCreatorTransaction = async (): Promise<void> => {
       await router.push({
         name: 'transaction',
@@ -253,14 +263,16 @@ export default defineComponent({
       });
       router.go(0);
     };
+
     const loadPriceData = async (): Promise<void> => {
       const usdPrice: number = await chain.getUsdPrice();
-      const dollarAmount =
-        usdPrice * parseFloat(totalString.value.split(' ')[0]);
+
+      const dollarAmount = usdPrice * parseFloat(total.value);
       totalValue.value = `$${dollarAmount.toFixed(
         2
       )} (@ $${usdPrice}/${chain.getSymbol()})`;
     };
+
     const formatTotalRefund = (refund: Refund): string => {
       const totalRefund = (
         assetToAmount(refund?.cpu_amount, token.value.precision) +
@@ -278,6 +290,7 @@ export default defineComponent({
         return 0;
       }
     };
+
     const copy = (value: string) => {
       copyToClipboard(value)
         .then((): void => {
@@ -297,8 +310,8 @@ export default defineComponent({
           });
         });
     };
+
     onMounted(async () => {
-      void updateRexBalance();
       await loadSystemToken();
       none.value = `${zero.value.toFixed(token.value.precision)} ${
         token.value.symbol
@@ -317,6 +330,13 @@ export default defineComponent({
         account: store.state.account.accountName
       });
     });
+
+    watch(
+      () => props.account,
+      async () => {
+        await loadAccountData();
+      }
+    );
 
     return {
       MICRO_UNIT,

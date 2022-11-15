@@ -31,7 +31,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       const account = users[0];
       const permission = (account as unknown as { requestPermission: string })
         .requestPermission;
-      commit('setAccountPermission', permission);
+      commit('setAccountPermission', permission || 'active');
       const accountName = await account.getAccountName();
       commit('setUser', account);
       commit('setIsAuthenticated', true);
@@ -171,7 +171,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: data as unknown
@@ -202,7 +202,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -216,7 +216,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -259,7 +259,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -273,7 +273,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -308,7 +308,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -343,7 +343,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -380,7 +380,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -457,7 +457,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -594,7 +594,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {
@@ -629,7 +629,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: 'active'
+            permission: state.accountPermission
           }
         ],
         data: {

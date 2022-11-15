@@ -34,7 +34,8 @@ export default defineComponent({
         amount: 0,
         contract: 'eosio.token'
       } as Token,
-      sendDialog: false
+      sendDialog: false,
+      apy: '--'
     };
   },
   props: {
@@ -127,13 +128,19 @@ export default defineComponent({
     }
   },
   async mounted() {
+    try {
+      const apyValue = await this.$api.getApy();
+      this.apy = `${apyValue}%`;
+    } catch (e) {
+      console.error(e);
+    }
     await this.loadAccountData();
   }
 });
 </script>
 
 <template lang="pug">
-q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
+q-dialog( @show='setDefaults' :persistent='true' maximized)
   q-card.rexCard
     .row.justify-center.q-pt-xl.full-height.full-width
       .absolute-top-right
@@ -141,6 +148,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
       .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
         .row.q-pl-sm
           .text-h4.q-pb-md.inline-block.color-grey-3.inline Staking (REX)
+          .text-h5.q-pb-md.inline-block.color-grey-3.inline.float-right APY: {{ apy }}
         .q-pa-sm
           StakingInfo
           .q-pt-lg.q-pl-lg(v-if='rexfund > 0')
@@ -233,4 +241,9 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
 .q-tab-panel
   padding-left: 0 !important
   padding-right: 0 !important
+
+.float-right
+  margin-left: auto
+  margin-top: auto
+  padding-right: 8px
 </style>

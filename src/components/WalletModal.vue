@@ -3,7 +3,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex';
 import { defineComponent } from 'vue';
 import { DialogChainObject } from 'quasar';
 export default defineComponent({
-  name: 'Wallet',
+  name: 'WalletModal',
   data() {
     return {
       authenticators: {},
@@ -38,7 +38,7 @@ export default defineComponent({
 q-dialog.modal-container(ref='walletDialog')
 
   .modal-header-container
-    q-icon( name='add_circle_outline' size='2.5rem' color="white") 
+    q-icon( name='add_circle_outline' size='2.5rem' color="white")
     h3.modal-header Attach an account
   q-separator
   q-list

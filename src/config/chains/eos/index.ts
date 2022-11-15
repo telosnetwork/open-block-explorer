@@ -18,6 +18,7 @@ const RPC_ENDPOINT = {
   host: 'eos.hyperion.eosrio.io',
   port: 443
 };
+const API_ENDPOINT = 'https://example.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
 const THEME = {};
@@ -37,6 +38,10 @@ export default class EOS extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getApiEndpoint(): string {
+    return API_ENDPOINT;
   }
 
   getS3ProducerBucket(): string {

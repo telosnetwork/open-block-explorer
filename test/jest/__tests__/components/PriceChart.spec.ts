@@ -45,14 +45,16 @@ describe('PriceChart', () => {
     mock.mockResolvedValueOnce(mockExchangeStats);
     mock.mockResolvedValueOnce(mockHistoryData);
   });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
+
   describe('mounted', () => {
-    it('calls setExchangeStats', () => {
+    it('calls fetchPriceChartData', () => {
       const methodSpy = jest.spyOn(
         PriceChart.methods as any,
-        'setExchangeStats'
+        'fetchPriceChartData'
       );
       const wrapper = shallowMount(PriceChart);
 
@@ -60,16 +62,43 @@ describe('PriceChart', () => {
         expect(methodSpy).toHaveBeenCalled();
       });
     });
+  });
 
-    it('calls setPriceHistory', () => {
-      const methodSpy = jest.spyOn(
-        PriceChart.methods as any,
-        'setPriceHistory'
-      );
-      const wrapper = shallowMount(PriceChart);
+  describe('methods', () => {
+    describe('formatPercentage', () => {
+      it('returns value rounded to 2 decimals as a % string', () => {
+        const testVal = 123.456;
+        const expected = '123.46 %';
+        const wrapper = shallowMount(PriceChart);
+        const received = wrapper.vm.formatPercentage(testVal);
 
-      wrapper.vm.$nextTick(() => {
-        expect(methodSpy).toHaveBeenCalled();
+        expect(received).toBe(expected);
+      });
+    });
+    describe('formatCurrencyValue', () => {
+      it('returns value as "$" rounded to 2 decimals if value is less than a million', () => {
+        const testVal = 999999.9911;
+        const expected = '$999999.99';
+        const wrapper = shallowMount(PriceChart);
+        const received = wrapper.vm.formatCurrencyValue(testVal);
+
+        expect(received).toBe(expected);
+      });
+      it('returns value "$" divided by a million rounded to 2 decimals and appended with "M" if value is greater than a million and less than a billion', () => {
+        const testVal = 1234567.89;
+        const expected = '$1.23M';
+        const wrapper = shallowMount(PriceChart);
+        const received = wrapper.vm.formatCurrencyValue(testVal);
+
+        expect(received).toBe(expected);
+      });
+      it('returns value "$" divided by a billion rounded to 2 decimals and appended with "B" if value is greater than a billion', () => {
+        const testVal = 123456789123.45678;
+        const expected = '$123.46B';
+        const wrapper = shallowMount(PriceChart);
+        const received = wrapper.vm.formatCurrencyValue(testVal);
+
+        expect(received).toBe(expected);
       });
     });
   });

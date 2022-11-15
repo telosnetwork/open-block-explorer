@@ -1,8 +1,8 @@
 <script lang="ts">
-import { defineComponent, toRef } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'TransactionsTable',
+  name: 'AccountFormat',
   props: {
     account: {
       type: String,
@@ -14,12 +14,9 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const type = toRef(props, 'type');
-    const account = toRef(props, 'account');
-
     return {
-      accType: type,
-      accAccount: account
+      accType: props.type,
+      accAccount: props.account
     };
   }
 });

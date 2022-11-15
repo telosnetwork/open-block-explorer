@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import Link from 'src/components/Transaction/AccountFormat.vue';
 import WalletModal from './WalletModal.vue';
 import { useStore } from 'src/store';
 import { authenticators } from 'src/boot/ual';
@@ -9,7 +8,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'LoginHandlerDropdown',
-  components: { Link, WalletModal },
+  components: { WalletModal },
   setup() {
     const store = useStore();
     const route = useRoute();
@@ -23,6 +22,7 @@ export default defineComponent({
       const idx = authenticators.find(
         (auth) => auth.constructor.name === wallet
       );
+
       return idx;
     };
 
@@ -81,9 +81,7 @@ WalletModal( v-model='showModal')
   width: 110px
   margin: 15px
 .connect-button
-  width: 60%
-  min-width: 120px
-  max-width: 140px
+  width: fit-content
   height: 40px
   text-transform: lowercase
 .buttons-container

@@ -7,7 +7,7 @@ import { useStore } from 'src/store';
 import { AccountDetails, Token, Refund } from 'src/types';
 
 export default defineComponent({
-  name: 'StakingInfo',
+  name: 'ResourcesInfo',
   setup() {
     const store = useStore();
     const openCoinDialog = ref<boolean>(false);
@@ -20,7 +20,9 @@ export default defineComponent({
       return store.state?.account.data;
     });
     const ramPrice = computed((): string => {
-      return store.state?.chain.ram_price;
+      return store.state?.chain.ram_price === '0'
+        ? '0.0000'
+        : store.state.chain.ram_price;
     });
     const ramAvailable = computed(
       () =>
@@ -67,7 +69,7 @@ export default defineComponent({
       const totalRefund = (
         assetToAmount(refund?.cpu_amount, token.value.precision) +
         assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(2);
+      ).toFixed(4);
       return `${totalRefund} ${token.value.symbol}`;
     }
 
@@ -123,7 +125,7 @@ export default defineComponent({
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light DELEGATED BY OTHERS
-          .col-5.text-right.text-bold {{delegatedResources.toFixed(2) + ` ${token.symbol}`}}
+          .col-5.text-right.text-bold {{delegatedResources.toFixed(4) + ` ${token.symbol}`}}
         .row.q-pt-sm
           .col-7.text-weight-light REFUNDING
           .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
