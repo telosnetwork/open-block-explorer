@@ -104,11 +104,16 @@ export default defineComponent({
           name: 'transfer',
           authorization: [
             {
-              actor: item.from,
+              actor: item.from.toLowerCase(),
               permission: 'active'
             }
           ],
-          data: item
+          data: {
+            from: item.from.toLowerCase(),
+            to: item.to.toLowerCase(),
+            quantity: item.quantity,
+            memo: item.memo,
+          }
         }
       });
 
