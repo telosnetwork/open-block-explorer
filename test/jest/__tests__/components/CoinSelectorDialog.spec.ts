@@ -40,25 +40,19 @@ describe('CoinSelectorDialog', () => {
         wrapper.vm.filterTokens();
         expect(wrapper.vm.filteredTokens).toEqual(wrapper.vm.availableTokens);
       });
-      it.skip('calls filterByText', () => {
-        wrapper.vm.search = 'test';
-        wrapper.vm.filterByText = jest.fn();
-        wrapper.vm.filterTokens();
-        expect(wrapper.vm.filterByText).toHaveBeenCalled();
-      });
     });
     describe('filterByText', () => {
-      it.skip('returns empty array if no match', () => {
+      it('returns empty array if no match', () => {
         wrapper.vm.search = 'test';
         wrapper.vm.filterByText([mockToken]);
         expect(wrapper.vm.filteredTokens).toEqual([]);
       });
-      it.skip('returns token if symbol match', () => {
+      it('returns token if symbol match', () => {
         wrapper.vm.search = 'MOCK';
         wrapper.vm.filterByText([mockToken]);
         expect(wrapper.vm.filteredTokens).toEqual([mockToken]);
       });
-      it.skip('returns token if contract match', () => {
+      it('returns token if contract match', () => {
         wrapper.vm.search = 'mock.token';
         wrapper.vm.filterByText([mockToken]);
         expect(wrapper.vm.filteredTokens).toEqual([mockToken]);
