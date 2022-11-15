@@ -67,5 +67,17 @@ describe('PercentCircle', () => {
         expect(wrapper.vm.dashArray).toBe(`${scaled}, ${circ as string}`);
       });
     });
+    describe('fractionUnits', () => {
+      it('returns fraction as formatted string with units', async () => {
+        await wrapper.setProps({
+          fraction: 3,
+          total: 10,
+          unit: 'kb'
+        });
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const expectedVal = `${wrapper.vm.fraction}${wrapper.vm.unit}/${wrapper.vm.total}${wrapper.vm.unit}`;
+        expect(wrapper.vm.fractionUnits).toBe(expectedVal);
+      });
+    });
   });
 });
