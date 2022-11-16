@@ -29,7 +29,7 @@ export default defineComponent({
   },
   setup(props) {
     const offset = ref(5);
-    const { fraction, total, label, radius, unit } = toRefs(props);
+    const { fraction, total, radius, unit } = toRefs(props);
     const diameter = computed(() => radius.value * 2);
     const circumference = computed(() => 2 * PI * radius.value);
     const containerWidth = computed(() => diameter.value + 2 * offset.value);
