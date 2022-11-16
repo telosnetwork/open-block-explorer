@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent, ref, toRefs } from 'vue';
 
 const PI = 3.1459;
 
@@ -27,41 +27,42 @@ export default defineComponent({
       default: ''
     }
   },
-  data() {
-    return {
-      offset: 5
-    };
-  },
-  computed: {
-    diameter(): number {
-      return 2 * this.radius;
-    },
-    circumference(): number {
-      return 2 * PI * this.radius;
-    },
-    containerWidth(): number {
-      return this.diameter + 2 * this.offset;
-    },
-    strokeColor(): string {
-      return parseFloat(this.formatResourcePercent) >= 90 ? 'red' : 'white';
-    },
-    dashArray(): string {
-      if (Number.isNaN(this.formatResourcePercent)) {
+  setup(props) {
+    const offset = ref(5);
+    const { fraction, total, label, radius, unit } = toRefs(props);
+    const diameter = computed(() => radius.value * 2);
+    const circumference = computed(() => 2 * PI * radius.value);
+    const containerWidth = computed(() => diameter.value + 2 * offset.value);
+    const formatResourcePercent = computed(() =>
+      ((fraction.value / total.value) * 100.0).toFixed(2)
+    );
+    const strokeColor = computed(() =>
+      parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white'
+    );
+    const fractionUnits = computed(
+      () => `${fraction.value}${unit.value}/${total.value}${unit.value}`
+    );
+    const available = computed(() => (total.value - fraction.value).toFixed(3));
+    const dashArray = computed(() => {
+      if (Number.isNaN(formatResourcePercent.value)) {
         return '0';
       }
       const scaledPath =
-        (parseFloat(this.formatResourcePercent) / 100) * this.circumference;
-      return `${scaledPath}, ${this.circumference}`;
-    },
-    formatResourcePercent(): string {
-      return ((this.fraction / this.total) * 100.0).toFixed(2);
-    },
-    fractionUnits(): string {
-      return `${this.fraction}${this.unit}/${this.total}${this.unit}`;
-    },
-    available(): string {
-      return (this.total - this.fraction).toFixed(3);
-    }
+        (parseFloat(formatResourcePercent.value) / 100) * circumference.value;
+      return `${scaledPath}, ${circumference.value}`;
+    });
+
+    return {
+      offset,
+      diameter,
+      circumference,
+      containerWidth,
+      formatResourcePercent,
+      strokeColor,
+      fractionUnits,
+      available,
+      dashArray
+    };
   }
 });
 </script>
