@@ -12,7 +12,7 @@ import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/Resources/ResourcesDialog.vue';
-import RexDialog from 'src/components/Staking/StakingDialog.vue';
+import StakingDialog from 'src/components/Staking/StakingDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { date, useQuasar } from 'quasar';
 import { copyToClipboard } from 'quasar';
@@ -29,7 +29,7 @@ export default defineComponent({
     SendDialog,
     ResourcesDialog,
     DateField,
-    RexDialog
+    StakingDialog
   },
   props: {
     account: {
@@ -65,8 +65,8 @@ export default defineComponent({
     const token = computed((): Token => store.state.chain.token);
     const accountExists = ref<boolean>(true);
     const openSendDialog = ref<boolean>(false);
+    const openResourcesDialog = ref<boolean>(false);
     const openStakingDialog = ref<boolean>(false);
-    const openRexDialog = ref<boolean>(false);
     const isAccount = computed((): boolean => {
       return store.state.account.accountName === props.account;
     });
@@ -360,8 +360,8 @@ export default defineComponent({
       createTime,
       createTransaction,
       openSendDialog,
+      openResourcesDialog,
       openStakingDialog,
-      openRexDialog,
       delegatedResources,
       isAccount,
       token,
@@ -412,9 +412,9 @@ export default defineComponent({
         .col-3
           q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount' class="full-width")
         .col-3
-          q-btn( @click="openStakingDialog = true" color='primary' label='Resources' v-if='isAccount' class="full-width")
+          q-btn( @click="openResourcesDialog = true" color='primary' label='Resources' v-if='isAccount' class="full-width")
         .col-3
-          q-btn.ellipsis( @click="openRexDialog = true" color='primary' label='staking (REX)' v-if='isAccount' class="full-width")
+          q-btn.ellipsis( @click="openStakingDialog = true" color='primary' label='staking (REX)' v-if='isAccount' class="full-width")
     q-markup-table
       thead
         tr
@@ -441,9 +441,9 @@ export default defineComponent({
             td.text-left DELEGATED BY OTHERS
             td.text-right {{ delegatedResources }}
 
-    sendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
-    ResourcesDialog(v-model="openStakingDialog")
-    RexDialog(v-model="openRexDialog" :availableTokens="availableTokens")
+    SendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
+    ResourcesDialog(v-model="openResourcesDialog")
+    StakingDialog(v-model="openStakingDialog" :availableTokens="availableTokens")
 
   q-card.account-card(v-else)
     q-card-section.resources-container

@@ -119,6 +119,7 @@ export default defineComponent({
     },
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
+      debugger;
       try {
         data = await this.$api.getAccount(this.account);
         this.$store.commit('account/setAccountData', data);
