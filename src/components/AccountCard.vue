@@ -93,6 +93,9 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
+      none.value = `${zero.value.toFixed(token.value.precision)} ${
+        token.value.symbol
+      }`;
       void updateRexBalance();
       let data: AccountDetails;
       try {
@@ -313,14 +316,11 @@ export default defineComponent({
 
     onMounted(async () => {
       await loadSystemToken();
-      none.value = `${zero.value.toFixed(token.value.precision)} ${
-        token.value.symbol
-      }`;
       await loadAccountData();
+      await loadPriceData();
       await store.dispatch('account/updateRexData', {
         account: props.account
       });
-      await loadPriceData();
       void store.dispatch('chain/updateRamPrice');
     });
 
@@ -334,6 +334,7 @@ export default defineComponent({
       () => props.account,
       async () => {
         await loadAccountData();
+        await loadPriceData();
       }
     );
     return {
