@@ -9,9 +9,6 @@ import { getChain } from 'src/config/ConfigManager';
 const symbol = getChain().getSymbol();
 
 export const mutations: MutationTree<AccountStateInterface> = {
-  setLoadingWallet(state: AccountStateInterface, wallet: string) {
-    state.loading = wallet;
-  },
   setUser(state: AccountStateInterface, user: User) {
     state.user = user ? markRaw(user) : user;
   },

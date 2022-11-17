@@ -12,10 +12,6 @@ const symbol = chain.getSymbol();
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {
-    // commit(
-    //   'setLoadingWallet',
-    //   (authenticator as Authenticator).getStyle().text
-    // );
     await (authenticator as Authenticator).init();
     if (!account) {
       const requestAccount = await (
@@ -43,7 +39,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         'autoLogin',
         (authenticator as Authenticator).getName()
       );
-      commit('setLoadingWallet');
     }
   },
   logout({ commit }) {

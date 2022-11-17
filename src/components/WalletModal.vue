@@ -1,5 +1,5 @@
 <script lang="ts">
-import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { defineComponent } from 'vue';
 import { DialogChainObject } from 'quasar';
 export default defineComponent({
