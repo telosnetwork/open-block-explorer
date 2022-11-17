@@ -440,10 +440,10 @@ export default defineComponent({
           tr
             td.text-left DELEGATED BY OTHERS
             td.text-right {{ delegatedResources }}
-
-    SendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
-    ResourcesDialog(v-model="openResourcesDialog")
-    StakingDialog(v-model="openStakingDialog" :availableTokens="availableTokens")
+    div(v-if='isAccount')
+      SendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
+      ResourcesDialog(v-model="openResourcesDialog")
+      StakingDialog(v-model="openStakingDialog" :availableTokens="availableTokens")
 
   q-card.account-card(v-else)
     q-card-section.resources-container
