@@ -67,8 +67,5 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setRexFund(state: AccountStateInterface, fund: number) {
     state.rexfund = fund;
-  },
-  setAuthenticatorName(state: AccountStateInterface, auth: string) {
-    state.authenticatorName = auth;
   }
 };

@@ -4,28 +4,22 @@ import WalletModal from './WalletModal.vue';
 import { useStore } from 'src/store';
 import { authenticators } from 'src/boot/ual';
 import { Authenticator } from 'universal-authenticator-library';
-import { useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'LoginHandlerDropdown',
   components: { WalletModal },
   setup() {
     const store = useStore();
-    const route = useRoute();
-    const router = useRouter();
 
     const account = computed(() => store.state.account.accountName);
     const showModal = ref(false);
 
     const getAuthenticator = (): Authenticator => {
       const wallet = localStorage.getItem('autoLogin');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      const idx = authenticators.find(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        (auth) => auth.constructor.name === wallet
+      const authenticator = authenticators.find(
+        (auth) => auth.getName() === wallet
       );
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return idx;
+      return authenticator;
     };
 
     const onLogout = async (): Promise<void> => {
@@ -37,15 +31,10 @@ export default defineComponent({
         console.log('Authenticator logout error', error);
         clearAccount();
       }
-
-      if (route.path !== '/') {
-        await router.push({ path: '/' });
-      }
     };
 
     const clearAccount = (): void => {
       void store.dispatch('account/logout');
-      router.go(0);
     };
     return {
       account,

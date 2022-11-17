@@ -16,7 +16,6 @@ export default defineComponent({
   },
   methods: {
     ...mapActions({ login: 'account/login' }),
-    ...mapMutations({ setAuthenticator: 'account/setAuthenticator' }),
     async onLogin(idx: number) {
       const authenticator =
         this.$ual.getAuthenticators().availableAuthenticators[idx];

@@ -26,7 +26,6 @@ export interface AccountStateInterface {
   savingsRex: string;
   tlosRexRatio: number;
   rexfund: number;
-  authenticatorName: string;
 }
 
 export function state(): AccountStateInterface {
@@ -58,7 +57,6 @@ export function state(): AccountStateInterface {
     maturedRex: `0.0000 ${chain.getSymbol()}`,
     savingsRex: `0.0000 ${chain.getSymbol()}`,
     tlosRexRatio: 1,
-    rexfund: 0,
-    authenticatorName: null
+    rexfund: 0
   };
 }
