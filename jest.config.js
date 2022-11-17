@@ -33,16 +33,16 @@ module.exports = {
   //TODO increase thresholds as coverage increases as testing will be enforced
   coverageThreshold: {
     global: {
-      branches: 0,
-      functions: 0,
-      lines: 0,
-      statements: 0
+      statements: 6,
+      branches: 2.25,
+      functions: 4.05,
+      lines: 6.25
     },
     './src/components/': {
-      statements: 0,
-      branches: 0,
-      functions: 0,
-      lines: 0
+      statements: 3.75,
+      branches: 2.4,
+      functions: 6,
+      lines: 4
     },
     './src/pages/': {
       statements: 0,
@@ -52,7 +52,7 @@ module.exports = {
     },
     './src/layouts/': {
       statements: 0,
-      branches: 0,
+      branches: 100,
       functions: 0,
       lines: 0
     }

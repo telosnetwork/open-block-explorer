@@ -12,10 +12,11 @@ div.row.q-col-gutter-md.q-mb-md
       label="Actor"
       :loading="isLoading"
       :model-value="actorValue"
-      @input-value="(value: string) => actorValue = value"
+      @input-value="(value) => actorValue = value"
       :options="actorsOptions"
       :rules="[value => !!value || 'Field is required', (value) => isLoading || actorsOptions.includes(value) || 'Field invalid']"
       reactive-rules
+      :error="isActorError"
     )
       template(#no-option)
         q-item
@@ -103,6 +104,7 @@ export default defineComponent({
     const permissionsOptions = ref<string[]>([]);
     const allRequiredAccounts = ref<RequiredAccounts[]>([]);
 
+    const isActorError = ref(false);
     const isLoading = ref(false);
     const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
 
@@ -132,6 +134,7 @@ export default defineComponent({
 
     watch(actorValue, (currentValue) => {
       isLoading.value = true;
+      isActorError.value = false;
 
       if (waitToSearch.value) {
         clearTimeout(waitToSearch.value);
@@ -202,8 +205,11 @@ export default defineComponent({
             );
             context.emit('update:permission', permissionsOptions.value[0]);
           }
+        } else {
+          isActorError.value = true;
         }
       } catch (error) {
+        isActorError.value = true;
         context.emit('update:permission', '');
       }
     }
@@ -218,12 +224,10 @@ export default defineComponent({
     return {
       actorValue,
       permissionValue,
-
+      isActorError,
       requiredAccounts,
-
       actorsOptions,
       permissionsOptions,
-
       isLoading
     };
   }
