@@ -318,7 +318,7 @@ export default defineComponent({
       }`;
       await loadAccountData();
       await store.dispatch('account/updateRexData', {
-        account: store.state.account.accountName
+        account: props.account
       });
       await loadPriceData();
       void store.dispatch('chain/updateRamPrice');
@@ -327,7 +327,7 @@ export default defineComponent({
     watch(transactionId, async () => {
       await loadAccountData();
       await store.dispatch('account/updateRexData', {
-        account: store.state.account.accountName
+        account: props.account
       });
     });
     watch(

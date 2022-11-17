@@ -10,7 +10,6 @@ export default defineComponent({
   components: { WalletModal },
   setup() {
     const store = useStore();
-
     const account = computed(() => store.state.account.accountName);
     const showModal = ref(false);
 
