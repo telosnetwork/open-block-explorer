@@ -59,7 +59,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     commit('setAuthenticatorName', null);
     commit('setUser', null);
     for (const key in localStorage) {
-      if (key.includes('anchor-link--')) {
+      if (key.includes('anchor')) {
         localStorage.removeItem(key);
       }
     }
