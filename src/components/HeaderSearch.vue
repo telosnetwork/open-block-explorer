@@ -174,7 +174,7 @@ export default defineComponent({
         // default to 'account'
       } else if (inputValue.value.length <= 13) {
         try {
-          await api.getAccount(inputValue.value.toLowerCase());
+          await api.getHyperionAccountData(inputValue.value.toLowerCase());
           await router.push({
             name: 'account',
             params: {

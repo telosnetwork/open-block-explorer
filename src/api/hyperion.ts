@@ -66,7 +66,7 @@ hyperion.interceptors.response.use(
   }
 );
 
-export const getAccount = async function (
+export const getHyperionAccountData = async function (
   address: string
 ): Promise<AccountDetails> {
   const response = await hyperion.get('v2/state/get_account', {

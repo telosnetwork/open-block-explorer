@@ -26,7 +26,7 @@ export default defineComponent({
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
-        data = await this.$api.getAccount(this.account);
+        data = await this.$api.getHyperionAccountData(this.account);
       } catch (e) {
         this.$q.notify(`Keys for account ${this.account} not found!`);
         return;
@@ -73,7 +73,7 @@ div.row.col-12.q-my-xs.justify-center.text-left
     div.row.col-11
       div.row.col-12.q-mt-lg
           div
-              p.panel-title Keys and Permissions 
+              p.panel-title Keys and Permissions
           q-space
       q-separator.row.col-12.q-mt-md.separator
       .permissions-container.col-12.q-py-lg

@@ -5,7 +5,7 @@
  *  - for existing method enpoint, export from service file and update the import statement here
  */
 import {
-  getAccount,
+  getHyperionAccountData,
   getCreator,
   getTokens,
   getTransactions,
@@ -26,6 +26,7 @@ import {
 } from './hyperion'; //  e.g. './new-service' method name stays the same
 
 import {
+  getAccount,
   getTableRows,
   getTokenBalances,
   deserializeActionData,
@@ -36,6 +37,7 @@ import { getApy } from './telosApi';
 
 export const api = {
   getAccount,
+  getHyperionAccountData,
   getCreator,
   getTokens,
   getTransactions,

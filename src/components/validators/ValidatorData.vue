@@ -67,7 +67,7 @@ export default defineComponent({
 
     async function getVotes() {
       if (account.value && account.value !== '') {
-        const data = await api.getAccount(account.value);
+        const data = await api.getHyperionAccountData(account.value);
         store.commit('account/setAccountData', data);
         const voterInfo = data.account.voter_info;
         if (!voterInfo) return;

@@ -20,6 +20,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
+import { API } from '@greymass/eosio';
 
 const chain = getChain();
 export default defineComponent({
@@ -75,6 +76,13 @@ export default defineComponent({
     const rex = ref<string>('0.0000 ' + token.value.symbol);
     const liqNum = ref<string>('0.0000');
     const totalString = computed(() => {
+      const test =
+        (
+          parseFloat(liqNum.value) +
+          resources.value +
+          parseFloat(rex.value.split(' ')[0])
+        ).toFixed(token.value.precision) + ` ${token.value.symbol}`;
+      debugger;
       return (
         (
           parseFloat(liqNum.value) +
@@ -93,11 +101,12 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
+      debugger;
       none.value = `${zero.value.toFixed(token.value.precision)} ${
         token.value.symbol
       }`;
       void updateRexBalance();
-      let data: AccountDetails;
+      let data: API.v1.AccountObject;
       try {
         data = await api.getAccount(props.account);
         store.commit('account/setAccountData', data);
@@ -119,9 +128,10 @@ export default defineComponent({
       } catch (e) {
         $q.notify(`creator account for ${props.account} not found!`);
       }
+      debugger;
       availableTokens.value = data.tokens;
-      const account = data.account;
-      ram_used.value = fixDec(account.ram_usage / KILO_UNIT.value);
+      const account = data;
+      ram_used.value = fixDec(account. ram_usage / KILO_UNIT.value);
       ram_max.value = fixDec(account.ram_quota / KILO_UNIT.value);
       cpu_used.value = fixDec(account.cpu_limit.used * MICRO_UNIT.value);
       cpu_max.value = fixDec(account.cpu_limit.max * MICRO_UNIT.value);
@@ -147,6 +157,7 @@ export default defineComponent({
             token.value.precision
           ) + ` ${token.value.symbol}`
         : `${token.value.symbol}`;
+      debugger;
       if (account.rex_info) {
         const liqNum = account.core_liquid_balance.split(' ')[0];
         const rexNum = account.rex_info.vote_stake.split(' ')[0];
