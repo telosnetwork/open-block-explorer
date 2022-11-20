@@ -1,12 +1,5 @@
 <script lang="ts">
-import {
-  AccountDetails,
-  Token,
-  Refund,
-  GetTableRowsParams,
-  RexbalRows,
-  RexPoolRows
-} from 'src/types';
+import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
@@ -20,7 +13,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
-import { API } from '@greymass/eosio';
+import { API, Asset, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
 export default defineComponent({
@@ -52,14 +45,14 @@ export default defineComponent({
     const ram_used = ref(0);
     const ram_max = ref(0);
     const creatingAccount = ref('');
-    const liquid = ref<string>('0.0000');
-    const total = ref('');
+    const liquid = ref<UInt64>();
+    const total = ref<UInt64>();
     const totalValue = ref('');
-    const refunding = ref<string>('0.0000');
-    const staked = ref<string>('0.0000');
-    const none = ref('');
+    const refunding = ref<UInt64>();
+    const staked = ref<UInt64>();
+    const none = ref<UInt64>();
     const system_account = ref('eosio');
-    const zero = ref(0.0);
+    const zero = ref<UInt64>();
     const radius = ref(44);
     const availableTokens = ref<Token[]>([]);
     const createTransaction = ref<string>('');
@@ -71,25 +64,12 @@ export default defineComponent({
     const isAccount = computed((): boolean => {
       return store.state.account.accountName === props.account;
     });
-    const resources = ref<number>(0.0);
+    const resources = ref<UInt64>();
     const delegatedResources = ref<string>('0.0000');
-    const rex = ref<string>('0.0000 ' + token.value.symbol);
-    const liqNum = ref<string>('0.0000');
+    const rex = ref<UInt64>();
+    const liqNum = ref<UInt64>();
     const totalString = computed(() => {
-      const test =
-        (
-          parseFloat(liqNum.value) +
-          resources.value +
-          parseFloat(rex.value.split(' ')[0])
-        ).toFixed(token.value.precision) + ` ${token.value.symbol}`;
-      debugger;
-      return (
-        (
-          parseFloat(liqNum.value) +
-          resources.value +
-          parseFloat(rex.value.split(' ')[0])
-        ).toFixed(token.value.precision) + ` ${token.value.symbol}`
-      );
+      return liqNum.value.add(resources.value); //TODO missing add rex.value
     });
     const createTimeFormat = computed((): string =>
       date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
@@ -102,9 +82,7 @@ export default defineComponent({
     };
     const loadAccountData = async (): Promise<void> => {
       debugger;
-      none.value = `${zero.value.toFixed(token.value.precision)} ${
-        token.value.symbol
-      }`;
+      none.value = zero.value;
       void updateRexBalance();
       let data: API.v1.AccountObject;
       try {
@@ -129,29 +107,26 @@ export default defineComponent({
         $q.notify(`creator account for ${props.account} not found!`);
       }
       debugger;
-      availableTokens.value = data.tokens;
+      // availableTokens.value = data.tokens;
       const account = data;
-      ram_used.value = fixDec(account. ram_usage / KILO_UNIT.value);
-      ram_max.value = fixDec(account.ram_quota / KILO_UNIT.value);
-      cpu_used.value = fixDec(account.cpu_limit.used * MICRO_UNIT.value);
-      cpu_max.value = fixDec(account.cpu_limit.max * MICRO_UNIT.value);
-      net_used.value = fixDec(account.net_limit.used / KILO_UNIT.value);
-      net_max.value = fixDec(account.net_limit.max / KILO_UNIT.value);
-      liquid.value = getAmount(account.core_liquid_balance);
-      liqNum.value = getAmount(account.core_liquid_balance);
-      resources.value = account?.self_delegated_bandwidth
-        ? Number(account.self_delegated_bandwidth.cpu_weight.split(' ')[0]) +
-          Number(account.self_delegated_bandwidth.net_weight.split(' ')[0])
-        : 0;
+      ram_used.value = fixDec(account.ram_usage.value / KILO_UNIT.value);
+      ram_max.value = fixDec(account.ram_quota.value / KILO_UNIT.value);
+      cpu_used.value = fixDec(account.cpu_limit.used.value * MICRO_UNIT.value);
+      cpu_max.value = fixDec(account.cpu_limit.max.value * MICRO_UNIT.value);
+      net_used.value = fixDec(account.net_limit.used.value / KILO_UNIT.value);
+      net_max.value = fixDec(account.net_limit.max.value / KILO_UNIT.value);
+      liquid.value = getAmount(account.core_liquid_balance.symbol.value);
+      liqNum.value = getAmount(account.core_liquid_balance.symbol.value);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      resources.value = UInt64.add(
+        account.self_delegated_bandwidth.cpu_weight.symbol.value,
+        account.self_delegated_bandwidth.net_weight.symbol.value
+      );
       const delegatedNum =
-        Number(account.total_resources.cpu_weight.split(' ')[0]) +
-        Number(account.total_resources.net_weight.split(' ')[0]) -
-        Number(
-          account?.self_delegated_bandwidth?.net_weight.split(' ')[0] || 0
-        ) -
-        Number(
-          account?.self_delegated_bandwidth?.cpu_weight.split(' ')[0] || 0
-        );
+        Number(account.total_resources.cpu_weight.value) +
+        Number(account.total_resources.net_weight.value) -
+        Number(account?.self_delegated_bandwidth?.net_weight.value || 0) -
+        Number(account?.self_delegated_bandwidth?.cpu_weight.value || 0);
       delegatedResources.value = account?.total_resources
         ? (delegatedNum > 0 ? delegatedNum : 0.0).toFixed(
             token.value.precision
@@ -159,21 +134,19 @@ export default defineComponent({
         : `${token.value.symbol}`;
       debugger;
       if (account.rex_info) {
-        const liqNum = account.core_liquid_balance.split(' ')[0];
-        const rexNum = account.rex_info.vote_stake.split(' ')[0];
-        const totalString = (parseFloat(liqNum) + parseFloat(rexNum)).toFixed(
-          token.value.precision
-        );
-        total.value = `${totalString} ${token.value.symbol}`;
-        rex.value = account.rex_info.vote_stake;
+        const liqNum = account.core_liquid_balance.value;
+        const rexNum = account.rex_info.vote_stake.value;
+        const totalString = (liqNum + rexNum).toFixed(token.value.precision);
+        total.value = UInt64.from(totalString); //`${totalString} ${token.value.symbol}`;
+        rex.value = account.rex_info.vote_stake.symbol.value;
       } else {
         total.value = liquid.value;
         rex.value = none.value;
       }
       refunding.value = formatTotalRefund(account.refund_request);
       staked.value = account.voter_info
-        ? formatStaked(account.voter_info.staked)
-        : none.value + ` ${token.value.symbol}`;
+        ? formatStaked(account.voter_info.staked.value)
+        : none.value; //+ ` ${token.value.symbol}`;
     };
     const updateRexBalance = async () => {
       const paramsrexbal = {
@@ -227,9 +200,9 @@ export default defineComponent({
       let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
       coreBalance += rexFundBalance;
       if (rexbalRows.rows.length > 0) {
-        rex.value = coreBalance.toFixed(4) + ` ${token.value.symbol}`;
+        rex.value = UInt64.from(coreBalance); //.toFixed(4) + ` ${token.value.symbol}`;
       } else {
-        rex.value = `0.000 ${token.value.symbol}`;
+        rex.value = UInt64.from(0);
       }
     };
     const fixDec = (val: number): number => {
@@ -247,15 +220,16 @@ export default defineComponent({
       }
     };
 
-    const formatStaked = (staked: number): string => {
-      const stakedValue = (
-        staked / Math.pow(10, token.value.precision)
-      ).toFixed(token.value.precision);
-      return `${stakedValue} ${token.value.symbol}`;
+    const formatStaked = (staked: UInt64): UInt64 => {
+      const stakedValue = UInt64.div(
+        staked,
+        UInt64.from(Math.pow(10, token.value.precision))
+      ); //.toFixed(token.value.precision);
+      return stakedValue; //`${stakedValue} ${token.value.symbol}`;
     };
 
-    const getAmount = (property: undefined | string): string => {
-      return property ? property : `${none.value}`;
+    const getAmount = (property: UInt64): UInt64 => {
+      return property ? property : none.value;
     };
 
     const loadCreatorAccount = async (): Promise<void> => {
@@ -281,29 +255,36 @@ export default defineComponent({
     const loadPriceData = async (): Promise<void> => {
       const usdPrice: number = await chain.getUsdPrice();
 
-      const dollarAmount = usdPrice * parseFloat(total.value);
-      totalValue.value = `$${dollarAmount.toFixed(
+      const dollarAmount = UInt64.mul(UInt64.from(usdPrice), total.value);
+      totalValue.value = dollarAmount.toString(); /* `$${dollarAmount.toFixed(
         2
       )} (@ $${usdPrice}/${chain.getSymbol()})`;
+      */
     };
 
-    const formatTotalRefund = (refund: Refund): string => {
-      const totalRefund = (
-        assetToAmount(refund?.cpu_amount, token.value.precision) +
-        assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(4);
-      return `${totalRefund} ${token.value.symbol}`;
+    const formatTotalRefund = (
+      refund: any /*AccountRefundRequest */
+    ): UInt64 => {
+      const totalRefund =
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        UInt64.add(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          refund?.cpu_amount.value /* token.value.precision) + */,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          refund?.net_amount.value /* token.value.precision */
+        ); //.toFixed(4);
+      return totalRefund; //} ${token.value.symbol}`;
     };
-    const assetToAmount = (asset: string, decimals = -1): number => {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    };
+    // const assetToAmount = (asset: Asset, decimals = -1): number => {
+    //   try {
+    //     let qty: string = asset.split(' ')[0];
+    //     let val: number = parseFloat(qty);
+    //     if (decimals > -1) qty = val.toFixed(decimals);
+    //     return val;
+    //   } catch (error) {
+    //     return 0;
+    //   }
+    // };
 
     const copy = (value: string) => {
       copyToClipboard(value)

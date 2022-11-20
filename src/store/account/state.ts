@@ -1,6 +1,7 @@
 import { Authorization, AccountDetails, Action, Rexbal, ABI } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { User } from 'universal-authenticator-library';
+import { API } from '@greymass/eosio';
 
 const chain = getChain();
 
@@ -12,7 +13,7 @@ export interface AccountStateInterface {
   autoLogin: unknown;
   isAuthenticated: boolean;
   linkedAccounts: Array<unknown>;
-  data: AccountDetails;
+  data: API.v1.AccountObject;
   authorization: Authorization[];
   rexActions: Action[];
   TransactionId: string;
@@ -37,14 +38,44 @@ export function state(): AccountStateInterface {
     autoLogin: null,
     isAuthenticated: false,
     linkedAccounts: [],
+    // data: {
+    //   account: {
+    //     account_name: '',
+    //     core_liquid_balance: '0.0000'
+    //   },
+    //   tokens: [],
+    //   actions: []
+    // } as API.v1.AccountObject,
+
     data: {
-      account: {
-        account_name: '',
-        core_liquid_balance: '0.0000'
-      },
-      tokens: [],
-      actions: []
-    } as AccountDetails,
+      account_name: '',
+      /** Highest block number on the chain */
+      // head_block_num: UInt32;
+      // /** Highest block unix timestamp. */
+      // head_block_time: TimePoint;
+      // /** Indicator of if this is a privileged system account */
+      // privileged: boolean;
+      // /** Last update to accounts contract as unix timestamp. */
+      // last_code_update: TimePoint;
+      // /** Account created as unix timestamp. */
+      // created: TimePoint;
+      /** Account core token balance */
+      core_liquid_balance: '0.0000'
+      // ram_quota: Int64;
+      // net_weight: Int64;
+      // cpu_weight: Int64;
+      // net_limit: AccountResourceLimit;
+      // cpu_limit: AccountResourceLimit;
+      // ram_usage: UInt64;
+      // permissions: AccountPermission[];
+      // total_resources: AccountTotalResources;
+      // self_delegated_bandwidth?: AccountSelfDelegatedBandwidth;
+      // refund_request?: AccountRefundRequest;
+      // voter_info?: AccountVoterInfo;
+      // rex_info?: AccountRexInfo;
+      // getPermission(permission: NameType): AccountPermission;
+    } as unknown as API.v1.AccountObject,
+
     authorization: [],
     rexActions: [],
     TransactionId: '',

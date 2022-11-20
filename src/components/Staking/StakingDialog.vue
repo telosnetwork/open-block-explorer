@@ -120,7 +120,7 @@ export default defineComponent({
     async loadAccountData(): Promise<void> {
       let data: AccountDetails;
       try {
-        data = await this.$api.getAccount(this.account);
+        data = await this.$api.getHyperionAccountData(this.account);
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
         return;
