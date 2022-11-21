@@ -330,12 +330,14 @@ export default defineComponent({
         account: store.state.account.accountName
       });
     });
+
     watch(
       () => props.account,
       async () => {
         await loadAccountData();
       }
     );
+
     return {
       MICRO_UNIT,
       KILO_UNIT,
