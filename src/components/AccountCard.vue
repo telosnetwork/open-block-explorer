@@ -322,6 +322,7 @@ export default defineComponent({
         account: props.account
       });
     });
+
     watch(
       () => props.account,
       async () => {
@@ -329,6 +330,7 @@ export default defineComponent({
         await loadPriceData();
       }
     );
+
     return {
       MICRO_UNIT,
       KILO_UNIT,

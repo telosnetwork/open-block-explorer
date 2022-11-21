@@ -1,35 +1,40 @@
 <script lang="ts">
 import { mapActions, mapGetters } from 'vuex';
-import { defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { DialogChainObject } from 'quasar';
+import { authenticators } from 'src/boot/ual';
+import { useStore } from 'src/store';
+
 export default defineComponent({
   name: 'WalletModal',
-  data() {
-    return {
-      authenticators: {},
-      error: null,
-      loading: {}
-    };
-  },
-  computed: {
-    ...mapGetters({ account: 'account/accountName' })
-  },
-  methods: {
-    ...mapActions({ login: 'account/login' }),
-    async onLogin(idx: number) {
-      const authenticator =
-        this.$ual.getAuthenticators().availableAuthenticators[idx];
-      this.error = null;
+  setup() {
+    const store = useStore();
+    const error = ref<string>(null);
+    const account = computed(() => store.state.account.accountName);
+    const loading = {};
+    const walletDialog = ref<DialogChainObject>(null);
+
+    const onLogin = async (idx: number) => {
+      const authenticator = authenticators[idx];
+      error.value = null;
       try {
-        await this.login({
-          account: this.account as string,
+        await store.dispatch('account/login', {
+          account: account.value,
           authenticator
         });
       } catch (e) {
-        this.error = e;
+        error.value = e as string;
       }
-      (this.$refs.walletDialog as DialogChainObject).hide();
-    }
+      walletDialog.value.hide();
+    };
+
+    return {
+      error,
+      loading,
+      account,
+      walletDialog,
+      onLogin
+    };
   }
 });
 </script>

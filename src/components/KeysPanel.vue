@@ -1,7 +1,11 @@
 <script lang="ts">
-import { AccountDetails, Permission, PermissionLinks } from 'src/types';
+import { Permission, PermissionLinks } from 'src/types';
 import PermissionCard from 'components/PermissionCard.vue';
-import { defineComponent } from 'vue';
+import { computed, defineComponent, onMounted, ref } from 'vue';
+import { api } from 'src/api';
+import { useQuasar } from 'quasar';
+import { API } from '@greymass/eosio';
+
 export default defineComponent({
   name: 'KeysPanel',
   components: {
@@ -14,43 +18,41 @@ export default defineComponent({
       default: null
     }
   },
-  data() {
-    return {
-      permission: null
-    };
-  },
-  async mounted() {
-    await this.loadAccountData();
-  },
-  methods: {
-    async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
+  setup(props) {
+    const account = computed(() => props.account);
+    const permission = ref<Permission>(null);
+    const $q = useQuasar();
+    const loadAccountData = async (): Promise<void> => {
+      let data: API.v1.AccountObject;
       try {
-        data = await this.$api.getHyperionAccountData(this.account);
+        data = await api.getAccount(account.value);
       } catch (e) {
-        this.$q.notify(`Keys for account ${this.account} not found!`);
+        $q.notify(`Keys for account ${account.value} not found!`);
         return;
       }
-      const permissions = data.account.permissions;
+      const permissions = data.permissions as Permission[];
       let links: PermissionLinks[];
       try {
-        links = await this.$api.getPermissionLinks(this.account);
+        links = await api.getPermissionLinks(account.value);
       } catch (e) {
-        this.$q.notify(
-          `Permission links for account ${this.account} not found!`
-        );
+        $q.notify(`Permission links for account ${account.value} not found!`);
         return;
       }
       for (let p of permissions) {
-        p.permission_links = links.filter((l) => l.permission == p.perm_name);
+        p['permission_links'] = links.filter(
+          (l) => l.permission == p.perm_name.toString()
+        );
       }
 
-      this.permission = this.sortPermissions(permissions);
-    },
-    sortPermissions(permissions: Permission[]) {
+      permission.value = sortPermissions(permissions);
+    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sortPermissions = (perm: any[]) => {
       let result: Permission;
-      result = permissions.find((p) => p.perm_name === 'owner');
-      permissions = permissions.filter((p) => p.perm_name !== 'owner');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      result = perm.find((p) => p.perm_name === 'owner');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      perm = perm.filter((p) => p.perm_name !== 'owner');
 
       const getChildren = (parent: Permission, perms: Permission[]) => {
         // Get children
@@ -62,9 +64,15 @@ export default defineComponent({
         return children;
       };
 
-      result.children = getChildren(result, permissions);
+      result.children = getChildren(result, perm);
       return result;
-    }
+    };
+    onMounted(() => {
+      void loadAccountData();
+    });
+    return {
+      permission
+    };
   }
 });
 </script>

@@ -144,7 +144,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     const rexActions = (await api.getActions(account, filter)).actions;
     commit('setRexActions', rexActions);
   },
-  async sendTransaction({ state }, { account, data, name }) {
+  async sendTransaction({ commit, state }, { account, data, name }) {
     let transaction = null;
     const actions = [
       {
@@ -169,8 +169,9 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
           expireSeconds: 180
         }
       );
+      commit('setTransaction', transaction.transactionId);
     } catch (e) {
-      throw e;
+      commit('setTransactionError', e);
     }
     return transaction;
   },

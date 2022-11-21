@@ -1,6 +1,7 @@
 <script lang="ts">
+import { api } from 'src/api';
 import { Token } from 'src/types';
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, ref, toRef } from 'vue';
 export default defineComponent({
   name: 'TokensPanel',
   props: {
@@ -10,39 +11,43 @@ export default defineComponent({
       default: null
     }
   },
-  data() {
-    return {
-      expanded: [],
-      tokens: []
-    };
-  },
-  async mounted() {
-    await this.loadTokens();
-  },
-  methods: {
-    async loadTokens(): Promise<void> {
+  setup(props) {
+    const tokens = ref<Token[]>([]);
+    const account = toRef(props, 'account');
+
+    const loadTokens = async (): Promise<void> => {
       // TODO Refactor redundant getTokens in AccountCard
-      const tokenList = await this.$api.getTokens(this.account);
-      this.tokens = tokenList.map(
+      const tokenList = await api.getTokens(account.value);
+      tokens.value = tokenList.map(
         (token) =>
           ({
             symbol: token.symbol,
             precision: token.precision,
             amount: token.amount,
-            contract: this.formatAccount(token.contract, 'account')
+            contract: formatAccount(token.contract, 'account')
           } as Token)
       );
-      this.tokens = this.tokens.filter(
+      tokens.value = tokens.value.filter(
         (token) => (token as Token).amount !== null
       );
-    },
+    };
     // TODO Refactor duplicate function in TransactionsTable
-    formatAccount(
+    const formatAccount = (
       name: string,
       type: 'account' | 'transaction' | 'block'
-    ): string {
+    ): string => {
       return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
-    }
+    };
+
+    onMounted(async () => {
+      await loadTokens();
+    });
+
+    return {
+      tokens,
+      formatAccount,
+      loadTokens
+    };
   }
 });
 </script>
