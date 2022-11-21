@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
 import { isValidHex } from 'src/utils/stringValidator';
-import { useQuasar } from 'quasar';
+import { QSelect, useQuasar } from 'quasar';
 
 export default defineComponent({
   name: 'HeaderSearch',
@@ -15,6 +15,7 @@ export default defineComponent({
     const inputValue = ref('');
     const options = ref<OptionsObj[]>([]);
     const isLoading = ref(false);
+    const searchSelect = ref<QSelect>();
 
     watch(inputValue, async () => {
       if (inputValue.value === '') {
@@ -189,11 +190,17 @@ export default defineComponent({
       }
     }
 
+    const focusSearch = () => {
+      searchSelect.value.focus();
+    };
+
     return {
       inputValue,
       options,
       isLoading,
-      handleGoTo
+      handleGoTo,
+      searchSelect,
+      focusSearch
     };
   }
 });
@@ -201,6 +208,7 @@ export default defineComponent({
 
 <template lang="pug">
 q-select(
+  ref='searchSelect'
   borderless
   dense
   filled
@@ -214,6 +222,7 @@ q-select(
   :model-value="inputValue"
   @input-value="(value) => inputValue = value"
   @keyup.enter="handleGoTo"
+  @click="focusSearch"
   :options="options"
   :option-disable="(item) => item.isHeader"
 ).search-input
