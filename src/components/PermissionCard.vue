@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, computed, toRefs } from 'vue';
 import { Permission } from 'src/types';
 import KeyToggle from 'src/components/KeyToggle.vue';
 
@@ -21,24 +21,30 @@ export default defineComponent({
       default: false
     }
   },
-  computed: {
-    branchTopClass() {
-      return this.isLast ? 'branch-corner' : 'branch-side-top';
-    },
-    branchBottomClass() {
-      return this.isLast ? '' : 'branch-side';
-    },
-    permissionCardClass() {
-      return this.depth == 0 ? 'owner-permission' : '';
-    }
-  },
-  methods: {
-    formatAccount(
+  setup(props) {
+    const { depth, isLast } = toRefs(props);
+    const branchTopClass = computed(() =>
+      isLast.value ? 'branch-corner' : 'branch-side-top'
+    );
+    const branchBottomClass = computed(() =>
+      isLast.value ? '' : 'branch-side'
+    );
+    const permissionCardClass = computed(() =>
+      depth.value == 0 ? 'owner-permission' : ''
+    );
+    const formatAccount = (
       name: string,
       type: 'account' | 'transaction' | 'block'
-    ): string {
+    ): string => {
       return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
-    }
+    };
+
+    return {
+      branchTopClass,
+      branchBottomClass,
+      permissionCardClass,
+      formatAccount
+    };
   }
 });
 </script>

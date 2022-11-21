@@ -1,7 +1,9 @@
 <script lang="ts">
 import { AccountDetails, Permission, PermissionLinks } from 'src/types';
 import PermissionCard from 'components/PermissionCard.vue';
-import { defineComponent } from 'vue';
+import { computed, defineComponent, onMounted, ref } from 'vue';
+import { api } from 'src/api';
+import { useQuasar } from 'quasar';
 export default defineComponent({
   name: 'KeysPanel',
   components: {
@@ -14,43 +16,36 @@ export default defineComponent({
       default: null
     }
   },
-  data() {
-    return {
-      permission: null
-    };
-  },
-  async mounted() {
-    await this.loadAccountData();
-  },
-  methods: {
-    async loadAccountData(): Promise<void> {
+  setup(props) {
+    const account = computed(() => props.account);
+    const permission = ref<Permission>(null);
+    const $q = useQuasar();
+    const loadAccountData = async (): Promise<void> => {
       let data: AccountDetails;
       try {
-        data = await this.$api.getAccount(this.account);
+        data = await api.getAccount(account.value);
       } catch (e) {
-        this.$q.notify(`Keys for account ${this.account} not found!`);
+        $q.notify(`Keys for account ${account.value} not found!`);
         return;
       }
       const permissions = data.account.permissions;
       let links: PermissionLinks[];
       try {
-        links = await this.$api.getPermissionLinks(this.account);
+        links = await api.getPermissionLinks(account.value);
       } catch (e) {
-        this.$q.notify(
-          `Permission links for account ${this.account} not found!`
-        );
+        $q.notify(`Permission links for account ${account.value} not found!`);
         return;
       }
       for (let p of permissions) {
         p.permission_links = links.filter((l) => l.permission == p.perm_name);
       }
 
-      this.permission = this.sortPermissions(permissions);
-    },
-    sortPermissions(permissions: Permission[]) {
+      permission.value = sortPermissions(permissions);
+    };
+    const sortPermissions = (perm: Permission[]) => {
       let result: Permission;
-      result = permissions.find((p) => p.perm_name === 'owner');
-      permissions = permissions.filter((p) => p.perm_name !== 'owner');
+      result = perm.find((p) => p.perm_name === 'owner');
+      perm = perm.filter((p) => p.perm_name !== 'owner');
 
       const getChildren = (parent: Permission, perms: Permission[]) => {
         // Get children
@@ -62,9 +57,15 @@ export default defineComponent({
         return children;
       };
 
-      result.children = getChildren(result, permissions);
+      result.children = getChildren(result, perm);
       return result;
-    }
+    };
+    onMounted(() => {
+      void loadAccountData();
+    });
+    return {
+      permission
+    };
   }
 });
 </script>

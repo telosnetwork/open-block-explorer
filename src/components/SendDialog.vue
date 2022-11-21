@@ -1,11 +1,13 @@
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
-import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
 
 import { getChain } from 'src/config/ConfigManager';
+import { useStore } from 'src/store';
+import { useRouter } from 'vue-router';
+import { mapActions } from 'vuex';
 
 const chain = getChain();
 
@@ -14,115 +16,124 @@ export default defineComponent({
   components: {
     CoinSelectorDialog
   },
-  data() {
-    return {
-      sendToken: {
-        symbol: chain.getSymbol(),
-        precision: 4,
-        amount: 0,
-        contract: 'eosio.token'
-      } as Token,
-      transactionId: null,
-      transactionError: null,
-      sendDialog: false
-    };
-  },
   props: {
     availableTokens: {
       type: Array as PropType<Token[]>,
       required: true
     }
   },
-  setup() {
-    return {
-      openCoinDialog: ref<boolean>(false),
-      recievingAccount: ref<string>(''),
-      sendAmount: ref<string>(''),
-      memo: ref<string>(''),
-      ...mapActions({ signTransaction: 'account/sendTransaction' })
-    };
-  },
-  computed: {
-    ...mapGetters({ account: 'account/accountName' }),
-    transactionForm(): boolean {
-      return !(this.transactionError || this.transactionId);
-    },
-    validated(): boolean {
-      return (
-        parseFloat(this.sendAmount) > 0 && this.recievingAccount.length > 0
-      );
-    }
-  },
-  methods: {
-    isValidAccount,
-    async sendTransaction(): Promise<void> {
-      const actionAccount = this.sendToken.contract;
+  setup(props) {
+    const store = useStore();
+    const router = useRouter();
+    const sendToken = ref<Token>({
+      symbol: chain.getSymbol(),
+      precision: 4,
+      amount: 0,
+      contract: 'eosio.token'
+    });
+    const availableTokens = toRef(props, 'availableTokens');
+    const account = computed(() => store.state.account.accountName);
+    const transactionId = computed(
+      (): string => store.state.account.TransactionId
+    );
+    const transactionError = computed(
+      () => store.state.account.TransactionError
+    );
+    const sendDialog = ref<boolean>(false);
+    const openCoinDialog = ref<boolean>(false);
+    const recievingAccount = ref<string>('');
+    const sendAmount = ref<string>('');
+    const memo = ref<string>('');
+
+    const transactionForm = computed(
+      () => !(transactionError.value || transactionId.value)
+    );
+    const validated = computed(
+      () =>
+        parseFloat(sendAmount.value) > 0 && recievingAccount.value.length > 0
+    );
+    const sendTransaction = async (): Promise<void> => {
+      void store.dispatch('account/resetTransaction');
+      const actionAccount = sendToken.value.contract;
       const data = {
-        from: this.account as string,
-        to: this.recievingAccount,
-        quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
-        memo: this.memo
+        from: account.value,
+        to: recievingAccount.value,
+        quantity: `${sendAmount.value} ${sendToken.value.symbol}`,
+        memo: memo.value
       };
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.transactionId = (
-          await this.signTransaction({
-            account: actionAccount,
-            data,
-            name: 'transfer'
-          })
-        ).transactionId as string;
-        this.$store.commit('account/setTransaction', this.transactionId);
-      } catch (e) {
-        this.transactionError = e;
-        this.$store.commit('account/setTransactionError', e);
-        this.resetForm();
-      }
-    },
-    setDefaults() {
-      this.transactionError = null;
-      if (this.availableTokens.length > 0) {
-        this.sendToken = this.availableTokens.find((token) => {
-          return token.symbol === this.sendToken.symbol;
+      await store.dispatch('account/sendTransaction', {
+        account: actionAccount,
+        data,
+        name: 'transfer'
+      });
+      void resetForm();
+    };
+    const setDefaults = () => {
+      void store.dispatch('account/resetTransaction');
+      if (availableTokens.value.length > 0) {
+        sendToken.value = availableTokens.value.find((token) => {
+          return token.symbol === sendToken.value.symbol;
         });
       }
-    },
-    updateSelectedCoin(token: Token): void {
-      this.sendToken = token;
-    },
-    resetForm() {
-      this.transactionId = null;
-      this.sendToken = {
+    };
+    const updateSelectedCoin = (token: Token): void => {
+      sendToken.value = token;
+    };
+    const resetForm = () => {
+      sendToken.value = {
         symbol: chain.getSymbol(),
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
       };
-    },
-    async navToTransaction() {
-      await this.$router.push({
+    };
+    const navToTransaction = async () => {
+      await router.push({
         name: 'transaction',
-        params: { transaction: this.transactionId as string }
+        params: { transaction: transactionId.value }
       });
-      this.$router.go(0);
-    },
-    formatDec() {
-      let amount = Number(this.sendAmount);
-      if (this.sendAmount != '') {
-        this.sendAmount = amount
+      router.go(0);
+      void store.dispatch('account/resetTransaction');
+    };
+    const formatDec = () => {
+      let amount = Number(sendAmount.value);
+      if (sendAmount.value != '') {
+        sendAmount.value = amount
           .toLocaleString('en-US', {
             style: 'decimal',
-            maximumFractionDigits: this.sendToken.precision,
-            minimumFractionDigits: this.sendToken.precision
+            maximumFractionDigits: sendToken.value.precision,
+            minimumFractionDigits: sendToken.value.precision
           })
           .replace(/,/g, '');
       }
-      this.sendAmount = this.sendAmount.replace(/[^0-9.]/g, '');
-    },
-    setMaxValue() {
-      this.sendAmount = (this.sendToken.amount - 0.1).toString();
-      void this.formatDec();
-    }
+      sendAmount.value = sendAmount.value.replace(/[^0-9.]/g, '');
+    };
+    const setMaxValue = () => {
+      sendAmount.value = (sendToken.value.amount - 0.1).toString();
+      void formatDec();
+    };
+
+    return {
+      sendToken,
+      transactionId,
+      transactionError,
+      sendDialog,
+      openCoinDialog,
+      recievingAccount,
+      sendAmount,
+      memo,
+      transactionForm,
+      account,
+      validated,
+      setDefaults,
+      updateSelectedCoin,
+      setMaxValue,
+      navToTransaction,
+      sendTransaction,
+      isValidAccount,
+      formatDec,
+      ...mapActions({ signTransaction: 'account/sendTransaction' })
+    };
   }
 });
 </script>
@@ -180,7 +191,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
             .row
               .col-12
                 .row Transaction Failed: {{ transactionError }}
-          q-btn.close-dialog( v-close-popup label='Close')
+          q-btn.close-dialog( v-close-popup label='Close' @click='setDefaults')
     CoinSelectorDialog(:updateSelectedCoin="updateSelectedCoin" v-model="openCoinDialog" :availableTokens="availableTokens")
 </template>
 
