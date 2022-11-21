@@ -1,7 +1,7 @@
-import { Authorization, AccountDetails, Action, Rexbal, ABI } from 'src/types';
+import { Authorization, Action, Rexbal, ABI } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { User } from 'universal-authenticator-library';
-import { API } from '@greymass/eosio';
+import { API, Name, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
 
@@ -19,7 +19,7 @@ export interface AccountStateInterface {
   TransactionId: string;
   TransactionError: unknown;
   rexbal: Rexbal;
-  vote: string[];
+  vote: Name[];
   abi: ABI;
   coreRexBalance: string;
   maturingRex: string;
@@ -60,7 +60,7 @@ export function state(): AccountStateInterface {
       // /** Account created as unix timestamp. */
       // created: TimePoint;
       /** Account core token balance */
-      core_liquid_balance: '0.0000'
+      core_liquid_balance: UInt64.from(0)
       // ram_quota: Int64;
       // net_weight: Int64;
       // cpu_weight: Int64;

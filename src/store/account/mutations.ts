@@ -1,10 +1,11 @@
 import { MutationTree } from 'vuex';
 import { AccountStateInterface } from './state';
-import { AccountDetails, Action, Rexbal, ABI } from 'src/types';
+import { Action, Rexbal, ABI } from 'src/types';
 import { User } from 'universal-authenticator-library';
 import { markRaw } from 'vue';
 
 import { getChain } from 'src/config/ConfigManager';
+import { API, Name } from '@greymass/eosio';
 
 const symbol = getChain().getSymbol();
 
@@ -18,9 +19,12 @@ export const mutations: MutationTree<AccountStateInterface> = {
   setAutoLogin(state: AccountStateInterface, status: string) {
     state.autoLogin = status;
   },
-  setAccountData(state: AccountStateInterface, AccountData: AccountDetails) {
+  setAccountData(
+    state: AccountStateInterface,
+    AccountData: API.v1.AccountObject
+  ) {
     state.data = AccountData;
-    state.vote = AccountData.account?.voter_info?.producers || [];
+    state.vote = AccountData?.voter_info?.producers || [];
   },
   setTransaction(state: AccountStateInterface, TransactionId: string) {
     state.TransactionId = TransactionId;
@@ -47,7 +51,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
     state.maturingRex = `${params.maturingRex.toFixed(4)} ${symbol}`;
     state.savingsRex = `${params.savingsRex.toFixed(4)} ${symbol}`;
   },
-  setVote(state: AccountStateInterface, vote: string[]) {
+  setVote(state: AccountStateInterface, vote: Name[]) {
     state.vote = vote.sort();
   },
   setABI(state: AccountStateInterface, abi: ABI) {
