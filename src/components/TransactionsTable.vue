@@ -1,10 +1,20 @@
 <script lang="ts">
 import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
-import { defineComponent, PropType } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  PropType,
+  ref,
+  toRefs,
+  watch
+} from 'vue';
 import DateField from 'src/components/DateField.vue';
 import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 import ActionFormat from 'src/components/Transaction/ActionFormat.vue';
 import DataFormat from 'src/components/Transaction/DataFormat.vue';
+import { api } from 'src/api';
 
 const FIVE_SECONDS = 5000;
 
@@ -28,189 +38,208 @@ export default defineComponent({
       default: null
     }
   },
-  data() {
-    return {
-      columns: [
-        {
-          name: 'transaction',
-          required: true,
-          label: 'TRANSACTION',
-          align: 'left',
-          field: 'transaction',
-          sortable: true
-        },
-        {
-          name: 'timestamp',
-          required: true,
-          align: 'left',
-          label: 'TIMESTAMP',
-          field: 'timestamp',
-          sortable: true
-        },
-        {
-          name: 'action',
-          required: true,
-          align: 'left',
-          label: 'ACTION',
-          field: 'action',
-          sortable: true
-        },
-        {
-          name: 'data',
-          required: true,
-          align: 'left',
-          label: 'DATA',
-          field: 'data'
-        }
-      ],
-      rows: [] as TransactionTableRow[],
-      filteredRows: [] as TransactionTableRow[],
-      expanded: [],
-      loading: false,
-      paginationSettings: {
-        sortBy: 'timestamp',
-        descending: true,
-        page: 1,
-        rowsPerPage: 10,
-        rowsNumber: 10000
-      } as PaginationSettings,
-      fromDateFilter: '',
-      toDateFilter: new Date().toLocaleString(),
-      actionsFilter: '',
-      tokenFilter: '',
-      interval: null,
-      showAge: localStorage.getItem('showAge') === 'true'
-    };
-  },
-  async mounted() {
-    await this.loadTableData();
-    this.interval = window.setInterval(() => {
-      //only automatically refresh data on first page, disable on page navigation
-      if (this.account == null && this.paginationSettings.page === 1)
-        void this.loadTableData();
-    }, FIVE_SECONDS);
-  },
-  beforeUnmount() {
-    clearInterval(this.interval);
-  },
-  watch: {
-    async account() {
-      await this.loadTableData();
-    },
-    async actions() {
-      await this.loadTableData();
-    },
-    filter() {
-      void this.filterRows();
-    },
-    showAge(val) {
-      localStorage.setItem('showAge', val);
-    }
-  },
-  computed: {
-    isTransaction(): boolean {
-      return this.account != null && this.account.length > 12;
-    },
-    tableTitle(): string {
-      return this.isTransaction ? 'Actions' : 'Latest Transactions';
-    },
-    hasPages(): boolean {
-      return this.rows.length >= this.paginationSettings.rowsPerPage;
-    },
-    noData(): boolean {
-      return this.rows.length === 0;
-    },
-    hasActions(): boolean {
-      return this.actions != null;
-    },
-    filter() {
+  setup(props) {
+    const { account, actions } = toRefs(props);
+    const columns = [
+      {
+        name: 'transaction',
+        required: true,
+        label: 'TRANSACTION',
+        align: 'left',
+        field: 'transaction',
+        sortable: true
+      },
+      {
+        name: 'timestamp',
+        required: true,
+        align: 'left',
+        label: 'TIMESTAMP',
+        field: 'timestamp',
+        sortable: true
+      },
+      {
+        name: 'action',
+        required: true,
+        align: 'left',
+        label: 'ACTION',
+        field: 'action',
+        sortable: true
+      },
+      {
+        name: 'data',
+        required: true,
+        align: 'left',
+        label: 'DATA',
+        field: 'data'
+      }
+    ];
+    const rows = ref<TransactionTableRow[]>([]);
+    const filteredRows = ref<TransactionTableRow[]>([]);
+    const expanded = ref<boolean[]>([]);
+    const loading = ref<boolean>(false);
+    const paginationSettings = ref<PaginationSettings>({
+      sortBy: 'timestamp',
+      descending: true,
+      page: 1,
+      rowsPerPage: 10,
+      rowsNumber: 10000
+    });
+    const fromDateFilter = ref('');
+    const toDateFilter = ref<string>(new Date().toLocaleString());
+    const actionsFilter = ref('');
+    const tokenFilter = ref('');
+    const interval = ref<number>(null);
+    const showAge = ref<boolean>(localStorage.getItem('showAge') === 'true');
+
+    const isTransaction = computed(
+      () => account.value != null && account.value.length > 12
+    );
+    const tableTitle = computed(() =>
+      isTransaction.value ? 'Actions' : 'Latest Transactions'
+    );
+
+    const hasPages = computed(
+      () => rows.value.length >= paginationSettings.value.rowsPerPage
+    );
+    const noData = computed(() => rows.value.length === 0);
+    const hasActions = computed(() => actions.value != null);
+    const filter = computed(() => {
       return {
-        actions: this.actionsFilter,
-        toDate: this.toDateFilter,
-        fromDate: this.fromDateFilter,
-        token: this.tokenFilter
+        actions: actionsFilter.value,
+        toDate: toDateFilter.value,
+        fromDate: fromDateFilter.value,
+        token: tokenFilter.value
       };
-    }
-  },
-  methods: {
-    async loadTableData(): Promise<void> {
+    });
+
+    const loadTableData = async (): Promise<void> => {
       let tableData: Action[];
-      if (this.isTransaction) {
-        tableData = (await this.$api.getTransaction(this.account)).actions;
-      } else if (this.hasActions) {
-        tableData = this.actions;
+      if (isTransaction.value) {
+        tableData = (await api.getTransaction(account.value)).actions;
+      } else if (hasActions.value) {
+        tableData = actions.value;
       } else {
         tableData =
-          this.account == null
-            ? await this.$api.getTransactions(
-                this.paginationSettings.page,
-                this.paginationSettings.rowsPerPage
+          account.value == null
+            ? await api.getTransactions(
+                paginationSettings.value.page,
+                paginationSettings.value.rowsPerPage
               )
-            : await this.$api.getTransactions(
-                this.paginationSettings.page,
-                this.paginationSettings.rowsPerPage,
-                this.account
+            : await api.getTransactions(
+                paginationSettings.value.page,
+                paginationSettings.value.rowsPerPage,
+                account.value
               );
       }
       if (tableData) {
-        this.rows = tableData.map(
+        rows.value = tableData.map(
           (tx) =>
             ({
               name: tx.trx_id,
               transaction: { id: tx.trx_id, type: 'transaction' },
               timestamp: tx['@timestamp'],
               action: tx,
-              data: this.hasActions
+              data: hasActions.value
                 ? { data: tx.data, name: tx.account }
                 : { data: tx.act.data, name: tx.act.name }
             } as TransactionTableRow)
         );
       }
-      void this.filterRows();
-    },
-    async onRequest(props: {
+      void filterRows();
+    };
+
+    const onRequest = async (props: {
       pagination: {
         page: number;
         rowsPerPage: number;
         sortBy: string;
         descending: boolean;
       };
-    }) {
-      this.loading = true;
+    }) => {
+      loading.value = true;
       const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      this.paginationSettings.page = page;
-      this.paginationSettings.rowsPerPage = rowsPerPage;
-      this.paginationSettings.sortBy = sortBy;
-      this.paginationSettings.descending = descending;
-      await this.loadTableData();
-      this.loading = false;
-    },
-    checkIsMultiLine(data: string): boolean {
+      paginationSettings.value.page = page;
+      paginationSettings.value.rowsPerPage = rowsPerPage;
+      paginationSettings.value.sortBy = sortBy;
+      paginationSettings.value.descending = descending;
+      await loadTableData();
+      loading.value = false;
+    };
+
+    const checkIsMultiLine = (data: string): boolean => {
       return data.length > 0 && data.split('\n').length > 1;
-    },
-    updateExpanded(newExpanded: string[]) {
+    };
+
+    const updateExpanded = (newExpanded: string[]) => {
       if (newExpanded.length > 1) {
         newExpanded.shift();
       }
-    },
-    filterRows() {
-      this.filteredRows = this.rows.filter((row) =>
-        row.action.act.name.includes(this.actionsFilter)
+    };
+
+    const filterRows = () => {
+      filteredRows.value = rows.value.filter((row) =>
+        row.action.act.name.includes(actionsFilter.value)
       );
-      this.filteredRows = this.filteredRows.filter((row) =>
-        JSON.stringify(row.data).includes(this.tokenFilter.toUpperCase())
+      filteredRows.value = filteredRows.value.filter((row) =>
+        JSON.stringify(row.data).includes(tokenFilter.value.toUpperCase())
       );
-      if (!!this.fromDateFilter && !!this.toDateFilter) {
-        this.filteredRows = this.filteredRows.filter((item) => {
+      if (!!fromDateFilter.value && !!toDateFilter.value) {
+        filteredRows.value = filteredRows.value.filter((item) => {
           return (
             new Date(item.timestamp).getTime() >=
-              new Date(this.fromDateFilter).getTime() &&
+              new Date(fromDateFilter.value).getTime() &&
             new Date(item.timestamp).getTime() <=
-              new Date(this.toDateFilter).getTime()
+              new Date(toDateFilter.value).getTime()
           );
         });
       }
-    }
+    };
+
+    onMounted(async () => {
+      await loadTableData();
+      interval.value = window.setInterval(() => {
+        //only automatically refresh data on first page, disable on page navigation
+        if (account.value == null && paginationSettings.value.page === 1)
+          void loadTableData();
+      }, FIVE_SECONDS);
+    });
+    onBeforeUnmount(() => {
+      clearInterval(interval.value);
+    });
+    watch([account, actions], () => {
+      void loadTableData();
+    });
+    watch(filter, () => {
+      void filterRows();
+    });
+    watch(showAge, (val) => {
+      localStorage.setItem('showAge', val ? 'true' : 'false');
+    });
+
+    return {
+      columns,
+      rows,
+      filteredRows,
+      expanded,
+      loading,
+      paginationSettings,
+      fromDateFilter,
+      toDateFilter,
+      actionsFilter,
+      tokenFilter,
+      interval,
+      showAge,
+      tableTitle,
+      hasPages,
+      noData,
+      hasActions,
+      filter,
+      onRequest,
+      loadTableData,
+      checkIsMultiLine,
+      updateExpanded,
+      filterRows
+    };
   }
 });
 </script>
