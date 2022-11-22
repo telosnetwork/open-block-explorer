@@ -4,7 +4,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token, Refund } from 'src/types';
+import { Token, Refund } from 'src/types';
+import { API } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'ResourcesInfo',
@@ -16,7 +17,7 @@ export default defineComponent({
     const netTokens = ref<string>('0.0000');
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const ramPrice = computed((): string => {
@@ -26,33 +27,21 @@ export default defineComponent({
     });
     const ramAvailable = computed(
       () =>
-        store.state.account.data.account.ram_quota -
-        store.state.account.data.account.ram_usage
+        Number(store.state.account.data.ram_quota) -
+        Number(store.state.account.data.ram_usage)
     );
     const delegatedResources = computed(() => {
       return (
+        Number(store.state.account.data.total_resources.cpu_weight) +
+        Number(store.state.account.data.total_resources.net_weight) -
         Number(
-          store.state.account.data.account.total_resources.cpu_weight.split(
-            ' '
-          )[0]
-        ) +
-        Number(
-          store.state.account.data.account.total_resources.net_weight.split(
-            ' '
-          )[0]
-        ) -
-        Number(
-          store.state.account.data.account?.self_delegated_bandwidth?.net_weight
-            ? store.state.account.data.account.self_delegated_bandwidth.net_weight.split(
-                ' '
-              )[0]
+          store.state.account.data.self_delegated_bandwidth?.net_weight
+            ? store.state.account.data.self_delegated_bandwidth.net_weight
             : '0'
         ) -
         Number(
-          store.state.account.data.account?.self_delegated_bandwidth?.cpu_weight
-            ? store.state.account.data.account.self_delegated_bandwidth.cpu_weight.split(
-                ' '
-              )[0]
+          store.state.account.data.self_delegated_bandwidth?.cpu_weight
+            ? store.state.account.data.self_delegated_bandwidth.cpu_weight
             : '0'
         )
       );

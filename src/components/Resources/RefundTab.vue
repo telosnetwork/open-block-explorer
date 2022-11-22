@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import { AccountDetails, Token, Refund } from 'src/types';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
+import { API } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'RefundTab',
@@ -17,7 +18,7 @@ export default defineComponent({
     const total = ref<string>('0.0000');
     const progress = ref<number>(0.2);
     const token = computed((): Token => store.state.chain.token);
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
 
@@ -52,7 +53,7 @@ export default defineComponent({
         Math.round(
           new Date(
             new Date(
-              accountData.value.account?.refund_request?.request_time + 'Z'
+              accountData.value.refund_request?.request_time.toString() + 'Z'
             ).toUTCString()
           ).getTime() / 1000
         ) +
@@ -67,7 +68,7 @@ export default defineComponent({
         Math.round(
           new Date(
             new Date(
-              accountData.value.account?.refund_request?.request_time + 'Z'
+              accountData.value?.refund_request?.request_time.toString() + 'Z'
             )
           ).getTime() / 1000
         ) +
@@ -109,7 +110,7 @@ export default defineComponent({
     async sendTransaction(): Promise<void> {
       this.transactionError = '';
       const data = {
-        owner: this.accountData.account.account_name,
+        owner: this.accountData.account_name,
         transfer: false
       };
       try {

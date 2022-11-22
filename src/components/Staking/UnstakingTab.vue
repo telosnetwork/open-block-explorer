@@ -2,8 +2,8 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { API } from '@greymass/eosio';
 
 const chain = getChain();
 
@@ -23,11 +23,11 @@ export default defineComponent({
     const transactionError = computed(
       () => store.state.account.TransactionError
     );
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const rexInfo = computed(() => {
-      return store.state.account.data.account.rex_info;
+      return store.state.account.data.rex_info;
     });
     const rexbal = computed(() => {
       return store.state.account.rexbal;

@@ -21,11 +21,11 @@ export default defineComponent({
     const stakingAccount = ref<string>(store.state.account.accountName || '');
     const cpuTokens = ref<string>('');
     const netTokens = ref<string>('');
-    const netStake = computed(
-      (): string => store.state.account.data.account.total_resources.net_weight
+    const netStake = computed((): string =>
+      store.state.account.data.total_resources.net_weight.toString()
     );
-    const cpuStake = computed(
-      (): string => store.state.account.data.account.total_resources.cpu_weight
+    const cpuStake = computed((): string =>
+      store.state.account.data.total_resources.cpu_weight.toString()
     );
 
     function formatDec() {

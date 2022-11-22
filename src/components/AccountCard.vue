@@ -13,7 +13,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
-import { API, Asset, UInt64 } from '@greymass/eosio';
+import { API, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
 export default defineComponent({
@@ -263,6 +263,7 @@ export default defineComponent({
     };
 
     const formatTotalRefund = (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       refund: any /*AccountRefundRequest */
     ): UInt64 => {
       const totalRefund =

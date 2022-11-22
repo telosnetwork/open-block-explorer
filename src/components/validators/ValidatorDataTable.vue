@@ -3,7 +3,7 @@ import { defineComponent, computed, ref, PropType } from 'vue';
 import moment from 'moment';
 import { useStore } from 'src/store';
 import { Producer } from 'src/types';
-import { useRoute } from 'vue-router';
+// import { useRoute } from 'vue-router';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain = getChain();
@@ -22,8 +22,8 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    const route = useRoute();
-    const query = route.query;
+    // const route = useRoute();
+    // const query = route.query;
     const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
     const producers = computed(() =>
@@ -31,11 +31,12 @@ export default defineComponent({
     );
     const currentVote = computed(() => {
       let votes = [...store.state.account.vote];
-      if (query['vote']) {
-        return votes.concat(query['vote'] as string);
-      }
+      //@TODO
+      // if (query['vote']) {
+      //   return votes.concat(query['vote'] as string);
+      // }
       votes.forEach((vote, index) => {
-        if (!producers.value.includes(vote)) {
+        if (!producers.value.toString().includes(vote.value.toString())) {
           votes.splice(index, 1);
         }
       });

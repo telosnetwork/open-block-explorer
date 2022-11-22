@@ -2,8 +2,8 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { API } from '@greymass/eosio';
 
 const chain = getChain();
 
@@ -23,11 +23,11 @@ export default defineComponent({
     const transactionError = computed(
       () => store.state.account.TransactionError
     );
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const rexInfo = computed(() => {
-      return store.state.account.data.account.rex_info;
+      return store.state.account.data.rex_info;
     });
     const rexbal = computed(() => {
       return store.state.account.rexbal;
@@ -54,7 +54,7 @@ export default defineComponent({
       if (
         stakeTokens.value === '0.0000' ||
         Number(stakeTokens.value) >=
-          Number(accountData.value.account.core_liquid_balance.split(' ')[0])
+          Number(accountData.value.core_liquid_balance.toString())
       ) {
         return;
       }
@@ -77,7 +77,7 @@ export default defineComponent({
 
     function setMaxValue() {
       stakeTokens.value = (
-        assetToAmount(accountData.value.account.core_liquid_balance) - 0.1
+        assetToAmount(accountData.value.core_liquid_balance.toString()) - 0.1
       ).toString();
       void formatDec();
     }

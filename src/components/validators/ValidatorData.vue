@@ -6,8 +6,9 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
-import { useRoute } from 'vue-router';
+// import { useRoute } from 'vue-router';
 import { getChain } from 'src/config/ConfigManager';
+// import { Name } from '@greymass/eosio';
 
 const chain = getChain();
 
@@ -20,15 +21,15 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const route = useRoute();
-    const query = route.query;
+    // const route = useRoute(); //@TODO restore if nec
+    // const query = route.query; //@TODO restore if nec
     const symbol = chain.getSymbol();
     const account = computed(() => store.state.account.accountName);
     const balance = computed(
       () =>
         (Number(
-          store.state.account.data?.account?.voter_info?.last_stake
-            ? store.state.account.data?.account.voter_info.last_stake / 10000
+          store.state.account.data?.voter_info?.staked
+            ? store.state.account.data?.voter_info.staked.value / 10000
             : 0
         ).toFixed(2) || '0') + ` ${symbol}`
     );
@@ -40,9 +41,10 @@ export default defineComponent({
     const producerVotes = ref<string[]>([]);
     const currentVote = computed(() => {
       let votes = store.state.account.vote;
-      if (query['vote']) {
-        return votes.concat(query['vote'] as string);
-      }
+      //@TODO test/restore if nec
+      // if (query['vote']) {
+      //   return votes.concat(query['vote']);
+      // }
       return votes;
     });
     const showCpu = ref<boolean>(false);

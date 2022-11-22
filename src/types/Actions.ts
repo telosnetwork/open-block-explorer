@@ -1,4 +1,4 @@
-import { API } from "@greymass/eosio";
+import { API } from '@greymass/eosio';
 
 export interface ActionData {
   actions: Action[];

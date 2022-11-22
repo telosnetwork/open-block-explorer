@@ -4,8 +4,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { API } from '@greymass/eosio';
+import { Token } from 'src/types';
 
 const chain = getChain();
 
@@ -17,11 +18,11 @@ export default defineComponent({
     const stakingAccount = ref<string>('');
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state.account.data;
     });
     const rexInfo = computed(() => {
-      return store.state?.account.data.account.rex_info;
+      return store.state?.account.data.rex_info;
     });
     const maturingRex = computed(() => {
       return store.state?.account.maturingRex;

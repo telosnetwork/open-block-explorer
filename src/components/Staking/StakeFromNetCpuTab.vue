@@ -2,8 +2,8 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { API } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'StakeFromNetCpu',
@@ -24,7 +24,7 @@ export default defineComponent({
     const netWithdraw = ref<string>('0.0000');
     const transactionId = ref<string>(store.state.account.TransactionId);
     const transactionError = ref<unknown>(store.state.account.TransactionError);
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
 
@@ -54,9 +54,11 @@ export default defineComponent({
       if (
         (cpuTokens.value === '0.0000' && netTokens.value === '0.0000') ||
         Number(cpuTokens.value) >=
-          assetToAmount(accountData.value.account.total_resources.cpu_weight) ||
+          assetToAmount(
+            accountData.value.total_resources.cpu_weight.toString()
+          ) ||
         Number(netTokens.value) >=
-          assetToAmount(accountData.value.account.total_resources.net_weight)
+          assetToAmount(accountData.value.total_resources.net_weight.toString())
       ) {
         return;
       }
@@ -92,14 +94,14 @@ export default defineComponent({
 
     function setMaxNetValue() {
       netTokens.value = assetToAmount(
-        accountData.value.account.total_resources.net_weight
+        accountData.value.total_resources.net_weight.toString()
       ).toString();
       void formatDec();
     }
 
     function setMaxCpuValue() {
       cpuTokens.value = assetToAmount(
-        accountData.value.account.total_resources.cpu_weight
+        accountData.value.total_resources.cpu_weight.toString()
       ).toString();
       void formatDec();
     }
