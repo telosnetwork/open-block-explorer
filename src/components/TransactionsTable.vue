@@ -294,19 +294,39 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           q-space
           .col
             q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
-        template( v-slot:body-cell-transaction="props")
-          q-td( :props="props" )
-            AccountFormat(:account="props.value.id" :type="props.value.type")
-        template( v-slot:body-cell-timestamp="props")
-          q-td( :props="props" )
-            DateField( :timestamp="props.value", :showAge='showAge' )
-        template( v-slot:body-cell-action="props")
-          q-td( :props="props" )
-            .row.justify-left.text-weight-light
-              ActionFormat(:action="props.value")
-        template( v-slot:body-cell-data="props")
-          q-td( :props="props"  )
-            DataFormat(:actionData="props.value.data" :actionName="props.value.name ")
+        template(v-slot:header="props")
+          q-tr(:props="props")
+            q-th(auto-width)
+
+            q-th(
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+            ) {{ col.label }}
+        template( v-slot:body="props")
+          q-tr(:props='props')
+            q-td(auto-width)
+              q-toggle(v-model="props.expand" checked-icon="add" unchecked-icon="remove")
+            q-td(auto-width)
+              AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
+            q-td(auto-width)
+              DateField( :timestamp="props.row.timestamp", :showAge='showAge' )
+            q-td(auto-width)
+              .row.justify-left.text-weight-light
+                ActionFormat(:action="props.row.action")
+            q-td(auto-width)
+              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name ")
+          q-tr(v-show="props.expand" :props="props")
+            q-tr(:props='props')
+              q-td(auto-width)
+                AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
+              q-td(auto-width)
+                DateField( :timestamp="props.row.timestamp", :showAge='showAge' )
+              q-td(auto-width)
+                .row.justify-left.text-weight-light
+                  ActionFormat(:action="props.row.action")
+              q-td
+                DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name ")
         template( v-slot:pagination="scope")
           div.row.col-12.q-mt-md.q-mb-xl()
           div.col-1(align="left")
@@ -328,20 +348,22 @@ $medium:750px
 
 .fixed-layout
   .q-table
-    min-width: 1000px
+    min-width: 1300px
     table-layout: fixed
     tbody td
       vertical-align: text-top
     tbody td:first-child
       word-break: break-all
     th:first-child
-      width: 12%
+      width: 8%
     th:nth-child(2)
-      width: 15%
+      width: 12%
     th:nth-child(3)
-      width: 25%
+      width: 15%
     th:nth-child(4)
-      width: 48%
+      width: 25%
+    th:nth-child(5)
+      width: 40%
 
 .q-table--no-wrap td
   word-break: break-all
