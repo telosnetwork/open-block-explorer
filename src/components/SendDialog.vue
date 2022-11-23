@@ -132,6 +132,7 @@ export default defineComponent({
       sendTransaction,
       isValidAccount,
       formatDec,
+      resetForm,
       ...mapActions({ signTransaction: 'account/sendTransaction' })
     };
   }
