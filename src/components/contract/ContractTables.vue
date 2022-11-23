@@ -120,16 +120,16 @@ q-card(
     .row.q-py-md.q-col-gutter-md
       .col-xs-6.col-sm-3
         .text-bold.q-pb-sm Scope
-        q-input(outlined @blur="getRows"  dense v-model="scope" style="background: #ffffff")
+        q-input(outlined @keydown.enter.prevent="getRows" @blur="getRows"  dense v-model="scope" style="background: #ffffff")
       .col-xs-6.col-sm-3
         .text-bold.q-pb-sm Lower Bound
-        q-input(outlined @blur="getRows" v-model="lower" dense style="background: #ffffff")
+        q-input(outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="lower" dense style="background: #ffffff")
       .col-xs-6.col-sm-3
         .text-bold.q-pb-sm Upper Bound
-        q-input(outlined @blur="getRows" v-model="upper" dense style="background: #ffffff")
+        q-input(outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="upper" dense style="background: #ffffff")
       .col-xs-6.col-sm-3
         .text-bold.q-pb-sm Limit
-        q-input(outlined @blur="getRows" v-model="limit" dense style="background: #ffffff")
+        q-input(outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="limit" dense style="background: #ffffff")
 
   q-card-section.q-pt-none
     q-table(
