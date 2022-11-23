@@ -80,7 +80,6 @@ export default defineComponent({
     ];
     const rows = ref<TransactionTableRow[]>([]);
     const filteredRows = ref<TransactionTableRow[]>([]);
-    const expanded = ref<boolean[]>([]);
     const loading = ref<boolean>(false);
     const paginationSettings = ref<PaginationSettings>({
       sortBy: 'timestamp',
@@ -186,9 +185,8 @@ export default defineComponent({
         });
         rows.value = Array.from(
           map,
-          ([tx_id, value]) => value as TransactionTableRow
+          ([, value]) => value as TransactionTableRow
         );
-        console.log(rows.value);
       }
       void filterRows();
     };
@@ -213,12 +211,6 @@ export default defineComponent({
 
     const checkIsMultiLine = (data: string): boolean => {
       return data.length > 0 && data.split('\n').length > 1;
-    };
-
-    const updateExpanded = (newExpanded: string[]) => {
-      if (newExpanded.length > 1) {
-        newExpanded.shift();
-      }
     };
 
     const filterRows = () => {
@@ -265,7 +257,6 @@ export default defineComponent({
       columns,
       rows,
       filteredRows,
-      expanded,
       loading,
       paginationSettings,
       fromDateFilter,
@@ -282,7 +273,6 @@ export default defineComponent({
       onRequest,
       loadTableData,
       checkIsMultiLine,
-      updateExpanded,
       filterRows
     };
   }
@@ -356,9 +346,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         :loading="loading"
         table-header-class="table-header"
         v-model:pagination="paginationSettings"
-        v-model:expanded="expanded"
         :hide-pagination="noData"
-        @update:expanded='updateExpanded'
         @request='onRequest'
         :rows-per-page-options='[ 10, 20, 50, 100, 200]'
         )
@@ -379,21 +367,24 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             ) {{ col.label }}
         template( v-slot:body="props")
           q-tr(:props='props')
-            q-td(auto-width)
-              q-toggle(v-model="props.expand" checked-icon="add" unchecked-icon="remove")
+            q-td.items-center(auto-width)
+              q-btn( v-if='props.row.actions.length > 1' flat size="sm" :icon="props.expand ? 'expand_less' : 'expand_more'" @click="props.expand = !props.expand")
             q-td
               AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
             q-td
               DateField( :timestamp="props.row.timestamp", :showAge='showAge' )
             q-td
-              .row.justify-left.text-weight-light
-                ActionFormat(:action="props.row.action")
+              .row.justify-left.text-weight-light(v-for='action in props.row.actions')
+                .col-auto
+                  .q-pt-xs
+                    ActionFormat(:action="action.action")
             q-td
-              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name ")
-          q-tr(v-show="props.expand" :props="props" v-for='action in props.row.actions')
+              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1')
+
+          q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
             q-td(auto-width)
             q-td
-              AccountFormat(:account="action.transaction.id" :type="action.transaction.type")
+              AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
             q-td
               DateField( :timestamp="action.timestamp", :showAge='showAge' )
             q-td
@@ -429,7 +420,7 @@ $medium:750px
     tbody td:first-child
       word-break: break-all
     th:first-child
-      width: 8%
+      width: 5%
     th:nth-child(2)
       width: 12%
     th:nth-child(3)
@@ -437,10 +428,10 @@ $medium:750px
     th:nth-child(4)
       width: 25%
     th:nth-child(5)
-      width: 40%
+      width: 43%
     tbody tr
       td:first-child
-        width: 8%
+        width: 5%
       td:nth-child(2)
         width: 12%
       td:nth-child(3)
@@ -448,7 +439,7 @@ $medium:750px
       td:nth-child(4)
         width: 25%
       td:nth-child(5)
-        width: 40%
+        width: 43%
 
 .q-table--no-wrap td
   word-break: break-all
@@ -506,4 +497,7 @@ body
 
 .dropdown-filter
   max-width: 300px
+
+.expanded-row
+  background: var(--q-color-producer-card-background)
 </style>
