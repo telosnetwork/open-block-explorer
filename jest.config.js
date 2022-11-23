@@ -40,9 +40,9 @@ module.exports = {
     },
     './src/components/': {
       statements: 3.75,
-      branches: 2.4,
-      functions: 6,
-      lines: 4
+      branches: 1.5,
+      functions: 4.0,
+      lines: 3.5
     },
     './src/pages/': {
       statements: 0,
