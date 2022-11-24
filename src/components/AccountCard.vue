@@ -38,18 +38,30 @@ export default defineComponent({
     const store = useStore();
     debugger;
     const accountData = ref<API.v1.AccountObject>();
-    const liquid = computed((): number => {
-      debugger;
-      return accountData.value
-        ? accountData.value.core_liquid_balance.value
-        : 0;
+
+    const liquidString = computed((): string => {
+      let result = '';
+      if (accountData.value?.core_liquid_balance.value) {
+        result = accountData.value.core_liquid_balance.value.toFixed(4);
+      }
+      return result;
     });
-    const totalTokens = computed((): number =>
-      accountData.value ? accountData.value.core_liquid_balance.value : 0.0
+
+    const totalTokens = computed(
+      (): number => accountData.value?.core_liquid_balance.value || 0
     );
     const usdPrice = ref<number>();
     const totalValue = computed((): number => {
       return usdPrice.value * totalTokens.value;
+    });
+    const totalValueString = computed((): string => {
+      let result = '';
+      if (totalValue.value && usdPrice.value) {
+        result = `$${totalValue.value.toFixed(2)} (@ $${usdPrice.value.toFixed(
+          4
+        )}/${chain.getSymbol()})`;
+      }
+      return result;
     });
 
     /**              */
@@ -378,9 +390,10 @@ export default defineComponent({
       ram_used,
       ram_max,
       creatingAccount,
-      liquid,
+      liquidString,
       totalTokens,
       totalValue,
+      totalValueString,
       refunding,
       staked,
       rex,
@@ -455,14 +468,14 @@ export default defineComponent({
           tr
           tr
             td.text-left.total-label TOTAL
-            td.text-right.total-amount {{ totalTokens }}
+            td.text-right.total-amount {{ totalTokens.toFixed(4) }}
           tr.total-row
             td.text-left
-            td.text-right.total-value {{ totalValue }}
+            td.text-right.total-value {{ totalValueString }}
           tr
           tr
             td.text-left LIQUID
-            td.text-right {{ liquid }}
+            td.text-right {{ liquidString }}
           tr
             td.text-left STAKED
             td.text-right {{ rex }}
