@@ -45,14 +45,14 @@ export default defineComponent({
     const ram_used = ref(0);
     const ram_max = ref(0);
     const creatingAccount = ref('');
-    const liquid = ref<UInt64>();
-    const total = ref<UInt64>();
+    const liquid = ref<UInt64>(UInt64.from(0));
+    const total = ref<UInt64>(UInt64.from(0));
     const totalValue = ref('');
-    const refunding = ref<UInt64>();
-    const staked = ref<UInt64>();
-    const none = ref<UInt64>();
+    const refunding = ref<UInt64>(UInt64.from(0));
+    const staked = ref<UInt64>(UInt64.from(0));
+    const none = ref<UInt64>(UInt64.from(0));
     const system_account = ref('eosio');
-    const zero = ref<UInt64>();
+    // const zero = ref<UInt64>(UInt64.from(0));
     const radius = ref(44);
     const availableTokens = ref<Token[]>([]);
     const createTransaction = ref<string>('');
@@ -64,12 +64,14 @@ export default defineComponent({
     const isAccount = computed((): boolean => {
       return store.state.account.accountName === props.account;
     });
-    const resources = ref<UInt64>();
+    const resources = ref<UInt64>(UInt64.from(0));
     const delegatedResources = ref<string>('0.0000');
-    const rex = ref<UInt64>();
-    const liqNum = ref<UInt64>();
+    const rex = ref<UInt64>(UInt64.from(0));
+    const liqNum = ref<UInt64>(UInt64.from(0));
+    debugger;
     const totalString = computed(() => {
-      return liqNum.value.add(resources.value); //TODO missing add rex.value
+      debugger;
+      return UInt64.add(liqNum.value as UInt64, resources.value as UInt64); //TODO missing add rex.value
     });
     const createTimeFormat = computed((): string =>
       date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
@@ -81,8 +83,6 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
-      debugger;
-      none.value = zero.value;
       void updateRexBalance();
       let data: API.v1.AccountObject;
       try {
@@ -229,7 +229,7 @@ export default defineComponent({
     };
 
     const getAmount = (property: UInt64): UInt64 => {
-      return property ? property : none.value;
+      return property ? property : (none.value as UInt64);
     };
 
     const loadCreatorAccount = async (): Promise<void> => {
@@ -255,7 +255,10 @@ export default defineComponent({
     const loadPriceData = async (): Promise<void> => {
       const usdPrice: number = await chain.getUsdPrice();
 
-      const dollarAmount = UInt64.mul(UInt64.from(usdPrice), total.value);
+      const dollarAmount = UInt64.mul(
+        UInt64.from(usdPrice),
+        total.value as UInt64
+      );
       totalValue.value = dollarAmount.toString(); /* `$${dollarAmount.toFixed(
         2
       )} (@ $${usdPrice}/${chain.getSymbol()})`;
@@ -350,7 +353,7 @@ export default defineComponent({
       rex,
       none,
       system_account,
-      zero,
+      // zero,
       radius,
       availableTokens,
       createTime,
