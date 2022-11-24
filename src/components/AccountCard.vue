@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
-import { useStore } from '../store';
+import { StateInterface, useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/Resources/ResourcesDialog.vue';
@@ -14,6 +14,8 @@ import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
+import { GetterTree } from 'vuex';
+import { AccountStateInterface } from 'src/store/account/state';
 
 const chain = getChain();
 export default defineComponent({
@@ -32,7 +34,25 @@ export default defineComponent({
     }
   },
   setup(props) {
+    /* newly defined */
     const store = useStore();
+    debugger;
+    const accountData = ref<API.v1.AccountObject>();
+    const liquid = computed((): number => {
+      debugger;
+      return accountData.value
+        ? accountData.value.core_liquid_balance.value
+        : 0;
+    });
+    const totalTokens = computed((): number =>
+      accountData.value ? accountData.value.core_liquid_balance.value : 0.0
+    );
+    const usdPrice = ref<number>();
+    const totalValue = computed((): number => {
+      return usdPrice.value * totalTokens.value;
+    });
+
+    /**              */
     const $q = useQuasar();
     const router = useRouter();
     const createTime = ref<string>('2019-01-01T00:00:00.000');
@@ -45,9 +65,7 @@ export default defineComponent({
     const ram_used = ref(0);
     const ram_max = ref(0);
     const creatingAccount = ref('');
-    const liquid = ref<UInt64>(UInt64.from(0));
-    const total = ref<UInt64>(UInt64.from(0));
-    const totalValue = ref('');
+    // const liquid = ref<UInt64>(UInt64.from(0));
     const refunding = ref<UInt64>(UInt64.from(0));
     const staked = ref<UInt64>(UInt64.from(0));
     const none = ref<UInt64>(UInt64.from(0));
@@ -71,6 +89,18 @@ export default defineComponent({
     debugger;
     const totalString = computed(() => {
       debugger;
+      console.log(liqNum.value.toString());
+      console.log(liqNum.value.toNumber());
+
+      console.log(resources.value.toString());
+      console.log(resources.value.toNumber());
+
+      console.log(
+        UInt64.add(liqNum.value as UInt64, resources.value as UInt64).toString()
+      );
+      console.log(
+        UInt64.add(liqNum.value as UInt64, resources.value as UInt64).toNumber()
+      );
       return UInt64.add(liqNum.value as UInt64, resources.value as UInt64); //TODO missing add rex.value
     });
     const createTimeFormat = computed((): string =>
@@ -79,74 +109,74 @@ export default defineComponent({
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
+
     const setToken = (value: Token) => {
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
-      void updateRexBalance();
-      let data: API.v1.AccountObject;
+      // void updateRexBalance();
       try {
-        data = await api.getAccount(props.account);
-        store.commit('account/setAccountData', data);
+        debugger;
+        accountData.value = await api.getAccount(props.account);
+        // store.commit('account/setAccountData', data);
       } catch (e) {
-        total.value = refunding.value = staked.value = rex.value = none.value;
+        // totalTokens = refunding.value = staked.value = rex.value = none.value;
         $q.notify(`account ${props.account} not found!`);
         accountExists.value = false;
         return;
       }
-      try {
-        const creatorData = (await api.getCreator(props.account)) as {
-          creator: string;
-          timestamp: string;
-          trx_id: string;
-        };
-        creatingAccount.value = creatorData.creator;
-        createTime.value = creatorData.timestamp;
-        createTransaction.value = creatorData.trx_id;
-      } catch (e) {
-        $q.notify(`creator account for ${props.account} not found!`);
-      }
-      debugger;
+      // try {
+      //   const creatorData = (await api.getCreator(props.account)) as {
+      //     creator: string;
+      //     timestamp: string;
+      //     trx_id: string;
+      //   };
+      //   creatingAccount.value = creatorData.creator;
+      //   createTime.value = creatorData.timestamp;
+      //   createTransaction.value = creatorData.trx_id;
+      // } catch (e) {
+      //   $q.notify(`creator account for ${props.account} not found!`);
+      // }
       // availableTokens.value = data.tokens;
-      const account = data;
-      ram_used.value = fixDec(account.ram_usage.value / KILO_UNIT.value);
-      ram_max.value = fixDec(account.ram_quota.value / KILO_UNIT.value);
-      cpu_used.value = fixDec(account.cpu_limit.used.value * MICRO_UNIT.value);
-      cpu_max.value = fixDec(account.cpu_limit.max.value * MICRO_UNIT.value);
-      net_used.value = fixDec(account.net_limit.used.value / KILO_UNIT.value);
-      net_max.value = fixDec(account.net_limit.max.value / KILO_UNIT.value);
-      liquid.value = getAmount(account.core_liquid_balance.symbol.value);
-      liqNum.value = getAmount(account.core_liquid_balance.symbol.value);
+      // const account = data;
+      // ram_used.value = fixDec(account.ram_usage.value / KILO_UNIT.value);
+      // ram_max.value = fixDec(account.ram_quota.value / KILO_UNIT.value);
+      // cpu_used.value = fixDec(account.cpu_limit.used.value * MICRO_UNIT.value);
+      // cpu_max.value = fixDec(account.cpu_limit.max.value * MICRO_UNIT.value);
+      // net_used.value = fixDec(account.net_limit.used.value / KILO_UNIT.value);
+      // net_max.value = fixDec(account.net_limit.max.value / KILO_UNIT.value);
+      // liquid.value = getAmount(account.core_liquid_balance.symbol.value);
+      // liqNum.value = getAmount(account.core_liquid_balance.symbol.value);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      resources.value = UInt64.add(
-        account.self_delegated_bandwidth.cpu_weight.symbol.value,
-        account.self_delegated_bandwidth.net_weight.symbol.value
-      );
-      const delegatedNum =
-        Number(account.total_resources.cpu_weight.value) +
-        Number(account.total_resources.net_weight.value) -
-        Number(account?.self_delegated_bandwidth?.net_weight.value || 0) -
-        Number(account?.self_delegated_bandwidth?.cpu_weight.value || 0);
-      delegatedResources.value = account?.total_resources
-        ? (delegatedNum > 0 ? delegatedNum : 0.0).toFixed(
-            token.value.precision
-          ) + ` ${token.value.symbol}`
-        : `${token.value.symbol}`;
-      debugger;
-      if (account.rex_info) {
-        const liqNum = account.core_liquid_balance.value;
-        const rexNum = account.rex_info.vote_stake.value;
-        const totalString = (liqNum + rexNum).toFixed(token.value.precision);
-        total.value = UInt64.from(totalString); //`${totalString} ${token.value.symbol}`;
-        rex.value = account.rex_info.vote_stake.symbol.value;
-      } else {
-        total.value = liquid.value;
-        rex.value = none.value;
-      }
-      refunding.value = formatTotalRefund(account.refund_request);
-      staked.value = account.voter_info
-        ? formatStaked(account.voter_info.staked.value)
-        : none.value; //+ ` ${token.value.symbol}`;
+      // resources.value = UInt64.add(
+      //   account.self_delegated_bandwidth.cpu_weight.symbol.value,
+      //   account.self_delegated_bandwidth.net_weight.symbol.value
+      // );
+      // const delegatedNum =
+      //   Number(account.total_resources.cpu_weight.value) +
+      //   Number(account.total_resources.net_weight.value) -
+      //   Number(account?.self_delegated_bandwidth?.net_weight.value || 0) -
+      //   Number(account?.self_delegated_bandwidth?.cpu_weight.value || 0);
+      // delegatedResources.value = account?.total_resources
+      //   ? (delegatedNum > 0 ? delegatedNum : 0.0).toFixed(
+      //       token.value.precision
+      //     ) + ` ${token.value.symbol}`
+      //   : `${token.value.symbol}`;
+      // debugger;
+      // if (account.rex_info) {
+      //   const liqNum = account.core_liquid_balance.value;
+      //   const rexNum = account.rex_info.vote_stake.value;
+      //   const totalString = (liqNum + rexNum).toFixed(token.value.precision);
+      //   total.value = UInt64.from(totalString); //`${totalString} ${token.value.symbol}`;
+      //   rex.value = account.rex_info.vote_stake.symbol.value;
+      // } else {
+      //   total.value = liquid.value;
+      //   rex.value = none.value;
+      // }
+      // refunding.value = formatTotalRefund(account.refund_request);
+      // staked.value = account.voter_info
+      //   ? formatStaked(account.voter_info.staked.value)
+      //   : none.value; //+ ` ${token.value.symbol}`;
     };
     const updateRexBalance = async () => {
       const paramsrexbal = {
@@ -252,18 +282,17 @@ export default defineComponent({
       router.go(0);
     };
 
-    const loadPriceData = async (): Promise<void> => {
-      const usdPrice: number = await chain.getUsdPrice();
+    // const loadPriceData = async (): Promise<void> => {
+    //   const usdPrice: number = await chain.getUsdPrice();
 
-      const dollarAmount = UInt64.mul(
-        UInt64.from(usdPrice),
-        total.value as UInt64
-      );
-      totalValue.value = dollarAmount.toString(); /* `$${dollarAmount.toFixed(
-        2
-      )} (@ $${usdPrice}/${chain.getSymbol()})`;
-      */
-    };
+    //   const dollarAmount = usdPrice * totalTokens.value;
+
+    //   );
+    //   totalValue.value = dollarAmount.toString(); /* `$${dollarAmount.toFixed(
+    //     2
+    //   )} (@ $${usdPrice}/${chain.getSymbol()})`;
+    //   */
+    // };
 
     const formatTotalRefund = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -311,9 +340,13 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      await loadSystemToken();
+      /***  new    */
+      usdPrice.value = await chain.getUsdPrice();
       await loadAccountData();
-      await loadPriceData();
+      /***         */
+
+      await loadSystemToken();
+      // await loadPriceData();
       await store.dispatch('account/updateRexData', {
         account: props.account
       });
@@ -331,7 +364,7 @@ export default defineComponent({
       () => props.account,
       async () => {
         await loadAccountData();
-        await loadPriceData();
+        // await loadPriceData();
       }
     );
 
@@ -346,7 +379,7 @@ export default defineComponent({
       ram_max,
       creatingAccount,
       liquid,
-      total,
+      totalTokens,
       totalValue,
       refunding,
       staked,
@@ -375,7 +408,7 @@ export default defineComponent({
       formatStaked,
       loadCreatorAccount,
       loadCreatorTransaction,
-      loadPriceData,
+      // loadPriceData,
       copy
     };
   }
@@ -422,7 +455,7 @@ export default defineComponent({
           tr
           tr
             td.text-left.total-label TOTAL
-            td.text-right.total-amount {{ totalString }}
+            td.text-right.total-amount {{ totalTokens }}
           tr.total-row
             td.text-left
             td.text-right.total-value {{ totalValue }}
