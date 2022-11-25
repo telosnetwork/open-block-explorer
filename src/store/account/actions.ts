@@ -1,4 +1,9 @@
-import { Authenticator } from 'universal-authenticator-library';
+import {
+  Authenticator,
+  SignTransactionConfig,
+  SignTransactionResponse,
+  User
+} from 'universal-authenticator-library';
 import { ActionTree } from 'vuex';
 import { StateInterface } from '../index';
 import { AccountStateInterface } from './state';
@@ -6,9 +11,77 @@ import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
+import { fuel_authenticators } from 'src/boot/ual';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
+
+// const account = new FuelUserWrapper(users[0]);
+export interface IAction {
+  account: string;
+  authorization: { actor: string; permission: string }[];
+  data: unknown;
+  name: string;
+}
+
+export interface ITransaction {
+  actions: IAction[];
+}
+
+class FuelUserWrapper extends User {
+  constructor(private user: User) {
+    super();
+  }
+
+  async signTransaction(
+    transaction: ITransaction,
+    config?: SignTransactionConfig
+  ): Promise<SignTransactionResponse> {
+    const name = localStorage.getItem('autoLogin');
+    const authenticator = fuel_authenticators.find((x) => x.getName() === name);
+
+    if (authenticator) {
+      await authenticator.init();
+      const users = await authenticator.login();
+      if (users.length) {
+        const account = users[0];
+
+        // we add the first noop action to delegate costs
+        const noop: IAction = {
+          authorization: [
+            {
+              actor: 'greymassfuel',
+              permission: 'cosign'
+            }
+          ],
+          account: 'greymassnoop',
+          name: 'noop',
+          data: {}
+        };
+        transaction.actions.unshift(noop);
+
+        return account.signTransaction(transaction, config);
+      }
+    }
+
+    return this.user.signTransaction(transaction, config);
+  }
+
+  signArbitrary = async (
+    publicKey: string,
+    data: string,
+    helpText: string
+  ): Promise<string> => this.user.signArbitrary(publicKey, data, helpText);
+
+  verifyKeyOwnership = async (challenge: string): Promise<boolean> =>
+    this.verifyKeyOwnership(challenge);
+
+  getAccountName = async (): Promise<string> => this.user.getAccountName();
+
+  getChainId = async (): Promise<string> => this.user.getChainId();
+
+  getKeys = async (): Promise<string[]> => this.user.getKeys();
+}
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {
@@ -24,7 +97,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     }
     const users = await (authenticator as Authenticator).login();
     if (users.length) {
-      const account = users[0];
+      const account = new FuelUserWrapper(users[0]);
       const permission = (account as unknown as { requestPermission: string })
         .requestPermission;
       const accountName = await account.getAccountName();
