@@ -25,6 +25,11 @@ const mainChain = {
   rpcEndpoints: [chain.getRPCEndpoint()]
 };
 
+const fuelChain = {
+  chainId: chain.getChainId(),
+  rpcEndpoints: [chain.getFuelRPCEndpoint()]
+};
+
 async function loginHandler() {
   let accountName = 'eosio';
   let permission = 'active';
@@ -145,14 +150,20 @@ async function signHandlerForMainChain(trx: string) {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> creating FuelUserWrapper to intersect the signTransaction
 async function signHandlerForFuelChain(trx: string) {
   return signHandler(chain.getFuelRPCEndpoint(), trx);
 }
 
+<<<<<<< HEAD
 >>>>>>> creating FuelUserWrapper to intersect the signTransaction
 =======
 >>>>>>> Refactored the code and added some unit tests
+=======
+>>>>>>> creating FuelUserWrapper to intersect the signTransaction
 export const authenticators: Authenticator[] = [
   new Anchor([mainChain], { appName: process.env.APP_NAME }),
   new CleosAuthenticator([mainChain], {
@@ -161,6 +172,22 @@ export const authenticators: Authenticator[] = [
     signHandler: signHandlerForMainChain
   })
 ];
+
+// if the chain is supported by Greymass Fuel we create
+// the same authenticetors list but with corresponding endpoint for Fuel
+let fuel_support: Authenticator[] = [];
+if (chain.getFuelRPCEndpoint()) {
+  fuel_support = [
+    new Anchor([fuelChain], { appName: process.env.APP_NAME }),
+    new CleosAuthenticator([mainChain], {
+      appName: process.env.APP_NAME,
+      loginHandler,
+      signHandler: signHandlerForFuelChain
+    })
+  ];
+}
+
+export const fuel_authenticators: Authenticator[] = fuel_support;
 
 export default boot(({ app }) => {
   const ual = new UAL([mainChain], 'ual', authenticators);
