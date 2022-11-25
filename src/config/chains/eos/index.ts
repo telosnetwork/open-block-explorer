@@ -18,6 +18,11 @@ const RPC_ENDPOINT = {
   host: 'eos.hyperion.eosrio.io',
   port: 443
 };
+const FUEL_RPC_ENDPOINT = {
+  protocol: 'https',
+  host: 'eos.greymass.com',
+  port: 443
+};
 const API_ENDPOINT = 'https://example.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
@@ -38,6 +43,10 @@ export default class EOS extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getFuelRPCEndpoint(): RpcEndpoint | null {
+    return FUEL_RPC_ENDPOINT;
   }
 
   getApiEndpoint(): string {

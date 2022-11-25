@@ -10,6 +10,7 @@ export interface Chain {
   getLargeLogoPath(): string;
   getChainId(): string;
   getRPCEndpoint(): RpcEndpoint;
+  getFuelRPCEndpoint(): RpcEndpoint | null;
   getHyperionEndpoint(): string;
   getApiEndpoint(): string;
   getS3ProducerBucket(): string;
