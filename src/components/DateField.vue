@@ -20,14 +20,14 @@ export default defineComponent({
       if (props.showAge) {
         return actionTime.fromNow();
       }
-      return `${actionTime.format('YYYY-MM-DD h:mm:ss')}`;
+      return `${actionTime.format('YYYY-MM-DD HH:mm:ss')}`;
     });
     const tooltipDate = computed(() => {
       const actionTime = moment.utc(props.timestamp, 'YYYY-MM-DD HH:mm:ssZ');
       if (!props.showAge) {
         return actionTime.fromNow();
       }
-      return `${actionTime.format('YYYY-MM-DD h:mm:ss')}`;
+      return `${actionTime.format('YYYY-MM-DD HH:mm:ss')}`;
     });
     return {
       friendlyDate,
