@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'AccountFormat',
@@ -14,9 +14,10 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const accAccount = computed(() => props.account);
     return {
       accType: props.type,
-      accAccount: props.account
+      accAccount
     };
   }
 });
