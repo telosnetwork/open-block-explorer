@@ -25,11 +25,6 @@ const mainChain = {
   rpcEndpoints: [chain.getRPCEndpoint()]
 };
 
-const fuelChain = {
-  chainId: chain.getChainId(),
-  rpcEndpoints: [chain.getFuelRPCEndpoint()]
-};
-
 async function loginHandler() {
   let accountName = 'eosio';
   let permission = 'active';
@@ -148,10 +143,6 @@ async function signHandlerForMainChain(trx: string) {
   return signHandler(chain.getRPCEndpoint(), trx);
 }
 
-async function signHandlerForFuelChain(trx: string) {
-  return signHandler(chain.getFuelRPCEndpoint(), trx);
-}
-
 export const authenticators: Authenticator[] = [
   new Anchor([mainChain], { appName: process.env.APP_NAME }),
   new CleosAuthenticator([mainChain], {
@@ -160,22 +151,6 @@ export const authenticators: Authenticator[] = [
     signHandler: signHandlerForMainChain
   })
 ];
-
-// if the chain is supported by Greymass Fuel we create
-// the same authenticetors list but with corresponding endpoint for Fuel
-let fuel_support: Authenticator[] = [];
-if (chain.getFuelRPCEndpoint()) {
-  fuel_support = [
-    new Anchor([fuelChain], { appName: process.env.APP_NAME }),
-    new CleosAuthenticator([mainChain], {
-      appName: process.env.APP_NAME,
-      loginHandler,
-      signHandler: signHandlerForFuelChain
-    })
-  ];
-}
-
-export const fuel_authenticators: Authenticator[] = fuel_support;
 
 export default boot(({ app }) => {
   const ual = new UAL([mainChain], 'ual', authenticators);

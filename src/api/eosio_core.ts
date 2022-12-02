@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* see https://github.com/greymass/eosio-core/blob/master/test/api.ts for documentation */
 import {
   ABIDef,
@@ -10,7 +7,7 @@ import {
   APIClient,
   Serializer
 } from '@greymass/eosio';
-import { ActionData, GetTableRowsParams } from 'src/types';
+import { GetTableRowsParams } from 'src/types';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 
