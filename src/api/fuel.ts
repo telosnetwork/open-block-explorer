@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 /* eslint-disable quotes */
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Most of this code was taken and addapted from https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70
+=======
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable prettier/prettier */
+// Most of this code was taken and addapted from https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70
+import axios from 'axios';
+>>>>>>> Refactored the code and added some unit tests
 import {
   SignTransactionConfig,
   SignTransactionResponse,
@@ -20,10 +28,16 @@ import {
   Transaction
 } from '@greymass/eosio';
 import { getChain } from 'src/config/ConfigManager';
+<<<<<<< HEAD
 import { Dialog } from 'quasar';
 
 // The maximum fee per transaction this script is willing to accept
 const maxFee = 0.05;
+=======
+
+// The maximum fee per transaction this script is willing to accept
+const maxFee = 0.005;
+>>>>>>> Refactored the code and added some unit tests
 
 // expire time in millisec
 const expireSeconds = 3600;
@@ -42,17 +56,24 @@ interface ResourceProviderResponse {
   data: ResponseData;
 }
 
+<<<<<<< HEAD
 interface CostsType {
   ram: string;
   cpu: string;
   net: string;
 }
 
+=======
+>>>>>>> Refactored the code and added some unit tests
 interface ResponseData {
   request: [string, SignedTransaction];
   signatures: Signature[];
   version: number;
+<<<<<<< HEAD
   costs?: CostsType;
+=======
+  costs?: { ram: string };
+>>>>>>> Refactored the code and added some unit tests
 }
 
 interface SignedTransactionResponse extends SignTransactionResponse {
@@ -107,6 +128,7 @@ export class FuelUserWrapper extends User {
       });
 
       // Submit the transaction to the resource provider endpoint
+<<<<<<< HEAD
       const cosigned = await fetch(resourceProviderEndpoint, {
         body: JSON.stringify({
           signer,
@@ -118,14 +140,32 @@ export class FuelUserWrapper extends User {
       // Interpret the resulting JSON
       const rpResponse =
         (await cosigned.json()) as unknown as ResourceProviderResponse;
+=======
+      const cosigned = await axios.post(
+        resourceProviderEndpoint,
+        JSON.stringify({
+          signer,
+          packedTransaction
+        }),
+        { method: 'POST' }
+      );
+
+      // Interpret the resulting JSON
+      const rpResponse = cosigned.data as ResourceProviderResponse;
+>>>>>>> Refactored the code and added some unit tests
 
       switch (rpResponse.code) {
         case 402: {
           // Resource Provider provided signature in exchange for a fee
+<<<<<<< HEAD
           // is ok to treat them with the same logic of code = 200?
           // Yes acording to this: https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70#file-fuel-core-presign-js-L128-L159
           // Aron rightly suggests that we should show and confirm the fee costs for this service:
           // https://github.com/telosnetwork/open-block-explorer/pull/477#discussion_r1053417964
+=======
+          // TODO: is ok to treat them with the same logic of code = 200?
+          // Yes acording to this: https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70#file-fuel-core-presign-js-L128-L159
+>>>>>>> Refactored the code and added some unit tests
         }
         case 200: {
           // Resource Provider provided signature for free
@@ -136,13 +176,18 @@ export class FuelUserWrapper extends User {
 
           // Ensure the modifed transaction is what the application expects
           // These validation methods will throw an exception if invalid data exists
+<<<<<<< HEAD
           const fees: string | null = validateTransaction(
+=======
+          validateTransaction(
+>>>>>>> Refactored the code and added some unit tests
             signer,
             modifiedTransaction,
             transaction,
             data.costs
           );
 
+<<<<<<< HEAD
           // validate with the user whether to use the service at all
           try {
             await confirmWithUser(this.user, fees);
@@ -152,6 +197,10 @@ export class FuelUserWrapper extends User {
           }
 
           modifiedTransaction.signatures = [...data.signatures];
+=======
+          modifiedTransaction.signatures = [...data.signatures];
+
+>>>>>>> Refactored the code and added some unit tests
           // Sign the modified transaction
           const locallySigned: SignedTransactionResponse =
             (await this.user.signTransaction(
@@ -194,7 +243,11 @@ export class FuelUserWrapper extends User {
         default:
           throw (
             'Code ' +
+<<<<<<< HEAD
             (+rpResponse.code).toString() +
+=======
+            rpResponse.code.toString() +
+>>>>>>> Refactored the code and added some unit tests
             ' not expected from resource provider endpoint: ' +
             resourceProviderEndpoint
           );
@@ -203,6 +256,11 @@ export class FuelUserWrapper extends User {
       // If we got here it means the resource provider will not participate in this transaction
       return this.user.signTransaction(originalTransaction, originalconfig);
     } catch (e) {
+<<<<<<< HEAD
+=======
+      console.info('ERROR:', e);
+      // console.error('ERROR: ', e);
+>>>>>>> Refactored the code and added some unit tests
       throw e;
     }
   }
@@ -228,6 +286,7 @@ export class FuelUserWrapper extends User {
   getKeys = async (): Promise<string[]> => this.user.getKeys();
 }
 
+<<<<<<< HEAD
 // Auxiliar functions to validate with the user the use of the service
 interface Preference {
   remember?: boolean;
@@ -341,6 +400,8 @@ async function confirmWithUser(user: User, fees: string | null) {
   });
 }
 
+=======
+>>>>>>> Refactored the code and added some unit tests
 // Auxiliar functions to validate modified transaction returned by the resourse provider
 
 // Validate the transaction
@@ -348,13 +409,22 @@ function validateTransaction(
   signer: PermissionLevel,
   modifiedTransaction: Transaction,
   transaction: Transaction,
+<<<<<<< HEAD
   costs: CostsType | null = null
 ): string | null {
+=======
+  costs: { ram: string } | null = null
+) {
+>>>>>>> Refactored the code and added some unit tests
   // Ensure the first action is the `greymassnoop:noop`
   validateNoop(modifiedTransaction);
 
   // Ensure the actions within the transaction match what was provided
+<<<<<<< HEAD
   return validateActions(signer, modifiedTransaction, transaction, costs);
+=======
+  validateActions(signer, modifiedTransaction, transaction, costs);
+>>>>>>> Refactored the code and added some unit tests
 }
 
 // Validate the actions of the modified transaction vs the original transaction
@@ -362,8 +432,13 @@ function validateActions(
   signer: PermissionLevel,
   modifiedTransaction: Transaction,
   transaction: Transaction,
+<<<<<<< HEAD
   costs: CostsType | null
 ): string | null {
+=======
+  costs: { ram: string } | null
+) {
+>>>>>>> Refactored the code and added some unit tests
   // Determine how many actions we expect to have been added to the transaction based on the costs
   const expectedNewActions = determineExpectedActionsLength(costs);
 
@@ -371,7 +446,11 @@ function validateActions(
   validateActionsLength(expectedNewActions, modifiedTransaction, transaction);
 
   // Ensure the appended actions were expected
+<<<<<<< HEAD
   return validateActionsContent(
+=======
+  validateActionsContent(
+>>>>>>> Refactored the code and added some unit tests
     signer,
     expectedNewActions,
     modifiedTransaction,
@@ -380,7 +459,11 @@ function validateActions(
 }
 
 // Validate the number of actions is the number expected
+<<<<<<< HEAD
 function determineExpectedActionsLength(costs: CostsType | null) {
+=======
+function determineExpectedActionsLength(costs: { ram: string } | null) {
+>>>>>>> Refactored the code and added some unit tests
   // By default, 1 new action is appended (noop)
   let expectedNewActions = 1;
 
@@ -402,7 +485,11 @@ function validateActionsContent(
   expectedNewActions: number,
   modifiedTransaction: Transaction,
   transaction: Transaction
+<<<<<<< HEAD
 ): string | null {
+=======
+) {
+>>>>>>> Refactored the code and added some unit tests
   // Make sure the originally requested actions are still intact and unmodified
   validateActionsOriginalContent(
     expectedNewActions,
@@ -412,15 +499,22 @@ function validateActionsContent(
 
   // If a fee has been added, ensure the fee is set properly
   if (expectedNewActions > 1) {
+<<<<<<< HEAD
     let totalFee: null | number = null;
     totalFee = validateActionsFeeContent(signer, modifiedTransaction);
+=======
+    validateActionsFeeContent(signer, modifiedTransaction);
+>>>>>>> Refactored the code and added some unit tests
     // If a ram purchase has been added, ensure the purchase was set properly
     if (expectedNewActions > 2) {
       validateActionsRamContent(signer, modifiedTransaction);
     }
+<<<<<<< HEAD
     return `${new Number(totalFee).toFixed(4)} TLOS`;
   } else {
     return null;
+=======
+>>>>>>> Refactored the code and added some unit tests
   }
 }
 
@@ -436,7 +530,11 @@ function descerialize(data: unknown): AuxTransactionData {
 function validateActionsFeeContent(
   signer: PermissionLevel,
   modifiedTransaction: Transaction
+<<<<<<< HEAD
 ): number {
+=======
+) {
+>>>>>>> Refactored the code and added some unit tests
   const feeAction = modifiedTransaction.actions[1];
   const data = descerialize(feeAction.data);
   const amount = parseFloat(data.quantity?.split(' ')[0]);
@@ -450,17 +548,26 @@ function validateActionsFeeContent(
   ) {
     throw new Error('Fee action was deemed invalid.');
   }
+<<<<<<< HEAD
   return amount;
+=======
+>>>>>>> Refactored the code and added some unit tests
 }
 
 // Ensure the RAM purchasing action is valid
 function validateActionsRamContent(
   signer: PermissionLevel,
   modifiedTransaction: Transaction
+<<<<<<< HEAD
 ): number {
   const ramAction = modifiedTransaction.actions[2];
   const data = descerialize(ramAction.data);
   const amount = parseFloat(data.quant?.split(' ')[0]);
+=======
+) {
+  const ramAction = modifiedTransaction.actions[2];
+  const data = descerialize(ramAction.data);
+>>>>>>> Refactored the code and added some unit tests
 
   if (
     ramAction.account.toString() !== 'eosio' ||
@@ -470,7 +577,10 @@ function validateActionsRamContent(
   ) {
     throw new Error('RAM action was deemed invalid.');
   }
+<<<<<<< HEAD
   return amount;
+=======
+>>>>>>> Refactored the code and added some unit tests
 }
 
 // Make sure the actions returned in the API response match what was submitted
@@ -544,8 +654,12 @@ function validateNoop(modifiedTransaction: Transaction) {
       expectedCosignerAccountName.toString() ||
     firstAuthorization.permission.toString() !==
       expectedCosignerAccountPermission.toString() ||
+<<<<<<< HEAD
     (JSON.stringify(firstAction.data) !== '""' &&
       JSON.stringify(firstAction.data) !== '{}')
+=======
+    JSON.stringify(firstAction.data) !== '{}'
+>>>>>>> Refactored the code and added some unit tests
   ) {
     throw new Error(
       `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`
