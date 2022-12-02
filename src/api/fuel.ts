@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable prettier/prettier */
 // Most of this code was taken and addapted from https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70
-import axios from 'axios';
+
 import {
   SignTransactionConfig,
   SignTransactionResponse,
@@ -101,17 +101,20 @@ export class FuelUserWrapper extends User {
       });
 
       // Submit the transaction to the resource provider endpoint
-      const cosigned = await axios.post(
-        resourceProviderEndpoint,
-        JSON.stringify({
-          signer,
-          packedTransaction
-        }),
-        { method: 'POST' }
-      );
+      const cosigned = await fetch(resourceProviderEndpoint, {
+          body: JSON.stringify({
+              signer,
+              packedTransaction,
+          }),
+          method: 'POST',
+      });
 
       // Interpret the resulting JSON
-      const rpResponse = cosigned.data as ResourceProviderResponse;
+      const rpResponse = await (cosigned.json()) as unknown as ResourceProviderResponse;
+
+      console.log('rpResponse', rpResponse);
+      console.log('typeof rpResponse.code', typeof rpResponse.code);
+      console.log('typeof rpResponse.code.toString', typeof rpResponse.code.toString);
 
       switch (rpResponse.code) {
         case 402: {
@@ -411,8 +414,10 @@ function validateNoop(modifiedTransaction: Transaction) {
       expectedCosignerAccountName.toString() ||
     firstAuthorization.permission.toString() !==
       expectedCosignerAccountPermission.toString() ||
-    JSON.stringify(firstAction.data) !== '{}'
+    (JSON.stringify(firstAction.data) !== '""' && JSON.stringify(firstAction.data) !== '{}')
   ) {
+    console.log('firstAction.data', firstAction.data);
+    console.log('JSON.stringify(firstAction.data)', JSON.stringify(firstAction.data));
     throw new Error(
       `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`
     );
