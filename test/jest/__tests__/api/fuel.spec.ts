@@ -52,10 +52,34 @@ jest.mock('@greymass/eosio', () => ({
 }));
 
 // mocking axios and the call to resource provider
-jest.mock('axios', () => ({
-  post: () => {
-    return {
-      data: {
+//jest.mock('axios', () => ({
+//  post: () => {
+//    return {
+//      data: {
+//        data: {
+//          signatures: [
+//            'SIG_K1_KdocT11N4hFoCozoY3mHf1baa5iK3gL5YksdNraGK3CdP6YjGA5CiMC4z7DNP5orh7tyv4QbU3nLNkkMg2oqPBMyJwaLnr'
+//          ],
+//          request: [
+//            '',
+//            {
+//              signatures: [] as string[],
+//              actions: [noopAction, originalAction]
+//            }
+//          ]
+//        },
+//        code: rpResponseCode
+//      }
+//    };
+//  }
+//}));
+// we need to change the code returned each time so we declare it as variable
+let rpResponseCode = Number(0);
+
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () =>
+      Promise.resolve({
         data: {
           signatures: [
             'SIG_K1_KdocT11N4hFoCozoY3mHf1baa5iK3gL5YksdNraGK3CdP6YjGA5CiMC4z7DNP5orh7tyv4QbU3nLNkkMg2oqPBMyJwaLnr'
@@ -69,12 +93,14 @@ jest.mock('axios', () => ({
           ]
         },
         code: rpResponseCode
-      }
-    };
-  }
-}));
-// we need to change the code returned each time so we declare it as variable
-let rpResponseCode = Number(0);
+      })
+  } as Response)
+);
+
+/*
+
+
+*/
 
 // mocking internal implementatios
 jest.mock('src/config/ConfigManager', () => ({
@@ -181,7 +207,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
   describe('FuelUserWrapper.signTransaction function', () => {
     describe('When reciving code 400 from resource provider', () => {
       it('should not change the original transaction', async () => {
-        rpResponseCode = 400;
+        rpResponseCode = Number(400);
         const trx = getOriginalTransaction();
         const response = await wrapper.signTransaction(trx, configData);
         const response_actions_json = JSON.stringify(
@@ -193,7 +219,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
     });
     describe('When reciving code 200 from resource provider', () => {
       it('should take the signature and modified trx, sign it and broadcast', async () => {
-        rpResponseCode = 200;
+        rpResponseCode = Number(200);
         const trx = getOriginalTransaction();
         const response = await wrapper.signTransaction(trx, configData);
         const response_actions_json = JSON.stringify(
@@ -209,7 +235,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
     });
     describe('When reciving code 402 from resource provider', () => {
       it('should take the signature and modified trx, sign it and broadcast', async () => {
-        rpResponseCode = 200;
+        rpResponseCode = Number(200);
         const trx = getOriginalTransaction();
         const response = await wrapper.signTransaction(trx, configData);
         const response_actions_json = JSON.stringify(
