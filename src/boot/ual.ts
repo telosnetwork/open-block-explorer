@@ -1,10 +1,5 @@
 import { boot } from 'quasar/wrappers';
-import {
-  Authenticator,
-  RpcEndpoint,
-  UAL,
-  User
-} from 'universal-authenticator-library';
+import { UAL, User } from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
@@ -23,11 +18,6 @@ declare module '@vue/runtime-core' {
 const mainChain = {
   chainId: chain.getChainId(),
   rpcEndpoints: [chain.getRPCEndpoint()]
-};
-
-const fuelChain = {
-  chainId: chain.getChainId(),
-  rpcEndpoints: [chain.getFuelRPCEndpoint()]
 };
 
 async function loginHandler() {
@@ -91,7 +81,7 @@ async function loginHandler() {
   };
 }
 
-async function signHandler(rpc: RpcEndpoint, trx: string) {
+async function signHandler(trx: string) {
   const trxJSON: string = JSON.stringify(
     Object.assign(
       {
@@ -106,7 +96,7 @@ async function signHandler(rpc: RpcEndpoint, trx: string) {
   await new Promise((resolve) => {
     Dialog.create({
       color: 'primary',
-      message: `<pre>cleos -u ${rpc.protocol}://${rpc.host}:${rpc.port} push transaction '${trxJSON}'</pre>`,
+      message: `<pre>cleos -u https://${process.env.NETWORK_HOST} push transaction '${trxJSON}'</pre>`,
       html: true,
       cancel: true,
       fullWidth: true,
@@ -116,7 +106,7 @@ async function signHandler(rpc: RpcEndpoint, trx: string) {
     })
       .onOk(() => {
         copyToClipboard(
-          `cleos -u ${rpc.protocol}://${rpc.host}:${rpc.port} push transaction '${trxJSON}'`
+          `cleos -u https://${process.env.NETWORK_HOST} push transaction '${trxJSON}'`
         )
           .then((): void => {
             Notify.create({
@@ -144,50 +134,14 @@ async function signHandler(rpc: RpcEndpoint, trx: string) {
   });
 }
 
-async function signHandlerForMainChain(trx: string) {
-  return signHandler(chain.getRPCEndpoint(), trx);
-}
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> creating FuelUserWrapper to intersect the signTransaction
-async function signHandlerForFuelChain(trx: string) {
-  return signHandler(chain.getFuelRPCEndpoint(), trx);
-}
-
-<<<<<<< HEAD
->>>>>>> creating FuelUserWrapper to intersect the signTransaction
-=======
->>>>>>> Refactored the code and added some unit tests
-=======
->>>>>>> creating FuelUserWrapper to intersect the signTransaction
-export const authenticators: Authenticator[] = [
+export const authenticators = [
   new Anchor([mainChain], { appName: process.env.APP_NAME }),
   new CleosAuthenticator([mainChain], {
     appName: process.env.APP_NAME,
     loginHandler,
-    signHandler: signHandlerForMainChain
+    signHandler
   })
 ];
-
-// if the chain is supported by Greymass Fuel we create
-// the same authenticetors list but with corresponding endpoint for Fuel
-let fuel_support: Authenticator[] = [];
-if (chain.getFuelRPCEndpoint()) {
-  fuel_support = [
-    new Anchor([fuelChain], { appName: process.env.APP_NAME }),
-    new CleosAuthenticator([mainChain], {
-      appName: process.env.APP_NAME,
-      loginHandler,
-      signHandler: signHandlerForFuelChain
-    })
-  ];
-}
-
-export const fuel_authenticators: Authenticator[] = fuel_support;
 
 export default boot(({ app }) => {
   const ual = new UAL([mainChain], 'ual', authenticators);
