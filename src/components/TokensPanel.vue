@@ -15,10 +15,34 @@ export default defineComponent({
     const tokens = ref<Token[]>([]);
     const account = toRef(props, 'account');
 
+    const getURLFilters = (name: string): string[] => {
+      // TODO: change this implementation and use this.$route
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      if (urlParams.has(name)) {
+        return urlParams.get(name).split(',');
+      } else {
+        return [];
+      }
+    };
+
     const loadTokens = async (): Promise<void> => {
       // TODO Refactor redundant getTokens in AccountCard
       const tokenList = await api.getTokens(account.value);
-      tokens.value = tokenList.map(
+
+      const codes = getURLFilters('code');
+      const symbols = getURLFilters('symbol');
+      let filtered = tokenList
+        .filter(
+          (token: Token) =>
+            codes.length === 0 || codes.some((c) => c == token.contract)
+        )
+        .filter(
+          (token: Token) =>
+            symbols.length === 0 || symbols.some((c) => c == token.symbol)
+        );
+
+      tokens.value = filtered.map(
         (token) =>
           ({
             symbol: token.symbol,
@@ -27,6 +51,7 @@ export default defineComponent({
             contract: formatAccount(token.contract, 'account')
           } as Token)
       );
+
       tokens.value = tokens.value.filter(
         (token) => (token as Token).amount !== null
       );
