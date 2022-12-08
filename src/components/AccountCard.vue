@@ -101,19 +101,6 @@ export default defineComponent({
     const liqNum = ref<UInt64>(UInt64.from(0));
     debugger;
     const totalString = computed(() => {
-      debugger;
-      console.log(liqNum.value.toString());
-      console.log(liqNum.value.toNumber());
-
-      console.log(resources.value.toString());
-      console.log(resources.value.toNumber());
-
-      console.log(
-        UInt64.add(liqNum.value as UInt64, resources.value as UInt64).toString()
-      );
-      console.log(
-        UInt64.add(liqNum.value as UInt64, resources.value as UInt64).toNumber()
-      );
       return UInt64.add(liqNum.value as UInt64, staked.value as UInt64); //TODO missing add rex.value
     });
     const createTimeFormat = computed((): string =>
@@ -127,15 +114,11 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
-      // void updateRexBalance();
       try {
         accountData.value = await api.getAccount(props.account);
-        const rexFund = await getRexFund();
-        // staked.value = accountData.value.voter_info.staked.value as UInt64;
-        const test = staked.value.toNumber();
-        // rex.value = accountData.value.voter_info.staked.value as UInt64;
-        rex.value = accountData.value.rex_info.vote_stake.value;
-        debugger;
+        await loadAccountCreatorInfo();
+        await loadBalances();
+
         // ? formatStaked(account.voter_info.staked.value)
         // : none.value; //+ ` ${token.value.symbol}`;
         // store.commit('account/setAccountData', data);
@@ -145,18 +128,7 @@ export default defineComponent({
         accountExists.value = false;
         return;
       }
-      // try {
-      //   const creatorData = (await api.getCreator(props.account)) as {
-      //     creator: string;
-      //     timestamp: string;
-      //     trx_id: string;
-      //   };
-      //   creatingAccount.value = creatorData.creator;
-      //   createTime.value = creatorData.timestamp;
-      //   createTransaction.value = creatorData.trx_id;
-      // } catch (e) {
-      //   $q.notify(`creator account for ${props.account} not found!`);
-      // }
+
       // availableTokens.value = data.tokens;
       // const account = data;
       // ram_used.value = fixDec(account.ram_usage.value / KILO_UNIT.value);
@@ -198,6 +170,28 @@ export default defineComponent({
       //   ? formatStaked(account.voter_info.staked.value)
       //   : none.value; //+ ` ${token.value.symbol}`;
     };
+
+    const loadBalances = async () => {
+      const rexBalance = await getRexBalance();
+      const rexFund = await getRexFund();
+      rex.value = rexBalance + rexFund;
+    };
+
+    const loadAccountCreatorInfo = async () => {
+      try {
+        const creatorData = (await api.getCreator(props.account)) as {
+          creator: string;
+          timestamp: string;
+          trx_id: string;
+        };
+        creatingAccount.value = creatorData.creator;
+        createTime.value = creatorData.timestamp;
+        createTransaction.value = creatorData.trx_id;
+      } catch (e) {
+        $q.notify(`creator account for ${props.account} not found!`);
+      }
+    };
+
     const getRexFund = async () => {
       debugger;
       const paramsrexfund = {
@@ -223,7 +217,8 @@ export default defineComponent({
           : 0.0;
       return rexFundBalance;
     };
-    const updateRexBalance = async () => {
+
+    const getRexBalance = async () => {
       const paramsrexbal = {
         code: 'eosio',
         limit: '2',
@@ -233,7 +228,15 @@ export default defineComponent({
         reverse: false,
         upper_bound: props.account as unknown as TableIndexType
       } as GetTableRowsParams;
-      const rexbalRows = (await api.getTableRows(paramsrexbal)) as RexbalRows;
+
+      const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
+        .rows[0];
+      debugger;
+      const rexBalance =
+        rexBal && rexBal.rex_balance
+          ? Number(rexBal.rex_balance.split(' ')[0])
+          : 0;
+
       const paramsrexpool = {
         code: 'eosio',
         scope: 'eosio',
@@ -241,48 +244,20 @@ export default defineComponent({
         json: true,
         reverse: false
       } as GetTableRowsParams;
+
       const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
         .rows[0];
-      // const paramsrexfund = {
-      //   code: 'eosio',
-      //   limit: '1',
-      //   lower_bound: props.account as unknown as TableIndexType,
-      //   scope: 'eosio',
-      //   table: 'rexfund',
-      //   reverse: false,
-      //   upper_bound: props.account as unknown as TableIndexType
-      // } as GetTableRowsParams;
-      // const rexfund = (
-      //   (await api.getTableRows(paramsrexfund)) as {
-      //     rows: {
-      //       owner: string;
-      //       balance: string;
-      //     }[];
-      //   }
-      // ).rows[0];
-      // const rexFundBalance =
-      //   rexfund && rexfund.balance
-      //     ? Number(rexfund.balance.split(' ')[0])
-      //     : 0.0;
-      const rexbal = rexbalRows.rows[0];
-      const rexBalance =
-        rexbal && rexbal.rex_balance
-          ? parseFloat(rexbal.rex_balance.split(' ')[0])
-          : 0;
+
       const totalRex = Number(rexpool.total_rex.split(' ')[0]);
       const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
       const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
-      // let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
-      // coreBalance += rexFundBalance;
-      if (rexbalRows.rows.length > 0) {
-        // rex.value = UInt64.from(coreBalance); //.toFixed(4) + ` ${token.value.symbol}`;
-      } else {
-        // rex.value = UInt64.from(0);
-      }
+      return totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
     };
+
     const fixDec = (val: number): number => {
       return parseFloat(val.toFixed(3));
     };
+
     const loadSystemToken = async (): Promise<void> => {
       if (token.value.symbol === '') {
         const tokenList = await api.getTokens(system_account.value);
