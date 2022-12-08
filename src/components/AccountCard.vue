@@ -16,6 +16,7 @@ import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
 import { GetterTree } from 'vuex';
 import { AccountStateInterface } from 'src/store/account/state';
+import { account } from 'src/store/account';
 
 const chain = getChain();
 export default defineComponent({
@@ -96,7 +97,7 @@ export default defineComponent({
     });
     const resources = ref<UInt64>(UInt64.from(0));
     const delegatedResources = ref<string>('0.0000');
-    const rex = ref<UInt64>(UInt64.from(0));
+    const rex = ref<number>(0);
     const liqNum = ref<UInt64>(UInt64.from(0));
     debugger;
     const totalString = computed(() => {
@@ -113,7 +114,7 @@ export default defineComponent({
       console.log(
         UInt64.add(liqNum.value as UInt64, resources.value as UInt64).toNumber()
       );
-      return UInt64.add(liqNum.value as UInt64, resources.value as UInt64); //TODO missing add rex.value
+      return UInt64.add(liqNum.value as UInt64, staked.value as UInt64); //TODO missing add rex.value
     });
     const createTimeFormat = computed((): string =>
       date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
@@ -128,8 +129,15 @@ export default defineComponent({
     const loadAccountData = async (): Promise<void> => {
       // void updateRexBalance();
       try {
-        debugger;
         accountData.value = await api.getAccount(props.account);
+        const rexFund = await getRexFund();
+        // staked.value = accountData.value.voter_info.staked.value as UInt64;
+        const test = staked.value.toNumber();
+        // rex.value = accountData.value.voter_info.staked.value as UInt64;
+        rex.value = accountData.value.rex_info.vote_stake.value;
+        debugger;
+        // ? formatStaked(account.voter_info.staked.value)
+        // : none.value; //+ ` ${token.value.symbol}`;
         // store.commit('account/setAccountData', data);
       } catch (e) {
         // totalTokens = refunding.value = staked.value = rex.value = none.value;
@@ -190,26 +198,8 @@ export default defineComponent({
       //   ? formatStaked(account.voter_info.staked.value)
       //   : none.value; //+ ` ${token.value.symbol}`;
     };
-    const updateRexBalance = async () => {
-      const paramsrexbal = {
-        code: 'eosio',
-        limit: '2',
-        lower_bound: props.account as unknown as TableIndexType,
-        scope: 'eosio',
-        table: 'rexbal',
-        reverse: false,
-        upper_bound: props.account as unknown as TableIndexType
-      } as GetTableRowsParams;
-      const rexbalRows = (await api.getTableRows(paramsrexbal)) as RexbalRows;
-      const paramsrexpool = {
-        code: 'eosio',
-        scope: 'eosio',
-        table: 'rexpool',
-        json: true,
-        reverse: false
-      } as GetTableRowsParams;
-      const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
-        .rows[0];
+    const getRexFund = async () => {
+      debugger;
       const paramsrexfund = {
         code: 'eosio',
         limit: '1',
@@ -231,6 +221,49 @@ export default defineComponent({
         rexfund && rexfund.balance
           ? Number(rexfund.balance.split(' ')[0])
           : 0.0;
+      return rexFundBalance;
+    };
+    const updateRexBalance = async () => {
+      const paramsrexbal = {
+        code: 'eosio',
+        limit: '2',
+        lower_bound: props.account as unknown as TableIndexType,
+        scope: 'eosio',
+        table: 'rexbal',
+        reverse: false,
+        upper_bound: props.account as unknown as TableIndexType
+      } as GetTableRowsParams;
+      const rexbalRows = (await api.getTableRows(paramsrexbal)) as RexbalRows;
+      const paramsrexpool = {
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'rexpool',
+        json: true,
+        reverse: false
+      } as GetTableRowsParams;
+      const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
+        .rows[0];
+      // const paramsrexfund = {
+      //   code: 'eosio',
+      //   limit: '1',
+      //   lower_bound: props.account as unknown as TableIndexType,
+      //   scope: 'eosio',
+      //   table: 'rexfund',
+      //   reverse: false,
+      //   upper_bound: props.account as unknown as TableIndexType
+      // } as GetTableRowsParams;
+      // const rexfund = (
+      //   (await api.getTableRows(paramsrexfund)) as {
+      //     rows: {
+      //       owner: string;
+      //       balance: string;
+      //     }[];
+      //   }
+      // ).rows[0];
+      // const rexFundBalance =
+      //   rexfund && rexfund.balance
+      //     ? Number(rexfund.balance.split(' ')[0])
+      //     : 0.0;
       const rexbal = rexbalRows.rows[0];
       const rexBalance =
         rexbal && rexbal.rex_balance
@@ -239,12 +272,12 @@ export default defineComponent({
       const totalRex = Number(rexpool.total_rex.split(' ')[0]);
       const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
       const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
-      let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
-      coreBalance += rexFundBalance;
+      // let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
+      // coreBalance += rexFundBalance;
       if (rexbalRows.rows.length > 0) {
-        rex.value = UInt64.from(coreBalance); //.toFixed(4) + ` ${token.value.symbol}`;
+        // rex.value = UInt64.from(coreBalance); //.toFixed(4) + ` ${token.value.symbol}`;
       } else {
-        rex.value = UInt64.from(0);
+        // rex.value = UInt64.from(0);
       }
     };
     const fixDec = (val: number): number => {
