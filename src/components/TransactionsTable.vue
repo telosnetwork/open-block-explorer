@@ -1,5 +1,10 @@
 <script lang="ts">
-import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
+import {
+  Action,
+  PaginationSettings,
+  TransactionTableRow,
+  TransactionTableActionRow
+} from 'src/types';
 import {
   computed,
   defineComponent,
@@ -75,7 +80,6 @@ export default defineComponent({
     ];
     const rows = ref<TransactionTableRow[]>([]);
     const filteredRows = ref<TransactionTableRow[]>([]);
-    const expanded = ref<boolean[]>([]);
     const loading = ref<boolean>(false);
     const paginationSettings = ref<PaginationSettings>({
       sortBy: 'timestamp',
@@ -132,17 +136,56 @@ export default defineComponent({
               );
       }
       if (tableData) {
-        rows.value = tableData.map(
-          (tx) =>
-            ({
-              name: tx.trx_id,
-              transaction: { id: tx.trx_id, type: 'transaction' },
-              timestamp: tx['@timestamp'],
-              action: tx,
+        const map = new Map();
+        tableData.forEach((item) => {
+          const key = item.trx_id;
+          const collection = map.get(key) as {
+            timestamp: string;
+            name: string;
+            actions: TransactionTableActionRow[];
+          };
+          if (!collection) {
+            map.set(key, {
+              name: item.trx_id,
+              transaction: { id: item.trx_id, type: 'transaction' },
+              timestamp: item['@timestamp'],
+              action: item,
               data: hasActions.value
-                ? { data: tx.data, name: tx.account }
-                : { data: tx.act.data, name: tx.act.name }
-            } as TransactionTableRow)
+                ? { data: item.data as unknown, name: item.account as unknown }
+                : { data: item.act.data as unknown, name: item.act.name },
+              actions: [
+                {
+                  name: item.trx_id,
+                  transaction: { id: item.trx_id, type: 'transaction' },
+                  timestamp: item['@timestamp'],
+                  action: item,
+                  data: hasActions.value
+                    ? {
+                        data: item.data as unknown,
+                        name: item.account as unknown
+                      }
+                    : { data: item.act.data as unknown, name: item.act.name }
+                }
+              ]
+            });
+          } else {
+            collection.actions.push({
+              name: item.trx_id,
+              transaction: { id: item.trx_id, type: 'transaction' },
+              timestamp: item['@timestamp'],
+              action: item,
+              data: hasActions.value
+                ? {
+                    data: item.act.data as unknown,
+                    name: item.account
+                  }
+                : { data: item.act.data as unknown, name: item.act.name }
+            });
+          }
+        });
+        rows.value = Array.from(
+          map,
+          ([, value]) => value as TransactionTableRow
         );
       }
       void filterRows();
@@ -168,12 +211,6 @@ export default defineComponent({
 
     const checkIsMultiLine = (data: string): boolean => {
       return data.length > 0 && data.split('\n').length > 1;
-    };
-
-    const updateExpanded = (newExpanded: string[]) => {
-      if (newExpanded.length > 1) {
-        newExpanded.shift();
-      }
     };
 
     const filterRows = () => {
@@ -220,7 +257,6 @@ export default defineComponent({
       columns,
       rows,
       filteredRows,
-      expanded,
       loading,
       paginationSettings,
       fromDateFilter,
@@ -237,7 +273,6 @@ export default defineComponent({
       onRequest,
       loadTableData,
       checkIsMultiLine,
-      updateExpanded,
       filterRows
     };
   }
@@ -304,16 +339,14 @@ div.row.col-12.q-mt-xs.justify-center.text-left
       q-table.q-mt-lg.row.fixed-layout(
         :rows="filteredRows"
         :columns="columns"
-        :row-key="row => row.name + row.action.action_ordinal"
+        :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
         flat
         :bordered="false"
         :square="true"
         :loading="loading"
         table-header-class="table-header"
         v-model:pagination="paginationSettings"
-        v-model:expanded="expanded"
         :hide-pagination="noData"
-        @update:expanded='updateExpanded'
         @request='onRequest'
         :rows-per-page-options='[ 10, 20, 50, 100, 200]'
         )
@@ -323,19 +356,42 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           q-space
           .col
             q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
-        template( v-slot:body-cell-transaction="props")
-          q-td( :props="props" )
-            AccountFormat(:account="props.value.id" :type="props.value.type")
-        template( v-slot:body-cell-timestamp="props")
-          q-td( :props="props" )
-            DateField( :timestamp="props.value", :showAge='showAge' )
-        template( v-slot:body-cell-action="props")
-          q-td( :props="props" )
-            .row.justify-left.text-weight-light
-              ActionFormat(:action="props.value")
-        template( v-slot:body-cell-data="props")
-          q-td( :props="props"  )
-            DataFormat(:actionData="props.value.data" :actionName="props.value.name ")
+        template(v-slot:header="props")
+          q-tr(:props="props")
+            q-th(auto-width)
+
+            q-th(
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+            ) {{ col.label }}
+        template( v-slot:body="props")
+          q-tr(:props='props')
+            q-td.items-center(auto-width)
+              q-btn( v-if='props.row.actions.length > 1' flat size="sm" :icon="props.expand ? 'expand_less' : 'expand_more'" @click="props.expand = !props.expand")
+            q-td
+              AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
+            q-td
+              DateField( :timestamp="props.row.timestamp", :showAge='showAge' )
+            q-td
+              .row.justify-left.text-weight-light(v-for='action in props.row.actions')
+                .col-auto
+                  .q-pt-xs
+                    ActionFormat(:action="action.action")
+            q-td
+              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1')
+
+          q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
+            q-td(auto-width)
+            q-td
+              AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
+            q-td
+              DateField( :timestamp="action.timestamp", :showAge='showAge' )
+            q-td
+              .row.justify-left.text-weight-light
+                ActionFormat(:action="action.action")
+            q-td
+              DataFormat(:actionData="action.data.data" :actionName="action.data.name ")
         template( v-slot:pagination="scope")
           div.row.col-12.q-mt-md.q-mb-xl()
           div.col-1(align="left")
@@ -357,20 +413,33 @@ $medium:750px
 
 .fixed-layout
   .q-table
-    min-width: 1000px
+    min-width: 1300px
     table-layout: fixed
     tbody td
       vertical-align: text-top
     tbody td:first-child
       word-break: break-all
     th:first-child
-      width: 12%
+      width: 5%
     th:nth-child(2)
-      width: 15%
+      width: 12%
     th:nth-child(3)
-      width: 25%
+      width: 15%
     th:nth-child(4)
-      width: 48%
+      width: 25%
+    th:nth-child(5)
+      width: 43%
+    tbody tr
+      td:first-child
+        width: 5%
+      td:nth-child(2)
+        width: 12%
+      td:nth-child(3)
+        width: 15%
+      td:nth-child(4)
+        width: 25%
+      td:nth-child(5)
+        width: 43%
 
 .q-table--no-wrap td
   word-break: break-all
@@ -428,4 +497,7 @@ body
 
 .dropdown-filter
   max-width: 300px
+
+.expanded-row
+  background: var(--q-color-producer-card-background)
 </style>
