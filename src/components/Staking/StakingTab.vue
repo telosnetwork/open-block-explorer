@@ -24,7 +24,6 @@ export default defineComponent({
       () => store.state.account.TransactionError
     );
     const accountData = computed((): API.v1.AccountObject => {
-      debugger;
       return store.state?.account.data;
     });
     const rexInfo = computed(() => {

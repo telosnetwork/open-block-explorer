@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
-import { StateInterface, useStore } from '../store';
+import { useStore } from '../store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/Resources/ResourcesDialog.vue';
@@ -14,9 +14,6 @@ import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
-import { GetterTree } from 'vuex';
-import { AccountStateInterface } from 'src/store/account/state';
-import { account } from 'src/store/account';
 
 const chain = getChain();
 export default defineComponent({
@@ -35,26 +32,56 @@ export default defineComponent({
     }
   },
   setup(props) {
-    /* newly defined */
+    const $q = useQuasar();
+    const router = useRouter();
     const store = useStore();
-    debugger;
-    const accountData = ref<API.v1.AccountObject>();
 
-    const liquidString = computed((): string => {
-      let result = '';
-      if (accountData.value?.core_liquid_balance.value) {
-        result = accountData.value.core_liquid_balance.value.toFixed(4);
-      }
-      return result;
+    const createTime = ref<string>('2019-01-01T00:00:00.000');
+    const createTransaction = ref<string>('');
+    const creatingAccount = ref('');
+    const system_account = ref('eosio');
+
+    const none = ref<UInt64>(UInt64.from(0));
+    const MICRO_UNIT = ref<number>(Math.pow(10, -6));
+    const KILO_UNIT = ref<number>(Math.pow(10, 3));
+    const resources = ref<number>(0);
+    const refunding = ref<number>(0.0);
+    const delegatedResources = ref<number>(0.0);
+    const rex = ref<number>(0);
+    const usdPrice = ref<number>();
+    const cpu_used = ref<number>(0);
+    const cpu_max = ref<number>(0);
+    const net_used = ref(0);
+    const net_max = ref(0);
+    const ram_used = ref(0);
+    const ram_max = ref(0);
+    const radius = ref(44);
+
+    const accountExists = ref<boolean>(true);
+    const openSendDialog = ref<boolean>(false);
+    const openResourcesDialog = ref<boolean>(false);
+    const openStakingDialog = ref<boolean>(false);
+
+    const accountData = ref<API.v1.AccountObject>();
+    const availableTokens = ref<Token[]>([]);
+
+    const token = computed((): Token => store.state.chain.token);
+
+    const liquid = computed((): number => {
+      return accountData.value?.core_liquid_balance.value
+        ? accountData.value.core_liquid_balance.value
+        : 0;
     });
 
     const totalTokens = computed(
-      (): number => accountData.value?.core_liquid_balance.value || 0
+      (): number =>
+        accountData.value?.core_liquid_balance.value + rex.value || 0
     );
-    const usdPrice = ref<number>();
+
     const totalValue = computed((): number => {
       return usdPrice.value * totalTokens.value;
     });
+
     const totalValueString = computed((): string => {
       let result = '';
       if (totalValue.value && usdPrice.value) {
@@ -65,47 +92,14 @@ export default defineComponent({
       return result;
     });
 
-    /**              */
-    const $q = useQuasar();
-    const router = useRouter();
-    const createTime = ref<string>('2019-01-01T00:00:00.000');
-    const MICRO_UNIT = ref(Math.pow(10, -6));
-    const KILO_UNIT = ref(Math.pow(10, 3));
-    const cpu_used = ref(0);
-    const cpu_max = ref(0);
-    const net_used = ref(0);
-    const net_max = ref(0);
-    const ram_used = ref(0);
-    const ram_max = ref(0);
-    const creatingAccount = ref('');
-    // const liquid = ref<UInt64>(UInt64.from(0));
-    const refunding = ref<UInt64>(UInt64.from(0));
-    const staked = ref<UInt64>(UInt64.from(0));
-    const none = ref<UInt64>(UInt64.from(0));
-    const system_account = ref('eosio');
-    // const zero = ref<UInt64>(UInt64.from(0));
-    const radius = ref(44);
-    const availableTokens = ref<Token[]>([]);
-    const createTransaction = ref<string>('');
-    const token = computed((): Token => store.state.chain.token);
-    const accountExists = ref<boolean>(true);
-    const openSendDialog = ref<boolean>(false);
-    const openResourcesDialog = ref<boolean>(false);
-    const openStakingDialog = ref<boolean>(false);
     const isAccount = computed((): boolean => {
       return store.state.account.accountName === props.account;
     });
-    const resources = ref<UInt64>(UInt64.from(0));
-    const delegatedResources = ref<string>('0.0000');
-    const rex = ref<number>(0);
-    const liqNum = ref<UInt64>(UInt64.from(0));
-    debugger;
-    const totalString = computed(() => {
-      return UInt64.add(liqNum.value as UInt64, staked.value as UInt64); //TODO missing add rex.value
-    });
+
     const createTimeFormat = computed((): string =>
       date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
     );
+
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
@@ -113,68 +107,65 @@ export default defineComponent({
     const setToken = (value: Token) => {
       store.commit('chain/setToken', value);
     };
+
     const loadAccountData = async (): Promise<void> => {
       try {
         accountData.value = await api.getAccount(props.account);
         await loadAccountCreatorInfo();
         await loadBalances();
-
-        // ? formatStaked(account.voter_info.staked.value)
-        // : none.value; //+ ` ${token.value.symbol}`;
+        loadResources();
         // store.commit('account/setAccountData', data);
       } catch (e) {
         // totalTokens = refunding.value = staked.value = rex.value = none.value;
         $q.notify(`account ${props.account} not found!`);
         accountExists.value = false;
+        console.log(e);
         return;
       }
 
       // availableTokens.value = data.tokens;
-      // const account = data;
-      // ram_used.value = fixDec(account.ram_usage.value / KILO_UNIT.value);
-      // ram_max.value = fixDec(account.ram_quota.value / KILO_UNIT.value);
-      // cpu_used.value = fixDec(account.cpu_limit.used.value * MICRO_UNIT.value);
-      // cpu_max.value = fixDec(account.cpu_limit.max.value * MICRO_UNIT.value);
-      // net_used.value = fixDec(account.net_limit.used.value / KILO_UNIT.value);
-      // net_max.value = fixDec(account.net_limit.max.value / KILO_UNIT.value);
-      // liquid.value = getAmount(account.core_liquid_balance.symbol.value);
-      // liqNum.value = getAmount(account.core_liquid_balance.symbol.value);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      // resources.value = UInt64.add(
-      //   account.self_delegated_bandwidth.cpu_weight.symbol.value,
-      //   account.self_delegated_bandwidth.net_weight.symbol.value
-      // );
-      // const delegatedNum =
-      //   Number(account.total_resources.cpu_weight.value) +
-      //   Number(account.total_resources.net_weight.value) -
-      //   Number(account?.self_delegated_bandwidth?.net_weight.value || 0) -
-      //   Number(account?.self_delegated_bandwidth?.cpu_weight.value || 0);
-      // delegatedResources.value = account?.total_resources
-      //   ? (delegatedNum > 0 ? delegatedNum : 0.0).toFixed(
-      //       token.value.precision
-      //     ) + ` ${token.value.symbol}`
-      //   : `${token.value.symbol}`;
-      // debugger;
-      // if (account.rex_info) {
-      //   const liqNum = account.core_liquid_balance.value;
-      //   const rexNum = account.rex_info.vote_stake.value;
-      //   const totalString = (liqNum + rexNum).toFixed(token.value.precision);
-      //   total.value = UInt64.from(totalString); //`${totalString} ${token.value.symbol}`;
-      //   rex.value = account.rex_info.vote_stake.symbol.value;
-      // } else {
-      //   total.value = liquid.value;
-      //   rex.value = none.value;
-      // }
-      // refunding.value = formatTotalRefund(account.refund_request);
-      // staked.value = account.voter_info
-      //   ? formatStaked(account.voter_info.staked.value)
-      //   : none.value; //+ ` ${token.value.symbol}`;
+    };
+
+    const loadResources = () => {
+      ram_used.value = fixDec(
+        Number(accountData.value.ram_usage) / KILO_UNIT.value
+      );
+      ram_max.value = fixDec(
+        Number(accountData.value.ram_quota) / KILO_UNIT.value
+      );
+      cpu_used.value = fixDec(
+        Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value
+      );
+      cpu_max.value = fixDec(
+        Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value
+      );
+      net_used.value = fixDec(
+        Number(accountData.value.net_limit.used) / KILO_UNIT.value
+      );
+      net_max.value = fixDec(
+        Number(accountData.value.net_limit.max) / KILO_UNIT.value
+      );
+
+      // resources.value =
+      //   accountData.value.self_delegated_bandwidth.cpu_weight.value +
+      //   accountData.value.self_delegated_bandwidth.net_weight.value;
+
+      delegatedResources.value =
+        Number(accountData.value.total_resources.cpu_weight.value) +
+        Number(accountData.value.total_resources.net_weight.value) -
+        Number(
+          accountData.value.self_delegated_bandwidth?.net_weight.value || 0
+        ) -
+        Number(
+          accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0
+        );
     };
 
     const loadBalances = async () => {
       const rexBalance = await getRexBalance();
       const rexFund = await getRexFund();
-      rex.value = rexBalance + rexFund;
+      rex.value = rexBalance + rexFund; // .toFixed(token.value.precision);
+      refunding.value = totalRefund();
     };
 
     const loadAccountCreatorInfo = async () => {
@@ -193,7 +184,6 @@ export default defineComponent({
     };
 
     const getRexFund = async () => {
-      debugger;
       const paramsrexfund = {
         code: 'eosio',
         limit: '1',
@@ -231,7 +221,6 @@ export default defineComponent({
 
       const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
         .rows[0];
-      debugger;
       const rexBalance =
         rexBal && rexBal.rex_balance
           ? Number(rexBal.rex_balance.split(' ')[0])
@@ -270,18 +259,6 @@ export default defineComponent({
       }
     };
 
-    const formatStaked = (staked: UInt64): UInt64 => {
-      const stakedValue = UInt64.div(
-        staked,
-        UInt64.from(Math.pow(10, token.value.precision))
-      ); //.toFixed(token.value.precision);
-      return stakedValue; //`${stakedValue} ${token.value.symbol}`;
-    };
-
-    const getAmount = (property: UInt64): UInt64 => {
-      return property ? property : (none.value as UInt64);
-    };
-
     const loadCreatorAccount = async (): Promise<void> => {
       await router.push({
         name: 'account',
@@ -302,42 +279,12 @@ export default defineComponent({
       router.go(0);
     };
 
-    // const loadPriceData = async (): Promise<void> => {
-    //   const usdPrice: number = await chain.getUsdPrice();
-
-    //   const dollarAmount = usdPrice * totalTokens.value;
-
-    //   );
-    //   totalValue.value = dollarAmount.toString(); /* `$${dollarAmount.toFixed(
-    //     2
-    //   )} (@ $${usdPrice}/${chain.getSymbol()})`;
-    //   */
-    // };
-
-    const formatTotalRefund = (
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      refund: any /*AccountRefundRequest */
-    ): UInt64 => {
-      const totalRefund =
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        UInt64.add(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          refund?.cpu_amount.value /* token.value.precision) + */,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          refund?.net_amount.value /* token.value.precision */
-        ); //.toFixed(4);
-      return totalRefund; //} ${token.value.symbol}`;
+    const totalRefund = (): number => {
+      return accountData.value.refund_request
+        ? accountData.value.refund_request?.cpu_amount.value +
+            accountData.value.refund_request?.net_amount.value
+        : 0;
     };
-    // const assetToAmount = (asset: Asset, decimals = -1): number => {
-    //   try {
-    //     let qty: string = asset.split(' ')[0];
-    //     let val: number = parseFloat(qty);
-    //     if (decimals > -1) qty = val.toFixed(decimals);
-    //     return val;
-    //   } catch (error) {
-    //     return 0;
-    //   }
-    // };
 
     const copy = (value: string) => {
       copyToClipboard(value)
@@ -359,14 +306,14 @@ export default defineComponent({
         });
     };
 
+    const formatAsset = (val: number): string => {
+      return `${val.toFixed(4)} ${chain.getSymbol()}`;
+    };
+
     onMounted(async () => {
-      /***  new    */
       usdPrice.value = await chain.getUsdPrice();
       await loadAccountData();
-      /***         */
-
       await loadSystemToken();
-      // await loadPriceData();
       await store.dispatch('account/updateRexData', {
         account: props.account
       });
@@ -384,7 +331,6 @@ export default defineComponent({
       () => props.account,
       async () => {
         await loadAccountData();
-        // await loadPriceData();
       }
     );
 
@@ -398,16 +344,14 @@ export default defineComponent({
       ram_used,
       ram_max,
       creatingAccount,
-      liquidString,
+      liquid,
       totalTokens,
       totalValue,
       totalValueString,
       refunding,
-      staked,
       rex,
       none,
       system_account,
-      // zero,
       radius,
       availableTokens,
       createTime,
@@ -419,18 +363,16 @@ export default defineComponent({
       isAccount,
       token,
       createTimeFormat,
-      totalString,
       resources,
       accountExists,
       loadAccountData,
       setToken,
       fixDec,
       loadSystemToken,
-      formatStaked,
       loadCreatorAccount,
       loadCreatorTransaction,
-      // loadPriceData,
-      copy
+      copy,
+      formatAsset
     };
   }
 });
@@ -476,23 +418,23 @@ export default defineComponent({
           tr
           tr
             td.text-left.total-label TOTAL
-            td.text-right.total-amount {{ totalTokens.toFixed(4) }}
+            td.text-right.total-amount {{ formatAsset(totalTokens) }}
           tr.total-row
             td.text-left
             td.text-right.total-value {{ totalValueString }}
           tr
           tr
             td.text-left LIQUID
-            td.text-right {{ liquidString }}
+            td.text-right {{ formatAsset(liquid) }}
           tr
             td.text-left STAKED
-            td.text-right {{ rex }}
+            td.text-right {{ formatAsset(rex) }}
           tr
             td.text-left REFUNDING
-            td.text-right {{ refunding }}
+            td.text-right {{ formatAsset(refunding) }}
           tr
             td.text-left DELEGATED BY OTHERS
-            td.text-right {{ delegatedResources }}
+            td.text-right {{ formatAsset(delegatedResources) }}
     div(v-if='isAccount')
       SendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
       ResourcesDialog(v-model="openResourcesDialog")
