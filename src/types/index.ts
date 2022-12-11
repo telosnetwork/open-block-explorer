@@ -20,7 +20,10 @@ export {
   Get_actions,
   Error
 } from './Actions';
-export { TransactionTableRow } from './TransactionTableRow';
+export {
+  TransactionTableRow,
+  TransactionTableActionRow
+} from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';
 export { GenericObj } from './GenericObj';
 export { Transaction } from './Transaction';
