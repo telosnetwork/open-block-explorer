@@ -73,10 +73,12 @@ export default defineComponent({
         : 0;
     });
 
-    const totalTokens = computed(
-      (): number =>
-        accountData.value?.core_liquid_balance.value + rex.value || 0
-    );
+    const totalTokens = computed((): number => {
+      if (rex.value && accountData.value.core_liquid_balance) {
+        return accountData.value.core_liquid_balance.value + rex.value;
+      }
+      return 0;
+    });
 
     const totalValue = computed((): number => {
       return usdPrice.value * totalTokens.value;
@@ -100,9 +102,9 @@ export default defineComponent({
       date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
     );
 
-    const transactionId = computed(
-      (): string => store.state.account.TransactionId
-    );
+    // const transactionId = computed(
+    //   (): string => store.state.account.TransactionId
+    // );
 
     const setToken = (value: Token) => {
       store.commit('chain/setToken', value);
@@ -320,12 +322,12 @@ export default defineComponent({
       void store.dispatch('chain/updateRamPrice');
     });
 
-    watch(transactionId, async () => {
-      await loadAccountData();
-      await store.dispatch('account/updateRexData', {
-        account: props.account
-      });
-    });
+    // watch(transactionId, async () => {
+    //   await loadAccountData();
+    //   await store.dispatch('account/updateRexData', {
+    //     account: props.account
+    //   });
+    // });
 
     watch(
       () => props.account,
