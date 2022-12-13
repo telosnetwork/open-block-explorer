@@ -5,6 +5,7 @@ import { User } from 'universal-authenticator-library';
 import { markRaw } from 'vue';
 
 import { getChain } from 'src/config/ConfigManager';
+import { FixedNumber } from 'ethers';
 
 const symbol = getChain().getSymbol();
 
@@ -56,7 +57,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
   setABI(state: AccountStateInterface, abi: ABI) {
     state.abi = abi;
   },
-  setTlosRexRatio(state: AccountStateInterface, ratio: number) {
+  setTlosRexRatio(state: AccountStateInterface, ratio: FixedNumber) {
     state.tlosRexRatio = ratio;
   },
   setAccountPermission(state: AccountStateInterface, permission: string) {

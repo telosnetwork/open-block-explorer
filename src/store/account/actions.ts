@@ -6,6 +6,7 @@ import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
+import { FixedNumber } from 'ethers';
 
 const chain = getChain();
 const symbol = chain.getSymbol();
@@ -120,16 +121,30 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       rexbal && rexbal.rex_balance
         ? parseFloat(rexbal.rex_balance.split(' ')[0])
         : 0;
-    const totalRex = Number(rexpool.total_rex.split(' ')[0]);
-    const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
-    const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
+    const totalRex = FixedNumber.from(rexpool.total_rex.split(' ')[0]);
+    const totalLendable = FixedNumber.from(
+      rexpool.total_lendable.split(' ')[0]
+    );
+    const tlosRexRatio =
+      totalRex.toUnsafeFloat() > 0
+        ? totalLendable.divUnsafe(totalRex)
+        : FixedNumber.from(1);
     commit('setTlosRexRatio', tlosRexRatio);
-    let coreBalance = totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
+    let coreBalance =
+      totalRex.toUnsafeFloat() < 0
+        ? tlosRexRatio.mulUnsafe(FixedNumber.from(rexBalance)).toUnsafeFloat()
+        : 0.0;
     coreBalance += rexFundBalance;
 
     let savingsRex = 0;
     let maturedRex = rexbal
-      ? tlosRexRatio * (Number(rexbal.matured_rex) / 10000)
+      ? tlosRexRatio
+          .mulUnsafe(
+            FixedNumber.from(rexbal.matured_rex).divUnsafe(
+              FixedNumber.from(10000)
+            )
+          )
+          .toUnsafeFloat()
       : 0;
     let maturingRex = 0;
     if (rexbal && rexbal.rex_maturities && rexbal.rex_maturities.length > 0) {
@@ -139,11 +154,14 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         const maturityYear = new Date(maturity.first).getFullYear();
         const maturityTime = new Date(maturity.first).getTime();
         if (maturityYear - thisYear > 1) {
-          savingsRex = tlosRexRatio * (Number(maturity.second) / 10000);
+          savingsRex =
+            (tlosRexRatio.toUnsafeFloat() * Number(maturity.second)) / 10000;
         } else if (maturityTime - now < 0) {
-          maturedRex += tlosRexRatio * (Number(maturity.second) / 10000);
+          maturedRex +=
+            (tlosRexRatio.toUnsafeFloat() * Number(maturity.second)) / 10000;
         } else {
-          maturingRex = tlosRexRatio * (Number(maturity.second) / 10000);
+          maturingRex =
+            (tlosRexRatio.toUnsafeFloat() * Number(maturity.second)) / 10000;
         }
       });
     }
@@ -250,7 +268,10 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       return;
     }
     const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
-    const rexToUnstake = (Number(amount) / state.tlosRexRatio).toFixed(4);
+    const rexToUnstake = FixedNumber.from(amount)
+      .divUnsafe(state.tlosRexRatio)
+      .toUnsafeFloat()
+      .toFixed(4);
 
     //   TODO check maturities
     const actions = [
@@ -587,7 +608,10 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async moveToSavings({ commit, state }, { amount }) {
     let transaction = null;
     const rexToUnstake =
-      (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+      FixedNumber.from(amount)
+        .divUnsafe(state.tlosRexRatio)
+        .toUnsafeFloat()
+        .toFixed(4) + ' REX';
     const actions = [
       {
         account: 'eosio',
@@ -622,7 +646,10 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async moveFromSavings({ commit, state }, { amount }) {
     let transaction = null;
     const rexToUnstake =
-      (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+      FixedNumber.from(amount)
+        .divUnsafe(state.tlosRexRatio)
+        .toUnsafeFloat()
+        .toFixed(4) + ' REX';
     const actions = [
       {
         account: 'eosio',

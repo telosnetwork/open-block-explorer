@@ -1,6 +1,7 @@
 import { Authorization, AccountDetails, Action, Rexbal, ABI } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { User } from 'universal-authenticator-library';
+import { FixedNumber } from 'ethers';
 
 const chain = getChain();
 
@@ -24,7 +25,7 @@ export interface AccountStateInterface {
   maturingRex: string;
   maturedRex: string;
   savingsRex: string;
-  tlosRexRatio: number;
+  tlosRexRatio: FixedNumber;
   rexfund: number;
   authenticatorName: string;
 }
@@ -57,7 +58,7 @@ export function state(): AccountStateInterface {
     maturingRex: `0.0000 ${chain.getSymbol()}`,
     maturedRex: `0.0000 ${chain.getSymbol()}`,
     savingsRex: `0.0000 ${chain.getSymbol()}`,
-    tlosRexRatio: 1,
+    tlosRexRatio: FixedNumber.from(1),
     rexfund: 0,
     authenticatorName: null
   };
