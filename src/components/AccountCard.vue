@@ -116,6 +116,9 @@ export default defineComponent({
         await loadAccountCreatorInfo();
         await loadBalances();
         loadResources();
+        debugger;
+        // availableTokens.value = accountData.value.tokens;
+
         // store.commit('account/setAccountData', data);
       } catch (e) {
         // totalTokens = refunding.value = staked.value = rex.value = none.value;
@@ -124,8 +127,6 @@ export default defineComponent({
         console.log(e);
         return;
       }
-
-      // availableTokens.value = data.tokens;
     };
 
     const loadResources = () => {
@@ -249,15 +250,9 @@ export default defineComponent({
       return parseFloat(val.toFixed(3));
     };
 
-    const loadSystemToken = async (): Promise<void> => {
+    const loadSystemToken = (): void => {
       if (token.value.symbol === '') {
-        const tokenList = await api.getTokens(system_account.value);
-        const token = tokenList.find(
-          (token: Token) =>
-            token.contract === `${system_account.value}.token` &&
-            token.symbol === chain.getSymbol()
-        );
-        setToken(token);
+        setToken(chain.getSystemToken());
       }
     };
 
