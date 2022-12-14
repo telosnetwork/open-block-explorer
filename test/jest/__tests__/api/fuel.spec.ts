@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { AnyTransaction } from '@greymass/eosio';
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
@@ -11,6 +10,54 @@ import {
 } from 'universal-authenticator-library';
 
 installQuasarPlugin();
+
+// mocking localStorage
+// https://robertmarshall.dev/blog/how-to-mock-local-storage-in-jest-tests/
+const localStorageMock = (function () {
+  let store: { [key: string]: unknown } = {};
+
+  return {
+    getItem(key: string) {
+      return store[key];
+    },
+
+    setItem(key: string, value: unknown) {
+      store[key] = value;
+    },
+
+    clear() {
+      store = {};
+    },
+
+    removeItem(key: string) {
+      delete store[key];
+    },
+
+    getAll() {
+      return store;
+    }
+  };
+})();
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
+// TODO: this do not work. How do you mock a class to work with: if (user instanceof AnchorUser) {...}
+// mocking AnchorUser
+jest.mock('ual-anchor', () => () => {
+  return {
+    AnchorUser: {}
+  };
+});
+
+// mocking quasar dialog
+const createDialog = jest.fn();
+jest.mock('quasar', () => ({
+  // mocking static functions create
+  Dialog: {
+    create: () => {
+      return createDialog();
+    }
+  }
+}));
 
 // mocking @greymass/eosio
 jest.mock('@greymass/eosio', () => ({
@@ -96,11 +143,6 @@ global.fetch = jest.fn(() =>
       })
   } as Response)
 );
-
-/*
-
-
-*/
 
 // mocking internal implementatios
 jest.mock('src/config/ConfigManager', () => ({
@@ -201,6 +243,8 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
   let wrapper: FuelUserWrapper;
 
   beforeEach(() => {
+    createDialog.mockReset();
+    localStorageMock.clear();
     wrapper = getWrapper();
   });
 
@@ -218,35 +262,78 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
       });
     });
     describe('When reciving code 200 from resource provider', () => {
-      it('should take the signature and modified trx, sign it and broadcast', async () => {
-        rpResponseCode = Number(200);
-        const trx = getOriginalTransaction();
-        const response = await wrapper.signTransaction(trx, configData);
-        const response_actions_json = JSON.stringify(
-          response.transaction.actions
-        );
-        const expected_actions = [
-          noopAction,
-          ...trx.actions.map((x) => ({ ...x }))
-        ];
-        const expected_actions_json = JSON.stringify(expected_actions);
-        expect(response_actions_json).toEqual(expected_actions_json);
+      describe('and the user approves the use of Fuel', () => {
+        it('should take the signature and modified trx, sign it and broadcast', async () => {
+          rpResponseCode = Number(200);
+          const trx = getOriginalTransaction();
+
+          createDialog.mockImplementationOnce(() => ({
+            onOk: jest.fn((resolve: (payload?: unknown) => void) => {
+              resolve(); // the user approves
+              return { onCancel: jest.fn() };
+            })
+          }));
+
+          const response = await wrapper.signTransaction(trx, configData);
+          const response_actions_json = JSON.stringify(
+            response.transaction.actions
+          );
+          const expected_actions = [
+            noopAction,
+            ...trx.actions.map((x) => ({ ...x }))
+          ];
+          const expected_actions_json = JSON.stringify(expected_actions);
+          expect(response_actions_json).toEqual(expected_actions_json);
+        });
+      });
+
+      describe('but the user refuses to use the service', () => {
+        it('should not change the original transaction', async () => {
+          rpResponseCode = Number(200);
+          const trx = getOriginalTransaction();
+
+          createDialog.mockImplementationOnce(() => ({
+            onOk: jest.fn(() => ({
+              onCancel: jest.fn((reject: (payload?: unknown) => void) => {
+                reject(); // the user rejects to use the service
+              })
+            }))
+          }));
+
+          const response = await wrapper.signTransaction(trx, configData);
+          const response_actions_json = JSON.stringify(
+            response.transaction.actions
+          );
+          const trx_actions_json = JSON.stringify(trx.actions);
+          expect(response_actions_json).toEqual(trx_actions_json);
+        });
       });
     });
+
     describe('When reciving code 402 from resource provider', () => {
-      it('should take the signature and modified trx, sign it and broadcast', async () => {
-        rpResponseCode = Number(200);
-        const trx = getOriginalTransaction();
-        const response = await wrapper.signTransaction(trx, configData);
-        const response_actions_json = JSON.stringify(
-          response.transaction.actions
-        );
-        const expected_actions = [
-          noopAction,
-          ...trx.actions.map((x) => ({ ...x }))
-        ];
-        const expected_actions_json = JSON.stringify(expected_actions);
-        expect(response_actions_json).toEqual(expected_actions_json);
+      describe('and the user approves the use of Fuel', () => {
+        it('should take the signature and modified trx, sign it and broadcast', async () => {
+          rpResponseCode = Number(402);
+          const trx = getOriginalTransaction();
+
+          createDialog.mockImplementationOnce(() => ({
+            onOk: jest.fn((resolve: (payload?: unknown) => void) => {
+              resolve(); // the user approves
+              return { onCancel: jest.fn() };
+            })
+          }));
+
+          const response = await wrapper.signTransaction(trx, configData);
+          const response_actions_json = JSON.stringify(
+            response.transaction.actions
+          );
+          const expected_actions = [
+            noopAction,
+            ...trx.actions.map((x) => ({ ...x }))
+          ];
+          const expected_actions_json = JSON.stringify(expected_actions);
+          expect(response_actions_json).toEqual(expected_actions_json);
+        });
       });
     });
   });
