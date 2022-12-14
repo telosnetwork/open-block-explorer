@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { AnyTransaction } from '@greymass/eosio';
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
@@ -119,7 +119,10 @@ global.fetch = jest.fn(() =>
 // mocking internal implementatios
 jest.mock('src/config/ConfigManager', () => ({
   getChain: () => ({
+    getSymbol: () => 'TLOS',
     getHyperionEndpoint: () => '',
+    getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 })
+  })
 }));
 
 // UserStub simulates a AnchorUser or CleosUser
@@ -144,8 +147,12 @@ class UserStub extends User {
   ): Promise<string> => Promise.resolve('');
   verifyKeyOwnership = async (challenge: string): Promise<boolean> =>
     Promise.resolve(false);
+  getAccountName = async (): Promise<string> =>
     Promise.resolve(signer.actor.toString());
   getChainId = async (): Promise<string> => Promise.resolve('');
+  getKeys = async (): Promise<string[]> => Promise.resolve(['']);
+}
+
 // The authority used to sign the test transaction
 const signer = {
   actor: 'actor.stub',
