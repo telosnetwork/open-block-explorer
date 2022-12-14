@@ -39,10 +39,10 @@ module.exports = {
       lines: 5
     },
     './src/components/': {
-      statements: 3,
-      branches: 1,
-      functions: 4,
-      lines: 3
+      statements: 0,
+      branches: 0,
+      functions: 0,
+      lines: 0
     },
     './src/pages/': {
       statements: 0,
