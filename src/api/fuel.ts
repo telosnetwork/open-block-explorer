@@ -19,6 +19,7 @@ import {
   SignedTransaction,
   Transaction
 } from '@greymass/eosio';
+import { AnchorUser } from 'ual-anchor';
 import { getChain } from 'src/config/ConfigManager';
 import { Dialog } from 'quasar';
 
@@ -129,6 +130,18 @@ export class FuelUserWrapper extends User {
         }
         case 200: {
           // Resource Provider provided signature for free
+
+          // validate with the user whether to use the service at all
+          try {
+            await confirmWithUser(this.user);
+          } catch (e) {
+            // TODO: need localization
+            // The user refuseed to use the service
+            console.info('Skip Fuel');
+            break;
+          }
+
+          console.info('Continue with Greymass Fuel !!');
 
           const { data } = rpResponse;
           const [, returnedTransaction] = data.request;
@@ -547,8 +560,8 @@ function validateNoop(modifiedTransaction: Transaction) {
     (JSON.stringify(firstAction.data) !== '""' &&
       JSON.stringify(firstAction.data) !== '{}')
   ) {
-    console.log('firstAction.data', firstAction.data);
-    console.log('JSON.stringify(firstAction.data)', JSON.stringify(firstAction.data));
+    // console.log('firstAction.data', firstAction.data);
+    // console.log('JSON.stringify(firstAction.data)', JSON.stringify(firstAction.data));
     throw new Error(
       `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`
     );

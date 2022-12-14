@@ -291,6 +291,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
         });
       });
     });
+
     describe('When reciving code 402 from resource provider', () => {
       describe('and the user approves to pay the fee', () => {
         it('should show the fee to the user and push three aditional actions before the original', async () => {
