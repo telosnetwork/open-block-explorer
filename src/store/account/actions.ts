@@ -8,7 +8,7 @@ import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain = getChain();
-const symbol = chain.getSymbol();
+const symbol = chain.getSystemToken().symbol;
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {

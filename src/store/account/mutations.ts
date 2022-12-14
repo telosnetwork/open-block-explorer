@@ -7,7 +7,7 @@ import { markRaw } from 'vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API, Name } from '@greymass/eosio';
 
-const symbol = getChain().getSymbol();
+const symbol = getChain().getSystemToken().symbol;
 
 export const mutations: MutationTree<AccountStateInterface> = {
   setUser(state: AccountStateInterface, user: User) {

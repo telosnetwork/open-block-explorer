@@ -8,7 +8,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { isValidAccount } from 'src/utils/stringValidator';
 
 const chain = getChain();
-const symbol = chain.getSymbol();
+const symbol = chain.getSystemToken().symbol;
 
 export default defineComponent({
   name: 'StakeTab',

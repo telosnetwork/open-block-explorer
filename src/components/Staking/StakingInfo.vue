@@ -14,7 +14,7 @@ export default defineComponent({
   name: 'StakingInfo',
   setup() {
     const store = useStore();
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const stakingAccount = ref<string>('');
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);

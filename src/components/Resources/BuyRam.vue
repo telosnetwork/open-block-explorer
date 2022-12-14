@@ -17,7 +17,7 @@ export default defineComponent({
     const store = useStore();
     let openTransaction = ref<boolean>(false);
     const buyAmount = ref<string>('');
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const buyOptions = [symbol.value, 'Bytes'];
     const buyOption = ref<string>(buyOptions[0]);
     const transactionId = computed(

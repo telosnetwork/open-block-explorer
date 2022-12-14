@@ -23,7 +23,7 @@ export default defineComponent({
     const store = useStore();
     // const route = useRoute(); //@TODO restore if nec
     // const query = route.query; //@TODO restore if nec
-    const symbol = chain.getSymbol();
+    const symbol = chain.getSystemToken().symbol;
     const account = computed(() => store.state.account.accountName);
     const balance = computed(
       () =>
@@ -121,7 +121,7 @@ export default defineComponent({
     async function updateSupply() {
       const paramsSupply = {
         code: 'eosio.token',
-        scope: chain.getSymbol(),
+        scope: chain.getSystemToken().symbol,
         table: 'stat'
       } as GetTableRowsParams;
       supply.value = assetToAmount(

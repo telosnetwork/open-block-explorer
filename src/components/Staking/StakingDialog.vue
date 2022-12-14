@@ -13,7 +13,7 @@ import SavingsTab from './SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 
-const symbol = getChain().getSymbol();
+const symbol = getChain().getSystemToken().symbol;
 
 export default defineComponent({
   name: 'StakingDialog',

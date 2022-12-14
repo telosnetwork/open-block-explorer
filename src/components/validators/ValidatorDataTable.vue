@@ -24,7 +24,7 @@ export default defineComponent({
     const store = useStore();
     // const route = useRoute();
     // const query = route.query;
-    const symbol = chain.getSymbol();
+    const symbol = chain.getSystemToken().symbol;
     const account = computed(() => store.state.account.accountName);
     const producers = computed(() =>
       [...store.state.chain.producers].map((val) => val.owner)

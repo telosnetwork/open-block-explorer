@@ -89,7 +89,7 @@ export default defineComponent({
       if (totalValue.value && usdPrice.value) {
         result = `$${totalValue.value.toFixed(2)} (@ $${usdPrice.value.toFixed(
           4
-        )}/${chain.getSymbol()})`;
+        )}/${chain.getSystemToken().symbol})`;
       }
       return result;
     });
@@ -304,16 +304,16 @@ export default defineComponent({
     };
 
     const formatAsset = (val: number): string => {
-      return `${val.toFixed(4)} ${chain.getSymbol()}`;
+      return `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
     };
 
     onMounted(async () => {
       usdPrice.value = await chain.getUsdPrice();
       await loadAccountData();
-      await loadSystemToken();
       await store.dispatch('account/updateRexData', {
         account: props.account
       });
+      loadSystemToken();
       void store.dispatch('chain/updateRamPrice');
     });
 

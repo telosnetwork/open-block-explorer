@@ -83,10 +83,10 @@ export function state(): AccountStateInterface {
     rexbal: {} as Rexbal,
     vote: [],
     abi: { abi: null } as ABI,
-    coreRexBalance: `0.0000 ${chain.getSymbol()}`,
-    maturingRex: `0.0000 ${chain.getSymbol()}`,
-    maturedRex: `0.0000 ${chain.getSymbol()}`,
-    savingsRex: `0.0000 ${chain.getSymbol()}`,
+    coreRexBalance: `0.0000 ${chain.getSystemToken().symbol}`,
+    maturingRex: `0.0000 ${chain.getSystemToken().symbol}`,
+    maturedRex: `0.0000 ${chain.getSystemToken().symbol}`,
+    savingsRex: `0.0000 ${chain.getSystemToken().symbol}`,
     tlosRexRatio: 1,
     rexfund: 0
   };

@@ -14,7 +14,7 @@ export default defineComponent({
     const store = useStore();
     const openTransaction = ref<boolean>(false);
     const chain = getChain();
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const stakingAccount = computed(
       (): string => store.state.account.accountName
     );

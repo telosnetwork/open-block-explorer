@@ -25,12 +25,7 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
     const router = useRouter();
-    const sendToken = ref<Token>({
-      symbol: chain.getSymbol(),
-      precision: 4,
-      amount: 0,
-      contract: 'eosio.token'
-    });
+    const sendToken = ref<Token>(chain.getSystemToken());
     const availableTokens = toRef(props, 'availableTokens');
     const account = computed(() => store.state.account.accountName);
     const transactionId = computed(
@@ -81,7 +76,7 @@ export default defineComponent({
     };
     const resetForm = () => {
       sendToken.value = {
-        symbol: chain.getSymbol(),
+        symbol: chain.getSystemToken().symbol,
         precision: 4,
         amount: 0,
         contract: 'eosio.token'

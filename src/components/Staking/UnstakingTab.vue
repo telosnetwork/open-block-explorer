@@ -16,7 +16,7 @@ export default defineComponent({
     const store = useStore();
     let openTransaction = ref<boolean>(false);
     const unstakeTokens = ref<string>('');
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );

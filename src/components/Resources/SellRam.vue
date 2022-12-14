@@ -15,7 +15,7 @@ export default defineComponent({
     const chain = getChain();
     let openTransaction = ref<boolean>(false);
     const sellAmount = ref('');
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
