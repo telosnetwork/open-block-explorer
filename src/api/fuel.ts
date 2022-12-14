@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Most of this code was taken and addapted from https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70
-
 import {
   SignTransactionConfig,
   SignTransactionResponse,
@@ -20,7 +17,9 @@ import {
   SignedTransaction,
   Transaction
 } from '@greymass/eosio';
+import { AnchorUser } from 'ual-anchor';
 import { getChain } from 'src/config/ConfigManager';
+import { Dialog } from 'quasar';
 
 // The maximum fee per transaction this script is willing to accept
 const maxFee = 0.005;
@@ -102,19 +101,16 @@ export class FuelUserWrapper extends User {
 
       // Submit the transaction to the resource provider endpoint
       const cosigned = await fetch(resourceProviderEndpoint, {
-          body: JSON.stringify({
-              signer,
-              packedTransaction,
-          }),
-          method: 'POST',
+        body: JSON.stringify({
+          signer,
+          packedTransaction
+        }),
+        method: 'POST'
       });
 
       // Interpret the resulting JSON
-      const rpResponse = await (cosigned.json()) as unknown as ResourceProviderResponse;
-
-      console.log('rpResponse', rpResponse);
-      console.log('typeof rpResponse.code', typeof rpResponse.code);
-      console.log('typeof rpResponse.code.toString', typeof rpResponse.code.toString);
+      const rpResponse =
+        (await cosigned.json()) as unknown as ResourceProviderResponse;
 
       switch (rpResponse.code) {
         case 402: {
@@ -124,6 +120,18 @@ export class FuelUserWrapper extends User {
         }
         case 200: {
           // Resource Provider provided signature for free
+
+          // validate with the user whether to use the service at all
+          try {
+            await confirmWithUser(this.user);
+          } catch (e) {
+            // TODO: need localization
+            // The user refuseed to use the service
+            console.info('Skip Fuel');
+            break;
+          }
+
+          console.info('Continue with Greymass Fuel !!');
 
           const { data } = rpResponse;
           const [, returnedTransaction] = data.request;
@@ -139,7 +147,6 @@ export class FuelUserWrapper extends User {
           );
 
           modifiedTransaction.signatures = [...data.signatures];
-
           // Sign the modified transaction
           const locallySigned: SignedTransactionResponse =
             (await this.user.signTransaction(
@@ -216,6 +223,121 @@ export class FuelUserWrapper extends User {
   getAccountName = async (): Promise<string> => this.user.getAccountName();
   getChainId = async (): Promise<string> => this.user.getChainId();
   getKeys = async (): Promise<string[]> => this.user.getKeys();
+}
+
+// Auxiliar functions to validate with the user the use of the service
+interface Preference {
+  remember?: boolean;
+  approve?: boolean;
+}
+export default class GreymassFuelService {
+  static preferences: { [account: string]: Preference } = {};
+  static globals: Record<string, (s: string) => string> = null;
+  static save() {
+    localStorage.setItem(
+      'fuel_preferences',
+      JSON.stringify(GreymassFuelService.preferences)
+    );
+  }
+  static load() {
+    try {
+      GreymassFuelService.preferences = GreymassFuelService.preferences || {};
+      const str = localStorage.getItem('fuel_preferences');
+      if (str) {
+        GreymassFuelService.preferences = JSON.parse(str);
+      }
+    } catch (e) {
+      console.error('ERROR: ', e);
+    }
+  }
+
+  static setPreferences(account: string, p: Preference) {
+    GreymassFuelService.preferences[account] = {
+      ...GreymassFuelService.preferences[account],
+      ...p
+    };
+    if (GreymassFuelService.preferences[account].remember) {
+      GreymassFuelService.save();
+    }
+  }
+  static setGlobals(g: Record<string, (s: string) => string>) {
+    GreymassFuelService.globals = g;
+  }
+}
+
+async function confirmWithUser(user: User) {
+  const username = await user.getAccountName();
+  let mymodel: string[] = [];
+  mymodel = [];
+
+  // TODO: when localization is active we can do take from here
+  // const $t:(s:string) => string = GreymassFuelService.globals['$t'];
+  // console.log(typeof $t);
+
+  return new Promise<void>((resolve, reject) => {
+    // Try and see if the user already answer (remembered)
+    if (
+      GreymassFuelService.preferences[username] &&
+      GreymassFuelService.preferences[username].remember
+    ) {
+      // ok, the user did. What's the answer?
+      if (GreymassFuelService.preferences[username].approve) {
+        resolve();
+      } else {
+        reject();
+      }
+      return;
+    }
+
+    const handler = function (approve: boolean) {
+      GreymassFuelService.setPreferences(username, { approve });
+      if (approve) resolve();
+      else reject();
+    };
+
+    // this are the normal texts for random wallet.
+    let cancel: string | boolean = 'Reject';
+    let ok = 'Approve';
+    let message =
+      "It seems you don't have enought resources to pay for your next transaction. " +
+      "But, don't worry. You can continue using Greymass Fuel services for free. Do you accept to use this service?";
+
+    // If the wallet is Greymass Anchor is not possible to avoid Fuel service (it is incorporated)
+    try {
+      if (user instanceof AnchorUser) {
+        cancel = false;
+        ok = 'Continue';
+        message =
+          "It seems you don't have enought resources to pay for your next transaction. " +
+          "But, don't worry. Graymass Anchor wallet incorporates Fuel service for you to connitue for free.";
+      }
+    } catch (e) {}
+
+    Dialog.create({
+      title: "You don't have enought resources!",
+      message,
+      cancel,
+      ok,
+      persistent: true,
+      options: {
+        type: 'checkbox',
+        model: mymodel,
+        // inline: true
+        isValid: (model: string | string[]) => {
+          GreymassFuelService.setPreferences(username, {
+            remember: model.length == 1
+          });
+          return true;
+        },
+        items: [
+          { label: 'Remember my decision', value: 'remember', color: 'primary' }
+        ]
+      }
+    })
+      // all answers should save the preferences
+      .onOk(() => handler(true))
+      .onCancel(() => handler(false));
+  });
 }
 
 // Auxiliar functions to validate modified transaction returned by the resourse provider
@@ -414,10 +536,11 @@ function validateNoop(modifiedTransaction: Transaction) {
       expectedCosignerAccountName.toString() ||
     firstAuthorization.permission.toString() !==
       expectedCosignerAccountPermission.toString() ||
-    (JSON.stringify(firstAction.data) !== '""' && JSON.stringify(firstAction.data) !== '{}')
+    (JSON.stringify(firstAction.data) !== '""' &&
+      JSON.stringify(firstAction.data) !== '{}')
   ) {
-    console.log('firstAction.data', firstAction.data);
-    console.log('JSON.stringify(firstAction.data)', JSON.stringify(firstAction.data));
+    // console.log('firstAction.data', firstAction.data);
+    // console.log('JSON.stringify(firstAction.data)', JSON.stringify(firstAction.data));
     throw new Error(
       `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`
     );
