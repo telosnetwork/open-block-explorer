@@ -56,6 +56,7 @@ export default defineComponent({
     const ram_used = ref(0);
     const ram_max = ref(0);
     const radius = ref(44);
+    const stakedResources = ref(0);
 
     const accountExists = ref<boolean>(true);
     const openSendDialog = ref<boolean>(false);
@@ -74,8 +75,16 @@ export default defineComponent({
     });
 
     const totalTokens = computed((): number => {
-      if (rex.value && accountData.value.core_liquid_balance) {
-        return accountData.value.core_liquid_balance.value + rex.value;
+      if (
+        rex.value &&
+        accountData.value.core_liquid_balance &&
+        stakedResources.value
+      ) {
+        return (
+          accountData.value.core_liquid_balance.value +
+          rex.value +
+          stakedResources.value
+        );
       }
       return 0;
     });
@@ -121,7 +130,11 @@ export default defineComponent({
 
         // store.commit('account/setAccountData', data);
       } catch (e) {
-        // totalTokens = refunding.value = staked.value = rex.value = none.value;
+        // totalTokens.value =
+        //   refunding.value =
+        //   staked.value =
+        //   rex.value =
+        //     none.value;
         $q.notify(`account ${props.account} not found!`);
         accountExists.value = false;
         console.log(e);
@@ -152,7 +165,9 @@ export default defineComponent({
       // resources.value =
       //   accountData.value.self_delegated_bandwidth.cpu_weight.value +
       //   accountData.value.self_delegated_bandwidth.net_weight.value;
-
+      stakedResources.value =
+        Number(accountData.value.total_resources.cpu_weight.value) +
+        Number(accountData.value.total_resources.net_weight.value);
       delegatedResources.value =
         Number(accountData.value.total_resources.cpu_weight.value) +
         Number(accountData.value.total_resources.net_weight.value) -
@@ -162,6 +177,7 @@ export default defineComponent({
         Number(
           accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0
         );
+      debugger;
     };
 
     const loadBalances = async () => {
