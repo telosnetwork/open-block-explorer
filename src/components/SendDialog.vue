@@ -22,7 +22,8 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props) {
+  emits: ['update-token-balances'],
+  setup(props, context) {
     const store = useStore();
     const router = useRouter();
     const sendToken = ref<Token>(chain.getSystemToken());
@@ -61,6 +62,7 @@ export default defineComponent({
         data,
         name: 'transfer'
       });
+      context.emit('update-token-balances');
       void resetForm();
     };
     const setDefaults = () => {

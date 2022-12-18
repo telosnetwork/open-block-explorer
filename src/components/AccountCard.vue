@@ -125,9 +125,7 @@ export default defineComponent({
         await loadAccountCreatorInfo();
         await loadBalances();
         loadResources();
-        debugger;
-        availableTokens.value = await api.getTokens(props.account);
-
+        await updateTokenBalances();
         store.commit('account/setAccountData', accountData);
       } catch (e) {
         // totalTokens.value =
@@ -174,7 +172,6 @@ export default defineComponent({
         Number(
           accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0
         );
-      debugger;
     };
 
     const loadBalances = async () => {
@@ -182,6 +179,10 @@ export default defineComponent({
       const rexFund = await getRexFund();
       rex.value = rexBalance + rexFund; // .toFixed(token.value.precision);
       refunding.value = totalRefund();
+    };
+
+    const updateTokenBalances = async () => {
+      availableTokens.value = await api.getTokens(props.account);
     };
 
     const loadAccountCreatorInfo = async () => {
@@ -382,7 +383,8 @@ export default defineComponent({
       loadCreatorAccount,
       loadCreatorTransaction,
       copy,
-      formatAsset
+      formatAsset,
+      updateTokenBalances
     };
   }
 });
@@ -446,7 +448,7 @@ export default defineComponent({
             td.text-left DELEGATED BY OTHERS
             td.text-right {{ formatAsset(delegatedResources) }}
     div(v-if='isAccount')
-      SendDialog(v-model="openSendDialog" :availableTokens="availableTokens")
+      SendDialog(v-model="openSendDialog" @update-token-balances='updateTokenBalances' :availableTokens="availableTokens")
       ResourcesDialog(v-model="openResourcesDialog")
       StakingDialog(v-model="openStakingDialog" :availableTokens="availableTokens")
 
