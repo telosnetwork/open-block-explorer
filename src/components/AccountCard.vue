@@ -128,7 +128,7 @@ export default defineComponent({
         debugger;
         availableTokens.value = await api.getTokens(props.account);
 
-        // store.commit('account/setAccountData', data);
+        store.commit('account/setAccountData', accountData);
       } catch (e) {
         // totalTokens.value =
         //   refunding.value =
@@ -162,15 +162,12 @@ export default defineComponent({
         Number(accountData.value.net_limit.max) / KILO_UNIT.value
       );
 
-      // resources.value =
-      //   accountData.value.self_delegated_bandwidth.cpu_weight.value +
-      //   accountData.value.self_delegated_bandwidth.net_weight.value;
       stakedResources.value =
         Number(accountData.value.total_resources.cpu_weight.value) +
         Number(accountData.value.total_resources.net_weight.value);
+
       delegatedResources.value =
-        Number(accountData.value.total_resources.cpu_weight.value) +
-        Number(accountData.value.total_resources.net_weight.value) -
+        stakedResources.value -
         Number(
           accountData.value.self_delegated_bandwidth?.net_weight.value || 0
         ) -
