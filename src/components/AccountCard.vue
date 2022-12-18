@@ -126,7 +126,7 @@ export default defineComponent({
         await loadBalances();
         loadResources();
         debugger;
-        // availableTokens.value = accountData.value.tokens;
+        availableTokens.value = await api.getTokens(props.account);
 
         // store.commit('account/setAccountData', data);
       } catch (e) {
