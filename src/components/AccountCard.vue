@@ -69,7 +69,7 @@ export default defineComponent({
     const token = computed((): Token => store.state.chain.token);
 
     const liquid = computed((): number => {
-      return accountData.value?.core_liquid_balance.value
+      return accountData.value?.core_liquid_balance?.value
         ? accountData.value.core_liquid_balance.value
         : 0;
     });
