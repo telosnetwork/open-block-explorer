@@ -102,9 +102,14 @@ export default defineComponent({
       isTransaction.value ? 'Actions' : 'Latest Transactions'
     );
 
-    const hasPages = computed(
-      () => rows.value.length >= paginationSettings.value.rowsPerPage
-    );
+    const hasPages = computed(() => {
+      let count = 0;
+      rows.value.forEach((element: TransactionTableRow) => {
+        count += element.actions.length;
+      });
+      return count >= paginationSettings.value.rowsPerPage;
+    });
+    
     const noData = computed(() => rows.value.length === 0);
     const hasActions = computed(() => actions.value != null);
     const filter = computed(() => {
