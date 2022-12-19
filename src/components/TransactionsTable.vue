@@ -109,7 +109,7 @@ export default defineComponent({
       });
       return count >= paginationSettings.value.rowsPerPage;
     });
-    
+
     const noData = computed(() => rows.value.length === 0);
     const hasActions = computed(() => actions.value != null);
     const filter = computed(() => {
