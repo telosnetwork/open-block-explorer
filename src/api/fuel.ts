@@ -268,10 +268,6 @@ async function confirmWithUser(user: User) {
   let mymodel: string[] = [];
   mymodel = [];
 
-  // TODO: when localization is active we can do take from here
-  // const $t:(s:string) => string = GreymassFuelService.globals['$t'];
-  // console.log(typeof $t);
-
   return new Promise<void>((resolve, reject) => {
     // Try and see if the user already answer (remembered)
     if (
