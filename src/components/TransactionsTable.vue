@@ -294,7 +294,6 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             .row
               q-input(filled dense v-model='actionsFilter' label="Search")
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
-          persistent
           color="primary"
           label="Date")
           .q-pa-md.dropdown-filter
