@@ -115,7 +115,7 @@ export class FuelUserWrapper extends User {
       switch (rpResponse.code) {
         case 402: {
           // Resource Provider provided signature in exchange for a fee
-          // TODO: is ok to treat them with the same logic of code = 200?
+          // is ok to treat them with the same logic of code = 200?
           // Yes acording to this: https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70#file-fuel-core-presign-js-L128-L159
         }
         case 200: {
@@ -125,7 +125,6 @@ export class FuelUserWrapper extends User {
           try {
             await confirmWithUser(this.user);
           } catch (e) {
-            // TODO: need localization
             // The user refuseed to use the service
             console.info('Skip Fuel');
             break;
