@@ -198,8 +198,6 @@ export class FuelUserWrapper extends User {
       // If we got here it means the resource provider will not participate in this transaction
       return this.user.signTransaction(originalTransaction, originalconfig);
     } catch (e) {
-      console.info('ERROR:', e);
-      // console.error('ERROR: ', e);
       throw e;
     }
   }
