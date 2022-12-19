@@ -43,6 +43,12 @@ const localStorageMock = (function () {
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
+jest.mock('ual-anchor', () => () => {
+  return {
+    AnchorUser: {}
+  };
+});
+
 // mocking quasar dialog
 const createDialog = jest.fn();
 jest.mock('quasar', () => ({
