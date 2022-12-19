@@ -38,8 +38,16 @@ export default defineComponent({
     });
     const lastUpdated = ref<string>('');
     const producerVotes = ref<string[]>([]);
+    const producers = computed(() =>
+      [...store.state.chain.producers].map((val) => val.owner)
+    );
     const currentVote = computed(() => {
-      let votes = store.state.account.vote;
+      let votes = [...store.state.account.vote];
+      votes.forEach((vote, index) => {
+        if (!producers.value.includes(vote)) {
+          votes.splice(index, 1);
+        }
+      });
       if (query['vote']) {
         return votes.concat(query['vote'] as string);
       }
@@ -131,6 +139,10 @@ export default defineComponent({
       );
     }
 
+    function resetVote() {
+      store.commit('account/setVote', []);
+    }
+
     async function updateVoteAmount() {
       const request = {
         code: 'eosio',
@@ -184,6 +196,7 @@ export default defineComponent({
       stakedAmount,
       currentVote,
       toggleView,
+      resetVote,
       getVotes,
       accountValid,
       sendVoteTransaction,
@@ -246,7 +259,11 @@ div
             .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{account}}
           q-separator(color="primary" size="2px")
           q-card-section
-            .row.full-width.justify-center.subtitle2.q-py-md.text-weight-light.text-grey-4.q-pt-lg SELECTED {{currentVote.length}} BLOCK PRODUCERS
+            .row.full-width.justify-center.q-pt-lg.q-py-md.q-col-gutter-xs
+              .col-auto
+                .subtitle2.text-weight-light.text-grey-4 SELECTED {{currentVote.length}} BLOCK PRODUCERS
+              .col-auto
+                q-btn(color="red" flat size="xs" icon="close" @click="resetVote")
             .row.full-width.justify-center
               q-btn.full-width.q-pa-sm(label="Vote for Block Producers" color="primary" @click="sendVoteTransaction")
       .col-md-4.col-sm-12.col-xs-12(v-else)
