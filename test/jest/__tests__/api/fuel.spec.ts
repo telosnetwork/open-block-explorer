@@ -90,29 +90,6 @@ jest.mock('@greymass/eosio', () => ({
   })
 }));
 
-// mocking axios and the call to resource provider
-//jest.mock('axios', () => ({
-//  post: () => {
-//    return {
-//      data: {
-//        data: {
-//          signatures: [
-//            'SIG_K1_KdocT11N4hFoCozoY3mHf1baa5iK3gL5YksdNraGK3CdP6YjGA5CiMC4z7DNP5orh7tyv4QbU3nLNkkMg2oqPBMyJwaLnr'
-//          ],
-//          request: [
-//            '',
-//            {
-//              signatures: [] as string[],
-//              actions: [noopAction, originalAction]
-//            }
-//          ]
-//        },
-//        code: rpResponseCode
-//      }
-//    };
-//  }
-//}));
-// we need to change the code returned each time so we declare it as variable
 let rpResponseCode = Number(0);
 
 global.fetch = jest.fn(() =>
