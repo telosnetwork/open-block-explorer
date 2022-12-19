@@ -40,14 +40,6 @@ const localStorageMock = (function () {
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-// TODO: this do not work. How do you mock a class to work with: if (user instanceof AnchorUser) {...}
-// mocking AnchorUser
-jest.mock('ual-anchor', () => () => {
-  return {
-    AnchorUser: {}
-  };
-});
-
 // mocking quasar dialog
 const createDialog = jest.fn();
 jest.mock('quasar', () => ({
