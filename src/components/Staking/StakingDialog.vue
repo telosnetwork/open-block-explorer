@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from 'vue';
-import { Token, AccountDetails } from 'src/types';
+import { Token } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
 import StakingInfo from './StakingInfo.vue';
@@ -12,6 +12,7 @@ import HistoryTab from './HistoryTab.vue';
 import SavingsTab from './SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
+import { API } from '@greymass/eosio';
 
 const symbol = getChain().getSystemToken().symbol;
 
@@ -118,9 +119,9 @@ export default defineComponent({
       this.$router.go(0);
     },
     async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
+      let data: API.v1.AccountObject;
       try {
-        data = await this.$api.getHyperionAccountData(this.account);
+        data = await this.$api.getAccount(this.account);
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
         return;

@@ -1,11 +1,9 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { Token, Refund } from 'src/types';
 import { API } from '@greymass/eosio';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
   name: 'ResourcesInfo',
@@ -16,7 +14,7 @@ export default defineComponent({
     const cpuTokens = ref<string>('0.0000');
     const netTokens = ref<string>('0.0000');
     const total = ref<string>('0.0000');
-    const token = computed((): Token => store.state.chain.token);
+    const token = ref<Token>(getChain().getSystemToken());
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
@@ -27,24 +25,45 @@ export default defineComponent({
     });
     const ramAvailable = computed(
       () =>
-        Number(store.state.account.data.ram_quota) -
-        Number(store.state.account.data.ram_usage)
+        Number(accountData.value.ram_quota) -
+        Number(accountData.value.ram_usage)
     );
     const delegatedResources = computed(() => {
-      return (
-        Number(store.state.account.data.total_resources.cpu_weight) +
-        Number(store.state.account.data.total_resources.net_weight) -
+      const totalStakedResources =
+        Number(accountData.value.cpu_weight.value) /
+          Math.pow(10, token.value.precision) +
+        Number(accountData.value.net_weight.value) /
+          Math.pow(10, token.value.precision);
+      const selfStakedResources =
         Number(
-          store.state.account.data.self_delegated_bandwidth?.net_weight
-            ? store.state.account.data.self_delegated_bandwidth.net_weight
+          accountData.value.self_delegated_bandwidth?.net_weight.value
+            ? accountData.value.self_delegated_bandwidth.net_weight.value
             : '0'
-        ) -
+        ) +
         Number(
-          store.state.account.data.self_delegated_bandwidth?.cpu_weight
-            ? store.state.account.data.self_delegated_bandwidth.cpu_weight
+          accountData.value.self_delegated_bandwidth?.cpu_weight.value
+            ? accountData.value.self_delegated_bandwidth.cpu_weight.value
             : '0'
-        )
-      );
+        );
+      return totalStakedResources - selfStakedResources;
+    });
+
+    const accountTotal = computed(() => {
+      return `${Number(accountData.value?.core_liquid_balance.value).toFixed(
+        token.value.precision
+      )} ${token.value.symbol}`;
+    });
+
+    const currentCpu = computed(() => {
+      return `${accountData.value?.total_resources?.cpu_weight.value.toFixed(
+        token.value.precision
+      )} ${token.value.symbol}`;
+    });
+
+    const currentNet = computed(() => {
+      return `${accountData.value?.total_resources?.net_weight.value.toFixed(
+        token.value.precision
+      )} ${token.value.symbol}`;
     });
 
     function formatStaked(staked: number): string {
@@ -85,6 +104,9 @@ export default defineComponent({
       ramPrice,
       ramAvailable,
       delegatedResources,
+      accountTotal,
+      currentCpu,
+      currentNet,
       formatStaked,
       formatTotalRefund
     };
@@ -96,18 +118,18 @@ export default defineComponent({
 .container.grey-3
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
-      .col-6.text-h6.text-bold ACCOUNT TOTAL
-      .col-6.text-h6.text-right.text-bold {{accountData.account?.core_liquid_balance}}
+      .col-6.text-h6.text-bold AVAILABLE BALANCE
+      .col-6.text-h6.text-right.text-bold {{ accountTotal }}
     .row.full-width.q-py-md
       hr
     .row.full-width.q-pb-md
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light CPU
-          .col-5.text-right.text-bold {{accountData.account?.total_resources?.cpu_weight}}
+          .col-5.text-right.text-bold {{ currentCpu }}
         .row.q-pt-sm
           .col-7.text-weight-light NET
-          .col-5.text-right.text-bold {{accountData.account?.total_resources?.net_weight}}
+          .col-5.text-right.text-bold {{ currentNet }}
         .row.q-pt-sm
           .col-7.text-weight-light AVAILABLE RAM
           .col-5.text-right.text-bold {{ramAvailable}} Bytes

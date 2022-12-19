@@ -126,13 +126,7 @@ export default defineComponent({
         await loadBalances();
         loadResources();
         await updateTokenBalances();
-        store.commit('account/setAccountData', accountData);
       } catch (e) {
-        // totalTokens.value =
-        //   refunding.value =
-        //   staked.value =
-        //   rex.value =
-        //     none.value;
         $q.notify(`account ${props.account} not found!`);
         accountExists.value = false;
         console.log(e);

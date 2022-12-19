@@ -1,7 +1,4 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { getChain } from 'src/config/ConfigManager';
@@ -22,19 +19,16 @@ export default defineComponent({
       return store.state.account.data;
     });
     const rexInfo = computed(() => {
-      return store.state?.account.data.rex_info;
+      return accountData.value.rex_info;
     });
     const maturingRex = computed(() => {
-      return store.state?.account.maturingRex;
+      return accountData.value.rex_info.rex_maturities;
     });
     const coreRexBalance = computed(() => {
-      return store.state?.account.coreRexBalance;
+      return accountData.value.rex_info.rex_balance;
     });
     const maturedRex = computed(() => {
-      return store.state?.account.maturedRex;
-    });
-    const rexSavings = computed(() => {
-      return store.state?.account.savingsRex;
+      return accountData.value.rex_info.matured_rex;
     });
 
     return {
@@ -47,7 +41,6 @@ export default defineComponent({
       rexInfo,
       coreRexBalance,
       maturedRex,
-      rexSavings,
       symbol
     };
   }
@@ -59,46 +52,15 @@ export default defineComponent({
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
       .col-6.text-h6.grey-3 ACCOUNT TOTAL
-      .col-6.text-h6.text-right.grey-3 {{accountData.account?.core_liquid_balance}}
+      .col-6.text-h6.text-right.grey-3 {{accountData.value.rex_balance.value}}
     .row.full-width.q-py-md.q-px-md
       hr
-    //-.row.full-width.q-col-gutter-lg.q-pb-md
-      .col-xs-12.col-sm-6
-        div Your Cumulative Earnings
-        .text-h6.grey-3 30.25 {{ ${symbol} }}
-      .col-xs-12.col-sm-6.q-pt-xs-md.q-pr-lg
-        .row(:class="$q.screen.gt.xs ? 'float-right' : '' ")
-          .row.q-pr-sm
-            .col-12(:class="$q.screen.gt.xs ? 'text-right' : '' ") 30 Day intrest
-            .col-12.grey-3(:class="$q.screen.gt.xs ? 'text-right' : '' ")  Here
-          q-separator(vertical color="primary")
-          q-btn-dropdown( padding="xs" flat @click='onMainClick')
-            q-list
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 30 days
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 3 months
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 6 months
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 1 year
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 2 years
-    //
 
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 {{ `TOTAL ${symbol} STAKED` }}
           .col-5.text-right.text-weight-bold {{coreRexBalance}}
-        .row.q-pt-sm
-          .col-7 SAVINGS
-          .col-5.text-right.text-weight-bold {{rexSavings}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 MATURED
