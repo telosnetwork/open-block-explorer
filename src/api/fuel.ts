@@ -316,7 +316,6 @@ async function confirmWithUser(user: User) {
       options: {
         type: 'checkbox',
         model: mymodel,
-        // inline: true
         isValid: (model: string | string[]) => {
           GreymassFuelService.setPreferences(username, {
             remember: model.length == 1
