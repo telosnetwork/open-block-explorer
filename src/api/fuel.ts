@@ -126,11 +126,8 @@ export class FuelUserWrapper extends User {
             await confirmWithUser(this.user);
           } catch (e) {
             // The user refuseed to use the service
-            console.info('Skip Fuel');
             break;
           }
-
-          console.info('Continue with Greymass Fuel !!');
 
           const { data } = rpResponse;
           const [, returnedTransaction] = data.request;
@@ -531,8 +528,6 @@ function validateNoop(modifiedTransaction: Transaction) {
     (JSON.stringify(firstAction.data) !== '""' &&
       JSON.stringify(firstAction.data) !== '{}')
   ) {
-    // console.log('firstAction.data', firstAction.data);
-    // console.log('JSON.stringify(firstAction.data)', JSON.stringify(firstAction.data));
     throw new Error(
       `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`
     );
