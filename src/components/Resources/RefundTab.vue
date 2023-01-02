@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token, Refund } from 'src/types';
+import { Token } from 'src/types';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
@@ -21,31 +21,19 @@ export default defineComponent({
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
+    const totalRefund = computed((): string => {
+      const refund = accountData.value.refund_request;
+      const totalRefund = refund
+        ? refund?.cpu_amount.value + refund?.net_amount.value
+        : 0;
+      return `${totalRefund.toFixed(4)} ${token.value.symbol}`;
+    });
 
     function formatStaked(staked: number): string {
       const stakedValue = (
         staked / Math.pow(10, token.value.precision)
       ).toFixed(2);
       return `${stakedValue} ${token.value.symbol}`;
-    }
-
-    function formatTotalRefund(refund: Refund): string {
-      const totalRefund = (
-        assetToAmount(refund?.cpu_amount, token.value.precision) +
-        assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(4);
-      return `${totalRefund} ${token.value.symbol}`;
-    }
-
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
     }
 
     function refundProgress(): number {
@@ -94,11 +82,11 @@ export default defineComponent({
       openTransaction,
       stakingAccount,
       total,
+      totalRefund,
       accountData,
       token,
       progress,
       formatStaked,
-      formatTotalRefund,
       refundProgress,
       refundCountdown,
       ...mapActions({ signTransaction: 'account/sendTransaction' }),
@@ -129,9 +117,10 @@ export default defineComponent({
       this.openTransaction = true;
     },
     async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
       try {
-        data = await this.$api.getHyperionAccountData(this.stakingAccount);
+        const data = await this.$api.getAccount(
+          this.store.state.account.abi.account_name
+        );
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
         return;
@@ -147,7 +136,7 @@ export default defineComponent({
     .row.full-width
       .row.full-width.q-pt-lg.q-px-lg
         .col-6.text-h6.grey-3 Refunding Total
-        .col-6.text-h6.text-right.grey-3 {{formatTotalRefund(accountData.account?.refund_request)}}
+        .col-6.text-h6.text-right.grey-3 {{ totalRefund }}
       .row.full-width.q-py-md
         hr
       .row.full-width.q-pb-lg.text-grey-3.text-weight-light

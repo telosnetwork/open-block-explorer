@@ -49,9 +49,11 @@ export default defineComponent({
     });
 
     const accountTotal = computed(() => {
-      return `${Number(accountData.value?.core_liquid_balance.value).toFixed(
-        token.value.precision
-      )} ${token.value.symbol}`;
+      let value = 0;
+      if (accountData.value) {
+        value = accountData.value?.core_liquid_balance.value;
+      }
+      return `${value.toFixed(token.value.precision)} ${token.value.symbol}`;
     });
 
     const currentCpu = computed(() => {
