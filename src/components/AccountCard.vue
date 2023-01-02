@@ -45,7 +45,6 @@ export default defineComponent({
     const MICRO_UNIT = ref<number>(Math.pow(10, -6));
     const KILO_UNIT = ref<number>(Math.pow(10, 3));
     const resources = ref<number>(0);
-    const refunding = ref<number>(0.0);
     const delegatedResources = ref<number>(0.0);
     const rex = ref<number>(0);
     const usdPrice = ref<number>();
@@ -65,6 +64,13 @@ export default defineComponent({
 
     const accountData = ref<API.v1.AccountObject>();
     const availableTokens = ref<Token[]>([]);
+
+    const totalRefund = computed((): number =>
+      accountData.value
+        ? accountData.value.refund_request?.cpu_amount.value +
+          accountData.value.refund_request?.net_amount.value
+        : 0
+    );
 
     const token = computed((): Token => store.state.chain.token);
 
@@ -172,7 +178,6 @@ export default defineComponent({
       const rexBalance = await getRexBalance();
       const rexFund = await getRexFund();
       rex.value = rexBalance + rexFund; // .toFixed(token.value.precision);
-      refunding.value = totalRefund();
     };
 
     const updateTokenBalances = async () => {
@@ -284,13 +289,6 @@ export default defineComponent({
       router.go(0);
     };
 
-    const totalRefund = (): number => {
-      return accountData.value.refund_request
-        ? accountData.value.refund_request?.cpu_amount.value +
-            accountData.value.refund_request?.net_amount.value
-        : 0;
-    };
-
     const copy = (value: string) => {
       copyToClipboard(value)
         .then((): void => {
@@ -350,10 +348,10 @@ export default defineComponent({
       ram_max,
       creatingAccount,
       liquid,
+      totalRefund,
       totalTokens,
       totalValue,
       totalValueString,
-      refunding,
       rex,
       none,
       system_account,
@@ -437,7 +435,7 @@ export default defineComponent({
             td.text-right {{ formatAsset(rex) }}
           tr
             td.text-left REFUNDING
-            td.text-right {{ formatAsset(refunding) }}
+            td.text-right {{ formatAsset(totalRefund) }}
           tr
             td.text-left DELEGATED BY OTHERS
             td.text-right {{ formatAsset(delegatedResources) }}

@@ -17,6 +17,9 @@ export default defineComponent({
     const stakingAccount = ref<string>('');
     const total = ref<string>('0.0000');
     const progress = ref<number>(0.2);
+    const resourceValue = computed(
+      (): API.v1.AccountRefundRequest => accountData.value?.refund_request
+    );
     const token = computed((): Token => store.state.chain.token);
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
@@ -84,6 +87,7 @@ export default defineComponent({
       total,
       totalRefund,
       accountData,
+      resourceValue,
       token,
       progress,
       formatStaked,
@@ -143,10 +147,10 @@ export default defineComponent({
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-6 CPU
-            .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.cpu_amount || '0.0000'}}
+            .col-6.text-right.text-weight-bold {{ resourceValue.cpu_amount || '0.0000'}}
           .row.q-pt-md
             .col-6 NET
-            .col-6.text-right.text-weight-bold {{accountData.account?.refund_request?.net_amount || '0.0000'}}
+            .col-6.text-right.text-weight-bold {{ resourceValue.net_amount || '0.0000'}}
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-7 {{refundCountdown()}}
