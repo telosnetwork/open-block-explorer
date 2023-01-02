@@ -35,6 +35,9 @@ export default defineComponent({
     const maturedRex = computed(() => {
       return store.state?.account.maturedRex;
     });
+    const liquidBalance = computed(
+      () => accountData.value?.core_liquid_balance.value
+    );
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
@@ -87,14 +90,15 @@ export default defineComponent({
       stakeTokens,
       transactionId,
       transactionError,
-      formatDec,
-      stake,
-      assetToAmount,
       accountData,
       rexInfo,
       rexbal,
       maturedRex,
+      liquidBalance,
       symbol,
+      formatDec,
+      stake,
+      assetToAmount,
       setMaxValue
     };
   }
@@ -109,7 +113,7 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-8 {{ `LIQUID ${symbol}` }}
-            .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{accountData.account.core_liquid_balance}}
+            .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{ liquidBalance }}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="stakeTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label='"Stake " + symbol' flat @click="stake" )

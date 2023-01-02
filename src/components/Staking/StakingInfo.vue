@@ -18,30 +18,28 @@ export default defineComponent({
     const accountData = computed((): API.v1.AccountObject => {
       return store.state.account.data;
     });
-    const rexInfo = computed(() => {
-      return accountData.value.rex_info;
-    });
-    const maturingRex = computed(() => {
-      return accountData.value.rex_info.rex_maturities;
-    });
-    const coreRexBalance = computed(() => {
-      return accountData.value.rex_info.rex_balance;
-    });
-    const maturedRex = computed(() => {
-      return accountData.value.rex_info.matured_rex;
-    });
+    const liquidBalance = computed(() => accountData.value.core_liquid_balance);
+    const rexInfo = computed(() => accountData.value.rex_info);
+    const maturingRex = computed(
+      () => accountData.value.rex_info.rex_maturities
+    );
+    const coreRexBalance = computed(
+      () => accountData.value.rex_info.rex_balance
+    );
+    const maturedRex = computed(() => accountData.value.rex_info.matured_rex);
 
     return {
       store,
+      symbol,
       stakingAccount,
       total,
       accountData,
       token,
-      maturingRex,
+      liquidBalance,
       rexInfo,
+      maturingRex,
       coreRexBalance,
-      maturedRex,
-      symbol
+      maturedRex
     };
   }
 });
@@ -51,8 +49,8 @@ export default defineComponent({
 .container.text-grey-3.text-weight-light
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
-      .col-6.text-h6.grey-3 ACCOUNT TOTAL
-      .col-6.text-h6.text-right.grey-3 {{accountData.value.rex_balance.value}}
+      .col-6.text-h6.grey-3 LIQUID BALANCE
+      .col-6.text-h6.text-right.grey-3 {{ liquidBalance }}
     .row.full-width.q-py-md.q-px-md
       hr
 
