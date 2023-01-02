@@ -53,46 +53,27 @@ export default defineComponent({
       if (accountData.value) {
         value = accountData.value?.core_liquid_balance.value;
       }
-      return `${value.toFixed(token.value.precision)} ${token.value.symbol}`;
+      return value;
     });
 
-    const currentCpu = computed(() => {
-      return `${accountData.value?.total_resources?.cpu_weight.value.toFixed(
-        token.value.precision
-      )} ${token.value.symbol}`;
-    });
+    const currentCpu = computed(
+      () => accountData.value?.total_resources?.cpu_weight.value
+    );
 
-    const currentNet = computed(() => {
-      return `${accountData.value?.total_resources?.net_weight.value.toFixed(
-        token.value.precision
-      )} ${token.value.symbol}`;
-    });
+    const currentNet = computed(
+      () => accountData.value?.total_resources?.net_weight.value
+    );
 
-    function formatStaked(staked: number): string {
-      const stakedValue = (
-        staked / Math.pow(10, token.value.precision)
-      ).toFixed(2);
-      return `${stakedValue} ${token.value.symbol}`;
-    }
+    const totalRefund = computed((): number =>
+      accountData.value
+        ? accountData.value.refund_request?.cpu_amount.value +
+          accountData.value.refund_request?.net_amount.value
+        : 0
+    );
 
-    function formatTotalRefund(refund: Refund): string {
-      const totalRefund = (
-        assetToAmount(refund?.cpu_amount, token.value.precision) +
-        assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(4);
-      return `${totalRefund} ${token.value.symbol}`;
-    }
-
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
+    const formatValue = (val: number): string => {
+      return `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
+    };
 
     return {
       store,
@@ -109,8 +90,8 @@ export default defineComponent({
       accountTotal,
       currentCpu,
       currentNet,
-      formatStaked,
-      formatTotalRefund
+      totalRefund,
+      formatValue
     };
   }
 });
@@ -121,27 +102,27 @@ export default defineComponent({
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
       .col-6.text-h6.text-bold AVAILABLE BALANCE
-      .col-6.text-h6.text-right.text-bold {{ accountTotal }}
+      .col-6.text-h6.text-right.text-bold {{ formatValue(accountTotal) }}
     .row.full-width.q-py-md
       hr
     .row.full-width.q-pb-md
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light CPU
-          .col-5.text-right.text-bold {{ currentCpu }}
+          .col-5.text-right.text-bold {{ formatValue(currentCpu) }}
         .row.q-pt-sm
           .col-7.text-weight-light NET
-          .col-5.text-right.text-bold {{ currentNet }}
+          .col-5.text-right.text-bold {{ formatValue(currentNet) }}
         .row.q-pt-sm
           .col-7.text-weight-light AVAILABLE RAM
           .col-5.text-right.text-bold {{ramAvailable}} Bytes
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light DELEGATED BY OTHERS
-          .col-5.text-right.text-bold {{delegatedResources.toFixed(4) + ` ${token.symbol}`}}
+          .col-5.text-right.text-bold {{ formatValue(delegatedResources) }}
         .row.q-pt-sm
           .col-7.text-weight-light REFUNDING
-          .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
+          .col-5.text-right.text-bold {{ formatValue(totalRefund) }}
         .row.q-pt-sm
           .col-7.text-weight-light RAM PRICE
           .col-5.text-right.text-bold {{ramPrice}} {{token.symbol}}/KB
