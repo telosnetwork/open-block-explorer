@@ -117,10 +117,6 @@ export default defineComponent({
       date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
     );
 
-    // const transactionId = computed(
-    //   (): string => store.state.account.TransactionId
-    // );
-
     const setToken = (value: Token) => {
       store.commit('chain/setToken', value);
     };
@@ -322,13 +318,6 @@ export default defineComponent({
       loadSystemToken();
       void store.dispatch('chain/updateRamPrice');
     });
-
-    // watch(transactionId, async () => {
-    //   await loadAccountData();
-    //   await store.dispatch('account/updateRexData', {
-    //     account: props.account
-    //   });
-    // });
 
     watch(
       () => props.account,

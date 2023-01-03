@@ -108,17 +108,6 @@ export default defineComponent({
       openTransaction.value = true;
     }
 
-    // function assetToAmount(asset: string, decimals = -1): number {
-    //   try {
-    //     let qty: string = asset.split(' ')[0];
-    //     let val: number = parseFloat(qty);
-    //     if (decimals > -1) qty = val.toFixed(decimals);
-    //     return val;
-    //   } catch (error) {
-    //     return 0;
-    //   }
-    // }
-
     function buyLimit(): number {
       if (buyOption.value === buyOptions[0]) {
         return accountData.value.core_liquid_balance.value;
@@ -150,7 +139,6 @@ export default defineComponent({
       buyPreview,
       formatDec,
       buy,
-      // assetToAmount,
       buyLimit,
       isValidAccount
     };

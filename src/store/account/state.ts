@@ -38,15 +38,6 @@ export function state(): AccountStateInterface {
     autoLogin: null,
     isAuthenticated: false,
     linkedAccounts: [],
-    // data: {
-    //   account: {
-    //     account_name: '',
-    //     core_liquid_balance: '0.0000'
-    //   },
-    //   tokens: [],
-    //   actions: []
-    // } as API.v1.AccountObject,
-
     data: {
       account_name: '',
       /** Highest block number on the chain */
