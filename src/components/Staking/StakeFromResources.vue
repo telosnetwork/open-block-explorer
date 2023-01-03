@@ -6,7 +6,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 
 export default defineComponent({
-  name: 'StakeFromNetCpu',
+  name: 'StakeFromResources',
   components: {
     ViewTransaction
   },

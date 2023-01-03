@@ -4,7 +4,7 @@ import { Token } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
 import StakingInfo from './StakingInfo.vue';
-import StakeCpuNetTab from './StakeFromNetCpuTab.vue';
+import StakeFromResources from './StakeFromResources.vue';
 import ProcessingTab from './ProcessingTab.vue';
 import StakingTab from './StakingTab.vue';
 import UnstakingTab from './UnstakingTab.vue';
@@ -20,7 +20,7 @@ export default defineComponent({
   name: 'StakingDialog',
   components: {
     StakingInfo,
-    StakeCpuNetTab,
+    StakeFromResources,
     ProcessingTab,
     StakingTab,
     UnstakingTab,
@@ -183,7 +183,7 @@ q-dialog( @show='setDefaults' :persistent='true' maximized)
               q-tab-panel(name="unstake")
                 UnstakingTab
               q-tab-panel(name="stakecpunet")
-                StakeCpuNetTab
+                StakeFromResources
               q-tab-panel(name="savings")
                 SavingsTab
               q-tab-panel(name="maturing")
