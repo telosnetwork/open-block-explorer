@@ -1,13 +1,18 @@
 <script lang="ts">
-import Validator from 'src/components/validators/ValidatorData.vue';
+import ValidatorData from 'src/components/validators/ValidatorData.vue';
 import { defineComponent, onMounted } from 'vue';
 import { useStore } from 'src/store';
+import { api } from 'src/api';
 export default defineComponent({
   name: 'Vote',
-  components: { Validator },
+  components: { ValidatorData },
   setup() {
     const store = useStore();
     onMounted(async () => {
+      if (!store.state.account.data.voter_info) {
+        const data = await api.getAccount(store.state.account.accountName);
+        store.commit('account/setAccountData', data);
+      }
       await store.dispatch('chain/updateBpList');
       window.setInterval(() => {
         void store.dispatch('chain/updateBlockData');
@@ -17,7 +22,7 @@ export default defineComponent({
 });
 </script>
 <template lang="pug">
-Validator
+ValidatorData
 </template>
 
 <style lang="sass" scoped></style>
