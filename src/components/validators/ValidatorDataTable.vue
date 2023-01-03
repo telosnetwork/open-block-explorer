@@ -21,9 +21,11 @@ export default defineComponent({
       [...store.state.chain.producers].map((val) => val.owner)
     );
     const currentVote = computed(() => {
-      let votes = [...store.state.account.vote];
+      let votes = store.state.account.data.voter_info.producers.map((vote) =>
+        vote.toString()
+      );
       votes.forEach((vote, index) => {
-        if (!producers.value.toString().includes(vote.value.toString())) {
+        if (!producers.value.includes(vote)) {
           votes.splice(index, 1);
         }
       });
@@ -77,17 +79,17 @@ export default defineComponent({
       producerRows,
       account,
       HeadProducer,
-      removeVote,
       selection,
       maxSelected,
-      getLink,
-      getFlag,
       currentVote,
       pagination,
-      updateVote,
       producerPay,
+      symbol,
+      updateVote,
+      removeVote,
       isTop21,
-      symbol
+      getLink,
+      getFlag
     };
   }
 });
