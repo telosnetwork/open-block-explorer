@@ -6,9 +6,8 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
-// import { useRoute } from 'vue-router';
 import { getChain } from 'src/config/ConfigManager';
-// import { Name } from '@greymass/eosio';
+import { Name } from '@greymass/eosio';
 
 const chain = getChain();
 
@@ -21,31 +20,25 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    // const route = useRoute(); //@TODO restore if nec
-    // const query = route.query; //@TODO restore if nec
     const symbol = chain.getSystemToken().symbol;
     const account = computed(() => store.state.account.accountName);
-    const balance = computed(
-      () =>
+    const balance = computed(() => {
+      return (
         (Number(
-          store.state.account.data?.voter_info?.staked
-            ? store.state.account.data?.voter_info.staked.value / 10000
+          store.state.account.data.voter_info
+            ? Number(store.state.account.data.voter_info.staked) / 10000
             : 0
         ).toFixed(2) || '0') + ` ${symbol}`
-    );
+      );
+    });
     const activecount = computed(() => {
       if (store.state.chain.producers.length > 42) return 42;
       else return store.state.chain.producers.length;
     });
     const lastUpdated = ref<string>('');
-    const producerVotes = ref<string[]>([]);
+    const producerVotes = ref<Name[]>([]);
     const currentVote = computed(() => {
-      let votes = store.state.account.vote;
-      //@TODO test/restore if nec
-      // if (query['vote']) {
-      //   return votes.concat(query['vote']);
-      // }
-      return votes;
+      return store.state.account.vote;
     });
     const showCpu = ref<boolean>(false);
     const voteChanged = ref<boolean>(false);
@@ -67,20 +60,6 @@ export default defineComponent({
       return amount_voted.value / supply.value || 0;
     });
 
-    async function getVotes() {
-      if (account.value && account.value !== '') {
-        const data = await api.getHyperionAccountData(account.value);
-        store.commit('account/setAccountData', data);
-        const voterInfo = data.account.voter_info;
-        if (!voterInfo) return;
-        producerVotes.value = voterInfo?.producers;
-        lastWeight.value = parseFloat(
-          voterInfo?.last_vote_weight || '0.0000'
-        ).toFixed(2);
-        lastStaked.value = voterInfo?.last_stake || 0.0;
-        stakedAmount.value = voterInfo.staked || 0.0;
-      }
-    }
     function assetToAmount(asset: string, decimals = -1): number {
       try {
         let qty: string = asset.split(' ')[0];
@@ -170,7 +149,6 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      await getVotes();
       await getVotingStatistics();
     });
 
@@ -185,10 +163,7 @@ export default defineComponent({
       lastStaked,
       stakedAmount,
       currentVote,
-      toggleView,
-      getVotes,
       accountValid,
-      sendVoteTransaction,
       openTransaction,
       transactionId,
       transactionError,
@@ -200,7 +175,10 @@ export default defineComponent({
       votesProgress,
       balance,
       showWalletModal,
-      symbol
+      symbol,
+      toggleView,
+      // getVotes,
+      sendVoteTransaction
     };
   }
 });
@@ -217,9 +195,6 @@ div
             .row.q-pa-md.q-col-gutter-md
               .col-12
                 q-linear-progress.gradient-color(size="120px" rounded :value="votesProgress" class="q-mt-sm")
-              //- When we have a way to determine total accounts
-              //- .col-6
-              //-   q-linear-progress.gradient-color(size="120px" rounded :value="0.1" class="q-mt-sm" )
             .row.q-pa-md.q-col-gutter-md
               .col-12
                 .row
@@ -230,16 +205,7 @@ div
                   .col-6 {{ amount_voted.toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}
                   .col-6
                     .float-right {{ supply.toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}
-              //- When we have a way to determine total accounts
-              //- .col-6
-              //-   .row
-              //-     .col-6 Voting Accounts
-              //-     .col-6
-              //-       .float-right Total Accounts
-              //-   .row
-              //-     .col-6 {{ voters.toLocaleString(undefined, {minimumFractionDigits: 2,maximumFractionDigits: 2,}) }}
-              //-     .col-6
-              //-       .float-right 323,3232,32
+
       .col-md-4.col-sm-12.col-xs-12(v-if="accountValid")
         q-card(flat).full-height.card-gradient
           q-card-section.card-gradient
@@ -261,12 +227,6 @@ div
                   q-btn.full-width.q-pa-sm(label="Vote for Block Producers" color="primary" @click="sendVoteTransaction")
   ValidatorDataTable(
     ref="ValidatorDataTable"
-    :producerVotes='producerVotes'
-    :lastWeight='lastWeight'
-    :lastStaked='lastStaked'
-    :stakedAmount='stakedAmount'
-    :lastUpdated='lastUpdated'
-    @get-votes='getVotes'
     :top21pay24h = 'top21pay24h'
   )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")

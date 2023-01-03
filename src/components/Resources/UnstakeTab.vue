@@ -3,9 +3,9 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { isValidAccount } from 'src/utils/stringValidator';
+import { API } from '@greymass/eosio';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -109,9 +109,9 @@ export default defineComponent({
       this.openTransaction = true;
     },
     async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
+      let data: API.v1.AccountObject;
       try {
-        data = await this.$api.getHyperionAccountData(this.stakingAccount);
+        data = await this.$api.getAccount(this.stakingAccount);
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
         return;

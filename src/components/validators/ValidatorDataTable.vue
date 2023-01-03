@@ -1,9 +1,7 @@
 <script lang="ts">
-import { defineComponent, computed, ref, PropType } from 'vue';
-import moment from 'moment';
+import { defineComponent, computed, ref } from 'vue';
 import { useStore } from 'src/store';
 import { Producer } from 'src/types';
-// import { useRoute } from 'vue-router';
 import { getChain } from 'src/config/ConfigManager';
 
 const chain = getChain();
@@ -13,17 +11,10 @@ const MAX_VOTE_PRODUCERS = 30;
 export default defineComponent({
   name: 'ValidatorDataTable',
   props: {
-    producerVotes: { type: Array as PropType<string[]>, required: true },
-    lastWeight: { type: String, required: true },
-    lastStaked: { type: Number, required: true },
-    stakedAmount: { type: Number, required: true },
-    lastUpdated: { type: String, required: true },
     top21pay24h: { type: Number, required: true }
   },
   setup(props) {
     const store = useStore();
-    // const route = useRoute();
-    // const query = route.query;
     const symbol = chain.getSystemToken().symbol;
     const account = computed(() => store.state.account.accountName);
     const producers = computed(() =>
@@ -31,10 +22,6 @@ export default defineComponent({
     );
     const currentVote = computed(() => {
       let votes = [...store.state.account.vote];
-      //@TODO
-      // if (query['vote']) {
-      //   return votes.concat(query['vote'] as string);
-      // }
       votes.forEach((vote, index) => {
         if (!producers.value.toString().includes(vote.value.toString())) {
           votes.splice(index, 1);
@@ -49,41 +36,12 @@ export default defineComponent({
     const producerRows = computed(
       (): Producer[] => store.state.chain.producers || []
     );
-    const lastWeight = computed(() => Number(props.lastWeight));
-    const lastUpdated = computed(() => props.lastUpdated);
-    const stakedAmount = computed(() => props.stakedAmount);
     const producerPay = computed(() => props.top21pay24h);
     const bpTop21 = computed(() => store.state.chain.producerSchedule);
-    const tableHeader = computed(() => {
-      const localTime = moment
-        .utc(lastUpdated.value)
-        .local()
-        .format('YYYY-MM-DD HH:mm');
-      return `Validators (${localTime})`;
-    });
 
     const maxSelected = computed(
       () => currentVote.value.length === MAX_VOTE_PRODUCERS
     );
-    const projectedVoteWeight = computed(() => {
-      if (currentVote.value.length === 0) {
-        return 0;
-      }
-      const percentVoted = currentVote.value.length / MAX_VOTE_PRODUCERS;
-      const voteWeight =
-        (Math.sin(Math.PI * percentVoted - Math.PI / 2.0) + 1) / 2.0;
-      return voteWeight * stakedAmount.value;
-    });
-    const weightChange = computed(() => {
-      //const difference = (projectedVoteWeight.value - lastWeight.value)
-      const difference = 12;
-      const symbol = difference > 0 ? '+' : '';
-      const percentage =
-        Number(lastWeight.value) > 0.001
-          ? ((projectedVoteWeight.value / lastWeight.value) * 100).toFixed(2)
-          : (projectedVoteWeight.value * 100).toFixed(2);
-      return `${symbol}${difference} (${percentage}%)`;
-    });
 
     const pagination = ref({
       rowsPerPage: 21
@@ -122,9 +80,6 @@ export default defineComponent({
       removeVote,
       selection,
       maxSelected,
-      projectedVoteWeight,
-      weightChange,
-      tableHeader,
       getLink,
       getFlag,
       currentVote,
