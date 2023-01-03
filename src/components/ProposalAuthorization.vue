@@ -184,7 +184,7 @@ export default defineComponent({
             actorsOptions.value.push(user.payer);
           });
 
-          const { account } = await api.getHyperionAccountData(value);
+          const account = await api.getAccount(value);
 
           if (typeof account !== 'undefined') {
             allRequiredAccounts.value = account.permissions.map(

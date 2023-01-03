@@ -51,7 +51,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async loadAccountData({ commit, state }) {
     try {
-      const data = await api.getHyperionAccountData(state.accountName);
+      const data = await api.getAccount(state.accountName);
       commit('account/setAccountData', data);
     } catch (e) {
       return;
