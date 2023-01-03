@@ -4,7 +4,7 @@ import PermissionCard from 'components/PermissionCard.vue';
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import { api } from 'src/api';
 import { useQuasar } from 'quasar';
-import { API } from '@greymass/eosio';
+import { API, Name } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'KeysPanel',
@@ -46,17 +46,16 @@ export default defineComponent({
 
       permission.value = sortPermissions(permissions);
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sortPermissions = (perm: any[]) => {
+    const sortPermissions = (perm: Permission[]) => {
       let result: Permission;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      result = perm.find((p) => p.perm_name === 'owner');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      perm = perm.filter((p) => p.perm_name !== 'owner');
+      result = perm.find((p) => p.perm_name.toString() === 'owner');
+      perm = perm.filter((p) => p.perm_name.toString() !== 'owner');
 
       const getChildren = (parent: Permission, perms: Permission[]) => {
         // Get children
-        let children = perms.filter((p) => p.parent === parent.perm_name);
+        let children = perms.filter(
+          (p) => p.parent.toString() === parent.perm_name.toString()
+        );
         // Set children's children
         for (let child of children) {
           child.children = getChildren(child, perms);
