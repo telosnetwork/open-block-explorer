@@ -177,7 +177,6 @@ export default defineComponent({
       showWalletModal,
       symbol,
       toggleView,
-      // getVotes,
       sendVoteTransaction
     };
   }
@@ -189,13 +188,13 @@ div
   .q-pa-md
     .row.q-col-gutter-md.q-pt-md
       .col-md-8.col-sm-12.col-xs-12
-        q-card(flat).card-gradient
+        q-card(flat).full-height.card-gradient
           q-card-section
             .row.q-pa-md.text-h5.text-weight-light Voting Statistics
-            .row.q-pa-md.q-col-gutter-md
+            .row.q-pa-md
               .col-12
                 q-linear-progress.gradient-color(size="120px" rounded :value="votesProgress" class="q-mt-sm")
-            .row.q-pa-md.q-col-gutter-md
+            .row.q-pa-md
               .col-12
                 .row
                   .col-6.text-uppercase.text-weight-light.text-grey-4 Total votes
