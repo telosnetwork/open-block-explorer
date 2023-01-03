@@ -58,12 +58,12 @@ div(v-if="permission" )
         q-card(flat).permission-card.col.q-mt-md
             q-card-section(horizontal)
                 q-card-section.permission-name-section.row.items-center.justify-center
-                    div.text-bold {{`${permission.perm_name} (${permission.required_auth.threshold})`}} 
+                    div.text-bold {{`${permission.perm_name} (${permission.required_auth.threshold})`}}
                 q-card-section.permission-key-section
                     div(v-for="k in permission.required_auth.keys" :key="k.key")
-                      KeyToggle(:weight='k.weight' :pubkey='k.key')
-                    div(v-for="a in permission.required_auth.accounts" :key="`${a.permission.actor}-${a.permission.permission}`") 
-                        div 
+                      KeyToggle(:weight='k.weight.value' :pubkey='k.key')
+                    div(v-for="a in permission.required_auth.accounts" :key="`${a.permission.actor}-${a.permission.permission}`")
+                        div
                             span {{`+${a.weight} &nbsp &nbsp `}}
                             span(v-html="formatAccount(a.permission.actor, 'account')").text-bold
                             span  @{{a.permission.permission}}
