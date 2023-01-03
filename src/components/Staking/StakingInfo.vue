@@ -20,13 +20,18 @@ export default defineComponent({
     });
     const liquidBalance = computed(() => accountData.value.core_liquid_balance);
     const rexInfo = computed(() => accountData.value.rex_info);
-    const maturingRex = computed(
-      () => accountData.value.rex_info.rex_maturities
-    );
-    const coreRexBalance = computed(
-      () => accountData.value.rex_info.rex_balance
-    );
-    const maturedRex = computed(() => accountData.value.rex_info.matured_rex);
+    const coreRexBalance = computed(() => {
+      return store.state?.account.coreRexBalance;
+    });
+    const maturingRex = computed(() => {
+      return store.state?.account.maturingRex;
+    });
+    const maturedRex = computed(() => {
+      return store.state?.account.maturedRex;
+    });
+    const rexSavings = computed(() => {
+      return store.state?.account.savingsRex;
+    });
 
     return {
       store,
@@ -39,7 +44,8 @@ export default defineComponent({
       rexInfo,
       maturingRex,
       coreRexBalance,
-      maturedRex
+      maturedRex,
+      rexSavings
     };
   }
 });
@@ -59,6 +65,9 @@ export default defineComponent({
         .row
           .col-7 {{ `TOTAL ${symbol} STAKED` }}
           .col-5.text-right.text-weight-bold {{coreRexBalance}}
+        .row.q-pt-sm
+          .col-7 SAVINGS
+          .col-5.text-right.text-weight-bold {{rexSavings}}
       .col-xs-12.col-sm-6.q-px-lg
         .row
           .col-7 MATURED

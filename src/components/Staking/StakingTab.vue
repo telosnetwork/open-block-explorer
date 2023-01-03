@@ -33,7 +33,7 @@ export default defineComponent({
       return store.state.account.rexbal;
     });
     const maturedRex = computed(() => {
-      return store.state?.account.maturedRex;
+      return store.state.account.maturedRex;
     });
     const liquidBalance = computed(
       () => accountData.value?.core_liquid_balance.value
