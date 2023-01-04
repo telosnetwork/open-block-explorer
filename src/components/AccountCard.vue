@@ -307,6 +307,11 @@ export default defineComponent({
         : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
     };
 
+    const resetBalances = () => {
+      totalTokens.value = '--';
+      rex.value = stakedResources.value = delegatedResources.value = 0;
+    };
+
     onMounted(async () => {
       usdPrice.value = await chain.getUsdPrice();
       await loadAccountData();
@@ -320,6 +325,7 @@ export default defineComponent({
     watch(
       () => props.account,
       async () => {
+        resetBalances();
         await loadAccountData();
       }
     );
