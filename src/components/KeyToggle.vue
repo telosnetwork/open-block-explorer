@@ -1,6 +1,6 @@
 <script lang="ts">
 import { useQuasar } from 'quasar';
-import { computed, defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { PublicKey, Weight } from '@greymass/eosio';
 
@@ -8,11 +8,11 @@ export default defineComponent({
   name: 'KeyToggle',
   props: {
     pubkey: {
-      type: {} as PropType<PublicKey>,
+      type: PublicKey,
       required: true
     },
     weight: {
-      type: {} as PropType<Weight>,
+      type: Weight,
       required: true
     }
   },

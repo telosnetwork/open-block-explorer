@@ -84,7 +84,7 @@ div.row.col-12.q-my-xs.justify-center.text-left
           q-space
       q-separator.row.col-12.q-mt-md.separator
       .permissions-container.col-12.q-py-lg
-        permission-card(:permission="permission" :depth="0").permissions
+        permission-card(v-if='permission' :permission="permission" :depth="0").permissions
 
 </template>
 <style lang="sass" scoped>

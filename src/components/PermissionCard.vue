@@ -9,8 +9,7 @@ export default defineComponent({
   props: {
     permission: {
       type: Object as PropType<Permission>,
-      required: false,
-      default: null
+      required: true
     },
     depth: {
       type: Number,
@@ -61,7 +60,7 @@ div(v-if="permission" )
                     div.text-bold {{`${permission.perm_name} (${permission.required_auth.threshold})`}}
                 q-card-section.permission-key-section
                     div(v-for="k in permission.required_auth.keys" :key="k.key")
-                      KeyToggle(:weight='k.weight.value' :pubkey='k.key')
+                      KeyToggle(:weight='k.weight' :pubkey='k.key')
                     div(v-for="a in permission.required_auth.accounts" :key="`${a.permission.actor}-${a.permission.permission}`")
                         div
                             span {{`+${a.weight} &nbsp &nbsp `}}
