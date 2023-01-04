@@ -1,7 +1,7 @@
 import { Authorization, Action, Rexbal, ABI } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { User } from 'universal-authenticator-library';
-import { API, Name, UInt64 } from '@greymass/eosio';
+import { API, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
 
