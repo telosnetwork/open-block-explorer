@@ -169,7 +169,10 @@ export default defineComponent({
 
     const setTotalBalance = () => {
       totalTokens.value =
-        liquid.value + rex.value + totalRefund.value + stakedResources.value;
+        liquid.value +
+        rex.value +
+        totalRefund.value +
+        (stakedResources.value - delegatedResources.value);
     };
 
     const updateTokenBalances = async () => {
