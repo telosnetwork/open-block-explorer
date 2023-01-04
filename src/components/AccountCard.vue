@@ -161,14 +161,15 @@ export default defineComponent({
         Number(accountData.value.total_resources.cpu_weight.value) +
         Number(accountData.value.total_resources.net_weight.value);
 
-      delegatedResources.value =
+      delegatedResources.value = Math.abs(
         stakedResources.value -
-        Number(
-          accountData.value.self_delegated_bandwidth?.net_weight.value || 0
-        ) -
-        Number(
-          accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0
-        );
+          Number(
+            accountData.value.self_delegated_bandwidth?.net_weight.value || 0
+          ) -
+          Number(
+            accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0
+          )
+      );
     };
 
     const loadBalances = async () => {
