@@ -18,9 +18,11 @@ export default defineComponent({
     const symbol = chain.getSystemToken().symbol;
     const account = computed(() => store.state.account.accountName);
     const previousVote = computed(() =>
-      store.state.account.data.voter_info.producers.map((vote) =>
-        vote.toString()
-      )
+      store.state.account.data.voter_info
+        ? store.state.account.data.voter_info.producers.map((vote) =>
+            vote.toString()
+          )
+        : []
     );
     const producers = computed(() =>
       [...store.state.chain.producers].map((val) => val.owner)
