@@ -89,7 +89,8 @@ export default defineComponent({
         return (
           accountData.value.core_liquid_balance.value +
           rex.value +
-          stakedResources.value
+          stakedResources.value +
+          totalRefund.value
         );
       }
       return 0;
