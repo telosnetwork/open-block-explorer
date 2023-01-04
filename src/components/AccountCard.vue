@@ -50,6 +50,7 @@ export default defineComponent({
     const usdPrice = ref<number>();
     const cpu_used = ref<number>(0);
     const cpu_max = ref<number>(0);
+    const totalTokens = ref<number | string>('--');
     const net_used = ref(0);
     const net_max = ref(0);
     const ram_used = ref(0);
@@ -80,24 +81,11 @@ export default defineComponent({
         : 0;
     });
 
-    const totalTokens = computed((): number => {
-      if (
-        rex.value &&
-        accountData.value.core_liquid_balance &&
-        stakedResources.value
-      ) {
-        return (
-          accountData.value.core_liquid_balance.value +
-          rex.value +
-          stakedResources.value +
-          totalRefund.value
-        );
+    const totalValue = computed((): number => {
+      if (typeof totalTokens.value === 'number') {
+        return usdPrice.value * totalTokens.value;
       }
       return 0;
-    });
-
-    const totalValue = computed((): number => {
-      return usdPrice.value * totalTokens.value;
     });
 
     const totalValueString = computed((): string => {
@@ -128,6 +116,7 @@ export default defineComponent({
         await loadAccountCreatorInfo();
         await loadBalances();
         loadResources();
+        setTotalBalance();
         await updateTokenBalances();
       } catch (e) {
         $q.notify(`account ${props.account} not found!`);
@@ -135,6 +124,12 @@ export default defineComponent({
         console.log(e);
         return;
       }
+    };
+
+    const loadBalances = async () => {
+      const rexBalance = await getRexBalance();
+      const rexFund = await getRexFund();
+      rex.value = rexBalance + rexFund;
     };
 
     const loadResources = () => {
@@ -172,10 +167,9 @@ export default defineComponent({
       );
     };
 
-    const loadBalances = async () => {
-      const rexBalance = await getRexBalance();
-      const rexFund = await getRexFund();
-      rex.value = rexBalance + rexFund; // .toFixed(token.value.precision);
+    const setTotalBalance = () => {
+      totalTokens.value =
+        liquid.value + rex.value + totalRefund.value + stakedResources.value;
     };
 
     const updateTokenBalances = async () => {
@@ -307,8 +301,10 @@ export default defineComponent({
         });
     };
 
-    const formatAsset = (val: number): string => {
-      return `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
+    const formatAsset = (val: number | string): string => {
+      return typeof val === 'string'
+        ? val
+        : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
     };
 
     onMounted(async () => {
