@@ -59,7 +59,7 @@ export default defineComponent({
 	.col.wrap
 		a(:href=" '/key/' + keyDisplay" class="hover-dec") {{`+${weight} &nbsp &nbsp ${keyDisplay}`}}
 		q-btn.rotate-315( @click="toggleKey()" flat round color="black" icon="vpn_key" size='xs') &nbsp;
-		q-btn( @click="copy(Key)" flat round color="black" icon="content_copy" size='xs')
+		q-btn( @click="copy(keyDisplay)" flat round color="black" icon="content_copy" size='xs')
 
 </template>
 
