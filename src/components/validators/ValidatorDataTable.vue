@@ -17,13 +17,16 @@ export default defineComponent({
     const store = useStore();
     const symbol = chain.getSystemToken().symbol;
     const account = computed(() => store.state.account.accountName);
+    const previousVote = computed(() =>
+      store.state.account.data.voter_info.producers.map((vote) =>
+        vote.toString()
+      )
+    );
     const producers = computed(() =>
       [...store.state.chain.producers].map((val) => val.owner)
     );
     const currentVote = computed(() => {
-      let votes = store.state.account.data.voter_info.producers.map((vote) =>
-        vote.toString()
-      );
+      let votes = store.state.account.vote;
       votes.forEach((vote, index) => {
         if (!producers.value.includes(vote)) {
           votes.splice(index, 1);
@@ -78,6 +81,7 @@ export default defineComponent({
     return {
       producerRows,
       account,
+      previousVote,
       HeadProducer,
       selection,
       maxSelected,
@@ -130,8 +134,9 @@ export default defineComponent({
                 .row.items-center.full-height {{ ((producerRows.indexOf(bp) + 1) < 22 ? producerPay : (producerRows.indexOf(bp) + 1) < 43 ? producerPay / 2 : 0 ).toFixed(0)  + ` ${symbol}` }}
               .col-1.select-box.q-py-md
                 .row.full-selection.justify-center
-                  q-checkbox(v-model="currentVote" :val="bp.owner" @update:model-value="(val)=> updateVote(val)")
-
+                  q-checkbox(v-model="currentVote" :val="bp.owner" @update:model-value="(val)=> updateVote(val)" :disable='!currentVote.includes(bp.owner) && currentVote.length >= 30')
+                .row.full-selection.justify-center
+                  q-badge(v-if='previousVote.includes(bp.owner)' color='green' label="VOTED")
 </template>
 
 <style lang="sass" scoped>

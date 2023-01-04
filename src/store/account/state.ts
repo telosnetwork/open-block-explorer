@@ -19,7 +19,7 @@ export interface AccountStateInterface {
   TransactionId: string;
   TransactionError: unknown;
   rexbal: Rexbal;
-  vote: Name[];
+  vote: string[];
   abi: ABI;
   coreRexBalance: string;
   maturingRex: string;

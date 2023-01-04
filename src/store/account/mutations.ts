@@ -5,7 +5,7 @@ import { User } from 'universal-authenticator-library';
 import { markRaw } from 'vue';
 
 import { getChain } from 'src/config/ConfigManager';
-import { API, Name } from '@greymass/eosio';
+import { API } from '@greymass/eosio';
 
 const symbol = getChain().getSystemToken().symbol;
 
@@ -24,7 +24,8 @@ export const mutations: MutationTree<AccountStateInterface> = {
     AccountData: API.v1.AccountObject
   ) {
     state.data = AccountData;
-    state.vote = AccountData?.voter_info?.producers || [];
+    state.vote =
+      AccountData?.voter_info?.producers.map((vote) => vote.toString()) || [];
   },
   setTransaction(state: AccountStateInterface, TransactionId: string) {
     state.TransactionId = TransactionId;
@@ -51,7 +52,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
     state.maturingRex = `${params.maturingRex.toFixed(4)} ${symbol}`;
     state.savingsRex = `${params.savingsRex.toFixed(4)} ${symbol}`;
   },
-  setVote(state: AccountStateInterface, vote: Name[]) {
+  setVote(state: AccountStateInterface, vote: string[]) {
     state.vote = vote.sort();
   },
   setABI(state: AccountStateInterface, abi: ABI) {
