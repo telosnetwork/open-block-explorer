@@ -66,7 +66,7 @@ export default defineComponent({
     const availableTokens = ref<Token[]>([]);
 
     const totalRefund = computed((): number =>
-      accountData.value
+      accountData.value && accountData.value.refund_request
         ? accountData.value.refund_request?.cpu_amount.value +
           accountData.value.refund_request?.net_amount.value
         : 0
