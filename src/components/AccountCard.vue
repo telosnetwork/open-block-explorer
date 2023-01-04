@@ -93,7 +93,6 @@ export default defineComponent({
       store.commit('chain/setToken', value);
     };
     const loadAccountData = async (): Promise<void> => {
-      void updateRexBalance();
       let data: AccountDetails;
       try {
         data = await api.getAccount(props.account);
@@ -151,15 +150,14 @@ export default defineComponent({
           token.value.precision
         );
         total.value = `${totalString} ${token.value.symbol}`;
-        rex.value = account.rex_info.vote_stake;
       } else {
         total.value = liquid.value;
-        rex.value = none.value;
       }
       refunding.value = formatTotalRefund(account.refund_request);
       staked.value = account.voter_info
         ? formatStaked(account.voter_info.staked)
         : none.value + ` ${token.value.symbol}`;
+      void updateRexBalance();
     };
     const updateRexBalance = async () => {
       const paramsrexbal = {
