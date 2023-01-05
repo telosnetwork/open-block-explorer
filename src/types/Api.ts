@@ -8,7 +8,8 @@ import {
   UInt128,
   UInt64,
   UInt32Type,
-  API
+  API,
+  PublicKey
 } from '@greymass/eosio';
 import { Transaction } from './Transaction';
 import {
@@ -70,6 +71,7 @@ export interface GetTableRowsParams {
 
 export type ApiClient = {
   getAccount: (address: string) => Promise<API.v1.AccountObject>;
+  getKeyAccounts: (key: PublicKey) => Promise<{ account_names: Name[] }>;
   getHyperionAccountData: (address: string) => Promise<AccountDetails>;
   getCreator: (address: string) => Promise<any>;
   getTokens: (address: string) => Promise<Token[]>;
