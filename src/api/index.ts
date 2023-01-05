@@ -37,6 +37,7 @@ import { getApy } from './telosApi';
 
 export const api = {
   getAccount,
+  getKeyAccounts,
   getHyperionAccountData,
   getCreator,
   getTokens,
@@ -55,7 +56,6 @@ export const api = {
   getProposals,
   getProducers,
   getABI,
-  getKeyAccounts,
   deserializeActionData,
   serializeActionData,
   getProducerSchedule,
