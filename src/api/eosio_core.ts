@@ -5,6 +5,7 @@
 import {
   ABIDef,
   ABISerializable,
+  API,
   Action,
   ActionType,
   APIClient,
@@ -19,6 +20,12 @@ const chain: Chain = getChain();
 const eosioCore = new APIClient({
   url: chain.getHyperionEndpoint()
 });
+
+export const getAccount = async function (
+  address: string
+): Promise<API.v1.AccountObject> {
+  return await eosioCore.v1.chain.get_account(address);
+};
 
 export const getTokenBalances = async function (
   address: string

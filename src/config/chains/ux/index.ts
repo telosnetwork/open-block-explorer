@@ -3,13 +3,18 @@ import { RpcEndpoint } from 'universal-authenticator-library';
 import { getEmptyPriceChartData } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
+import { Token } from 'src/types';
 
 const CHAIN_ID =
   '8fc6dce7942189f842170de953932b1f66693ad3788f766e777b6f9d22335c02';
 const DISPLAY = 'UX';
-const SYMBOL = 'UTX';
+const TOKEN = {
+  symbol: 'UTX',
+  precision: 4,
+  amount: 0,
+  contract: 'eosio.token'
+} as Token;
 const HYPERION_ENDPOINT = 'https://ux.eosusa.io';
-
 const RPC_ENDPOINT = {
   protocol: 'https',
   host: 'ux.eosusa.io',
@@ -49,8 +54,8 @@ export default class UX extends BaseChain {
     return getEmptyPriceChartData();
   }
 
-  getSymbol(): string {
-    return SYMBOL;
+  getSystemToken(): Token {
+    return TOKEN;
   }
 
   getUsdPrice(): Promise<number> {

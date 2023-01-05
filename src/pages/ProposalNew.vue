@@ -379,8 +379,9 @@ export default defineComponent({
             expireSeconds: 30
           }
         );
-        if (store.state.account.authenticatorName != 'cleos')
+        if (store.state.account.autoLogin != 'cleos') {
           success.showModal = true;
+        }
 
         success.transactionId = transaction.transactionId;
         success.proposalName = data.proposal_name;

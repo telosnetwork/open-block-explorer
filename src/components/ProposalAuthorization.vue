@@ -71,14 +71,15 @@ div.row.q-col-gutter-md.q-mb-md
 <script lang="ts">
 import { defineComponent, ref, watch, computed, onMounted } from 'vue';
 import { api } from 'src/api';
+import { Name, UInt32 } from '@greymass/eosio';
 
 interface RequiredAccounts {
-  permissionName: string;
-  threshold: number;
+  permissionName: Name;
+  threshold: UInt32;
   accounts: {
     weight: string;
-    actor: string;
-    permission: string;
+    actor: Name;
+    permission: Name;
   }[];
 }
 
@@ -101,7 +102,7 @@ export default defineComponent({
   emits: ['update:actor', 'update:permission', 'remove'],
   setup(props, context) {
     const actorsOptions = ref<string[]>([]);
-    const permissionsOptions = ref<string[]>([]);
+    const permissionsOptions = ref<Name[]>([]);
     const allRequiredAccounts = ref<RequiredAccounts[]>([]);
 
     const isActorError = ref(false);
@@ -183,7 +184,7 @@ export default defineComponent({
             actorsOptions.value.push(user.payer);
           });
 
-          const { account } = await api.getAccount(value);
+          const account = await api.getAccount(value);
 
           if (typeof account !== 'undefined') {
             allRequiredAccounts.value = account.permissions.map(
@@ -192,7 +193,7 @@ export default defineComponent({
                   permissionName: permission.perm_name,
                   threshold: permission.required_auth.threshold,
                   accounts: permission.required_auth.accounts.map((item) => ({
-                    weight: `+ ${item.weight}`,
+                    weight: `+ ${item.weight.toString()}`,
                     actor: item.permission.actor,
                     permission: item.permission.permission
                   }))
@@ -217,7 +218,7 @@ export default defineComponent({
     const requiredAccounts = computed(() => {
       if (!permissionValue.value) return [];
       return allRequiredAccounts.value.find(
-        (item) => item.permissionName === permissionValue.value
+        (item) => item.permissionName.toString() === permissionValue.value
       );
     });
 

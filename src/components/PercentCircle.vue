@@ -34,7 +34,9 @@ export default defineComponent({
     const circumference = computed(() => 2 * PI * radius.value);
     const containerWidth = computed(() => diameter.value + 2 * offset.value);
     const formatResourcePercent = computed(() =>
-      ((fraction.value / total.value) * 100.0).toFixed(2)
+      fraction.value && total.value
+        ? ((fraction.value / total.value) * 100.0).toFixed(2)
+        : '0.00'
     );
     const strokeColor = computed(() =>
       parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white'
@@ -84,7 +86,6 @@ div.chart-container
       :y="radius - offset"
     ) {{ label }}
     text.text.percentage(
-      v-if='!Number.isNaN(formatResourcePercent)'
       x="20"
       :y="radius + 12"
     ) {{ formatResourcePercent }}%

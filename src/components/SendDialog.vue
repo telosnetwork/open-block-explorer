@@ -3,7 +3,6 @@ import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
 import { isValidAccount } from 'src/utils/stringValidator';
-
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
@@ -22,16 +21,18 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props) {
+  emits: ['update-token-balances'],
+  setup(props, context) {
     const store = useStore();
     const router = useRouter();
-    const sendToken = ref<Token>({
-      symbol: chain.getSymbol(),
-      precision: 4,
-      amount: 0,
-      contract: 'eosio.token'
-    });
+    const sendToken = ref<Token>(chain.getSystemToken());
     const availableTokens = toRef(props, 'availableTokens');
+    const sendDialog = ref<boolean>(false);
+    const openCoinDialog = ref<boolean>(false);
+    const recievingAccount = ref<string>('');
+    const sendAmount = ref<string>('');
+    const memo = ref<string>('');
+
     const account = computed(() => store.state.account.accountName);
     const transactionId = computed(
       (): string => store.state.account.TransactionId
@@ -39,12 +40,6 @@ export default defineComponent({
     const transactionError = computed(
       () => store.state.account.TransactionError
     );
-    const sendDialog = ref<boolean>(false);
-    const openCoinDialog = ref<boolean>(false);
-    const recievingAccount = ref<string>('');
-    const sendAmount = ref<string>('');
-    const memo = ref<string>('');
-
     const transactionForm = computed(
       () => !(transactionError.value || transactionId.value)
     );
@@ -52,6 +47,7 @@ export default defineComponent({
       () =>
         parseFloat(sendAmount.value) > 0 && recievingAccount.value.length > 0
     );
+
     const sendTransaction = async (): Promise<void> => {
       void store.dispatch('account/resetTransaction');
       const actionAccount = sendToken.value.contract;
@@ -66,8 +62,9 @@ export default defineComponent({
         data,
         name: 'transfer'
       });
-      void resetForm();
+      context.emit('update-token-balances');
     };
+
     const setDefaults = () => {
       void store.dispatch('account/resetTransaction');
       if (availableTokens.value.length > 0) {
@@ -76,17 +73,20 @@ export default defineComponent({
         });
       }
     };
+
     const updateSelectedCoin = (token: Token): void => {
       sendToken.value = token;
     };
+
     const resetForm = () => {
       sendToken.value = {
-        symbol: chain.getSymbol(),
+        symbol: chain.getSystemToken().symbol,
         precision: 4,
         amount: 0,
         contract: 'eosio.token'
       };
     };
+
     const navToTransaction = async () => {
       await router.push({
         name: 'transaction',
@@ -95,6 +95,7 @@ export default defineComponent({
       router.go(0);
       void store.dispatch('account/resetTransaction');
     };
+
     const formatDec = () => {
       let amount = Number(sendAmount.value);
       if (sendAmount.value != '') {
@@ -108,6 +109,7 @@ export default defineComponent({
       }
       sendAmount.value = sendAmount.value.replace(/[^0-9.]/g, '');
     };
+
     const setMaxValue = () => {
       sendAmount.value = (sendToken.value.amount - 0.1).toString();
       void formatDec();

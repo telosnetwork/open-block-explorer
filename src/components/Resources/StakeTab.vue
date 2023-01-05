@@ -3,12 +3,12 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { isValidAccount } from 'src/utils/stringValidator';
+import { API } from '@greymass/eosio';
 
 const chain = getChain();
-const symbol = chain.getSymbol();
+const symbol = chain.getSystemToken().symbol;
 
 export default defineComponent({
   name: 'StakeTab',
@@ -19,8 +19,8 @@ export default defineComponent({
     const store = useStore();
     const openTransaction = ref<boolean>(false);
     const stakingAccount = ref<string>(store.state.account.accountName || '');
-    const accountTotal = computed(
-      (): string => store.state.account.data.account?.core_liquid_balance
+    const accountTotal = computed((): string =>
+      store.state.account.data.core_liquid_balance.toString()
     );
     const cpuTokens = ref<string>('');
     const netTokens = ref<string>('');
@@ -106,7 +106,7 @@ export default defineComponent({
       this.openTransaction = true;
     },
     async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
+      let data: API.v1.AccountObject;
       try {
         data = await this.$api.getAccount(this.stakingAccount);
         this.$store.commit('account/setAccountData', data);
