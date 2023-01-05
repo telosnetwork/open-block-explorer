@@ -21,12 +21,12 @@ import {
   getProposals,
   getProducers,
   getABI,
-  getKeyAccounts,
   getProducerSchedule
 } from './hyperion'; //  e.g. './new-service' method name stays the same
 
 import {
   getAccount,
+  getKeyAccounts,
   getTableRows,
   getTokenBalances,
   deserializeActionData,

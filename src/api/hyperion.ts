@@ -238,7 +238,7 @@ export const getABI = async function (account: string): Promise<ABI> {
   return response.data;
 };
 
-export const getKeyAccounts = async function (
+export const getHyperionKeyAccounts = async function (
   key: string
 ): Promise<{ account_names: string[] }> {
   const response = await hyperion.get('v2/state/get_key_accounts', {
