@@ -58,8 +58,6 @@ export default defineComponent({
       return store.state?.account.data;
     });
 
-    // const reciever = ref<string>(accountData.abiName);
-
     function formatDec() {
       const precision = store.state.chain.token.precision;
       if (buyOption.value === buyOptions[0]) {
