@@ -6,6 +6,7 @@ import KeysPanel from 'components/KeysPanel.vue';
 import ChildrenPanel from 'components/ChildrenPanel.vue';
 import AccountCard from 'components/AccountCard.vue';
 import ContractTabs from 'components/contract/ContractTabs.vue';
+import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
 
@@ -26,6 +27,7 @@ export default defineComponent({
     const tab = ref<string>((route.query['tab'] as string) || 'transactions');
     const account = computed(() => (route.params.account as string) || '');
     const abi = computed(() => store.state.account.abi.abi);
+    const tokenList = ref(api.getTokens(account.value));
 
     onMounted(async () => {
       await store.dispatch('account/updateABI', route.params.account);
@@ -43,7 +45,8 @@ export default defineComponent({
     return {
       tab,
       account,
-      abi
+      abi,
+      tokenList
     };
   }
 });
@@ -53,7 +56,7 @@ export default defineComponent({
 div.row.col-12
   div.column.col-12.gradient-box
     div.row
-      AccountCard.account-card(:account='account')
+      AccountCard.account-card(:account='account' :tokens='tokenList')
     q-tabs(v-model="tab" no-caps).tabs
       q-tab( name="transactions" label="Transactions" )
       q-tab( name="contract" label="Contract" v-if="abi")

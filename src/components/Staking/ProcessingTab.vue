@@ -1,9 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token } from 'src/types';
+import { Token } from 'src/types';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
+import { API } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'ProcessingTab',
@@ -14,7 +15,7 @@ export default defineComponent({
     const store = useStore();
     const progress = ref<number>(0.2);
     const token = computed((): Token => store.state.chain.token);
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const maturingRex = computed(() => {
@@ -27,7 +28,7 @@ export default defineComponent({
         Math.round(
           new Date(
             new Date(
-              accountData.value.account?.refund_request?.request_time + 'Z'
+              accountData.value?.refund_request?.request_time.toString() + 'Z'
             ).toUTCString()
           ).getTime() / 1000
         ) +
@@ -43,7 +44,8 @@ export default defineComponent({
         Math.round(
           new Date(
             new Date(
-              accountData.value.account?.rex_info?.rex_maturities[0].first + 'Z'
+              accountData.value?.rex_info?.rex_maturities[0].first.toString() +
+                'Z'
             )
           ).getTime() / 1000
         ) - Math.round(new Date(new Date().toISOString()).getTime() / 1000);

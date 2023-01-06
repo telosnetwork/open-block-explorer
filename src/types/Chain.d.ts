@@ -1,10 +1,11 @@
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
+import { Token } from './Actions';
 
 export interface Chain {
   getName(): string;
-  getSymbol(): string;
+  getSystemToken(): Token;
   getDisplay(): string;
   getSmallLogoPath(): string;
   getLargeLogoPath(): string;

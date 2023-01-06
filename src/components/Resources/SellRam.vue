@@ -2,8 +2,8 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { API } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'SellRam',
@@ -15,7 +15,7 @@ export default defineComponent({
     const chain = getChain();
     let openTransaction = ref<boolean>(false);
     const sellAmount = ref('');
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
@@ -33,10 +33,10 @@ export default defineComponent({
     );
     const ramAvailable = computed(
       () =>
-        store.state.account.data.account.ram_quota -
-        store.state.account.data.account.ram_usage
+        Number(store.state.account.data.ram_quota.value) -
+        Number(store.state.account.data.ram_usage.value)
     );
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
 

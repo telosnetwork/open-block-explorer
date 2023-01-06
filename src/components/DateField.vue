@@ -7,7 +7,7 @@ export default defineComponent({
   props: {
     timestamp: {
       type: String,
-      required: true
+      default: ''
     },
     showAge: {
       type: Boolean,

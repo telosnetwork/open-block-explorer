@@ -1,4 +1,4 @@
-import { AccountDetails } from 'src/types';
+import { API } from '@greymass/eosio';
 import { User } from 'universal-authenticator-library';
 import { GetterTree } from 'vuex';
 import { StateInterface } from '../index';
@@ -14,7 +14,7 @@ export const getters: GetterTree<AccountStateInterface, StateInterface> = {
   accountName(state): string {
     return state.accountName;
   },
-  getAccountData(state): AccountDetails {
+  getAccountData(state): API.v1.AccountObject {
     return state.data;
   },
   getUser(state): User {
