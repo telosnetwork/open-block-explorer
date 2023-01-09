@@ -2,7 +2,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
+import { API } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'SavingsTab',
@@ -19,7 +19,7 @@ export default defineComponent({
     const fromSavingAmount = ref<string>('');
     const transactionId = ref<string>(store.state.account.TransactionId);
     const transactionError = ref<unknown>(store.state.account.TransactionError);
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const maturedRex = computed(() => {

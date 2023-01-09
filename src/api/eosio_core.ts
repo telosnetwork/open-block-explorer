@@ -5,10 +5,13 @@
 import {
   ABIDef,
   ABISerializable,
+  API,
   Action,
   ActionType,
   APIClient,
-  Serializer
+  Serializer,
+  PublicKey,
+  Name
 } from '@greymass/eosio';
 import { ActionData, GetTableRowsParams } from 'src/types';
 import { Chain } from 'src/types/Chain';
@@ -19,6 +22,19 @@ const chain: Chain = getChain();
 const eosioCore = new APIClient({
   url: chain.getHyperionEndpoint()
 });
+
+export const getAccount = async function (
+  address: string
+): Promise<API.v1.AccountObject> {
+  return await eosioCore.v1.chain.get_account(address);
+};
+
+export const getKeyAccounts = async function (
+  key: PublicKey
+): Promise<{ account_names: Name[] }> {
+  const response = await eosioCore.v1.history.get_key_accounts(key);
+  return response;
+};
 
 export const getTokenBalances = async function (
   address: string

@@ -1,10 +1,9 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token, Refund } from 'src/types';
+import { Token } from 'src/types';
+import { API } from '@greymass/eosio';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
   name: 'ResourcesInfo',
@@ -15,8 +14,8 @@ export default defineComponent({
     const cpuTokens = ref<string>('0.0000');
     const netTokens = ref<string>('0.0000');
     const total = ref<string>('0.0000');
-    const token = computed((): Token => store.state.chain.token);
-    const accountData = computed((): AccountDetails => {
+    const token = ref<Token>(getChain().getSystemToken());
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const ramPrice = computed((): string => {
@@ -26,63 +25,55 @@ export default defineComponent({
     });
     const ramAvailable = computed(
       () =>
-        store.state.account.data.account.ram_quota -
-        store.state.account.data.account.ram_usage
+        Number(accountData.value.ram_quota) -
+        Number(accountData.value.ram_usage)
     );
     const delegatedResources = computed(() => {
-      return (
+      const totalStakedResources =
+        Number(accountData.value.cpu_weight.value) /
+          Math.pow(10, token.value.precision) +
+        Number(accountData.value.net_weight.value) /
+          Math.pow(10, token.value.precision);
+      const selfStakedResources =
         Number(
-          store.state.account.data.account.total_resources.cpu_weight.split(
-            ' '
-          )[0]
+          accountData.value.self_delegated_bandwidth?.net_weight.value
+            ? accountData.value.self_delegated_bandwidth.net_weight.value
+            : '0'
         ) +
         Number(
-          store.state.account.data.account.total_resources.net_weight.split(
-            ' '
-          )[0]
-        ) -
-        Number(
-          store.state.account.data.account?.self_delegated_bandwidth?.net_weight
-            ? store.state.account.data.account.self_delegated_bandwidth.net_weight.split(
-                ' '
-              )[0]
+          accountData.value.self_delegated_bandwidth?.cpu_weight.value
+            ? accountData.value.self_delegated_bandwidth.cpu_weight.value
             : '0'
-        ) -
-        Number(
-          store.state.account.data.account?.self_delegated_bandwidth?.cpu_weight
-            ? store.state.account.data.account.self_delegated_bandwidth.cpu_weight.split(
-                ' '
-              )[0]
-            : '0'
-        )
-      );
+        );
+      return totalStakedResources - selfStakedResources;
     });
 
-    function formatStaked(staked: number): string {
-      const stakedValue = (
-        staked / Math.pow(10, token.value.precision)
-      ).toFixed(2);
-      return `${stakedValue} ${token.value.symbol}`;
-    }
-
-    function formatTotalRefund(refund: Refund): string {
-      const totalRefund = (
-        assetToAmount(refund?.cpu_amount, token.value.precision) +
-        assetToAmount(refund?.net_amount, token.value.precision)
-      ).toFixed(4);
-      return `${totalRefund} ${token.value.symbol}`;
-    }
-
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
+    const accountTotal = computed(() => {
+      let value = 0;
+      if (accountData.value) {
+        value = accountData.value?.core_liquid_balance.value;
       }
-    }
+      return value;
+    });
+
+    const currentCpu = computed(
+      () => accountData.value?.total_resources?.cpu_weight.value
+    );
+
+    const currentNet = computed(
+      () => accountData.value?.total_resources?.net_weight.value
+    );
+
+    const totalRefund = computed((): number =>
+      accountData.value
+        ? accountData.value.refund_request?.cpu_amount.value +
+          accountData.value.refund_request?.net_amount.value
+        : 0
+    );
+
+    const formatValue = (val: number): string => {
+      return `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
+    };
 
     return {
       store,
@@ -96,8 +87,11 @@ export default defineComponent({
       ramPrice,
       ramAvailable,
       delegatedResources,
-      formatStaked,
-      formatTotalRefund
+      accountTotal,
+      currentCpu,
+      currentNet,
+      totalRefund,
+      formatValue
     };
   }
 });
@@ -107,28 +101,28 @@ export default defineComponent({
 .container.grey-3
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
-      .col-6.text-h6.text-bold ACCOUNT TOTAL
-      .col-6.text-h6.text-right.text-bold {{accountData.account?.core_liquid_balance}}
+      .col-6.text-h6.text-bold AVAILABLE BALANCE
+      .col-6.text-h6.text-right.text-bold {{ formatValue(accountTotal) }}
     .row.full-width.q-py-md
       hr
     .row.full-width.q-pb-md
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light CPU
-          .col-5.text-right.text-bold {{accountData.account?.total_resources?.cpu_weight}}
+          .col-5.text-right.text-bold {{ formatValue(currentCpu) }}
         .row.q-pt-sm
           .col-7.text-weight-light NET
-          .col-5.text-right.text-bold {{accountData.account?.total_resources?.net_weight}}
+          .col-5.text-right.text-bold {{ formatValue(currentNet) }}
         .row.q-pt-sm
           .col-7.text-weight-light AVAILABLE RAM
           .col-5.text-right.text-bold {{ramAvailable}} Bytes
       .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
         .row
           .col-7.text-weight-light DELEGATED BY OTHERS
-          .col-5.text-right.text-bold {{delegatedResources.toFixed(4) + ` ${token.symbol}`}}
+          .col-5.text-right.text-bold {{ formatValue(delegatedResources) }}
         .row.q-pt-sm
           .col-7.text-weight-light REFUNDING
-          .col-5.text-right.text-bold {{formatTotalRefund(accountData.account?.refund_request)}}
+          .col-5.text-right.text-bold {{ formatValue(totalRefund) }}
         .row.q-pt-sm
           .col-7.text-weight-light RAM PRICE
           .col-5.text-right.text-bold {{ramPrice}} {{token.symbol}}/KB

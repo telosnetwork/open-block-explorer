@@ -5,9 +5,8 @@ Telos Main Net: [https://explorer.telos.net](https://explorer.telos.net)  [![Net
 Telos Test Net: [https://explorer-test.telos.net](https://explorer-test.telos.net) [![Netlify Status](https://api.netlify.com/api/v1/badges/8a778d87-a057-472f-ab3b-07d978faafaa/deploy-status)](https://app.netlify.com/sites/open-block-explorer-dev/deploys)
 
 ## Latest release
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/telosnetwork/open-block-explorer?url=https://github.com/telosnetwork/open-block-explorer/releases/latest&style=for-the-badge)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/telosnetwork/open-block-explorer?url=https://github.com/telosnetwork/open-block-explorer/releases/latest&style=for-the-badge)](https://github.com/telosnetwork/open-block-explorer/releases/latest)
 
-[Notes](https://github.com/telosnetwork/open-block-explorer/releases/latest)
 
 ## About
 

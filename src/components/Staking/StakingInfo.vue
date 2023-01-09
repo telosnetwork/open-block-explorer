@@ -1,11 +1,9 @@
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
-import { AccountDetails, Token } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { API } from '@greymass/eosio';
+import { Token } from 'src/types';
 
 const chain = getChain();
 
@@ -13,21 +11,20 @@ export default defineComponent({
   name: 'StakingInfo',
   setup() {
     const store = useStore();
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const stakingAccount = ref<string>('');
     const total = ref<string>('0.0000');
     const token = computed((): Token => store.state.chain.token);
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state.account.data;
     });
-    const rexInfo = computed(() => {
-      return store.state?.account.data.account.rex_info;
+    const liquidBalance = computed(() => accountData.value.core_liquid_balance);
+    const rexInfo = computed(() => accountData.value.rex_info);
+    const coreRexBalance = computed(() => {
+      return store.state?.account.coreRexBalance;
     });
     const maturingRex = computed(() => {
       return store.state?.account.maturingRex;
-    });
-    const coreRexBalance = computed(() => {
-      return store.state?.account.coreRexBalance;
     });
     const maturedRex = computed(() => {
       return store.state?.account.maturedRex;
@@ -38,16 +35,17 @@ export default defineComponent({
 
     return {
       store,
+      symbol,
       stakingAccount,
       total,
       accountData,
       token,
-      maturingRex,
+      liquidBalance,
       rexInfo,
+      maturingRex,
       coreRexBalance,
       maturedRex,
-      rexSavings,
-      symbol
+      rexSavings
     };
   }
 });
@@ -57,38 +55,10 @@ export default defineComponent({
 .container.text-grey-3.text-weight-light
   .row.full-width
     .row.full-width.q-pt-md.q-px-lg
-      .col-6.text-h6.grey-3 ACCOUNT TOTAL
-      .col-6.text-h6.text-right.grey-3 {{accountData.account?.core_liquid_balance}}
+      .col-6.text-h6.grey-3 LIQUID BALANCE
+      .col-6.text-h6.text-right.grey-3 {{ liquidBalance }}
     .row.full-width.q-py-md.q-px-md
       hr
-    //-.row.full-width.q-col-gutter-lg.q-pb-md
-      .col-xs-12.col-sm-6
-        div Your Cumulative Earnings
-        .text-h6.grey-3 30.25 {{ ${symbol} }}
-      .col-xs-12.col-sm-6.q-pt-xs-md.q-pr-lg
-        .row(:class="$q.screen.gt.xs ? 'float-right' : '' ")
-          .row.q-pr-sm
-            .col-12(:class="$q.screen.gt.xs ? 'text-right' : '' ") 30 Day intrest
-            .col-12.grey-3(:class="$q.screen.gt.xs ? 'text-right' : '' ")  Here
-          q-separator(vertical color="primary")
-          q-btn-dropdown( padding="xs" flat @click='onMainClick')
-            q-list
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 30 days
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 3 months
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 6 months
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 1 year
-              q-item(clickable v-close-popup @click='onItemClick')
-                q-item-section
-                  q-item-label 2 years
-    //
 
     .row.full-width.q-pb-lg
       .col-xs-12.col-sm-6.q-px-lg

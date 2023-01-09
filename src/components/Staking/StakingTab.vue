@@ -2,8 +2,8 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { API } from '@greymass/eosio';
 
 const chain = getChain();
 
@@ -16,25 +16,28 @@ export default defineComponent({
     const store = useStore();
     let openTransaction = ref<boolean>(false);
     const stakeTokens = ref<string>('');
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
     const transactionError = computed(
       () => store.state.account.TransactionError
     );
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const rexInfo = computed(() => {
-      return store.state.account.data.account.rex_info;
+      return store.state.account.data.rex_info;
     });
     const rexbal = computed(() => {
       return store.state.account.rexbal;
     });
     const maturedRex = computed(() => {
-      return store.state?.account.maturedRex;
+      return store.state.account.maturedRex;
     });
+    const liquidBalance = computed(
+      () => accountData.value?.core_liquid_balance.value
+    );
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
@@ -54,7 +57,7 @@ export default defineComponent({
       if (
         stakeTokens.value === '0.0000' ||
         Number(stakeTokens.value) >=
-          Number(accountData.value.account.core_liquid_balance.split(' ')[0])
+          Number(accountData.value.core_liquid_balance.toString())
       ) {
         return;
       }
@@ -77,7 +80,7 @@ export default defineComponent({
 
     function setMaxValue() {
       stakeTokens.value = (
-        assetToAmount(accountData.value.account.core_liquid_balance) - 0.1
+        assetToAmount(accountData.value.core_liquid_balance.toString()) - 0.1
       ).toString();
       void formatDec();
     }
@@ -87,14 +90,15 @@ export default defineComponent({
       stakeTokens,
       transactionId,
       transactionError,
-      formatDec,
-      stake,
-      assetToAmount,
       accountData,
       rexInfo,
       rexbal,
       maturedRex,
+      liquidBalance,
       symbol,
+      formatDec,
+      stake,
+      assetToAmount,
       setMaxValue
     };
   }
@@ -109,7 +113,7 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-8 {{ `LIQUID ${symbol}` }}
-            .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{accountData.account.core_liquid_balance}}
+            .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{ `${liquidBalance} ${symbol}` }}
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="stakeTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label='"Stake " + symbol' flat @click="stake" )

@@ -6,7 +6,7 @@ export default defineComponent({
   props: {
     account: {
       type: String,
-      required: true
+      default: () => ''
     },
     type: {
       type: String,

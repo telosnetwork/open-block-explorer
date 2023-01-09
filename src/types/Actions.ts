@@ -1,3 +1,5 @@
+import { API } from '@greymass/eosio';
+
 export interface ActionData {
   actions: Action[];
   cached: boolean;
@@ -130,10 +132,7 @@ interface RequiredAuth {
   waits: [];
 }
 
-export interface Permission {
-  parent: string;
-  perm_name: string;
-  required_auth: RequiredAuth;
+export interface Permission extends API.v1.AccountPermission {
   children: Permission[];
   permission_links: PermissionLinks[];
 }

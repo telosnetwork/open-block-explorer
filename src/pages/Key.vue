@@ -3,25 +3,20 @@ import { defineComponent, ref, onMounted } from 'vue';
 import KeyAccountsCard from 'src/components/KeyAccountsCard.vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/api';
-import { Numeric } from 'eosjs';
+import { Name, PublicKey } from '@greymass/eosio';
 
 /* eslint-disable */
 export default defineComponent({
   name: 'Key',
   setup() {
     const route = useRoute();
-    const pubkey = ref(route.params.key as string);
-    const accounts = ref<string[]>(['']);
+    const pubKey = ref<PublicKey>(PublicKey.from(route.params.key as string));
+    const accounts = ref<Name[]>([]);
     onMounted(async () => {
-      if (pubkey.value.startsWith('PUB_K1_')){
-        pubkey.value = Numeric.publicKeyToLegacyString(
-          Numeric.stringToPublicKey(pubkey.value)
-        );
-      }
-      accounts.value = (await api.getKeyAccounts(pubkey.value)).account_names;
+      accounts.value = (await api.getKeyAccounts(pubKey.value)).account_names;
     });
     return {
-      pubkey,
+      pubKey,
       accounts
     };
   },
@@ -32,7 +27,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-KeyAccountsCard(:pubkey='pubkey' :accounts='accounts')
+KeyAccountsCard(:pubKey='pubKey' :accounts='accounts')
 
 </template>
 

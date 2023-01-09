@@ -2,9 +2,9 @@
 import { defineComponent, ref, computed, watch } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { isValidAccount } from 'src/utils/stringValidator';
+import { API, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
 
@@ -17,7 +17,7 @@ export default defineComponent({
     const store = useStore();
     let openTransaction = ref<boolean>(false);
     const buyAmount = ref<string>('');
-    const symbol = ref<string>(chain.getSymbol());
+    const symbol = ref<string>(chain.getSystemToken().symbol);
     const buyOptions = [symbol.value, 'Bytes'];
     const buyOption = ref<string>(buyOptions[0]);
     const transactionId = computed(
@@ -48,16 +48,15 @@ export default defineComponent({
     const ramPrice = computed((): string => {
       return store.state?.chain.ram_price;
     });
-    const ramAvailable = computed(
-      () =>
-        store.state.account.data.account.ram_quota -
-        store.state.account.data.account.ram_usage
+    const ramAvailable = computed(() =>
+      UInt64.sub(
+        store.state.account.data.ram_quota,
+        store.state.account.data.ram_usage
+      )
     );
-    const accountData = computed((): AccountDetails => {
+    const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
-
-    const reciever = ref<string>(accountData.value.account.account_name);
 
     function formatDec() {
       const precision = store.state.chain.token.precision;
@@ -83,7 +82,7 @@ export default defineComponent({
           buyAmount.value === '0.0000' ||
           '' ||
           Number(buyAmount.value) >=
-            Number(accountData.value.account.core_liquid_balance.split(' ')[0])
+            Number(accountData.value.core_liquid_balance.value)
         ) {
           return;
         }
@@ -95,8 +94,7 @@ export default defineComponent({
           buyAmount.value === '0' ||
           '' ||
           Number(buyAmount.value) >=
-            (assetToAmount(accountData.value.account.core_liquid_balance) *
-              1000) /
+            (Number(accountData.value.core_liquid_balance.value) * 1000) /
               Number(ramPrice.value)
         ) {
           return;
@@ -108,24 +106,12 @@ export default defineComponent({
       openTransaction.value = true;
     }
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
-
     function buyLimit(): number {
       if (buyOption.value === buyOptions[0]) {
-        return assetToAmount(accountData.value.account.core_liquid_balance);
+        return accountData.value.core_liquid_balance.value;
       } else {
         return (
-          (assetToAmount(accountData.value.account.core_liquid_balance) *
-            1000) /
+          (Number(accountData.value.core_liquid_balance.value) * 1000) /
           Number(ramPrice.value)
         );
       }
@@ -149,10 +135,8 @@ export default defineComponent({
       symbol,
       buyOption,
       buyPreview,
-      reciever,
       formatDec,
       buy,
-      assetToAmount,
       buyLimit,
       isValidAccount
     };
@@ -171,7 +155,7 @@ export default defineComponent({
     .row
       .col-12
         .row.justify-between.q-pb-sm RAM Receiver:
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="reciever" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="accountData.abiName" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row
       .row.q-pb-sm.full-width
         .col-12 {{ `Amount of RAM to buy in ` + buyOption}}

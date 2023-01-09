@@ -3,12 +3,12 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { AccountDetails } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { isValidAccount } from 'src/utils/stringValidator';
+import { API } from '@greymass/eosio';
 
 const chain = getChain();
-const symbol = chain.getSymbol();
+const symbol = chain.getSystemToken().symbol;
 
 export default defineComponent({
   name: 'UnstakeTab',
@@ -21,11 +21,11 @@ export default defineComponent({
     const stakingAccount = ref<string>(store.state.account.accountName || '');
     const cpuTokens = ref<string>('');
     const netTokens = ref<string>('');
-    const netStake = computed(
-      (): string => store.state.account.data.account.total_resources.net_weight
+    const netStake = computed((): string =>
+      store.state.account.data.total_resources.net_weight.toString()
     );
-    const cpuStake = computed(
-      (): string => store.state.account.data.account.total_resources.cpu_weight
+    const cpuStake = computed((): string =>
+      store.state.account.data.total_resources.cpu_weight.toString()
     );
 
     function formatDec() {
@@ -109,7 +109,7 @@ export default defineComponent({
       this.openTransaction = true;
     },
     async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
+      let data: API.v1.AccountObject;
       try {
         data = await this.$api.getAccount(this.stakingAccount);
         this.$store.commit('account/setAccountData', data);
