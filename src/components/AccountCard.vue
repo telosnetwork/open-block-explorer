@@ -138,32 +138,34 @@ export default defineComponent({
       ram_max.value = fixDec(
         Number(accountData.value.ram_quota) / KILO_UNIT.value
       );
-      cpu_used.value = fixDec(
-        Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value
-      );
-      cpu_max.value = fixDec(
-        Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value
-      );
-      net_used.value = fixDec(
-        Number(accountData.value.net_limit.used) / KILO_UNIT.value
-      );
-      net_max.value = fixDec(
-        Number(accountData.value.net_limit.max) / KILO_UNIT.value
-      );
+      if (props.account !== system_account.value) {
+        cpu_used.value = fixDec(
+          Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value
+        );
+        cpu_max.value = fixDec(
+          Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value
+        );
+        net_used.value = fixDec(
+          Number(accountData.value.net_limit.used) / KILO_UNIT.value
+        );
+        net_max.value = fixDec(
+          Number(accountData.value.net_limit.max) / KILO_UNIT.value
+        );
 
-      stakedResources.value =
-        Number(accountData.value.total_resources.cpu_weight.value) +
-        Number(accountData.value.total_resources.net_weight.value);
+        stakedResources.value =
+          Number(accountData.value.total_resources.cpu_weight.value) +
+          Number(accountData.value.total_resources.net_weight.value);
 
-      delegatedResources.value = Math.abs(
-        stakedResources.value -
-          Number(
-            accountData.value.self_delegated_bandwidth?.net_weight.value || 0
-          ) -
-          Number(
-            accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0
-          )
-      );
+        delegatedResources.value = Math.abs(
+          stakedResources.value -
+            Number(
+              accountData.value.self_delegated_bandwidth?.net_weight.value || 0
+            ) -
+            Number(
+              accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0
+            )
+        );
+      }
     };
 
     const setTotalBalance = () => {
@@ -188,6 +190,7 @@ export default defineComponent({
         creatingAccount.value = creatorData.creator;
         createTime.value = creatorData.timestamp;
         createTransaction.value = creatorData.trx_id;
+        debugger;
       } catch (e) {
         $q.notify(`creator account for ${props.account} not found!`);
       }
@@ -383,11 +386,13 @@ export default defineComponent({
     q-card-section.resources-container
       .inline-section
         .row.justify-center.full-height.items-center
-          .col-5
+          .col-5(v-if="account !== system_account")
+            .text-title {{ account }}
+          .col-2(v-else)
             .text-title {{ account }}
           .col-1
             q-btn.float-right( @click="copy(account)" flat round color="white" icon="content_copy" size='sm')
-        .text-subtitle(v-if="creatingAccount !== '__self__'") created by
+        .text-subtitle(v-if="creatingAccount && creatingAccount !== '__self__'") created by
           span &nbsp;
             a( @click='loadCreatorAccount') {{ creatingAccount }}
           span &nbsp;
@@ -396,6 +401,11 @@ export default defineComponent({
             q-tooltip {{createTimeFormat}}
           a(class="q-ml-xs" @click='loadCreatorTransaction').tx-link
             q-icon( name="fas fa-link")
+        .text-subtitle(v-else) created
+          span &nbsp;
+          div
+            DateField( :timestamp="createTime", showAge ) &nbsp;
+            q-tooltip {{createTimeFormat}}
         q-space
       .resources(v-if="account !== system_account")
         PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='s')
