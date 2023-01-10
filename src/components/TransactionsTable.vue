@@ -153,7 +153,7 @@ export default defineComponent({
             map.set(key, {
               name: item.trx_id,
               transaction: { id: item.trx_id, type: 'transaction' },
-              timestamp: item['@timestamp'],
+              timestamp: item['@timestamp'] || item.timestamp,
               action: item,
               data: hasActions.value
                 ? { data: item.data as unknown, name: item.account as unknown }
@@ -177,7 +177,7 @@ export default defineComponent({
             collection.actions.push({
               name: item.trx_id,
               transaction: { id: item.trx_id, type: 'transaction' },
-              timestamp: item['@timestamp'],
+              timestamp: item['@timestamp'] || item.timestamp,
               action: item,
               data: hasActions.value
                 ? {
