@@ -17,19 +17,27 @@ export default defineComponent({
     const stakingAccount = ref<string>('');
     const total = ref<string>('0.0000');
     const progress = ref<number>(0.2);
-    const resourceValue = computed(
-      (): API.v1.AccountRefundRequest => accountData.value?.refund_request
+    const refundRequest = computed((): API.v1.AccountRefundRequest => {
+      return accountData.value?.refund_request;
+    });
+    const cpuAmount = computed(
+      (): number => refundRequest.value?.cpu_amount.value
+    );
+    const netAmount = computed(
+      (): number => refundRequest.value?.net_amount.value
     );
     const token = computed((): Token => store.state.chain.token);
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const totalRefund = computed((): string => {
-      const refund = accountData.value.refund_request;
-      const totalRefund = refund
-        ? refund?.cpu_amount.value + refund?.net_amount.value
+      const totalRefund = refundRequest.value
+        ? (
+            refundRequest.value.cpu_amount.value +
+            refundRequest.value.net_amount.value
+          ).toFixed(4)
         : 0;
-      return `${totalRefund.toFixed(4)} ${token.value.symbol}`;
+      return `${totalRefund} ${token.value.symbol}`;
     });
 
     function formatStaked(staked: number): string {
@@ -68,8 +76,6 @@ export default defineComponent({
       if (diff > 0) {
         var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
           hours = component(diff, 60 * 60) % 24; // hours
-        // minutes = component(diff, 60) % 60, // minutes
-        // seconds = component(diff, 1) % 60;// seconds
         return `${days} days, ${hours} hours remaining`;
       } else {
         return 'No pending refund';
@@ -87,7 +93,9 @@ export default defineComponent({
       total,
       totalRefund,
       accountData,
-      resourceValue,
+      refundRequest,
+      cpuAmount,
+      netAmount,
       token,
       progress,
       formatStaked,
@@ -147,10 +155,10 @@ export default defineComponent({
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-6 CPU
-            .col-6.text-right.text-weight-bold {{ resourceValue.cpu_amount || '0.0000'}}
+            .col-6.text-right.text-weight-bold {{ cpuAmount || '0'}}
           .row.q-pt-md
             .col-6 NET
-            .col-6.text-right.text-weight-bold {{ resourceValue.net_amount || '0.0000'}}
+            .col-6.text-right.text-weight-bold {{ netAmount || '0'}}
         .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
           .row
             .col-7 {{refundCountdown()}}
