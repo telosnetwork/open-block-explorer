@@ -135,10 +135,11 @@ export default defineComponent({
       ram_used.value = fixDec(
         Number(accountData.value.ram_usage) / KILO_UNIT.value
       );
-      ram_max.value = fixDec(
-        Number(accountData.value.ram_quota) / KILO_UNIT.value
-      );
+
       if (props.account !== system_account.value) {
+        ram_max.value = fixDec(
+          Number(accountData.value.ram_quota) / KILO_UNIT.value
+        );
         cpu_used.value = fixDec(
           Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value
         );
@@ -190,7 +191,6 @@ export default defineComponent({
         creatingAccount.value = creatorData.creator;
         createTime.value = creatorData.timestamp;
         createTransaction.value = creatorData.trx_id;
-        debugger;
       } catch (e) {
         $q.notify(`creator account for ${props.account} not found!`);
       }
@@ -411,6 +411,8 @@ export default defineComponent({
         PercentCircle(:radius='radius' :fraction='cpu_used' :total='cpu_max' label='CPU' unit='s')
         PercentCircle(:radius='radius' :fraction='net_used' :total='net_max' label='NET' unit='kb')
         PercentCircle(:radius='radius' :fraction='ram_used' :total='ram_max' label='RAM' unit='kb')
+      .resources(v-else)
+        div.usage RAM USED: {{ ram_used }} kb
     q-card-section.resources-container
       .row.justify-center.q-gutter-sm
         .col-3
@@ -540,6 +542,12 @@ $medium:750px
 
 .total-value
   font-weight: normal
+
+.usage
+  text-anchor: middle
+  dominant-baseline: middle
+  fill: white
+  font-size: 14px
 
 @media screen and (max-width: $medium) // screen < $medium
   .account-card
