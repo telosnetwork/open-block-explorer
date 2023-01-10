@@ -59,9 +59,9 @@ export default defineComponent({
       void store.dispatch('account/resetTransaction');
       if (
         (cpuTokens.value === '0.0000' && netTokens.value === '0.0000') ||
-        Number(cpuTokens.value) >= assetToAmount(cpuWeight.value.toString()) ||
+        Number(cpuTokens.value) >= Number(cpuWeight.value) ||
         Number(netTokens.value) >=
-          assetToAmount(accountData.value.total_resources.net_weight.toString())
+          Number(accountData.value.total_resources.net_weight)
       ) {
         return;
       }
@@ -84,24 +84,13 @@ export default defineComponent({
       openTransaction.value = true;
     }
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
-
     function setMaxNetValue() {
-      netTokens.value = assetToAmount(netWeight.value.toString()).toString();
+      netTokens.value = netWeight.value.toString();
       void formatDec();
     }
 
     function setMaxCpuValue() {
-      cpuTokens.value = assetToAmount(cpuWeight.value.toString()).toString();
+      cpuTokens.value = cpuWeight.value.toString();
       void formatDec();
     }
 
@@ -121,7 +110,6 @@ export default defineComponent({
       formatDec,
       stake,
       unstake,
-      assetToAmount,
       setMaxNetValue,
       setMaxCpuValue
     };
@@ -138,12 +126,12 @@ export default defineComponent({
           .row.q-pb-sm.full-width
             .col-9 TRANSFER CPU TO STAKING
             .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxCpuValue' v-ripple) {{cpuWeight}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(cpuWeight)  || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= cpuWeight.value  || 'Invalid amount.' ]" type="text" dense dark)
           .row
           .row.q-pb-sm.full-width
             .col-9 TRANSFER NET TO STAKING
             .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxNetValue' v-ripple) {{netWeight}}
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= assetToAmount(netWeight) || 'Invalid amount.' ]" type="text" dense dark)
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= netWeight.value || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label=" 'Stake ' + symbol" flat @click="stake" )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
