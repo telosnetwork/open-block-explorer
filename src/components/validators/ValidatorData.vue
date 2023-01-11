@@ -22,15 +22,9 @@ export default defineComponent({
     const store = useStore();
     const symbol = chain.getSystemToken().symbol;
     const account = computed(() => store.state.account.accountName);
-    const balance = computed(() => {
-      return (
-        (Number(
-          store.state.account.data.voter_info
-            ? Number(store.state.account.data.voter_info.staked) / 10000
-            : 0
-        ).toFixed(2) || '0') + ` ${symbol}`
-      );
-    });
+    const balance = computed(
+      () => (Number(lastWeight.value).toFixed(2) || '0') + ` ${symbol}`
+    );
     const activecount = computed(() => {
       if (store.state.chain.producers.length > 42) return 42;
       else return store.state.chain.producers.length;
@@ -43,7 +37,7 @@ export default defineComponent({
     const showCpu = ref<boolean>(false);
     const voteChanged = ref<boolean>(false);
     const resetFlag = ref<boolean>(false);
-    const lastWeight = ref<string>('0');
+    const lastWeight = ref<number>(0);
     const lastStaked = ref<number>(0);
     const stakedAmount = ref<number>(0);
     const accountValid = computed(() => account.value && account.value !== '');
@@ -71,9 +65,25 @@ export default defineComponent({
       }
     }
     async function getVotingStatistics() {
+      await getVoteWeight();
       await updateVoteAmount();
       await updateSupply();
       await updatePayRate();
+    }
+
+    async function getVoteWeight() {
+      const paramsVoteWeight = {
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'voters',
+        lower_bound: Name.from(account.value),
+        limit: 1
+      } as GetTableRowsParams;
+      lastWeight.value = (
+        (await api.getTableRows(paramsVoteWeight)) as {
+          rows: { last_vote_weight: number }[];
+        }
+      ).rows[0].last_vote_weight;
     }
 
     async function updatePayRate() {
@@ -139,6 +149,7 @@ export default defineComponent({
       if (accountValid.value) {
         await store.dispatch('account/sendVoteTransaction');
         openTransaction.value = true;
+        await getVoteWeight();
       } else {
         showWalletModal.value = true;
       }
@@ -208,7 +219,11 @@ div
       .col-md-4.col-sm-12.col-xs-12(v-if="accountValid")
         q-card(flat).full-height.card-gradient
           q-card-section.card-gradient
-            .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{ `YOUR AVAILABLE VOTING ${symbol}` }}
+            .row.full-width.justify-center
+              .text-h6.q-py-md.text-weight-light.text-grey-4 YOUR CURRENT VOTE WEIGHT
+              q-icon.info-icon(name="info" color="white" size="20px")
+                q-tooltip(anchor="top middle" self="bottom middle" :offset="[10, 10]") Voting is inversley weighted and increases the more validators you vote for (up to 30).
+
             .row.full-width.justify-center.text-h5 {{ balance }}
             .row.full-width.justify-center.text-h6.q-py-md.text-weight-light.text-grey-4 {{account}}
           q-separator(color="primary" size="2px")
@@ -236,4 +251,10 @@ div
 .card-gradient
   background: var(--q-color-secondary-gradient)
   color: white
+
+.info-icon
+  display: inline-block
+  margin-top: auto
+  margin-bottom: auto
+  margin-left: 0.5rem
 </style>
