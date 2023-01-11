@@ -220,7 +220,7 @@ div
         q-card(flat).full-height.card-gradient
           q-card-section.card-gradient
             .row.full-width.justify-center
-              .text-h6.q-py-md.text-weight-light.text-grey-4 YOUR CURRENT VOTE WEIGHT
+              .text-h6.q-py-md.text-weight-light.text-grey-4 Current Vote Weight
               q-icon.info-icon(name="info" color="white" size="20px")
                 q-tooltip(anchor="top middle" self="bottom middle" :offset="[10, 10]") Voting is inversley weighted and increases the more validators you vote for (up to 30).
 
