@@ -332,6 +332,10 @@ export default defineComponent({
       async () => {
         resetBalances();
         await loadAccountData();
+<<<<<<< Updated upstream
+=======
+        await loadBalances();
+>>>>>>> Stashed changes
       }
     );
 
