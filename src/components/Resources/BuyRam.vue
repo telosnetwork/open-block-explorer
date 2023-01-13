@@ -58,6 +58,10 @@ export default defineComponent({
       return store.state?.account.data;
     });
 
+    const receivingAccount = computed((): string =>
+      accountData.value.account_name.toString()
+    );
+
     function formatDec() {
       const precision = store.state.chain.token.precision;
       if (buyOption.value === buyOptions[0]) {
@@ -132,6 +136,7 @@ export default defineComponent({
       transactionError,
       ramAvailable,
       accountData,
+      receivingAccount,
       symbol,
       buyOption,
       buyPreview,
@@ -155,7 +160,9 @@ export default defineComponent({
     .row
       .col-12
         .row.justify-between.q-pb-sm RAM Receiver:
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="accountData.abiName" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+          q-space
+          .text-grey-3 Defaults to connected account
+        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="receivingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row
       .row.q-pb-sm.full-width
         .col-12 {{ `Amount of RAM to buy in ` + buyOption}}

@@ -465,7 +465,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setTransactionError', e);
     }
   },
-  async buyRam({ commit, state }, { amount }) {
+  async buyRam({ commit, state }, { amount, receiver }) {
     let transaction = null;
     const actions = [
       {
@@ -499,7 +499,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setTransactionError', e);
     }
   },
-  async buyRamBytes({ commit, state }, { amount }) {
+  async buyRamBytes({ commit, state }, { amount, receiver }) {
     let transaction = null;
     const actions = [
       {
