@@ -90,7 +90,6 @@ export default defineComponent({
             ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
             : `0.0000 ${symbol}`
       } as StakeResourcesTransactionData;
-      debugger;
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
