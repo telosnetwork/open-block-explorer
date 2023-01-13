@@ -465,7 +465,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setTransactionError', e);
     }
   },
-  async buyRam({ commit, state }, { amount, receiver }) {
+  async buyRam({ commit, state }, { amount, receivingAccount }) {
     let transaction = null;
     const actions = [
       {
@@ -479,7 +479,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         ],
         data: {
           payer: state.accountName,
-          receiver: state.accountName,
+          receiver: receivingAccount as string,
           quant: amount as string
         }
       }
@@ -499,7 +499,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setTransactionError', e);
     }
   },
-  async buyRamBytes({ commit, state }, { amount, receiver }) {
+  async buyRamBytes({ commit, state }, { amount, receivingAccount }) {
     let transaction = null;
     const actions = [
       {
@@ -513,7 +513,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         ],
         data: {
           payer: state.accountName,
-          receiver: state.accountName,
+          receiver: receivingAccount as string,
           bytes: amount as string
         }
       }

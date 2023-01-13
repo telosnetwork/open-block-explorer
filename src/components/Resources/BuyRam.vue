@@ -20,6 +20,7 @@ export default defineComponent({
     const symbol = ref<string>(chain.getSystemToken().symbol);
     const buyOptions = [symbol.value, 'Bytes'];
     const buyOption = ref<string>(buyOptions[0]);
+    const receivingAccount = ref<string>(store.state.account.accountName);
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
@@ -58,10 +59,6 @@ export default defineComponent({
       return store.state?.account.data;
     });
 
-    const receivingAccount = computed((): string =>
-      accountData.value.account_name.toString()
-    );
-
     function formatDec() {
       const precision = store.state.chain.token.precision;
       if (buyOption.value === buyOptions[0]) {
@@ -91,7 +88,8 @@ export default defineComponent({
           return;
         }
         await store.dispatch('account/buyRam', {
-          amount: buyAmount.value + ' ' + symbol.value
+          amount: buyAmount.value + ' ' + symbol.value,
+          receivingAccount: receivingAccount.value
         });
       } else {
         if (
@@ -104,7 +102,8 @@ export default defineComponent({
           return;
         }
         await store.dispatch('account/buyRamBytes', {
-          amount: buyAmount.value
+          amount: buyAmount.value,
+          receivingAccount: receivingAccount.value
         });
       }
       openTransaction.value = true;
