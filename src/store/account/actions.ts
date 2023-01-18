@@ -36,6 +36,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       commit('setAccountPermission', permission || 'active');
       const accountName = await account.getAccountName();
 
+      commit('setAccountPermission', permission || 'active');
       commit('setUser', account);
       commit('setIsAuthenticated', true);
       commit('setAccountName', accountName);
