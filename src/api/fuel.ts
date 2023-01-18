@@ -1,3 +1,5 @@
+/* eslint-disable quotes */
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Most of this code was taken and addapted from https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70
 import {
@@ -17,12 +19,11 @@ import {
   SignedTransaction,
   Transaction
 } from '@greymass/eosio';
-import { AnchorUser } from 'ual-anchor';
 import { getChain } from 'src/config/ConfigManager';
 import { Dialog } from 'quasar';
 
 // The maximum fee per transaction this script is willing to accept
-const maxFee = 0.005;
+const maxFee = 0.05;
 
 // expire time in millisec
 const expireSeconds = 3600;
@@ -41,11 +42,17 @@ interface ResourceProviderResponse {
   data: ResponseData;
 }
 
+interface CostsType {
+  ram: string;
+  cpu: string;
+  net: string;
+}
+
 interface ResponseData {
   request: [string, SignedTransaction];
   signatures: Signature[];
   version: number;
-  costs?: { ram: string };
+  costs?: CostsType;
 }
 
 interface SignedTransactionResponse extends SignTransactionResponse {
@@ -117,17 +124,11 @@ export class FuelUserWrapper extends User {
           // Resource Provider provided signature in exchange for a fee
           // is ok to treat them with the same logic of code = 200?
           // Yes acording to this: https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70#file-fuel-core-presign-js-L128-L159
+          // Aron rightly suggests that we should show and confirm the fee costs for this service:
+          // https://github.com/telosnetwork/open-block-explorer/pull/477#discussion_r1053417964
         }
         case 200: {
           // Resource Provider provided signature for free
-
-          // validate with the user whether to use the service at all
-          try {
-            await confirmWithUser(this.user);
-          } catch (e) {
-            // The user refuseed to use the service
-            break;
-          }
 
           const { data } = rpResponse;
           const [, returnedTransaction] = data.request;
@@ -135,12 +136,20 @@ export class FuelUserWrapper extends User {
 
           // Ensure the modifed transaction is what the application expects
           // These validation methods will throw an exception if invalid data exists
-          validateTransaction(
+          const fees: string | null = validateTransaction(
             signer,
             modifiedTransaction,
             transaction,
             data.costs
           );
+
+          // validate with the user whether to use the service at all
+          try {
+            await confirmWithUser(this.user, fees);
+          } catch (e) {
+            // The user refuseed to use the service
+            break;
+          }
 
           modifiedTransaction.signatures = [...data.signatures];
           // Sign the modified transaction
@@ -185,7 +194,7 @@ export class FuelUserWrapper extends User {
         default:
           throw (
             'Code ' +
-            rpResponse.code.toString() +
+            (+rpResponse.code).toString() +
             ' not expected from resource provider endpoint: ' +
             resourceProviderEndpoint
           );
@@ -259,7 +268,7 @@ export default class GreymassFuelService {
   }
 }
 
-async function confirmWithUser(user: User) {
+async function confirmWithUser(user: User, fees: string | null) {
   const username = await user.getAccountName();
   let mymodel: string[] = [];
   mymodel = [];
@@ -286,26 +295,29 @@ async function confirmWithUser(user: User) {
     };
 
     // this are the normal texts for random wallet.
-    let cancel: string | boolean = 'Reject';
-    let ok = 'Approve';
+    const cancel: string | boolean = 'Reject';
+    const ok = 'Confirm';
     let message =
-      "It seems you don't have enought resources to pay for your next transaction. " +
-      "But, don't worry. You can continue using Greymass Fuel services for free. Do you accept to use this service?";
+      "Your account doesn't have sufficient resources (CPU, NET, or RAM) to pay for your next transaction. " +
+      'Don\'t worry! Telos has partnered with Greymass to proceed with your transaction using "Greymass Fuel", allowing you to continue for free.<br/><br/>' +
+      'We recommend powering up your account with at least 0.5 TLOS in CPU and NET each and purchasing RAM, as this service is not supported on all dAPPs in our ecosystem. Please <a src="https://wallet.telos.net/" target="_blank">click here</a> to proceed and power up your account';
 
     // If the wallet is Greymass Anchor is not possible to avoid Fuel service (it is incorporated)
     try {
-      if (user instanceof AnchorUser) {
-        cancel = false;
-        ok = 'Continue';
+      if (typeof fees == 'string') {
         message =
-          "It seems you don't have enought resources to pay for your next transaction. " +
-          "But, don't worry. Graymass Anchor wallet incorporates Fuel service for you to connitue for free.";
+          "Your account doesn't have sufficient resources (CPU, NET, or RAM) to pay for your next transaction and it can not be processed without fees. " +
+          'Telos has partnered with Greymass to proceed with your transaction using "Greymass Fuel", reducing cost significantly.<br/><br/>' +
+          'Please confirm fees below to proceed.<br/><br/>' +
+          `<div><center><h5><b>${fees}</b></h5></center><div><br/>` +
+          'We recommend powering up your account with at least 0.5 TLOS in CPU and NET each and purchasing RAM, as this service is not supported on all dAPPs in our ecosystem. Please <a src="https://wallet.telos.net/" target="_blank">click here</a> to proceed and power up your account';
       }
     } catch (e) {}
 
     Dialog.create({
-      title: "You don't have enought resources!",
+      title: 'Resource Warning!',
       message,
+      html: true,
       cancel,
       ok,
       persistent: true,
@@ -336,13 +348,13 @@ function validateTransaction(
   signer: PermissionLevel,
   modifiedTransaction: Transaction,
   transaction: Transaction,
-  costs: { ram: string } | null = null
-) {
+  costs: CostsType | null = null
+): string | null {
   // Ensure the first action is the `greymassnoop:noop`
   validateNoop(modifiedTransaction);
 
   // Ensure the actions within the transaction match what was provided
-  validateActions(signer, modifiedTransaction, transaction, costs);
+  return validateActions(signer, modifiedTransaction, transaction, costs);
 }
 
 // Validate the actions of the modified transaction vs the original transaction
@@ -350,8 +362,8 @@ function validateActions(
   signer: PermissionLevel,
   modifiedTransaction: Transaction,
   transaction: Transaction,
-  costs: { ram: string } | null
-) {
+  costs: CostsType | null
+): string | null {
   // Determine how many actions we expect to have been added to the transaction based on the costs
   const expectedNewActions = determineExpectedActionsLength(costs);
 
@@ -359,7 +371,7 @@ function validateActions(
   validateActionsLength(expectedNewActions, modifiedTransaction, transaction);
 
   // Ensure the appended actions were expected
-  validateActionsContent(
+  return validateActionsContent(
     signer,
     expectedNewActions,
     modifiedTransaction,
@@ -368,7 +380,7 @@ function validateActions(
 }
 
 // Validate the number of actions is the number expected
-function determineExpectedActionsLength(costs: { ram: string } | null) {
+function determineExpectedActionsLength(costs: CostsType | null) {
   // By default, 1 new action is appended (noop)
   let expectedNewActions = 1;
 
@@ -390,7 +402,7 @@ function validateActionsContent(
   expectedNewActions: number,
   modifiedTransaction: Transaction,
   transaction: Transaction
-) {
+): string | null {
   // Make sure the originally requested actions are still intact and unmodified
   validateActionsOriginalContent(
     expectedNewActions,
@@ -400,11 +412,15 @@ function validateActionsContent(
 
   // If a fee has been added, ensure the fee is set properly
   if (expectedNewActions > 1) {
-    validateActionsFeeContent(signer, modifiedTransaction);
+    let totalFee: null | number = null;
+    totalFee = validateActionsFeeContent(signer, modifiedTransaction);
     // If a ram purchase has been added, ensure the purchase was set properly
     if (expectedNewActions > 2) {
       validateActionsRamContent(signer, modifiedTransaction);
     }
+    return `${new Number(totalFee).toFixed(4)} TLOS`;
+  } else {
+    return null;
   }
 }
 
@@ -420,7 +436,7 @@ function descerialize(data: unknown): AuxTransactionData {
 function validateActionsFeeContent(
   signer: PermissionLevel,
   modifiedTransaction: Transaction
-) {
+): number {
   const feeAction = modifiedTransaction.actions[1];
   const data = descerialize(feeAction.data);
   const amount = parseFloat(data.quantity?.split(' ')[0]);
@@ -434,15 +450,17 @@ function validateActionsFeeContent(
   ) {
     throw new Error('Fee action was deemed invalid.');
   }
+  return amount;
 }
 
 // Ensure the RAM purchasing action is valid
 function validateActionsRamContent(
   signer: PermissionLevel,
   modifiedTransaction: Transaction
-) {
+): number {
   const ramAction = modifiedTransaction.actions[2];
   const data = descerialize(ramAction.data);
+  const amount = parseFloat(data.quant?.split(' ')[0]);
 
   if (
     ramAction.account.toString() !== 'eosio' ||
@@ -452,6 +470,7 @@ function validateActionsRamContent(
   ) {
     throw new Error('RAM action was deemed invalid.');
   }
+  return amount;
 }
 
 // Make sure the actions returned in the API response match what was submitted
@@ -528,11 +547,6 @@ function validateNoop(modifiedTransaction: Transaction) {
     (JSON.stringify(firstAction.data) !== '""' &&
       JSON.stringify(firstAction.data) !== '{}')
   ) {
-    console.log('firstAction.data', firstAction.data);
-    console.log(
-      'JSON.stringify(firstAction.data)',
-      JSON.stringify(firstAction.data)
-    );
     throw new Error(
       `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`
     );

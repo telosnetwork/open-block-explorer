@@ -8,6 +8,8 @@ import {
   SignTransactionResponse,
   User
 } from 'universal-authenticator-library';
+import { QDialogOptions } from 'quasar';
+import rp_response_file from './rp_response.json';
 
 installQuasarPlugin();
 
@@ -40,19 +42,13 @@ const localStorageMock = (function () {
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-jest.mock('ual-anchor', () => () => {
-  return {
-    AnchorUser: {}
-  };
-});
-
 // mocking quasar dialog
 const createDialog = jest.fn();
 jest.mock('quasar', () => ({
   // mocking static functions create
   Dialog: {
-    create: () => {
-      return createDialog();
+    create: (options: QDialogOptions) => {
+      return createDialog(options);
     }
   }
 }));
@@ -122,6 +118,7 @@ global.fetch = jest.fn(() =>
 // mocking internal implementatios
 jest.mock('src/config/ConfigManager', () => ({
   getChain: () => ({
+    getSymbol: () => 'TLOS',
     getHyperionEndpoint: () => '',
     getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 })
   })
@@ -135,7 +132,7 @@ class UserStub extends User {
 
   async signTransaction(
     trx: AnyTransaction,
-    _conf?: SignTransactionConfig
+    conf?: SignTransactionConfig
   ): Promise<SignTransactionResponse> {
     return Promise.resolve({
       transaction: { ...trx, signatures: ['local-signature'] }
@@ -149,7 +146,8 @@ class UserStub extends User {
   ): Promise<string> => Promise.resolve('');
   verifyKeyOwnership = async (challenge: string): Promise<boolean> =>
     Promise.resolve(false);
-  getAccountName = async (): Promise<string> => Promise.resolve('');
+  getAccountName = async (): Promise<string> =>
+    Promise.resolve(signer.actor.toString());
   getChainId = async (): Promise<string> => Promise.resolve('');
   getKeys = async (): Promise<string[]> => Promise.resolve(['']);
 }
@@ -242,12 +240,14 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
           rpResponseCode = Number(200);
           const trx = getOriginalTransaction();
 
-          createDialog.mockImplementationOnce(() => ({
-            onOk: jest.fn((resolve: (payload?: unknown) => void) => {
-              resolve(); // the user approves
-              return { onCancel: jest.fn() };
-            })
-          }));
+          createDialog.mockImplementationOnce((options: QDialogOptions) => {
+            return {
+              onOk: jest.fn((resolve: (payload?: unknown) => void) => {
+                resolve(); // the user approves
+                return { onCancel: jest.fn() };
+              })
+            };
+          });
 
           const response = await wrapper.signTransaction(trx, configData);
           const response_actions_json = JSON.stringify(
@@ -284,30 +284,75 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
         });
       });
     });
-
     describe('When reciving code 402 from resource provider', () => {
-      describe('and the user approves the use of Fuel', () => {
-        it('should take the signature and modified trx, sign it and broadcast', async () => {
+      describe('and the user approves to pay the fee', () => {
+        it('should show the fee to the user and push three aditional actions before the original', async () => {
+          rpResponseCode = Number(402);
+          const trx = getOriginalTransaction();
+
+          // setting the resource provider response for a complete coverage: cpu, net and ram
+          const json = rp_response_file.json;
+          global.fetch = jest.fn(() =>
+            Promise.resolve({
+              json: () => Promise.resolve(json)
+            } as Response)
+          );
+
+          // check if the fee is being displayed correctly
+          createDialog.mockImplementationOnce((options: QDialogOptions) => {
+            expect(options.message.indexOf(' TLOS')).toBeGreaterThan(0);
+            const fees = json.data.fee;
+            const feesFromMessage = options.message
+              .match(/<b>(\d+\.\d+\sTLOS)<\/b>/g)[0]
+              .replace(/<\/?b>/g, '');
+            expect(feesFromMessage).toEqual(fees);
+            return {
+              onOk: jest.fn((resolve: (payload?: unknown) => void) => {
+                resolve(); // the user approves
+                return { onCancel: jest.fn() };
+              })
+            };
+          });
+
+          const response = await wrapper.signTransaction(trx, configData);
+
+          const response_actions_json = JSON.stringify(
+            response.transaction.actions
+          );
+          const rp_response_trx = rp_response_file.json.data.request[1];
+          if (typeof rp_response_trx === 'string') {
+            throw new Error('rp_response_trx is a string');
+          }
+          const expected_actions = [
+            rp_response_trx.actions[0],
+            rp_response_trx.actions[1],
+            rp_response_trx.actions[2],
+            ...trx.actions.map((x) => ({ ...x }))
+          ];
+          const expected_actions_json = JSON.stringify(expected_actions);
+
+          expect(response_actions_json).toEqual(expected_actions_json);
+        });
+      });
+      describe('but the user refuses to pay the fee', () => {
+        it('should not change the original transaction', async () => {
           rpResponseCode = Number(402);
           const trx = getOriginalTransaction();
 
           createDialog.mockImplementationOnce(() => ({
-            onOk: jest.fn((resolve: (payload?: unknown) => void) => {
-              resolve(); // the user approves
-              return { onCancel: jest.fn() };
-            })
+            onOk: jest.fn(() => ({
+              onCancel: jest.fn((reject: (payload?: unknown) => void) => {
+                reject(); // the user rejects to use the service
+              })
+            }))
           }));
 
           const response = await wrapper.signTransaction(trx, configData);
           const response_actions_json = JSON.stringify(
             response.transaction.actions
           );
-          const expected_actions = [
-            noopAction,
-            ...trx.actions.map((x) => ({ ...x }))
-          ];
-          const expected_actions_json = JSON.stringify(expected_actions);
-          expect(response_actions_json).toEqual(expected_actions_json);
+          const trx_actions_json = JSON.stringify(trx.actions);
+          expect(response_actions_json).toEqual(trx_actions_json);
         });
       });
     });
