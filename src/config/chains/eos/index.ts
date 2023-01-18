@@ -6,13 +6,18 @@ import {
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
+import { Token } from 'src/types';
 
 const CHAIN_ID =
   'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
 const DISPLAY = 'EOS';
-const SYMBOL = 'EOS';
+const TOKEN = {
+  symbol: 'EOS',
+  precision: 4,
+  amount: 0,
+  contract: 'eosio.token'
+} as Token;
 const HYPERION_ENDPOINT = 'https://eos.hyperion.eosrio.io';
-
 const RPC_ENDPOINT = {
   protocol: 'https',
   host: 'eos.hyperion.eosrio.io',
@@ -61,8 +66,8 @@ export default class EOS extends BaseChain {
     return getCoingeckoPriceChartData('eos');
   }
 
-  getSymbol(): string {
-    return SYMBOL;
+  getSystemToken(): Token {
+    return TOKEN;
   }
 
   getUsdPrice(): Promise<number> {

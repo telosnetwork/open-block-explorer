@@ -1,10 +1,10 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from 'vue';
-import { Token, AccountDetails } from 'src/types';
+import { Token } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
 import { isValidAccount } from 'src/utils/stringValidator';
 import StakingInfo from './StakingInfo.vue';
-import StakeCpuNetTab from './StakeFromNetCpuTab.vue';
+import StakeFromResources from './StakeFromResources.vue';
 import ProcessingTab from './ProcessingTab.vue';
 import StakingTab from './StakingTab.vue';
 import UnstakingTab from './UnstakingTab.vue';
@@ -12,14 +12,15 @@ import HistoryTab from './HistoryTab.vue';
 import SavingsTab from './SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
+import { API } from '@greymass/eosio';
 
-const symbol = getChain().getSymbol();
+const symbol = getChain().getSystemToken().symbol;
 
 export default defineComponent({
   name: 'StakingDialog',
   components: {
     StakingInfo,
-    StakeCpuNetTab,
+    StakeFromResources,
     ProcessingTab,
     StakingTab,
     UnstakingTab,
@@ -118,7 +119,7 @@ export default defineComponent({
       this.$router.go(0);
     },
     async loadAccountData(): Promise<void> {
-      let data: AccountDetails;
+      let data: API.v1.AccountObject;
       try {
         data = await this.$api.getAccount(this.account);
         this.$store.commit('account/setAccountData', data);
@@ -182,7 +183,7 @@ q-dialog( @show='setDefaults' :persistent='true' maximized)
               q-tab-panel(name="unstake")
                 UnstakingTab
               q-tab-panel(name="stakecpunet")
-                StakeCpuNetTab
+                StakeFromResources
               q-tab-panel(name="savings")
                 SavingsTab
               q-tab-panel(name="maturing")

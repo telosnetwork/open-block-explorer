@@ -6,13 +6,18 @@ import {
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
+import { Token } from 'src/types';
 
 const CHAIN_ID =
   '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4';
 const DISPLAY = 'WAX';
-const SYMBOL = 'WAX';
+const TOKEN = {
+  symbol: 'WAX',
+  precision: 4,
+  amount: 0,
+  contract: 'eosio.token'
+} as Token;
 const HYPERION_ENDPOINT = 'https://wax.eosusa.io';
-
 const RPC_ENDPOINT = {
   protocol: 'https',
   host: 'wax.eosusa.io',
@@ -56,8 +61,8 @@ export default class EOS extends BaseChain {
     return getCoingeckoPriceChartData('wax');
   }
 
-  getSymbol(): string {
-    return SYMBOL;
+  getSystemToken(): Token {
+    return TOKEN;
   }
 
   getUsdPrice(): Promise<number> {

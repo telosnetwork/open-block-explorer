@@ -76,7 +76,7 @@ export default defineComponent({
       },
       series: [
         {
-          name: chain.getSymbol(),
+          name: chain.getSystemToken().symbol,
           color: getCssVar('primary'),
           data: [] as DateTuple[]
         }

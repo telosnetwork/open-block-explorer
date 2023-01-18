@@ -9,14 +9,10 @@ import { getChain } from 'src/config/ConfigManager';
 import { FuelUserWrapper } from 'src/api/fuel';
 
 const chain = getChain();
-const symbol = chain.getSymbol();
+const symbol = chain.getSystemToken().symbol;
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   async login({ commit }, { account, authenticator }) {
-    commit(
-      'setLoadingWallet',
-      (authenticator as Authenticator).getStyle().text
-    );
     await (authenticator as Authenticator).init();
     if (!account) {
       const requestAccount = await (
@@ -32,43 +28,26 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       const account = new FuelUserWrapper(users[0]);
       const permission = (account as unknown as { requestPermission: string })
         .requestPermission;
-
-      commit('setAccountPermission', permission || 'active');
       const accountName = await account.getAccountName();
 
       commit('setAccountPermission', permission || 'active');
       commit('setUser', account);
       commit('setIsAuthenticated', true);
       commit('setAccountName', accountName);
-      localStorage.setItem(
-        'autoLogin',
-        (authenticator as Authenticator).constructor.name
-      );
+
       localStorage.setItem('account', accountName);
       localStorage.setItem(
         'autoLogin',
         (authenticator as Authenticator).getName()
       );
-      commit(
-        'setAuthenticatorName',
-        (authenticator as Authenticator).getName()
-      );
-      localStorage.setItem('returning', 'true');
-      commit('setLoadingWallet');
     }
   },
   logout({ commit }) {
     commit('setIsAuthenticated', false);
     commit('setAccountName', '');
-    commit('setAuthenticatorName', null);
     commit('setUser', null);
-    for (const key in localStorage) {
-      if (key.includes('anchor')) {
-        localStorage.removeItem(key);
-      }
-    }
+
     localStorage.removeItem('account');
-    localStorage.removeItem('returning');
     localStorage.removeItem('autoLogin');
   },
   async loadAccountData({ commit, state }) {

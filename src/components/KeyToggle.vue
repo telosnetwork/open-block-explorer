@@ -1,25 +1,28 @@
 <script lang="ts">
 import { useQuasar } from 'quasar';
-import { defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { copyToClipboard } from 'quasar';
-import { Numeric } from 'eosjs';
+import { PublicKey, Weight } from '@greymass/eosio';
 
 export default defineComponent({
   name: 'KeyToggle',
   props: {
     pubkey: {
-      type: String as PropType<string>,
+      type: PublicKey,
       required: true
     },
     weight: {
-      type: Number as PropType<number>,
+      type: Weight,
       required: true
     }
   },
   setup(props) {
-    const Key = ref(props.pubkey);
-    const Weight = ref(props.weight);
+    const key = ref(props.pubkey);
+    const legacyKeyFormat = ref<boolean>(false);
     const $q = useQuasar();
+    const keyDisplay = computed(() =>
+      legacyKeyFormat.value ? key.value.toLegacyString() : key.value.toString()
+    );
     function copy(value: string) {
       copyToClipboard(value)
         .then((): void => {
@@ -40,17 +43,10 @@ export default defineComponent({
         });
     }
     function toggleKey() {
-      if (Key.value.startsWith('PUB_K1_')) {
-        Key.value = Numeric.publicKeyToLegacyString(
-          Numeric.stringToPublicKey(Key.value)
-        );
-      } else {
-        Key.value = Numeric.convertLegacyPublicKey(Key.value);
-      }
+      legacyKeyFormat.value = !legacyKeyFormat.value;
     }
     return {
-      Key,
-      Weight,
+      keyDisplay,
       copy,
       toggleKey
     };
@@ -61,9 +57,9 @@ export default defineComponent({
 <template lang="pug">
 .row.q-pb-md
 	.col.wrap
-		a(:href=" '/key/' + Key" class="hover-dec") {{`+${Weight} &nbsp &nbsp ${Key}`}}
+		a(:href=" '/key/' + keyDisplay" class="hover-dec") {{`+${weight} &nbsp &nbsp ${keyDisplay}`}}
 		q-btn.rotate-315( @click="toggleKey()" flat round color="black" icon="vpn_key" size='xs') &nbsp;
-		q-btn( @click="copy(Key)" flat round color="black" icon="content_copy" size='xs')
+		q-btn( @click="copy(keyDisplay)" flat round color="black" icon="content_copy" size='xs')
 
 </template>
 

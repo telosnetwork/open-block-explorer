@@ -2,6 +2,7 @@ import { Chain } from '../types/Chain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
+import { Token } from 'src/types';
 
 export default abstract class BaseChain implements Chain {
   protected name: string;
@@ -22,7 +23,7 @@ export default abstract class BaseChain implements Chain {
     return `~/assets/${this.name}/logo_sm.svg`;
   }
 
-  abstract getSymbol(): string;
+  abstract getSystemToken(): Token;
   abstract getChainId(): string;
   abstract getDisplay(): string;
   abstract getHyperionEndpoint(): string;

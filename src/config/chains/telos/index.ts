@@ -21,11 +21,18 @@ import {
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
+import { Token } from 'src/types';
 
 const CHAIN_ID =
   '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11';
 const DISPLAY = 'Telos';
-const SYMBOL = 'TLOS';
+const TOKEN = {
+  symbol: 'TLOS',
+  precision: 4,
+  amount: 0,
+  contract: 'eosio.token'
+} as Token;
+
 const HYPERION_ENDPOINT = 'https://mainnet.telos.net';
 
 const RPC_ENDPOINT = {
@@ -95,8 +102,8 @@ export default class Telos extends BaseChain {
     return getCoingeckoPriceChartData('telos');
   }
 
-  getSymbol(): string {
-    return SYMBOL;
+  getSystemToken(): Token {
+    return TOKEN;
   }
 
   getUsdPrice(): Promise<number> {
