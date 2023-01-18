@@ -332,6 +332,9 @@ export default defineComponent({
       async () => {
         resetBalances();
         await loadAccountData();
+        await store.dispatch('account/updateRexData', {
+          account: props.account
+        });
       }
     );
 
