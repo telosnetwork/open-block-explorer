@@ -43,12 +43,15 @@ const localStorageMock = (function () {
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
+<<<<<<< HEAD
 jest.mock('ual-anchor', () => () => {
   return {
     AnchorUser: {}
   };
 });
 
+=======
+>>>>>>> merging
 // mocking quasar dialog
 const createDialog = jest.fn();
 jest.mock('quasar', () => ({
@@ -291,7 +294,10 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
         });
       });
     });
+<<<<<<< HEAD
 
+=======
+>>>>>>> merging
     describe('When reciving code 402 from resource provider', () => {
       describe('and the user approves to pay the fee', () => {
         it('should show the fee to the user and push three aditional actions before the original', async () => {
