@@ -8,11 +8,8 @@ import {
   SignTransactionResponse,
   User
 } from 'universal-authenticator-library';
-<<<<<<< HEAD
 import { QDialogOptions } from 'quasar';
 import rp_response_file from './rp_response.json';
-=======
->>>>>>> 889c4ab1158441fa69bb965c086ed4d7ba13deec
 
 installQuasarPlugin();
 
@@ -45,27 +42,13 @@ const localStorageMock = (function () {
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-<<<<<<< HEAD
-=======
-jest.mock('ual-anchor', () => () => {
-  return {
-    AnchorUser: {}
-  };
-});
-
->>>>>>> 889c4ab1158441fa69bb965c086ed4d7ba13deec
 // mocking quasar dialog
 const createDialog = jest.fn();
 jest.mock('quasar', () => ({
   // mocking static functions create
   Dialog: {
-<<<<<<< HEAD
     create: (options: QDialogOptions) => {
       return createDialog(options);
-=======
-    create: () => {
-      return createDialog();
->>>>>>> 889c4ab1158441fa69bb965c086ed4d7ba13deec
     }
   }
 }));
@@ -135,10 +118,7 @@ global.fetch = jest.fn(() =>
 // mocking internal implementatios
 jest.mock('src/config/ConfigManager', () => ({
   getChain: () => ({
-<<<<<<< HEAD
     getSymbol: () => 'TLOS',
-=======
->>>>>>> 889c4ab1158441fa69bb965c086ed4d7ba13deec
     getHyperionEndpoint: () => '',
     getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 })
   })
@@ -152,11 +132,7 @@ class UserStub extends User {
 
   async signTransaction(
     trx: AnyTransaction,
-<<<<<<< HEAD
     conf?: SignTransactionConfig
-=======
-    _conf?: SignTransactionConfig
->>>>>>> 889c4ab1158441fa69bb965c086ed4d7ba13deec
   ): Promise<SignTransactionResponse> {
     return Promise.resolve({
       transaction: { ...trx, signatures: ['local-signature'] }
@@ -170,12 +146,8 @@ class UserStub extends User {
   ): Promise<string> => Promise.resolve('');
   verifyKeyOwnership = async (challenge: string): Promise<boolean> =>
     Promise.resolve(false);
-<<<<<<< HEAD
   getAccountName = async (): Promise<string> =>
     Promise.resolve(signer.actor.toString());
-=======
-  getAccountName = async (): Promise<string> => Promise.resolve('');
->>>>>>> 889c4ab1158441fa69bb965c086ed4d7ba13deec
   getChainId = async (): Promise<string> => Promise.resolve('');
   getKeys = async (): Promise<string[]> => Promise.resolve(['']);
 }
@@ -268,7 +240,6 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
           rpResponseCode = Number(200);
           const trx = getOriginalTransaction();
 
-<<<<<<< HEAD
           createDialog.mockImplementationOnce((options: QDialogOptions) => {
             return {
               onOk: jest.fn((resolve: (payload?: unknown) => void) => {
@@ -277,14 +248,6 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
               })
             };
           });
-=======
-          createDialog.mockImplementationOnce(() => ({
-            onOk: jest.fn((resolve: (payload?: unknown) => void) => {
-              resolve(); // the user approves
-              return { onCancel: jest.fn() };
-            })
-          }));
->>>>>>> 889c4ab1158441fa69bb965c086ed4d7ba13deec
 
           const response = await wrapper.signTransaction(trx, configData);
           const response_actions_json = JSON.stringify(
@@ -321,7 +284,6 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
         });
       });
     });
-<<<<<<< HEAD
     describe('When reciving code 402 from resource provider', () => {
       describe('and the user approves to pay the fee', () => {
         it('should show the fee to the user and push three aditional actions before the original', async () => {
@@ -393,34 +355,6 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
           expect(response_actions_json).toEqual(trx_actions_json);
         });
       });
-=======
-
-    describe('When reciving code 402 from resource provider', () => {
-      describe('and the user approves the use of Fuel', () => {
-        it('should take the signature and modified trx, sign it and broadcast', async () => {
-          rpResponseCode = Number(402);
-          const trx = getOriginalTransaction();
-
-          createDialog.mockImplementationOnce(() => ({
-            onOk: jest.fn((resolve: (payload?: unknown) => void) => {
-              resolve(); // the user approves
-              return { onCancel: jest.fn() };
-            })
-          }));
-
-          const response = await wrapper.signTransaction(trx, configData);
-          const response_actions_json = JSON.stringify(
-            response.transaction.actions
-          );
-          const expected_actions = [
-            noopAction,
-            ...trx.actions.map((x) => ({ ...x }))
-          ];
-          const expected_actions_json = JSON.stringify(expected_actions);
-          expect(response_actions_json).toEqual(expected_actions_json);
-        });
-      });
->>>>>>> 889c4ab1158441fa69bb965c086ed4d7ba13deec
     });
   });
 });
