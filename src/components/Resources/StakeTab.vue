@@ -6,6 +6,7 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { isValidAccount } from 'src/utils/stringValidator';
 import { API } from '@greymass/eosio';
+import { StakeResourcesTransactionData } from 'src/types';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -79,15 +80,16 @@ export default defineComponent({
       const data = {
         from: this.$store.state.account.accountName.toLowerCase(),
         receiver: this.stakingAccount.toLowerCase(),
-        stake_cpu_quantity: `${parseFloat(this.cpuTokens).toFixed(
-          4
-        )} ${symbol}`,
-
-        stake_net_quantity: `${parseFloat(this.netTokens).toFixed(
-          4
-        )} ${symbol}`,
-        transfer: false
-      };
+        transfer: false,
+        stake_cpu_quantity:
+          parseFloat(this.cpuTokens) > 0
+            ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+            : `0.0000 ${symbol}`,
+        stake_net_quantity:
+          parseFloat(this.netTokens) > 0
+            ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+            : `0.0000 ${symbol}`
+      } as StakeResourcesTransactionData;
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
