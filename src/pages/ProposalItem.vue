@@ -371,7 +371,9 @@ export default defineComponent({
       return await Promise.all(transactionsPromise);
     }
 
-    onMounted(async () => {
+    onMounted(loadProposalAndUpdateFields);
+    
+    async function loadProposalAndUpdateFields() {
       const proposal = await loadProposal();
 
       if (typeof proposal === 'undefined') {
@@ -410,7 +412,7 @@ export default defineComponent({
       );
 
       isLoading.value = false;
-    });
+    }
 
     async function signTransaction({
       name,
@@ -457,6 +459,8 @@ export default defineComponent({
             }
           }
         });
+        await new Promise((r) => setTimeout(r, 1000));
+        await loadProposalAndUpdateFields();
       } catch (e) {
         console.log(e);
         handleError(e, 'Unable approve proposal');
@@ -476,6 +480,8 @@ export default defineComponent({
             }
           }
         });
+        await new Promise((r) => setTimeout(r, 1000));
+        await loadProposalAndUpdateFields();
       } catch (e) {
         console.log(e);
         handleError(e, 'Unable approve proposal');
@@ -492,6 +498,8 @@ export default defineComponent({
             executer: account.value
           }
         });
+        await new Promise((r) => setTimeout(r, 1000));
+        await loadProposalAndUpdateFields();
       } catch (e) {
         handleError(e, 'Unable execute proposal');
       }
@@ -507,6 +515,8 @@ export default defineComponent({
             canceler: account.value
           }
         });
+        await new Promise((r) => setTimeout(r, 1000));
+        await loadProposalAndUpdateFields();
       } catch (e) {
         handleError(e, 'Unable cancel proposal');
       }
