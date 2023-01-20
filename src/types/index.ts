@@ -27,6 +27,7 @@ export {
 export { PaginationSettings } from './PaginationSettings';
 export { GenericObj } from './GenericObj';
 export { Transaction } from './Transaction';
+export { StakeResourcesTransactionData } from './StakeResourcesTransactionData';
 export { OptionsObj } from './OptionsObj';
 export { TreeNode } from './TreeNode';
 export {
