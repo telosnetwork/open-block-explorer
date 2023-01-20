@@ -127,7 +127,7 @@ export default defineComponent({
       .col-12
         .row.justify-between.q-pb-sm CPU/NET Receiver
           q-space
-          .text-grey-3 Defaults to selected account
+          .text-grey-3 Defaults to connected account
         q-input.full-width(standout="bg-deep-purple-2 text-white" dense  dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row.q-py-md
       .col-6
