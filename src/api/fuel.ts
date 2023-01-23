@@ -12,9 +12,7 @@ import {
   APIClient,
   Name,
   NameType,
-  PackedTransaction,
   PermissionLevel,
-  Serializer,
   Signature,
   SignedTransaction,
   Transaction
@@ -22,11 +20,16 @@ import {
 import { getChain } from 'src/config/ConfigManager';
 import { Dialog } from 'quasar';
 
+// DEMO
+import rp_response_fee from './rp_response_fee.json';
+
+
+
 // The maximum fee per transaction this script is willing to accept
 const maxFee = 0.05;
 
 // expire time in millisec
-const expireSeconds = 3600;
+// const expireSeconds = 3600;
 
 const chain = getChain();
 const client = new APIClient({
@@ -34,7 +37,7 @@ const client = new APIClient({
 });
 
 const fuelrpc = chain.getFuelRPCEndpoint();
-const resourceProviderEndpoint = `${fuelrpc.protocol}://${fuelrpc.host}:${fuelrpc.port}/v1/resource_provider/request_transaction`;
+const resourceProviderEndpoint = `${fuelrpc?.protocol}://${fuelrpc?.host}:${fuelrpc?.port}/v1/resource_provider/request_transaction`;
 
 // Auxiliar interfaces
 interface ResourceProviderResponse {
@@ -59,6 +62,9 @@ interface SignedTransactionResponse extends SignTransactionResponse {
   transaction: { signatures: Signature[] };
 }
 
+
+alert('WARNING: this is a demo branch');
+
 // Wrapper for the user to intersect the signTransaction call
 export class FuelUserWrapper extends User {
   constructor(private user: User) {
@@ -71,7 +77,7 @@ export class FuelUserWrapper extends User {
   ): Promise<SignTransactionResponse> {
     try {
       // Retrieve transaction headers
-      const info = await client.v1.chain.get_info();
+      /*const info = await client.v1.chain.get_info();
       const header = info.getTransactionHeader(expireSeconds);
 
       // collect all contract abis
@@ -85,7 +91,7 @@ export class FuelUserWrapper extends User {
         abi: abis[i]
       }));
 
-      // create complete well formed transaction
+      create complete well formed transaction
       const transaction = Transaction.from(
         {
           ...header,
@@ -93,13 +99,15 @@ export class FuelUserWrapper extends User {
         },
         abis_and_names
       );
+      */
+      const transaction = originalTransaction as Transaction;
 
       // Pack the transaction for transport
-      const packedTransaction = PackedTransaction.from({
-        signatures: [],
-        packed_context_free_data: '',
-        packed_trx: Serializer.encode({ object: transaction })
-      });
+      // const packedTransaction = PackedTransaction.from({
+      //   signatures: [],
+      //   packed_context_free_data: '',
+      //   packed_trx: Serializer.encode({ object: transaction })
+      // });
 
       const signer = PermissionLevel.from({
         actor: (await this.user.getAccountName()) as NameType,
@@ -107,17 +115,16 @@ export class FuelUserWrapper extends User {
       });
 
       // Submit the transaction to the resource provider endpoint
-      const cosigned = await fetch(resourceProviderEndpoint, {
-        body: JSON.stringify({
-          signer,
-          packedTransaction
-        }),
-        method: 'POST'
-      });
+      ///const cosigned = await fetch(resourceProviderEndpoint, {
+      ///  body: JSON.stringify({
+      ///    signer,
+      ///    packedTransaction
+      ///  }),
+      ///  method: 'POST'
+      ///});
 
       // Interpret the resulting JSON
-      const rpResponse =
-        (await cosigned.json()) as unknown as ResourceProviderResponse;
+      const rpResponse = rp_response_fee.json as unknown as ResourceProviderResponse;
 
       switch (rpResponse.code) {
         case 402: {
@@ -507,6 +514,24 @@ function validateActionsOriginalContent(
       !matchesData
     ) {
       const { account, name } = original;
+      // show all variables to see what is wrong
+      console.log('action', action);
+      console.log('action.name.toString()', action.name.toString());
+      console.log('original.name.toString()', original.name.toString());
+      console.log('matchesAccount', matchesAccount);
+      console.log('matchesAction', matchesAction);
+      console.log('matchesLength', matchesLength);
+      console.log('matchesActor', matchesActor);
+      console.log('matchesPermission', matchesPermission);
+      console.log('matchesData', matchesData);
+      console.log('action.data.toString()', action.data.toString());
+      console.log('original.data.toString()', original.data.toString());
+      console.log('action.authorization[0].actor.toString()', action.authorization[0].actor.toString());
+      console.log('original.authorization[0].actor.toString()', original.authorization[0].actor.toString());
+
+
+
+
       throw new Error(
         `Transaction returned by API has non-matching action at index ${i} (${account.toString()}:${name.toString()})`
       );
