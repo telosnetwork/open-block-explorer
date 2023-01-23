@@ -106,6 +106,7 @@ import sha256 from 'fast-sha256';
 import { ABI, ABIDef, Action, Serializer, Transaction } from '@greymass/eosio';
 import { useStore } from 'src/store';
 import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
+import { sleep } from 'src/utils/sleep';
 
 export default defineComponent({
   name: 'ProposalItem',
@@ -372,8 +373,10 @@ export default defineComponent({
     }
 
     onMounted(loadProposalAndUpdateFields);
-    
+
     async function loadProposalAndUpdateFields() {
+      isLoading.value = true;
+
       const proposal = await loadProposal();
 
       if (typeof proposal === 'undefined') {
@@ -459,7 +462,7 @@ export default defineComponent({
             }
           }
         });
-        await new Promise((r) => setTimeout(r, 1000));
+        await sleep();
         await loadProposalAndUpdateFields();
       } catch (e) {
         console.log(e);
@@ -480,7 +483,7 @@ export default defineComponent({
             }
           }
         });
-        await new Promise((r) => setTimeout(r, 1000));
+        await sleep();
         await loadProposalAndUpdateFields();
       } catch (e) {
         console.log(e);
@@ -498,7 +501,7 @@ export default defineComponent({
             executer: account.value
           }
         });
-        await new Promise((r) => setTimeout(r, 1000));
+        await sleep();
         await loadProposalAndUpdateFields();
       } catch (e) {
         handleError(e, 'Unable execute proposal');
@@ -515,7 +518,7 @@ export default defineComponent({
             canceler: account.value
           }
         });
-        await new Promise((r) => setTimeout(r, 1000));
+        await sleep();
         await loadProposalAndUpdateFields();
       } catch (e) {
         handleError(e, 'Unable cancel proposal');
