@@ -125,6 +125,7 @@ export class FuelUserWrapper extends User {
 
       // Interpret the resulting JSON
       const rpResponse = rp_response_fee.json as unknown as ResourceProviderResponse;
+      rpResponse.data.request[1].actions[3] = transaction.actions[0];
 
       switch (rpResponse.code) {
         case 402: {
