@@ -20,6 +20,7 @@ export default defineComponent({
     const symbol = ref<string>(chain.getSystemToken().symbol);
     const buyOptions = [symbol.value, 'Bytes'];
     const buyOption = ref<string>(buyOptions[0]);
+    const receivingAccount = ref<string>(store.state.account.accountName);
     const transactionId = computed(
       (): string => store.state.account.TransactionId
     );
@@ -87,7 +88,8 @@ export default defineComponent({
           return;
         }
         await store.dispatch('account/buyRam', {
-          amount: buyAmount.value + ' ' + symbol.value
+          amount: buyAmount.value + ' ' + symbol.value,
+          receivingAccount: receivingAccount.value
         });
       } else {
         if (
@@ -100,7 +102,8 @@ export default defineComponent({
           return;
         }
         await store.dispatch('account/buyRamBytes', {
-          amount: buyAmount.value
+          amount: buyAmount.value,
+          receivingAccount: receivingAccount.value
         });
       }
       openTransaction.value = true;
@@ -132,6 +135,7 @@ export default defineComponent({
       transactionError,
       ramAvailable,
       accountData,
+      receivingAccount,
       symbol,
       buyOption,
       buyPreview,
@@ -155,7 +159,9 @@ export default defineComponent({
     .row
       .col-12
         .row.justify-between.q-pb-sm RAM Receiver:
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="accountData.abiName" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+          q-space
+          .text-grey-3 Defaults to connected account
+        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="receivingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row
       .row.q-pb-sm.full-width
         .col-12 {{ `Amount of RAM to buy in ` + buyOption}}
