@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { AnyTransaction } from '@greymass/eosio';
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
@@ -43,15 +42,6 @@ const localStorageMock = (function () {
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-<<<<<<< HEAD
-jest.mock('ual-anchor', () => () => {
-  return {
-    AnchorUser: {}
-  };
-});
-
-=======
->>>>>>> merging
 // mocking quasar dialog
 const createDialog = jest.fn();
 jest.mock('quasar', () => ({
@@ -89,7 +79,7 @@ jest.mock('@greymass/eosio', () => ({
       v1: {
         chain: {
           get_info: () => ({
-            getTransactionHeader: (s: number) => transactionHeaders
+            getTransactionHeader: (_s: number) => transactionHeaders
           }),
           get_abi: () => Promise.resolve({ abi: 'abi' }),
           push_transaction: () => ({
@@ -142,7 +132,7 @@ class UserStub extends User {
 
   async signTransaction(
     trx: AnyTransaction,
-    conf?: SignTransactionConfig
+    _conf?: SignTransactionConfig
   ): Promise<SignTransactionResponse> {
     return Promise.resolve({
       transaction: { ...trx, signatures: ['local-signature'] }
@@ -150,11 +140,11 @@ class UserStub extends User {
   }
 
   signArbitrary = async (
-    publicKey: string,
-    data: string,
-    helpText: string
+    _publicKey: string,
+    _data: string,
+    _helpText: string
   ): Promise<string> => Promise.resolve('');
-  verifyKeyOwnership = async (challenge: string): Promise<boolean> =>
+  verifyKeyOwnership = async (_challenge: string): Promise<boolean> =>
     Promise.resolve(false);
   getAccountName = async (): Promise<string> =>
     Promise.resolve(signer.actor.toString());
@@ -294,10 +284,6 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
         });
       });
     });
-<<<<<<< HEAD
-
-=======
->>>>>>> merging
     describe('When reciving code 402 from resource provider', () => {
       describe('and the user approves to pay the fee', () => {
         it('should show the fee to the user and push three aditional actions before the original', async () => {

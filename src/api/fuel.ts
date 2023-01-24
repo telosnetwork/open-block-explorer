@@ -19,7 +19,6 @@ import {
   SignedTransaction,
   Transaction
 } from '@greymass/eosio';
-import { AnchorUser } from 'ual-anchor';
 import { getChain } from 'src/config/ConfigManager';
 import { Dialog } from 'quasar';
 
@@ -130,15 +129,6 @@ export class FuelUserWrapper extends User {
         }
         case 200: {
           // Resource Provider provided signature for free
-
-          // validate with the user whether to use the service at all
-          try {
-            await confirmWithUser(this.user);
-          } catch (e) {
-            // TODO: need localization
-            // The user refuseed to use the service
-            break;
-          }
 
           const { data } = rpResponse;
           const [, returnedTransaction] = data.request;
