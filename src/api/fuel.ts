@@ -242,6 +242,9 @@ export default class GreymassFuelService {
       JSON.stringify(GreymassFuelService.preferences)
     );
   }
+  static drop() {
+    localStorage.removeItem('fuel_preferences');
+  }  
   static load() {
     try {
       GreymassFuelService.preferences = GreymassFuelService.preferences || {};
@@ -261,6 +264,8 @@ export default class GreymassFuelService {
     };
     if (GreymassFuelService.preferences[account].remember) {
       GreymassFuelService.save();
+    } else {
+      GreymassFuelService.drop();
     }
   }
   static setGlobals(g: Record<string, (s: string) => string>) {
