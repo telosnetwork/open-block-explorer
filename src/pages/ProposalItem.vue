@@ -1,9 +1,9 @@
 <template lang="pug">
-div(:style="isLoading ? '' : 'max-height: 12rem;'").full-width.row.justify-center.items-center.gradient-box
+div(style="height: fit-content; min-height: 25rem;").full-width.row.justify-center.items-center.gradient-box
   div(v-if="isLoading").col.text-center
     q-spinner(color="white" size="2em")
 
-  div(v-else).col.text-center
+  div(v-else style="height: 22rem; padding-top: 6rem;").col.text-center
     h1.text-h4.text-white.q-ma-none Proposal {{proposalName}}
     p.text-caption.text-white.text-uppercase.q-mt-xs(:style="{opacity:'0.5'}").
       PROPOSER <router-link :to="'/account/' + proposer" class="text-white cursor-pointer">{{proposer}}</router-link> • APPROVAL STATUS {{approvalStatus}} • EXPIRATION {{expirationDate}}
@@ -18,7 +18,7 @@ div(:style="isLoading ? '' : 'max-height: 12rem;'").full-width.row.justify-cente
       q-btn(v-if="isShowApproveButton" outline padding="sm md" color="white" text-color="white" label="Approve" @click="onApprove")
       q-btn(v-if="isShowUnapproveButton" outline padding="sm md" color="white" text-color="white" label="Unapprove" @click="onUnapprove")
 
-q-page(v-if="!isLoading" padding)
+q-page(padding)
   h2.text-h6.text-weight-regular Multisig Transaction
   q-card(
     v-for="(multsigTransactionItem, multsigTransactionIndex) in multsigTransactionData"
