@@ -72,26 +72,6 @@ q-page(padding)
               :color="props.row.status ? 'green' : 'orange'"
               :label="props.row.status ? 'APPROVED' : 'PENDING'"
             )
-
-  h2.text-h6.text-weight-regular.q-mt-xl Transaction history
-  q-card(
-    v-for="(transactionHistoryItem, transactionHistoryIndex) in transactionHistoryData"
-    :key="transactionHistoryIndex"
-  ).q-mt-md
-    div(v-for="transactionItem in transactionHistoryItem" :key="transactionItem.trx_id")
-      q-card-section.overflow-auto
-        router-link(
-          :to="'/transaction/' + transactionItem.trx_id"
-          style="text-decoration:none"
-        ).text-primary.cursor-pointer {{transactionItem.trx_id}}
-      json-viewer(
-        :value="transactionHistoryItem[0].act"
-        :expand-depth="5"
-        preview-mode
-        boxed
-        copyable
-        sort
-      )
 </template>
 
 <script lang="ts">
@@ -135,7 +115,6 @@ export default defineComponent({
 
     const multsigTransactionData = ref<unknown>({});
     const requestedApprovalsRows = ref<RequestedApprovals[]>([]);
-    const transactionHistoryData = ref<unknown>([]);
 
     const requestedApprovalsColumns = [
       {
@@ -407,7 +386,6 @@ export default defineComponent({
       multsigTransactionData.value = multsigTransactionDataValue;
 
       const transactions = await handleTransactionHistory(proposal.block_num);
-      transactionHistoryData.value = transactions;
 
       isCanceled.value = transactions.some(
         (item) =>
@@ -551,7 +529,6 @@ export default defineComponent({
       multsigTransactionData,
       requestedApprovalsRows,
       requestedApprovalsColumns,
-      transactionHistoryData,
 
       onApprove,
       onUnapprove,
