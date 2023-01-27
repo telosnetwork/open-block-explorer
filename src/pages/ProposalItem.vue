@@ -114,7 +114,6 @@ export default defineComponent({
 
     const multsigTransactionData = ref<unknown>({});
     const requestedApprovalsRows = ref<RequestedApprovals[]>([]);
-    const transactionHistoryData = ref<unknown>([]);
 
     const requestedApprovalsColumns = [
       {
@@ -382,7 +381,6 @@ export default defineComponent({
       multsigTransactionData.value = multsigTransactionDataValue;
 
       const transactions = await handleTransactionHistory(proposal.block_num);
-      transactionHistoryData.value = transactions;
 
       isCanceled.value = transactions.some(
         (item) =>
@@ -518,7 +516,6 @@ export default defineComponent({
       multsigTransactionData,
       requestedApprovalsRows,
       requestedApprovalsColumns,
-      transactionHistoryData,
 
       onApprove,
       onUnapprove,
