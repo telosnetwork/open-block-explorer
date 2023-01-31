@@ -13,7 +13,7 @@ export default {
   setup() {
     return {
       showSidebar: () => {
-        return process.env.SHOW_SIDEBAR == 'true';
+        return process.env.SHOW_SIDEBAR === 'true';
       }
     };
   }
