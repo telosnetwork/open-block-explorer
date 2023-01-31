@@ -79,7 +79,7 @@ git clone https://github.com/telosnetwork/open-block-explorer
 cd open-block-explorer && yarn
 ```
 
-### Restore .env file & check that the correct endpoints are set
+### Restore .env file, set default chain and/or optionally enable chain switching
 ```bash
 cp .env.example .env
 ```
