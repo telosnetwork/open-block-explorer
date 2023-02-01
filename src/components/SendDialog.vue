@@ -69,7 +69,6 @@ export default defineComponent({
       void store.dispatch('account/resetTransaction');
 
       if (availableTokens.value.length > 0) {
-
         console.log('inside if (availableTokens.value.length > 0)');
 
         sendToken.value = availableTokens.value.find((token) => {
