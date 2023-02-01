@@ -42,6 +42,7 @@ export default defineComponent({
     const system_account = ref('eosio');
 
     const isLoading = ref<boolean>(true);
+    const tokensLoading = ref<boolean>(true);
     const none = ref<UInt64>(UInt64.from(0));
     const MICRO_UNIT = ref<number>(Math.pow(10, -6));
     const KILO_UNIT = ref<number>(Math.pow(10, 3));
@@ -182,6 +183,7 @@ export default defineComponent({
 
     const updateTokenBalances = async () => {
       availableTokens.value = await api.getTokens(props.account);
+      tokensLoading.value = false;
     };
 
     const loadAccountCreatorInfo = async () => {
@@ -352,6 +354,7 @@ export default defineComponent({
       ram_max,
       creatingAccount,
       isLoading,
+      tokensLoading,
       liquid,
       totalRefund,
       totalTokens,
@@ -423,7 +426,14 @@ export default defineComponent({
     q-card-section.resources-container
       .row.justify-center.q-gutter-sm
         .col-3
-          q-btn( @click="openSendDialog = true" color='primary' label='send' v-if='isAccount' class="full-width")
+          q-btn(
+            v-if='isAccount'
+            :disabled="tokensLoading || isLoading"
+            color='primary'
+            :label='tokensLoading ? "Loading..." : "Send"'
+            class="full-width"
+            @click="openSendDialog = true"
+          )
         .col-3
           q-btn( @click="openResourcesDialog = true" color='primary' label='Resources' v-if='isAccount' class="full-width")
         .col-3
