@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, toRef } from 'vue';
+import { computed, defineComponent, PropType, ref, toRef, watch } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
 import { isValidAccount } from 'src/utils/stringValidator';
@@ -69,6 +69,9 @@ export default defineComponent({
       void store.dispatch('account/resetTransaction');
 
       if (availableTokens.value.length > 0) {
+
+        console.log('inside if (availableTokens.value.length > 0)');
+
         sendToken.value = availableTokens.value.find((token) => {
           return (
             token?.symbol === sendToken.value?.symbol &&
@@ -77,6 +80,12 @@ export default defineComponent({
         });
       }
     };
+
+    watch(availableTokens, (newValue, oldValue) => {
+      if (newValue !== oldValue && newValue.length !== 0) {
+        setDefaults();
+      }
+    });
 
     const updateSelectedCoin = (token: Token): void => {
       sendToken.value = token;
