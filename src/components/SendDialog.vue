@@ -71,8 +71,8 @@ export default defineComponent({
       if (availableTokens.value.length > 0) {
         sendToken.value = availableTokens.value.find((token) => {
           return (
-            token.symbol === sendToken.value.symbol &&
-            token.contract === sendToken.value.contract
+            token?.symbol === sendToken.value?.symbol &&
+            token?.contract === sendToken.value?.contract
           );
         });
       }
