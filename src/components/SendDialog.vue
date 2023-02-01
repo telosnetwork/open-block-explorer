@@ -173,8 +173,8 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                 .row.justify-between.q-pb-sm.q-gutter-x-sm
                   div AMOUNT
                   q-space
-                  .color-grey-3.text-weight-bold.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{sendToken.amount}} AVAILABLE
-                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken.amount || "invalid amount" ]' type="text" dense dark)
+                  .color-grey-3.text-weight-bold.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{sendToken?.amount}} AVAILABLE
+                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken?.amount || "invalid amount" ]' type="text" dense dark)
             .row
               .col-12
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
@@ -188,7 +188,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
           q-card-section(v-if='transactionId')
             .row
               .col-12
-                .row You successfully sent {{ sendAmount }} {{ sendToken.symbol }} to {{ recievingAccount }}.
+                .row You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ recievingAccount }}.
                 .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}
           q-card-section(v-else)
             .row
