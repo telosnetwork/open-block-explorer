@@ -430,8 +430,8 @@ export default defineComponent({
           q-btn(
             v-if='isAccount'
             :disabled="tokensLoading || isLoading"
-            color='primary'
             :label='tokensLoading ? "Loading..." : "Send"'
+            color='primary'
             class="full-width"
             @click="openSendDialog = true"
           )
