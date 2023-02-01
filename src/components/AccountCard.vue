@@ -182,6 +182,7 @@ export default defineComponent({
     };
 
     const updateTokenBalances = async () => {
+      tokensLoading.value = true;
       availableTokens.value = await api.getTokens(props.account);
       tokensLoading.value = false;
     };
