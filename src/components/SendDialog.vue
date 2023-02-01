@@ -72,6 +72,8 @@ export default defineComponent({
         console.log('inside if (availableTokens.value.length > 0)');
 
         sendToken.value = availableTokens.value.find((token) => {
+          console.log(token);
+          console.log(sendToken.value);
           return (
             token?.symbol === sendToken.value?.symbol &&
             token?.contract === sendToken.value?.contract
@@ -82,6 +84,7 @@ export default defineComponent({
 
     watch(availableTokens, (newValue, oldValue) => {
       if (newValue !== oldValue && newValue.length !== 0) {
+        console.log('inside watcher');
         setDefaults();
       }
     });
@@ -154,7 +157,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
+q-dialog( :persistent='true' @hide='resetForm' maximized)
   q-card.sendCard
     .row.justify-center.items-center.full-height.full-width
       .absolute-top-right
