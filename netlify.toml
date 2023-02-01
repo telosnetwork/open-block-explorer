@@ -19,8 +19,3 @@
   CHAIN_NAME = "telos-testnet"
   # SHOW_SIDEBAR = "true"
 
-[context.deploy-preview.environment]
-  APP_NAME = "Telos Block Explorer"
-  NODE_VERSION = "14"
-  # SHOW_SIDEBAR = "true"
-  CHAIN_NAME = "telos"
