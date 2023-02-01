@@ -69,7 +69,10 @@ export default defineComponent({
       void store.dispatch('account/resetTransaction');
       if (availableTokens.value.length > 0) {
         sendToken.value = availableTokens.value.find((token) => {
-          return token.symbol === sendToken.value.symbol;
+          return (
+            token.symbol === sendToken.value.symbol &&
+            token.contract === sendToken.value.contract
+          );
         });
       }
     };
