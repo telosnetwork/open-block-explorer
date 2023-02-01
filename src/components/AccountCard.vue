@@ -41,6 +41,7 @@ export default defineComponent({
     const creatingAccount = ref('');
     const system_account = ref('eosio');
 
+    const isLoading = ref<boolean>(true);
     const none = ref<UInt64>(UInt64.from(0));
     const MICRO_UNIT = ref<number>(Math.pow(10, -6));
     const KILO_UNIT = ref<number>(Math.pow(10, 3));
@@ -50,7 +51,7 @@ export default defineComponent({
     const usdPrice = ref<number>();
     const cpu_used = ref<number>(0);
     const cpu_max = ref<number>(0);
-    const totalTokens = ref<number | string>('--');
+    const totalTokens = ref<number | string>('');
     const net_used = ref(0);
     const net_max = ref(0);
     const ram_used = ref(0);
@@ -112,6 +113,7 @@ export default defineComponent({
 
     const loadAccountData = async (): Promise<void> => {
       try {
+        isLoading.value = true;
         accountData.value = await api.getAccount(props.account);
         await loadAccountCreatorInfo();
         await loadBalances();
@@ -175,6 +177,7 @@ export default defineComponent({
         rex.value +
         totalRefund.value +
         (stakedResources.value - delegatedResources.value);
+      isLoading.value = false;
     };
 
     const updateTokenBalances = async () => {
@@ -348,6 +351,7 @@ export default defineComponent({
       ram_used,
       ram_max,
       creatingAccount,
+      isLoading,
       liquid,
       totalRefund,
       totalTokens,
@@ -432,10 +436,12 @@ export default defineComponent({
           tr
           tr
             td.text-left.total-label TOTAL
-            td.text-right.total-amount {{ formatAsset(totalTokens) }}
+            td.text-right.total-amount.total-loading-spinner(v-if='isLoading')
+               q-spinner(color="white" size="1.5em")
+            td.text-right.total-amount(v-else) {{ formatAsset(totalTokens) }}
           tr.total-row
             td.text-left
-            td.text-right.total-value {{ totalValueString }}
+            td.text-right.total-value(v-show='!isLoading') {{ totalValueString }}
           tr
           tr
             td.text-left LIQUID
@@ -524,6 +530,8 @@ $medium:750px
 
 .text-right
   font-weight: bold
+  &.total-loading-spinner
+    padding-right: .5rem
 
 .text-title, .text-subtitle
   display: flex
