@@ -164,7 +164,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
               .col-4
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
                 .row.items-center.no-wrap.selector-container.q-py-sm(@click="openCoinDialog = true" )
-                  .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken.symbol}}
+                  .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken?.symbol}}
                   .col-4
                     .row.justify-end.items-center.arrowButton
                       q-icon.fas.fa-chevron-down.q-pr-lg(size="17px")
