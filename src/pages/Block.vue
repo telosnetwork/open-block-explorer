@@ -19,7 +19,7 @@ export default defineComponent({
       // api get block and set block
       block.value = await api.getBlock(route.params.block as string);
       block.value.transactions.forEach((tr) => {
-        const act = tr.trx.transaction.actions.map((act) => {
+        const act = tr.trx.transaction?.actions.map((act) => {
           return {
             ...act,
             trx_id: tr.trx.id,
@@ -72,7 +72,7 @@ export default defineComponent({
                 div(class="text-h4 text-bold") Block not found.
   .q-pt-lg
     TransactionTable(:actions='Actions')
-    
+
 </template>
 
 <style scoped lang="sass">

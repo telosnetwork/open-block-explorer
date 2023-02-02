@@ -82,7 +82,9 @@ export default defineComponent({
         let cpu = 0;
         let net = 0;
         Block.value.transactions.forEach((tx) => {
-          actionCount += tx.trx.transaction.actions.length;
+          if (tx.trx.transaction && tx.trx.transaction.actions) {
+            actionCount += tx.trx.transaction.actions.length;
+          }
           cpu += tx.cpu_usage_us;
           net += tx.net_usage_words;
         });
@@ -134,9 +136,9 @@ export default defineComponent({
               .row.q-col-gutter-sm
                 .col-auto
                   q-btn.button-primary( @click="previousBlock" flat dense size='md' icon='arrow_back' )
-                .col-auto 
+                .col-auto
                   q-btn.button-primary( @click="nextBlock" flat dense size='md' icon='arrow_forward' )
-        
+
         q-card-section.q-pt-none
           .row.items-center
             .col-11.text-bold.ellipsis {{numberWithCommas(block_num)}}
