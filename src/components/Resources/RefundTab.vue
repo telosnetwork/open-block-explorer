@@ -126,7 +126,10 @@ export default defineComponent({
         this.transactionError = e;
       }
       await this.loadAccountData();
-      this.openTransaction = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        this.openTransaction = true;
+      }
     },
     async loadAccountData(): Promise<void> {
       try {
