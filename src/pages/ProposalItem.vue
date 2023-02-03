@@ -1,9 +1,9 @@
 <template lang="pug">
-div(:style="isLoading ? '' : 'max-height: 12rem;'").full-width.row.justify-center.items-center.gradient-box
+div(style="height: fit-content; min-height: 25rem;").full-width.row.justify-center.items-center.gradient-box
   div(v-if="isLoading").col.text-center
     q-spinner(color="white" size="2em")
 
-  div(v-else).col.text-center
+  div(v-else style="height: 22rem; padding-top: 6rem;").col.text-center
     h1.text-h4.text-white.q-ma-none Proposal {{proposalName}}
     p.text-caption.text-white.text-uppercase.q-mt-xs(:style="{opacity:'0.5'}").
       PROPOSER <router-link :to="'/account/' + proposer" class="text-white cursor-pointer">{{proposer}}</router-link> • APPROVAL STATUS {{approvalStatus}} • EXPIRATION {{expirationDate}}
@@ -18,7 +18,7 @@ div(:style="isLoading ? '' : 'max-height: 12rem;'").full-width.row.justify-cente
       q-btn(v-if="isShowApproveButton" outline padding="sm md" color="white" text-color="white" label="Approve" @click="onApprove")
       q-btn(v-if="isShowUnapproveButton" outline padding="sm md" color="white" text-color="white" label="Unapprove" @click="onUnapprove")
 
-q-page(v-if="!isLoading" padding)
+q-page(padding)
   h2.text-h6.text-weight-regular Multisig Transaction
   q-card(
     v-for="(multsigTransactionItem, multsigTransactionIndex) in multsigTransactionData"
@@ -72,26 +72,6 @@ q-page(v-if="!isLoading" padding)
               :color="props.row.status ? 'green' : 'orange'"
               :label="props.row.status ? 'APPROVED' : 'PENDING'"
             )
-
-  h2.text-h6.text-weight-regular.q-mt-xl Transaction history
-  q-card(
-    v-for="(transactionHistoryItem, transactionHistoryIndex) in transactionHistoryData"
-    :key="transactionHistoryIndex"
-  ).q-mt-md
-    div(v-for="transactionItem in transactionHistoryItem" :key="transactionItem.trx_id")
-      q-card-section.overflow-auto
-        router-link(
-          :to="'/transaction/' + transactionItem.trx_id"
-          style="text-decoration:none"
-        ).text-primary.cursor-pointer {{transactionItem.trx_id}}
-      json-viewer(
-        :value="transactionHistoryItem[0].act"
-        :expand-depth="5"
-        preview-mode
-        boxed
-        copyable
-        sort
-      )
 </template>
 
 <script lang="ts">
@@ -106,6 +86,7 @@ import sha256 from 'fast-sha256';
 import { ABI, ABIDef, Action, Serializer, Transaction } from '@greymass/eosio';
 import { useStore } from 'src/store';
 import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
+import { sleep } from 'src/utils/sleep';
 
 export default defineComponent({
   name: 'ProposalItem',
@@ -134,7 +115,6 @@ export default defineComponent({
 
     const multsigTransactionData = ref<unknown>({});
     const requestedApprovalsRows = ref<RequestedApprovals[]>([]);
-    const transactionHistoryData = ref<unknown>([]);
 
     const requestedApprovalsColumns = [
       {
@@ -371,7 +351,11 @@ export default defineComponent({
       return await Promise.all(transactionsPromise);
     }
 
-    onMounted(async () => {
+    onMounted(loadProposalAndUpdateFields);
+
+    async function loadProposalAndUpdateFields() {
+      isLoading.value = true;
+
       const proposal = await loadProposal();
 
       if (typeof proposal === 'undefined') {
@@ -402,7 +386,6 @@ export default defineComponent({
       multsigTransactionData.value = multsigTransactionDataValue;
 
       const transactions = await handleTransactionHistory(proposal.block_num);
-      transactionHistoryData.value = transactions;
 
       isCanceled.value = transactions.some(
         (item) =>
@@ -410,7 +393,7 @@ export default defineComponent({
       );
 
       isLoading.value = false;
-    });
+    }
 
     async function signTransaction({
       name,
@@ -457,6 +440,8 @@ export default defineComponent({
             }
           }
         });
+        await sleep();
+        await loadProposalAndUpdateFields();
       } catch (e) {
         console.log(e);
         handleError(e, 'Unable approve proposal');
@@ -476,6 +461,8 @@ export default defineComponent({
             }
           }
         });
+        await sleep();
+        await loadProposalAndUpdateFields();
       } catch (e) {
         console.log(e);
         handleError(e, 'Unable approve proposal');
@@ -492,6 +479,8 @@ export default defineComponent({
             executer: account.value
           }
         });
+        await sleep();
+        await loadProposalAndUpdateFields();
       } catch (e) {
         handleError(e, 'Unable execute proposal');
       }
@@ -507,6 +496,8 @@ export default defineComponent({
             canceler: account.value
           }
         });
+        await sleep();
+        await loadProposalAndUpdateFields();
       } catch (e) {
         handleError(e, 'Unable cancel proposal');
       }
@@ -538,7 +529,6 @@ export default defineComponent({
       multsigTransactionData,
       requestedApprovalsRows,
       requestedApprovalsColumns,
-      transactionHistoryData,
 
       onApprove,
       onUnapprove,
