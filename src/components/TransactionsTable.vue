@@ -477,31 +477,6 @@ body
   &:hover
     text-decoration: underline
 
-.action
-  // margin: 0.5rem 0
-  padding: 0 0.5rem
-  &.action-transfer
-    background: rgba(196, 196, 196, 0.3)
-    font-weight: bold
-  &.action-general
-    border: 0.1rem solid rgba(196, 196, 196, 0.3)
-
-.memo-card
-  background: var(--q-color-tertiary-gradient)
-  border-radius: 3px
-  flex-grow: 1
-  display: flex
-  .memo-card-title
-    padding: 0.5rem
-    background: var(--q-color-tertiary-gradient)
-    font-weight: bold
-    flex-shrink: 0
-    display: flex
-    justify-content: center
-    align-items: center
-  .memo-card-memo
-    padding: 0.5rem
-
 .dropdown-filter
   max-width: 300px
 

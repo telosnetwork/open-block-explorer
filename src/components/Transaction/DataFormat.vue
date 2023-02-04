@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, toRef, onMounted } from 'vue';
+import { defineComponent, ref, toRef, computed } from 'vue';
 import { TransferData } from 'src/types';
 import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 /* eslint-disable */
@@ -17,18 +17,16 @@ export default defineComponent({
     }
   },
   setup(props) {
+    console.log("DataFormat()");
     const actionName = toRef(props, 'actionName');
     const actionData = toRef(props, 'actionData');
-    const transferData = ref<TransferData>({} as TransferData);
+    // const transferData = ref<TransferData>({} as TransferData);
     const dataBox = ref(null);
-    const isOverflowing = ref(false);
     const showOverflow = ref(false);
     const maxHeight = ref(200);
-
-    if (actionName.value === 'transfer') {
-      transferData.value = actionData.value as TransferData;
-    }
-
+    const isOverflowing = computed(() => dataBox.value?.clientHeight > maxHeight.value);
+    const transferData = computed(() => actionData.value as TransferData);
+    
     function formatGeneralData(data: any): any[] {
       var dict: any[] = [];
       for (let key in data) {
@@ -78,9 +76,19 @@ export default defineComponent({
       showOverflow.value = !showOverflow.value;
     }
 
-    onMounted(() => {
-      isOverflowing.value = dataBox.value.clientHeight > maxHeight.value;
-    });
+    function debug() {
+      console.log('-- internal data for degub ---');
+      console.log('dataBox.value.clientHeight:', dataBox.value.clientHeight);
+      console.log('maxHeight:', maxHeight.value);
+      console.log('isOverflowing:', isOverflowing.value);
+      console.log('actionName:', actionName.value);
+      console.log('transferData:', transferData.value);
+      console.log('actionData:', actionData.value);
+    }
+
+    // onMounted(() => {
+    //   isOverflowing.value = dataBox.value.clientHeight > maxHeight.value;
+    // });
 
     return {
       data: actionData,
@@ -92,6 +100,7 @@ export default defineComponent({
       isOverflowing,
       showOverflow,
       toggleOverflow,
+      debug,
       maxHeight
     };
   }
@@ -99,7 +108,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : `max-height: ${maxHeight}px`")
+div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : `max-height: ${maxHeight}px`" @click="debug")
   .row(v-if="actionName === 'transfer'" ref="dataBox")
     .col-12
       span.text-bold
@@ -122,12 +131,20 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
 </template>
 
 <style lang="sass" scoped>
-.action
-  // margin: 0.5rem 0
-  padding: 0 0.5rem
-  &.action-transfer
-    background: rgba(196, 196, 196, 0.3)
+
+.memo-card
+  background: var(--q-color-tertiary-gradient)
+  border-radius: 3px
+  flex-grow: 1
+  display: flex
+  .memo-card-title
+    padding: 0.5rem
+    background: var(--q-color-tertiary-gradient)
     font-weight: bold
-  &.action-general
-    border: 0.1rem solid rgba(196, 196, 196, 0.3)
+    flex-shrink: 0
+    display: flex
+    justify-content: center
+    align-items: center
+  .memo-card-memo
+    padding: 0.5rem    
 </style>
