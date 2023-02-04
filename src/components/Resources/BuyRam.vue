@@ -106,7 +106,10 @@ export default defineComponent({
           receivingAccount: receivingAccount.value
         });
       }
-      openTransaction.value = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        openTransaction.value = true;
+      }
     }
 
     function buyLimit(): number {
