@@ -17,10 +17,8 @@ export default defineComponent({
     }
   },
   setup(props) {
-    console.log("DataFormat()");
     const actionName = toRef(props, 'actionName');
     const actionData = toRef(props, 'actionData');
-    // const transferData = ref<TransferData>({} as TransferData);
     const dataBox = ref(null);
     const showOverflow = ref(false);
     const maxHeight = ref(200);
@@ -76,20 +74,6 @@ export default defineComponent({
       showOverflow.value = !showOverflow.value;
     }
 
-    function debug() {
-      console.log('-- internal data for degub ---');
-      console.log('dataBox.value.clientHeight:', dataBox.value.clientHeight);
-      console.log('maxHeight:', maxHeight.value);
-      console.log('isOverflowing:', isOverflowing.value);
-      console.log('actionName:', actionName.value);
-      console.log('transferData:', transferData.value);
-      console.log('actionData:', actionData.value);
-    }
-
-    // onMounted(() => {
-    //   isOverflowing.value = dataBox.value.clientHeight > maxHeight.value;
-    // });
-
     return {
       data: actionData,
       transferData,
@@ -100,7 +84,6 @@ export default defineComponent({
       isOverflowing,
       showOverflow,
       toggleOverflow,
-      debug,
       maxHeight
     };
   }
@@ -108,7 +91,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : `max-height: ${maxHeight}px`" @click="debug")
+div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : `max-height: ${maxHeight}px`")
   .row(v-if="actionName === 'transfer'" ref="dataBox")
     .col-12
       span.text-bold
@@ -119,7 +102,8 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
     .col-12
     .memo-card
       .memo-card-title MEMO
-      .memo-card-memo {{transferData.memo}}
+      .memo-card-memo(v-if="transferData.memo") {{transferData.memo}}
+      .memo-card-memo.placeholder(v-else) no memo
   .row(v-else ref="dataBox")
     .col-12( v-for="val in formatGeneralData(data)" :key="val.key")
       .text-weight-bold {{val.key}} :
@@ -146,5 +130,8 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
     justify-content: center
     align-items: center
   .memo-card-memo
-    padding: 0.5rem    
+    padding: 0.5rem
+    &.placeholder
+      opacity: 0.5
+      font-style: italic
 </style>
