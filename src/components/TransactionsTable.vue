@@ -143,6 +143,9 @@ export default defineComponent({
       if (tableData) {
         const map = new Map();
         tableData.forEach((item) => {
+          if (!item) {
+            return;
+          }
           const key = item.trx_id;
           const collection = map.get(key) as {
             timestamp: string;
