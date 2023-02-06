@@ -64,7 +64,10 @@ export default defineComponent({
       await store.dispatch('account/stakeRex', {
         amount: stakeTokens.value
       });
-      openTransaction.value = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        openTransaction.value = true;
+      }
     }
 
     function assetToAmount(asset: string, decimals = -1): number {
