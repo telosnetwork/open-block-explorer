@@ -176,7 +176,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                 .row.justify-between.q-pb-sm.q-gutter-x-sm
                   div AMOUNT
                   q-space
-                  .color-grey-3.text-weight-bold.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{ sendToken?.amount ? `${sendToken.amount } AVAILABLE` : '--' }}
+                  .color-grey-3.text-weight-bold.cursor-pointer.q-hoverable.balance-amount(@click='setMaxValue') {{ sendToken?.amount ? `${sendToken.amount } AVAILABLE` : '--' }}
                 q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken?.amount || "invalid amount" ]' type="text" dense dark)
             .row
               .col-12
@@ -240,4 +240,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
     color: $grey-4
 .send-img
   height: 35px !important
+
+.balance-amount:hover
+  color: $primary
 </style>
