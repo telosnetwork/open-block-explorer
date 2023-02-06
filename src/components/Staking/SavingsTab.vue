@@ -62,7 +62,10 @@ export default defineComponent({
       await store.dispatch('account/moveToSavings', {
         amount: toSavingAmount.value
       });
-      openTransaction.value = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        openTransaction.value = true;
+      }
     }
 
     async function moveFromSavings() {
@@ -77,7 +80,10 @@ export default defineComponent({
       await store.dispatch('account/moveFromSavings', {
         amount: fromSavingAmount.value
       });
-      openTransaction.value = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        openTransaction.value = true;
+      }
     }
 
     function assetToAmount(asset: string, decimals = -1): number {
