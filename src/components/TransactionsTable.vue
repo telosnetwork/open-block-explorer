@@ -1,10 +1,5 @@
 <script lang="ts">
-import {
-  Action,
-  PaginationSettings,
-  TransactionTableRow,
-  TransactionTableActionRow
-} from 'src/types';
+import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
 import {
   computed,
   defineComponent,
@@ -141,60 +136,29 @@ export default defineComponent({
               );
       }
       if (tableData) {
-        const map = new Map();
-        tableData.forEach((item) => {
-          if (!item) {
-            return;
-          }
-          const key = item.trx_id;
-          const collection = map.get(key) as {
-            timestamp: string;
-            name: string;
-            actions: TransactionTableActionRow[];
-          };
-          if (!collection) {
-            map.set(key, {
+        rows.value = tableData.map((item) => ({
+          name: item.trx_id,
+          transaction: { id: item.trx_id, type: 'transaction' },
+          timestamp: item['@timestamp'] || item.timestamp,
+          action: item,
+          data: hasActions.value
+            ? { data: item.data as unknown, name: item.account }
+            : { data: item.act.data as unknown, name: item.act.name },
+          actions: [
+            {
               name: item.trx_id,
               transaction: { id: item.trx_id, type: 'transaction' },
-              timestamp: item['@timestamp'] || item.timestamp,
-              action: item,
-              data: hasActions.value
-                ? { data: item.data as unknown, name: item.account as unknown }
-                : { data: item.act.data as unknown, name: item.act.name },
-              actions: [
-                {
-                  name: item.trx_id,
-                  transaction: { id: item.trx_id, type: 'transaction' },
-                  timestamp: item['@timestamp'],
-                  action: item,
-                  data: hasActions.value
-                    ? {
-                        data: item.data as unknown,
-                        name: item.account as unknown
-                      }
-                    : { data: item.act.data as unknown, name: item.act.name }
-                }
-              ]
-            });
-          } else {
-            collection.actions.push({
-              name: item.trx_id,
-              transaction: { id: item.trx_id, type: 'transaction' },
-              timestamp: item['@timestamp'] || item.timestamp,
+              timestamp: item['@timestamp'],
               action: item,
               data: hasActions.value
                 ? {
-                    data: item.act.data as unknown,
+                    data: item.data as unknown,
                     name: item.account
                   }
                 : { data: item.act.data as unknown, name: item.act.name }
-            });
-          }
-        });
-        rows.value = Array.from(
-          map,
-          ([, value]) => value as TransactionTableRow
-        );
+            }
+          ]
+        }));
       }
       void filterRows();
     };
@@ -365,8 +329,6 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
         template(v-slot:header="props")
           q-tr(:props="props")
-            q-th(auto-width)
-
             q-th(
               v-for="col in props.cols"
               :key="col.name"
@@ -374,8 +336,6 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             ) {{ col.label }}
         template( v-slot:body="props")
           q-tr(:props='props')
-            q-td.items-center(auto-width)
-              q-btn( v-if='props.row.actions.length > 1' flat size="sm" :icon="props.expand ? 'expand_less' : 'expand_more'" @click="props.expand = !props.expand")
             q-td
               AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
             q-td
