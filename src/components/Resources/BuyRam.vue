@@ -28,7 +28,7 @@ export default defineComponent({
       if (buyOption.value === buyOptions[0]) {
         return (
           ((Number(buyAmount.value) * 1000) / Number(ramPrice.value)).toFixed(
-            4
+            0
           ) +
           ' ' +
           buyOptions[1]
