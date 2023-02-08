@@ -419,6 +419,7 @@ $medium:750px
   overflow-x: auto
 
 .fixed-layout
+  max-width: 100%
   .q-table
     min-width: 1300px
     table-layout: fixed
