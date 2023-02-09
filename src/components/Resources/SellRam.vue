@@ -57,7 +57,10 @@ export default defineComponent({
       await store.dispatch('account/sellRam', {
         amount: sellAmount.value
       });
-      openTransaction.value = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        openTransaction.value = true;
+      }
     }
 
     function assetToAmount(asset: string, decimals = -1): number {
