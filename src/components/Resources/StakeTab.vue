@@ -150,7 +150,7 @@ export default defineComponent({
         q-input.full-width(standout="bg-deep-purple-2 text-white" dense  dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row.q-py-md
       .col-6
-        .row.justify-between.q-pb-sm
+        .row.q-pb-sm
           .col-6 ADD CPU
           .col-6
             .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = (accountTotal - 0.1).toString(); netTokens = '0'" )
@@ -161,7 +161,7 @@ export default defineComponent({
         q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
 
       .col-6.q-pl-md
-        .row.justify-between.q-pb-sm
+        .row.q-pb-sm
           .col-6 ADD NET
           .col-6
             .color-grey-3.flex.justify-end.items-center( @click="netTokens = (accountTotal - 0.1).toString(); cpuTokens = '0'" )
