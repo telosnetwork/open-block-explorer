@@ -21,8 +21,8 @@ export default defineComponent({
     const store = useStore();
     const openTransaction = ref<boolean>(false);
     const stakingAccount = ref<string>(store.state.account.accountName || '');
-    const cpuTokens = ref<string>('0.0000');
-    const netTokens = ref<string>('0.0000');
+    const cpuTokens = ref<string>('0');
+    const netTokens = ref<string>('0');
     const netStake = computed((): string =>
       store.state.account.data.total_resources.net_weight.toString()
     );
@@ -31,7 +31,7 @@ export default defineComponent({
     );
 
     function formatDec() {
-      if (cpuTokens.value != '') {
+      if (cpuTokens.value != '0') {
         cpuTokens.value = Number(cpuTokens.value)
           .toLocaleString('en-US', {
             style: 'decimal',
@@ -40,7 +40,7 @@ export default defineComponent({
           })
           .replace(/[^0-9.]/g, '');
       }
-      if (netTokens.value != '') {
+      if (netTokens.value != '0') {
         netTokens.value = Number(netTokens.value)
           .toLocaleString('en-US', {
             style: 'decimal',
