@@ -75,7 +75,7 @@ export default defineComponent({
     async sendTransaction(): Promise<void> {
       this.transactionError = '';
       if (parseFloat(this.cpuTokens) <= 0 && parseFloat(this.netTokens) <= 0) {
-        this.$q.notify('Enter valid value for CPU or NET to unstake');
+        this.$q.notify('Enter valid value for CPU or NET to stake');
         return;
       }
       const data = {
