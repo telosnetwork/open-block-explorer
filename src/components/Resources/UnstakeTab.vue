@@ -83,14 +83,17 @@ export default defineComponent({
       const data = {
         from: this.stakingAccount.toLowerCase(),
         receiver: this.stakingAccount.toLowerCase(),
-        unstake_cpu_quantity: `${parseFloat(this.cpuTokens).toFixed(
-          4
-        )} ${symbol}`,
-        unstake_net_quantity: `${parseFloat(this.netTokens).toFixed(
-          4
-        )} ${symbol}`,
+        unstake_stake_cpu_quantity:
+          parseFloat(this.cpuTokens) > 0
+            ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+            : `0.0000 ${symbol}`,
+        unstake_stake_net_quantity:
+          parseFloat(this.netTokens) > 0
+            ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+            : `0.0000 ${symbol}`,
         transfer: false
       };
+
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
