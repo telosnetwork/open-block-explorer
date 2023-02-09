@@ -71,6 +71,22 @@ export default defineComponent({
       isValidAccount
     };
   },
+  computed: {
+    inputRules(): Array<(data: string) => boolean | string> {
+      return [
+        (val: string) => +val >= 0 || 'Value must not be negative',
+        (val: string) => +val < this.accountTotal || 'Not enough funds'
+      ];
+    },
+    notEnoughTlosForTransaction(): boolean {
+      return +this.cpuTokens + +this.netTokens > this.accountTotal;
+    },
+    disableCta(): boolean {
+      const allZero = +this.cpuTokens === 0 && +this.netTokens === 0;
+
+      return this.notEnoughTlosForTransaction || allZero;
+    }
+  },
   methods: {
     async sendTransaction(): Promise<void> {
       this.transactionError = '';
@@ -134,15 +150,31 @@ export default defineComponent({
         q-input.full-width(standout="bg-deep-purple-2 text-white" dense  dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
     .row.q-py-md
       .col-6
-        .row.justify-between.q-pb-sm ADD CPU
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 || 'Invalid amount.' ]" type="text" dense dark)
+        .row.justify-between.q-pb-sm
+          .col-6 ADD CPU
+          .col-6
+            .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = (accountTotal - 0.1).toString(); netTokens = '0'" )
+              span.text-weight-bold.balance-amount {{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}
+              q-icon.q-ml-xs( name="info" )
+              q-tooltip Click to fill full amount
+
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
 
       .col-6.q-pl-md
-        .row.justify-between.q-pb-sm ADD NET
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 ||'Invalid amount.' ]" type="text" dense dark)
+        .row.justify-between.q-pb-sm
+          .col-6 ADD NET
+          .col-6
+            .color-grey-3.flex.justify-end.items-center( @click="netTokens = (accountTotal - 0.1).toString(); cpuTokens = '0'" )
+              span.text-weight-bold.balance-amount {{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}
+              q-icon.q-ml-xs( name="info" )
+              q-tooltip Click to fill full amount
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
+
+    .row.text-red(v-if="notEnoughTlosForTransaction") Balance too low for transaction
+
     .row
       .col-12.q-pt-md
-        q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )
+        q-btn.full-width.button-accent(label="Confirm" flat :disable="disableCta" @click="sendTransaction" )
   ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
@@ -152,4 +184,8 @@ export default defineComponent({
     background: rgba(108, 35, 255, 1)
     border-radius: 4px
     color: $grey-4
+
+.balance-amount:hover
+  color: $primary
+  cursor: pointer
 </style>
