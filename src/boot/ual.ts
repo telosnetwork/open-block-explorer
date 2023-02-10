@@ -1,5 +1,10 @@
 import { boot } from 'quasar/wrappers';
-import { UAL, User } from 'universal-authenticator-library';
+import {
+  Authenticator,
+  RpcEndpoint,
+  UAL,
+  User
+} from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
@@ -81,7 +86,7 @@ async function loginHandler() {
   };
 }
 
-async function signHandler(trx: string) {
+async function signHandler(rpc: RpcEndpoint, trx: string) {
   const trxJSON: string = JSON.stringify(
     Object.assign(
       {
@@ -96,7 +101,7 @@ async function signHandler(trx: string) {
   await new Promise((resolve) => {
     Dialog.create({
       color: 'primary',
-      message: `<pre>cleos -u https://${process.env.NETWORK_HOST} push transaction '${trxJSON}'</pre>`,
+      message: `<pre>cleos -u ${rpc.protocol}://${rpc.host}:${rpc.port} push transaction '${trxJSON}'</pre>`,
       html: true,
       cancel: true,
       fullWidth: true,
@@ -106,7 +111,7 @@ async function signHandler(trx: string) {
     })
       .onOk(() => {
         copyToClipboard(
-          `cleos -u https://${process.env.NETWORK_HOST} push transaction '${trxJSON}'`
+          `cleos -u ${rpc.protocol}://${rpc.host}:${rpc.port} push transaction '${trxJSON}'`
         )
           .then((): void => {
             Notify.create({
@@ -134,12 +139,16 @@ async function signHandler(trx: string) {
   });
 }
 
-export const authenticators = [
+async function signHandlerForMainChain(trx: string) {
+  return signHandler(chain.getRPCEndpoint(), trx);
+}
+
+export const authenticators: Authenticator[] = [
   new Anchor([mainChain], { appName: process.env.APP_NAME }),
   new CleosAuthenticator([mainChain], {
     appName: process.env.APP_NAME,
     loginHandler,
-    signHandler
+    signHandler: signHandlerForMainChain
   })
 ];
 
