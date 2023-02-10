@@ -314,16 +314,16 @@ export default defineComponent({
     watch(
       () => pagination.value,
       async () => {
-        let pag = pagination.value;
+        let pageValue = pagination.value;
         let page = 1;
         let size = pageSizeOptions[0];
 
         // we also allow to pass a single number as the page number
-        if (typeof pag === 'number') {
-          page = pag;
-        } else if (typeof pag === 'string') {
+        if (typeof pagValue === 'number') {
+          page = pageValue;
+        } else if (typeof pageValue === 'string') {
           // we also allow to pass a string of two numbers: 'page,rowsPerPage'
-          const [p, s] = pag.split(',');
+          const [p, s] = pageValue.split(',');
           page = Number(p);
           size = Number(s);
         }
