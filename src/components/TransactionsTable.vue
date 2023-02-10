@@ -319,7 +319,7 @@ export default defineComponent({
         let size = pageSizeOptions[0];
 
         // we also allow to pass a single number as the page number
-        if (typeof pagValue === 'number') {
+        if (typeof pageValue === 'number') {
           page = pageValue;
         } else if (typeof pageValue === 'string') {
           // we also allow to pass a string of two numbers: 'page,rowsPerPage'
