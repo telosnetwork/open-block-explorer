@@ -1,0 +1,110 @@
+{
+    "request": {
+        "path": "http://localhost:8080/v1/resource_provider/request_transaction",
+        "params": {
+            "method": "POST",
+            "body": "{\"ref\":\"unittest\",\"request\":\"esr://gmMsfmIRpc7x7DpLh8nvg-zz9VdvrLYRihbJ-mIxXW5CYY4vA8OyJhPmVwahDAwM4bo2Z88yBjhx3DxY6vuYAQQmbDwVAxMAssE0IwMEsLj6B4No6_KMxKK07MwShYKc0vTMPAVdhaLU4vzSouRUhYKi_LLMlNQihZLU4hIFjcScnPxyt9TUYiuFtMSc4lRNoFkA\",\"signer\":{\"actor\":\"actor.stub\",\"permission\":\"active\"}}"
+        }
+    },
+    "headers": {
+        "access-control-allow-headers": "authorization, content-type",
+        "access-control-allow-methods": "OPTIONS, GET, POST",
+        "access-control-allow-origin": "*",
+        "access-control-request-method": "*",
+        "connection": "close",
+        "date": "Wed, 21 Dec 2022 01:22:17 GMT",
+        "transfer-encoding": "chunked"
+    },
+    "status": 402,
+    "json": {
+        "code": 402,
+        "message": "Fee required to complete transaction.",
+        "data": {
+            "costs": {
+                "cpu": "0.0009 TLOS",
+                "net": "0.0001 TLOS",
+                "ram": "0.0397 TLOS"
+            },
+            "fee": "0.0407 TLOS",
+            "ref": "unittest",
+            "request": [
+                "transaction",
+                {
+                    "expiration": "2022-12-21T01:27:16",
+                    "ref_block_num": 39068,
+                    "ref_block_prefix": 3331483963,
+                    "max_net_usage_words": 0,
+                    "max_cpu_usage_ms": 5,
+                    "delay_sec": 0,
+                    "context_free_actions": [],
+                    "actions": [
+                        {
+                            "account": "greymassnoop",
+                            "name": "noop",
+                            "authorization": [
+                                {
+                                    "actor": "greymassfuel",
+                                    "permission": "cosign"
+                                }
+                            ],
+                            "data": ""
+                        },
+                        {
+                            "account": "eosio.token",
+                            "name": "transfer",
+                            "authorization": [
+                                {
+                                    "actor": "actor.stub",
+                                    "permission": "active"
+                                }
+                            ],
+                            "data": {
+                                "from": "actor.stub",
+                                "to": "fuel.gm",
+                                "quantity": "0.0407 TLOS",
+                                "memo": "Fuel Transaction Fee | ref=unittest"
+                            }
+                        },
+                        {
+                            "account": "eosio",
+                            "name": "buyram",
+                            "authorization": [
+                                {
+                                    "actor": "greymassfuel",
+                                    "permission": "buyram"
+                                }
+                            ],
+                            "data": {
+                                "payer": "greymassfuel",
+                                "receiver": "actor.stub",
+                                "quant": "0.0397 TLOS"
+                            }
+                        },
+                        {
+                            "account": "eosio.token",
+                            "name": "transfer",
+                            "authorization": [
+                                {
+                                    "actor": "actor.stub",
+                                    "permission": "active"
+                                }
+                            ],
+                            "data": {
+                                "from": "actor.stub",
+                                "to": "caleosblocks",
+                                "quantity": "0.0001 TLOS",
+                                "memo": ""
+                            }
+                        }
+                    ],
+                    "transaction_extensions": []
+                }
+            ],
+            "signatures": [
+                "SIG_K1_K21XeU2QFaiyKNSbdKLqqkfpFNrRCktTqfMWhXSef8BvMUiv9gpfKLvsbRNZw8wb54p3RCKfWmQqGc6Qof1PHJZMj6v33U",
+                "SIG_K1_KdcmmUz8pAcKUhqNMntG1FfFTVDxQeu4FtLzY97AixNdUj9Xepgo4RK8RBiBy6xM9RnstXoj5eh1qaUMma78rQWVPyPvan"
+            ],
+            "version": null
+        }
+    }
+}
