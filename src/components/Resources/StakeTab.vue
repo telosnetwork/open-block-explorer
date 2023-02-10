@@ -23,11 +23,11 @@ export default defineComponent({
     const accountTotal = computed((): string =>
       store.state.account.data.core_liquid_balance.toString()
     );
-    const cpuTokens = ref<string>('');
-    const netTokens = ref<string>('');
+    const cpuTokens = ref<string>('0');
+    const netTokens = ref<string>('0');
 
     function formatDec() {
-      if (cpuTokens.value != '') {
+      if (cpuTokens.value != '0') {
         cpuTokens.value = Number(cpuTokens.value)
           .toLocaleString('en-US', {
             style: 'decimal',
@@ -36,7 +36,7 @@ export default defineComponent({
           })
           .replace(/[^0-9.]/g, '');
       }
-      if (netTokens.value != '') {
+      if (netTokens.value != '0') {
         netTokens.value = Number(netTokens.value)
           .toLocaleString('en-US', {
             style: 'decimal',
@@ -90,7 +90,8 @@ export default defineComponent({
   methods: {
     async sendTransaction(): Promise<void> {
       this.transactionError = '';
-      if (this.cpuTokens === '0.0000' && this.netTokens === '0.0000') {
+      if (parseFloat(this.cpuTokens) <= 0 && parseFloat(this.netTokens) <= 0) {
+        this.$q.notify('Enter valid value for CPU or NET to stake');
         return;
       }
       const data = {

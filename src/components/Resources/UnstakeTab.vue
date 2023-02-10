@@ -19,8 +19,8 @@ export default defineComponent({
     const store = useStore();
     const openTransaction = ref<boolean>(false);
     const stakingAccount = ref<string>(store.state.account.accountName || '');
-    const cpuTokens = ref<string>('');
-    const netTokens = ref<string>('');
+    const cpuTokens = ref<string>('0');
+    const netTokens = ref<string>('0');
     const netStake = computed((): string =>
       store.state.account.data.total_resources.net_weight.toString()
     );
@@ -29,7 +29,7 @@ export default defineComponent({
     );
 
     function formatDec() {
-      if (cpuTokens.value != '') {
+      if (cpuTokens.value != '0') {
         cpuTokens.value = Number(cpuTokens.value)
           .toLocaleString('en-US', {
             style: 'decimal',
@@ -38,7 +38,7 @@ export default defineComponent({
           })
           .replace(/[^0-9.]/g, '');
       }
-      if (netTokens.value != '') {
+      if (netTokens.value != '0') {
         netTokens.value = Number(netTokens.value)
           .toLocaleString('en-US', {
             style: 'decimal',
@@ -94,20 +94,24 @@ export default defineComponent({
   methods: {
     async sendTransaction(): Promise<void> {
       this.transactionError = '';
-      if (this.cpuTokens === '0.0000' && this.netTokens === '0.0000') {
+      if (parseFloat(this.cpuTokens) <= 0 && parseFloat(this.netTokens) <= 0) {
+        this.$q.notify('Enter valid value for CPU or NET to unstake');
         return;
       }
       const data = {
         from: this.stakingAccount.toLowerCase(),
         receiver: this.stakingAccount.toLowerCase(),
-        unstake_cpu_quantity: `${parseFloat(this.cpuTokens).toFixed(
-          4
-        )} ${symbol}`,
-        unstake_net_quantity: `${parseFloat(this.netTokens).toFixed(
-          4
-        )} ${symbol}`,
+        unstake_stake_cpu_quantity:
+          parseFloat(this.cpuTokens) > 0
+            ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+            : `0.0000 ${symbol}`,
+        unstake_stake_net_quantity:
+          parseFloat(this.netTokens) > 0
+            ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+            : `0.0000 ${symbol}`,
         transfer: false
       };
+
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
@@ -153,7 +157,7 @@ export default defineComponent({
                 span.text-weight-bold.balance-amount {{ cpuStake ? `${cpuStake } AVAILABLE` : '--' }}
                 q-icon.q-ml-xs( name="info" )
                 q-tooltip Click to fill full amount
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="cpuInputRules" type="text" dense dark)
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="cpuTokens" :lazy-rules="true"  :rules="cpuInputRules" type="text" dense dark)
 
       .col-6.q-pl-md
         .row.q-pb-sm
@@ -163,7 +167,7 @@ export default defineComponent({
                 span.text-weight-bold.balance-amount {{ netStake ? `${netStake } AVAILABLE` : '--' }}
                 q-icon.q-ml-xs( name="info" )
                 q-tooltip Click to fill full amount
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000'  v-model="netTokens" :lazy-rules='true' :rules="netInputRules" type="text" dense dark)
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0'  v-model="netTokens" :lazy-rules="true" :rules="netInputRules" type="text" dense dark)
     .row
       .col-12.q-pt-md
         q-btn.full-width.button-accent(label="Confirm" flat :disable="ctaDisabled" @click="sendTransaction" )
