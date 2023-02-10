@@ -42,6 +42,10 @@ export default class UX extends BaseChain {
     return RPC_ENDPOINT;
   }
 
+  getFuelRPCEndpoint(): RpcEndpoint | null {
+    return null;
+  }
+
   getApiEndpoint(): string {
     return API_ENDPOINT;
   }
