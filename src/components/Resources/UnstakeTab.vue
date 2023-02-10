@@ -2,7 +2,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
-import { useQuasar } from 'quasar';
+// import { useQuasar } from 'quasar';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { isValidAccount } from 'src/utils/stringValidator';
@@ -17,7 +17,7 @@ export default defineComponent({
     ViewTransaction
   },
   setup() {
-    const $q = useQuasar();
+    // const $q = useQuasar();
     const store = useStore();
     const openTransaction = ref<boolean>(false);
     const stakingAccount = ref<string>(store.state.account.accountName || '');

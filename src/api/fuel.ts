@@ -34,7 +34,7 @@ const client = new APIClient({
 });
 
 const fuelrpc = chain.getFuelRPCEndpoint();
-const resourceProviderEndpoint = `${fuelrpc.protocol}://${fuelrpc.host}:${fuelrpc.port}/v1/resource_provider/request_transaction`;
+const resourceProviderEndpoint = `${fuelrpc?.protocol}://${fuelrpc?.host}:${fuelrpc?.port}/v1/resource_provider/request_transaction`;
 
 // Auxiliar interfaces
 interface ResourceProviderResponse {
