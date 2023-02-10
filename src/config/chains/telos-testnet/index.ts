@@ -79,6 +79,10 @@ export default class TelosTestnet extends BaseChain {
     return RPC_ENDPOINT;
   }
 
+  getFuelRPCEndpoint(): RpcEndpoint | null {
+    return null;
+  }
+
   getApiEndpoint(): string {
     return API_ENDPOINT;
   }
