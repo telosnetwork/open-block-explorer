@@ -6,6 +6,7 @@ import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
+import { FuelUserWrapper } from 'src/api/fuel';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -24,7 +25,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     }
     const users = await (authenticator as Authenticator).login();
     if (users.length) {
-      const account = users[0];
+      const account = new FuelUserWrapper(users[0]);
       const permission = (account as unknown as { requestPermission: string })
         .requestPermission;
       const accountName = await account.getAccountName();
