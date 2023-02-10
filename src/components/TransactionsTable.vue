@@ -20,6 +20,7 @@ import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 import ActionFormat from 'src/components/Transaction/ActionFormat.vue';
 import DataFormat from 'src/components/Transaction/DataFormat.vue';
 import { api } from 'src/api';
+import { useRoute, useRouter } from 'vue-router';
 
 const FIVE_SECONDS = 5000;
 
@@ -44,6 +45,12 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const route = useRoute();
+    const router = useRouter();
+    const pagination = computed(
+      () => (route.query['page'] as string) || '1,10'
+    );
+    const pageSizeOptions = [10, 20, 50, 100, 200];
     const { account, actions } = toRefs(props);
     const columns = [
       {
@@ -85,7 +92,7 @@ export default defineComponent({
       sortBy: 'timestamp',
       descending: true,
       page: 1,
-      rowsPerPage: 10,
+      rowsPerPage: pageSizeOptions[0],
       rowsNumber: 10000
     });
     const fromDateFilter = ref('');
@@ -177,6 +184,12 @@ export default defineComponent({
               ]
             });
           } else {
+            console.log(
+              'collection: ',
+              key,
+              'collection.actions:',
+              collection.actions.length
+            );
             collection.actions.push({
               name: item.trx_id,
               transaction: { id: item.trx_id, type: 'transaction' },
@@ -217,6 +230,44 @@ export default defineComponent({
       loading.value = false;
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const onPaginationChange = async (props: {
+      pagination: {
+        page: number;
+        rowsPerPage: number;
+        sortBy: string;
+        descending: boolean;
+      };
+    }) => {
+      const { page, rowsPerPage } = props.pagination;
+
+      // we need to change the URL to keep the pagination state by changing the route.query.page
+      // with a string like 'page,rowsPerPage'
+      await router.push({
+        // taking care to preserve the current #hash anchor and the current query parameters
+        hash: window.location.hash,
+        query: {
+          ...route.query,
+          page: `${page},${rowsPerPage}`
+        }
+      });
+    };
+
+    const setPagination = async (
+      page: string | number,
+      size: string | number
+    ) => {
+      if (page) {
+        paginationSettings.value.page = Number(page);
+      }
+      if (size) {
+        paginationSettings.value.rowsPerPage = Number(size);
+      }
+      await onRequest({
+        pagination: paginationSettings.value
+      });
+    };
+
     const checkIsMultiLine = (data: string): boolean => {
       return data.length > 0 && data.split('\n').length > 1;
     };
@@ -240,8 +291,7 @@ export default defineComponent({
       }
     };
 
-    onMounted(async () => {
-      await loadTableData();
+    onMounted(() => {
       interval.value = window.setInterval(() => {
         //only automatically refresh data on first page, disable on page navigation
         if (account.value == null && paginationSettings.value.page === 1)
@@ -260,6 +310,28 @@ export default defineComponent({
     watch(showAge, (val) => {
       localStorage.setItem('showAge', val ? 'true' : 'false');
     });
+    // create a watch for pagination and make sure it is called inmediately
+    watch(
+      () => pagination.value,
+      async () => {
+        let pageValue = pagination.value;
+        let page = 1;
+        let size = pageSizeOptions[0];
+
+        // we also allow to pass a single number as the page number
+        if (typeof pageValue === 'number') {
+          page = pageValue;
+        } else if (typeof pageValue === 'string') {
+          // we also allow to pass a string of two numbers: 'page,rowsPerPage'
+          const [p, s] = pageValue.split(',');
+          page = Number(p);
+          size = Number(s);
+        }
+
+        await setPagination(page, size);
+      },
+      { immediate: true }
+    );
 
     return {
       columns,
@@ -281,7 +353,10 @@ export default defineComponent({
       onRequest,
       loadTableData,
       checkIsMultiLine,
-      filterRows
+      filterRows,
+      pageSizeOptions,
+      setPagination,
+      onPaginationChange
     };
   }
 });
@@ -294,6 +369,8 @@ div.row.col-12.q-mt-xs.justify-center.text-left
       div.col-auto
           p.panel-title {{ tableTitle }}
       q-space
+      div.col-auto.row.items-center.justify-end
+        q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
       div.col-auto.row.flex.filter-buttons
         q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
           color="primary"
@@ -354,15 +431,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         table-header-class="table-header"
         v-model:pagination="paginationSettings"
         :hide-pagination="noData"
-        @request='onRequest'
-        :rows-per-page-options='[ 10, 20, 50, 100, 200]'
+        @request='onPaginationChange'
+        :rows-per-page-options='pageSizeOptions'
         )
-        template(v-slot:top="props")
-          .col
-            p.panel-title {{ tableTitle }}
-          q-space
-          .col
-            q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
         template(v-slot:header="props")
           q-tr(:props="props")
             q-th(auto-width)
@@ -400,7 +471,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
             q-td
               DataFormat(:actionData="action.data.data" :actionName="action.data.name ")
         template( v-slot:pagination="scope")
-          div.row.col-12.q-mt-md.q-mb-xl()
+          div.col(align="left")
+            span.q-mr-sm page <b>{{ scope.pagination.page }}</b>
+          q-space
           div.col-1(align="left")
             q-btn.q-ml-xs.q-mr-xs.col.button-primary(
               :disable="scope.isFirstPage"
@@ -476,31 +549,6 @@ body
   text-decoration: none
   &:hover
     text-decoration: underline
-
-.action
-  // margin: 0.5rem 0
-  padding: 0 0.5rem
-  &.action-transfer
-    background: rgba(196, 196, 196, 0.3)
-    font-weight: bold
-  &.action-general
-    border: 0.1rem solid rgba(196, 196, 196, 0.3)
-
-.memo-card
-  background: var(--q-color-tertiary-gradient)
-  border-radius: 3px
-  flex-grow: 1
-  display: flex
-  .memo-card-title
-    padding: 0.5rem
-    background: var(--q-color-tertiary-gradient)
-    font-weight: bold
-    flex-shrink: 0
-    display: flex
-    justify-content: center
-    align-items: center
-  .memo-card-memo
-    padding: 0.5rem
 
 .dropdown-filter
   max-width: 300px
