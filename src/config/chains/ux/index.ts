@@ -7,6 +7,7 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   '8fc6dce7942189f842170de953932b1f66693ad3788f766e777b6f9d22335c02';
+const NAME = 'ux';
 const DISPLAY = 'UX';
 const TOKEN = {
   symbol: 'UTX',
@@ -26,6 +27,10 @@ const DISPLAY_MAP = true;
 const THEME = {};
 
 export default class UX extends BaseChain {
+  getName(): string {
+    return NAME;
+  }
+
   getChainId(): string {
     return CHAIN_ID;
   }
