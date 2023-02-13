@@ -1141,6 +1141,14 @@ export const tokenList: Token[] = [
     chain: 'telos'
   },
   {
+    name: 'Telos',
+    symbol: 'TLOS',
+    contract: 'eosio.token',
+    precision: 4,
+    logo: 'https://raw.githubusercontent.com/Viterbo/antelope-token-list/main/logos/telos.png',
+    chain: 'telos-testnet'
+  },
+  {
     name: 'TOOKTOOK',
     symbol: 'TOOK',
     contract: 'taketooktook',
@@ -1301,6 +1309,14 @@ export const tokenList: Token[] = [
     chain: 'telos'
   },
   {
+    name: 'Cards & Tokens',
+    symbol: 'CNT',
+    contract: 'vapaeetokens',
+    precision: 4,
+    logo: 'https://raw.githubusercontent.com/Viterbo/antelope-token-list/main/logos/cnt.png',
+    chain: 'telos-testnet'
+  },
+  {
     name: 'Viitasphere Token',
     symbol: 'VIITA',
     contract: 'viitasphere1',
@@ -1323,6 +1339,14 @@ export const tokenList: Token[] = [
     precision: 4,
     logo: 'https://raw.githubusercontent.com/Viterbo/antelope-token-list/main/logos/acorn.png',
     chain: 'telos'
+  },
+  {
+    name: 'Acorn UBI',
+    symbol: 'ACORN',
+    contract: 'acornaccount',
+    precision: 4,
+    logo: 'https://raw.githubusercontent.com/Viterbo/antelope-token-list/main/logos/acorn.png',
+    chain: 'telos-testnet'
   },
   {
     name: 'Teachology',
