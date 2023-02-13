@@ -28,12 +28,40 @@ export default defineComponent({
       isLoading.value = true;
       const queryValue = inputValue.value.toLowerCase();
 
-      await Promise.all([searchAccounts(queryValue)]).then((results) => {
+      await Promise.all([searchAccountsDelay(queryValue)]).then((results) => {
         options.value = ([] as OptionsObj[]).concat.apply([], results);
       });
 
       isLoading.value = false;
     });
+
+    const timer = setTimeout(() => 0, 0);
+
+    function searchAccountsDelay(value: string): Promise<OptionsObj[]> {
+      clearTimeout(timer);
+      return new Promise<OptionsObj[]>((resolve) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        setTimeout(async () => {
+          const result = await searchAccounts(value);
+          if (inputValue.value === value) {
+            console.log(
+              'searchAccounts OK - inputValue: ',
+              inputValue.value,
+              ' value: ',
+              value
+            );
+            resolve(result);
+          } else {
+            console.log(
+              'searchAccounts CANCELLED - inputValue: ',
+              inputValue.value,
+              ' value: ',
+              value
+            );
+          }
+        }, 500);
+      });
+    }
 
     async function searchAccounts(value: string): Promise<OptionsObj[]> {
       try {

@@ -6,7 +6,6 @@ import {
   Action,
   PaginationSettings,
   TransactionTableRow,
-  TransactionTableActionRow,
   Token
 } from 'src/types';
 import {
@@ -101,9 +100,7 @@ export default defineComponent({
     const loading = ref<boolean>(false);
     const showPagesSizes = ref<boolean>(false);
     const switchPageSelector = () => {
-      console.log(showPagesSizes.value, '-> switchPageSelector()');
       showPagesSizes.value = !showPagesSizes.value;
-      console.log('switchPageSelector() -> ', showPagesSizes.value);
     };
     const changePageSize = async (size: number) => {
       paginationSettings.value.rowsPerPage = size;
@@ -218,7 +215,7 @@ export default defineComponent({
         tableData = actions.value;
       } else {
         const page = paginationSettings.value.page;
-        const limit = paginationSettings.value.rowsPerPage;
+        let limit = paginationSettings.value.rowsPerPage;
 
         let notified = accountsModel.value ?? '';
         let after = '';
@@ -236,6 +233,12 @@ export default defineComponent({
           extras = extras ? {...extras, 'act.name': actionsModel.value} : {'act.name': actionsModel.value};
         }
 
+        // if token is selected, we need to get all transactions and filter them
+        // so we eventually will need more than the current page size
+        if (tokenModel.value) {
+          limit = 100;
+        }
+
         tableData = await api.getTransactions({
           page,
           limit,
@@ -248,6 +251,15 @@ export default defineComponent({
         });
       }
       if (tableData) {
+        if (tokenModel.value) {
+          tableData = tableData.filter((item) => {
+            return (item.act.data as {quantity?:string}).quantity?.includes(tokenModel.value.symbol);
+          });
+
+          // take only the first aginationSettings.value.rowsPerPage items
+          tableData = tableData.slice(0, paginationSettings.value.rowsPerPage);
+        }
+
         rows.value = tableData.map((item) => ({
           name: item.trx_id,
           transaction: { id: item.trx_id, type: 'transaction' },
@@ -422,7 +434,7 @@ export default defineComponent({
 
 <template lang="pug">
 div.row.col-12.q-mt-xs.justify-center.text-left
-  div.row.col-11
+  div.row.trx-table--main-container
     div.row.col-12.q-mt-lg.justify-end
       div.col-auto.q-mr-xl
           p.panel-title {{ tableTitle }}
@@ -441,7 +453,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
           color="primary"
           @click="clearFilters"
         )
-          span.q-pr-sm clear
+          span.q-pr-sm clear filters
 
         q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
           no-caps
@@ -520,7 +532,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
               TokenSearch(v-model='tokenModel' @update:model-value="toggleDropdown($refs.token_dropdown)")
     q-separator.row.col-12.q-mt-md.separator
     div.row.col-12.table-container
-      q-table.q-mt-lg.row.fixed-layout(
+      q-table.q-mt-lg.row.trx-table--fixed-layout(
         flat
         hide-pagination
         table-header-class="table-header"
@@ -534,6 +546,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         :loading="loading"
         :hide-pagination="noData"
         :rows-per-page-options='pageSizeOptions'
+        :dense="$q.screen.width < 1024"
         @request='onPaginationChange'
       )
         template(v-slot:header="props")
@@ -568,10 +581,10 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 ActionFormat(:action="action.action")
             q-td
               DataFormat(:actionData="action.data.data" :actionName="action.data.name ")
-    div.row.col-12.items-center.justify-center.q-mt-md
+    div.row.col-12.items-center.justify-end.q-mt-md
       // records per page selector
       q-space
-      div.col-auto.q-mr-lg
+      div.col-auto
         small Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}
         // dropdown button to select number of rows per page
         q-icon(
@@ -590,58 +603,67 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 :key="size"
               )
                 q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }} 
-      div.col-auto.q-mr-xs
-        small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
-      div.col-auto.q-mr-xs
-        q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-          size="sm"
-          :disable="paginationSettings.page === 1"
-          @click="$refs.main_table.prevPage()") PREV
-      div.col-auto.q-mr-xs
-        q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-          size="sm"
-          :disable="paginationSettings.page === lastPage"
-          @click="$refs.main_table.nextPage()") NEXT
+      div.col-auto.q-ml-lg
+        div.row
+          div.col-auto.q-mr-xs
+            small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
+          div.col-auto.q-mr-xs
+            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+              size="sm"
+              :disable="paginationSettings.page === 1"
+              @click="$refs.main_table.prevPage()") PREV
+          div.col-auto.q-mr-xs
+            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+              size="sm"
+              :disable="paginationSettings.page === lastPage"
+              @click="$refs.main_table.nextPage()") NEXT
 
 
           
 </template>
 
 <style lang="sass">
-$medium:750px
+$medium:920px
 
 .table-container
   overflow-x: auto
 
-.fixed-layout
+.trx-table--main-container
+  width: 90%
+
+.trx-table--fixed-layout
   .q-table
-    // min-width: 1300px TODO: checkate esto como queda sin eso
     table-layout: fixed
     tbody td
       vertical-align: text-top
     tbody td:first-child
       word-break: break-all
-    th:first-child
-      width: 5%
-    th:nth-child(2)
-      width: 12%
-    th:nth-child(3)
+    th:nth-child(1)
       width: 15%
+    th:nth-child(2)
+      width: 17%
+    th:nth-child(3)
+      width: 27%
     th:nth-child(4)
-      width: 25%
-    th:nth-child(5)
-      width: 43%
-    tbody tr
-      td:first-child
-        width: 5%
-      td:nth-child(2)
+      width: 41%
+
+@media screen and (max-width: $medium)
+  .trx-table--main-container
+    width: 100%
+  .trx-table--fixed-layout
+    min-width: 620px
+    .q-table
+      table-layout: auto
+      tbody td:first-child
+        word-break: break-all
+      th:nth-child(1)
         width: 12%
-      td:nth-child(3)
-        width: 15%
-      td:nth-child(4)
-        width: 25%
-      td:nth-child(5)
-        width: 43%
+      th:nth-child(2)
+        width: 17%
+      th:nth-child(3)
+        width: 17%
+      th:nth-child(4)
+        width: 54%
 
 .q-table--no-wrap td
   word-break: break-all
