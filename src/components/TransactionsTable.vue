@@ -1,3 +1,5 @@
+<!-- eslint-disable vue/return-in-computed-property -->
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <!-- eslint-disable prettier/prettier -->
 <script lang="ts">
 import {
@@ -97,6 +99,16 @@ export default defineComponent({
     const rows = ref<TransactionTableRow[]>([]);
     const filteredRows = ref<TransactionTableRow[]>([]);
     const loading = ref<boolean>(false);
+    const showPagesSizes = ref<boolean>(false);
+    const switchPageSelector = () => {
+      console.log(showPagesSizes.value, '-> switchPageSelector()');
+      showPagesSizes.value = !showPagesSizes.value;
+      console.log('switchPageSelector() -> ', showPagesSizes.value);
+    };
+    const changePageSize = async (size: number) => {
+      paginationSettings.value.rowsPerPage = size;
+      await onPaginationChange({ pagination: paginationSettings.value});
+    };
     const paginationSettings = ref<PaginationSettings>({
       sortBy: 'timestamp',
       descending: true,
@@ -170,12 +182,10 @@ export default defineComponent({
       isTransaction.value ? 'Actions' : 'Latest Transactions'
     );
 
-    const hasPages = computed(() => {
-      let count = 0;
-      rows.value.forEach((element: TransactionTableRow) => {
-        count += element.actions.length;
-      });
-      return count >= paginationSettings.value.rowsPerPage;
+    const lastPage = computed(() => {
+      const rowsPerPage = paginationSettings.value.rowsPerPage;
+      const rowsNumber = paginationSettings.value.rowsNumber;
+      return Math.ceil(rowsNumber / rowsPerPage);
     });
 
     const noData = computed(() => rows.value.length === 0);
@@ -238,60 +248,29 @@ export default defineComponent({
         });
       }
       if (tableData) {
-        const map = new Map();
-        tableData.forEach((item) => {
-          if (!item) {
-            return;
-          }
-          const key = item.trx_id;
-          const collection = map.get(key) as {
-            timestamp: string;
-            name: string;
-            actions: TransactionTableActionRow[];
-          };
-          if (!collection) {
-            map.set(key, {
+        rows.value = tableData.map((item) => ({
+          name: item.trx_id,
+          transaction: { id: item.trx_id, type: 'transaction' },
+          timestamp: item['@timestamp'] || item.timestamp,
+          action: item,
+          data: hasActions.value
+            ? { data: item.data as unknown, name: item.account }
+            : { data: item.act.data as unknown, name: item.act.name },
+          actions: [
+            {
               name: item.trx_id,
               transaction: { id: item.trx_id, type: 'transaction' },
-              timestamp: item['@timestamp'] || item.timestamp,
-              action: item,
-              data: hasActions.value
-                ? { data: item.data as unknown, name: item.account as unknown }
-                : { data: item.act.data as unknown, name: item.act.name },
-              actions: [
-                {
-                  name: item.trx_id,
-                  transaction: { id: item.trx_id, type: 'transaction' },
-                  timestamp: item['@timestamp'],
-                  action: item,
-                  data: hasActions.value
-                    ? {
-                        data: item.data as unknown,
-                        name: item.account as unknown
-                      }
-                    : { data: item.act.data as unknown, name: item.act.name }
-                }
-              ]
-            });
-          } else {
-            collection.actions.push({
-              name: item.trx_id,
-              transaction: { id: item.trx_id, type: 'transaction' },
-              timestamp: item['@timestamp'] || item.timestamp,
+              timestamp: item['@timestamp'],
               action: item,
               data: hasActions.value
                 ? {
-                    data: item.act.data as unknown,
+                    data: item.data as unknown,
                     name: item.account
                   }
                 : { data: item.act.data as unknown, name: item.act.name }
-            });
-          }
-        });
-        rows.value = Array.from(
-          map,
-          ([, value]) => value as TransactionTableRow
-        );
+            }
+          ]
+        }));
       }
       void filterRows();
     };
@@ -406,6 +385,7 @@ export default defineComponent({
       rows,
       filteredRows,
       loading,
+      showPagesSizes,
       paginationSettings,
       fromDateModel,
       toDateModel,
@@ -420,7 +400,7 @@ export default defineComponent({
       interval,
       showAge,
       tableTitle,
-      hasPages,
+      lastPage,
       noData,
       hasActions,
       filter,
@@ -429,6 +409,8 @@ export default defineComponent({
       checkIsMultiLine,
       filterRows,
       pageSizeOptions,
+      changePageSize,
+      switchPageSelector,
       setPagination,
       onPaginationChange,
       toggleDropdown,
@@ -539,19 +521,21 @@ div.row.col-12.q-mt-xs.justify-center.text-left
     q-separator.row.col-12.q-mt-md.separator
     div.row.col-12.table-container
       q-table.q-mt-lg.row.fixed-layout(
+        flat
+        hide-pagination
+        table-header-class="table-header"
+        ref="main_table"
+        v-model:pagination="paginationSettings"
         :rows="filteredRows"
         :columns="columns"
         :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
-        flat
         :bordered="false"
         :square="true"
         :loading="loading"
-        table-header-class="table-header"
-        v-model:pagination="paginationSettings"
         :hide-pagination="noData"
-        @request='onPaginationChange'
         :rows-per-page-options='pageSizeOptions'
-        )
+        @request='onPaginationChange'
+      )
         template(v-slot:header="props")
           q-tr(:props="props")
             q-th(
@@ -584,19 +568,43 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 ActionFormat(:action="action.action")
             q-td
               DataFormat(:actionData="action.data.data" :actionName="action.data.name ")
-        template( v-slot:pagination="scope")
-          div.col(align="left")
-            span.q-mr-sm page <b>{{ scope.pagination.page }}</b>
-          q-space
-          div.col-1(align="left")
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              :disable="scope.isFirstPage"
-              @click="scope.prevPage") PREV
-          q-space
-          div.col-1(align="right")
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              :disable="scope.isLastPage || ! hasPages"
-              @click="scope.nextPage") NEXT
+    div.row.col-12.items-center.justify-center.q-mt-md
+      // records per page selector
+      q-space
+      div.col-auto.q-mr-lg
+        small Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}
+        // dropdown button to select number of rows per page
+        q-icon(
+          :name="showPagesSizes ? 'expand_more' : 'expand_less'"
+          size="sm"
+          @click="switchPageSelector"
+        )
+          q-popup-proxy(
+            transition-show="scale"
+            transition-hide="scale"
+            ref="page_size_selector"
+          )
+            q-list
+              q-item.cursor-pointer(
+                v-for="size in pageSizeOptions"
+                :key="size"
+              )
+                q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }} 
+      div.col-auto.q-mr-xs
+        small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
+      div.col-auto.q-mr-xs
+        q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+          size="sm"
+          :disable="paginationSettings.page === 1"
+          @click="$refs.main_table.prevPage()") PREV
+      div.col-auto.q-mr-xs
+        q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+          size="sm"
+          :disable="paginationSettings.page === lastPage"
+          @click="$refs.main_table.nextPage()") NEXT
+
+
+          
 </template>
 
 <style lang="sass">
