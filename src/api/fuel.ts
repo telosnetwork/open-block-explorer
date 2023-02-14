@@ -70,6 +70,11 @@ export class FuelUserWrapper extends User {
     originalconfig?: SignTransactionConfig
   ): Promise<SignTransactionResponse> {
     try {
+      // if fuel is not supported, just let the normal implementation perform
+      if (!fuelrpc) {
+        return this.user.signTransaction(originalTransaction, originalconfig);
+      }
+      
       // Retrieve transaction headers
       const info = await client.v1.chain.get_info();
       const header = info.getTransactionHeader(expireSeconds);
