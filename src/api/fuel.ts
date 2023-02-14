@@ -70,6 +70,7 @@ export class FuelUserWrapper extends User {
     originalconfig?: SignTransactionConfig
   ): Promise<SignTransactionResponse> {
     try {
+      // if fuel is not supported, just let the normal implementation to perform
       if (!fuelrpc) {
         return this.user.signTransaction(originalTransaction, originalconfig);
       }
