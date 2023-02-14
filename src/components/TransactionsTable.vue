@@ -169,7 +169,6 @@ export default defineComponent({
       return '';
     });
 
-    const interval = ref<number>(null);
     const showAge = ref<boolean>(localStorage.getItem('showAge') === 'true');
 
     const isTransaction = computed(
@@ -402,7 +401,6 @@ export default defineComponent({
       accountsModel,
       tokenDisplay,
       tokenModel,
-      interval,
       showAge,
       tableTitle,
       lastPage,
