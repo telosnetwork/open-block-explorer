@@ -347,23 +347,9 @@ export default defineComponent({
     };
 
     const filterRows = () => {
-      filteredRows.value = rows.value.filter((row) =>
-        row.action.act.name.includes(actionsFilter.value)
-      );
-      filteredRows.value = filteredRows.value.filter((row) =>
-        JSON.stringify(row.data).includes(tokenFilter.value.toUpperCase())
-      );
-      if (!!fromDateFilter.value && !!toDateFilter.value) {
-        filteredRows.value = filteredRows.value.filter((item) => {
-          return (
-            new Date(item.timestamp).getTime() >=
-              new Date(fromDateFilter.value).getTime() &&
-            new Date(item.timestamp).getTime() <=
-              new Date(toDateFilter.value).getTime()
-          );
-        });
-      }
+      filteredRows.value = rows.value;
     };
+
     onBeforeUnmount(() => {
       clearInterval(interval.value);
     });
