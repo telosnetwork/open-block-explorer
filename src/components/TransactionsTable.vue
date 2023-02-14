@@ -203,6 +203,10 @@ export default defineComponent({
       );
     });
 
+    const filterRows = () => {
+      filteredRows.value = rows.value;
+    };
+
     const loadTableData = async (): Promise<void> => {
       let tableData: Action[];
       if (isTransaction.value) {
@@ -305,6 +309,7 @@ export default defineComponent({
     const toggleDropdown = (dropdown: QBtnDropdown) => {
       dropdown.toggle();
     };
+
     const onPaginationChange = async (props: {
       pagination: {
         page: number;
@@ -346,19 +351,14 @@ export default defineComponent({
       return data.length > 0 && data.split('\n').length > 1;
     };
 
-    const filterRows = () => {
-      filteredRows.value = rows.value;
-    };
-
-    onBeforeUnmount(() => {
-      clearInterval(interval.value);
-    });
     watch([account, actions], () => {
       void loadTableData();
     });
+
     watch(filter, () => {
       void loadTableData();
     });
+
     watch(showAge, (val) => {
       localStorage.setItem('showAge', val ? 'true' : 'false');
     });
