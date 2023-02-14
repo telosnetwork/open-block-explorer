@@ -114,6 +114,9 @@ export default defineComponent({
       rowsNumber: 10000
     });
 
+    const showFilters = ref<boolean>(!!account.value);
+    const useLiveTransactions = ref<boolean>(!showFilters.value);
+
     // actions filter
     const auxModel = ref('');
     const actionsModel = ref('');
@@ -351,11 +354,13 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      interval.value = window.setInterval(() => {
-        //only automatically refresh data on first page, disable on page navigation
-        if (account.value == null && paginationSettings.value.page === 1)
-          void loadTableData();
-      }, FIVE_SECONDS);
+      if (useLiveTransactions.value) {
+        interval.value = window.setInterval(() => {
+          //only automatically refresh data on first page, disable on page navigation
+          if (account.value == null && paginationSettings.value.page === 1)
+            void loadTableData();
+        }, FIVE_SECONDS);
+      }
     });
     onBeforeUnmount(() => {
       clearInterval(interval.value);
@@ -426,7 +431,9 @@ export default defineComponent({
       setPagination,
       onPaginationChange,
       toggleDropdown,
-      clearFilters
+      clearFilters,
+      showFilters,
+      useLiveTransactions
     };
   }
 });
@@ -443,7 +450,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
    
       // -- Filters  --
-      div.col-auto.row.flex.filter-buttons
+      div.col-auto.row.flex.filter-buttons(
+        v-if="showFilters"
+      )
         q-btn(
           v-if="filter !== ''"
           dense
@@ -581,7 +590,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 ActionFormat(:action="action.action")
             q-td
               DataFormat(:actionData="action.data.data" :actionName="action.data.name ")
-    div.row.col-12.items-center.justify-end.q-mt-md
+    div.row.col-12.items-center.justify-end.q-mt-md.q-mb-sm
       // records per page selector
       q-space
       div.col-auto
@@ -604,7 +613,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
               )
                 q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }} 
       div.col-auto.q-ml-lg
-        div.row
+        div.row.items-baseline
           div.col-auto.q-mr-xs
             small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
           div.col-auto.q-mr-xs

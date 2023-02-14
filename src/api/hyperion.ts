@@ -28,12 +28,38 @@ import {
 } from 'src/types';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
-import { tokenList } from 'src/config/tokensList';
 import { HyperionTransactionFilter } from 'src/types/Api';
 
 const chain: Chain = getChain();
 const hyperion = axios.create({ baseURL: chain.getHyperionEndpoint() });
 const controller = new AbortController();
+
+const url =
+  'https://raw.githubusercontent.com/telosnetwork/token-list/main/telosmain.json';
+
+const tokenListPromise = fetch(url)
+  .then((response) => response.text())
+  .then((fileContent) => JSON.parse(fileContent))
+  .then((object) => object.tokens)
+  .then((originals: any[]) =>
+    originals.map(
+      (token: { logo_sm: string }) =>
+        ({
+          ...token,
+          logo: token.logo_sm,
+          // currently, the token list is only for telos, so we can hardcode this for now
+          chain: 'telos'
+        } as unknown as Token)
+    )
+  )
+  .then((list) => {
+    console.log('Token list loaded', list);
+    return list;
+  })
+  .catch((error) => {
+    console.error(error);
+    return [];
+  });
 
 const MAX_REQUESTS_COUNT = 5;
 const INTERVAL_MS = 10;
@@ -91,6 +117,7 @@ export const getTokens = async function (address?: string): Promise<Token[]> {
     });
     return response.data.tokens;
   } else {
+    const tokenList = await tokenListPromise;
     return tokenList.filter((token: any) => {
       return token.chain === chain.getName();
     });
