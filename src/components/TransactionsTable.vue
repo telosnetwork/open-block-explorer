@@ -1,5 +1,13 @@
+<!-- eslint-disable vue/return-in-computed-property -->
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+<!-- eslint-disable prettier/prettier -->
 <script lang="ts">
-import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
+import {
+  Action,
+  PaginationSettings,
+  TransactionTableRow,
+  Token
+} from 'src/types';
 import {
   computed,
   defineComponent,
@@ -14,8 +22,12 @@ import DateField from 'src/components/DateField.vue';
 import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 import ActionFormat from 'src/components/Transaction/ActionFormat.vue';
 import DataFormat from 'src/components/Transaction/DataFormat.vue';
+import HeaderSearch from 'src/components/HeaderSearch.vue';
+import AccountSearch from 'src/components/AccountSearch.vue';
+import TokenSearch from 'src/components/TokenSearch.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
+import { QBtnDropdown } from 'quasar';
 
 const FIVE_SECONDS = 5000;
 
@@ -25,7 +37,10 @@ export default defineComponent({
     DateField,
     AccountFormat,
     ActionFormat,
-    DataFormat
+    DataFormat,
+    HeaderSearch,
+    AccountSearch,
+    TokenSearch
   },
   props: {
     account: {
@@ -83,6 +98,14 @@ export default defineComponent({
     const rows = ref<TransactionTableRow[]>([]);
     const filteredRows = ref<TransactionTableRow[]>([]);
     const loading = ref<boolean>(false);
+    const showPagesSizes = ref<boolean>(false);
+    const switchPageSelector = () => {
+      showPagesSizes.value = !showPagesSizes.value;
+    };
+    const changePageSize = async (size: number) => {
+      paginationSettings.value.rowsPerPage = size;
+      await onPaginationChange({ pagination: paginationSettings.value});
+    };
     const paginationSettings = ref<PaginationSettings>({
       sortBy: 'timestamp',
       descending: true,
@@ -90,10 +113,62 @@ export default defineComponent({
       rowsPerPage: pageSizeOptions[0],
       rowsNumber: 10000
     });
-    const fromDateFilter = ref('');
-    const toDateFilter = ref<string>(new Date().toLocaleString());
-    const actionsFilter = ref('');
-    const tokenFilter = ref('');
+
+    // actions filter
+    const auxModel = ref('');
+    const actionsModel = ref('');
+    const actionsDisplay = computed(() => {
+      if (actionsModel.value) {
+        const list = actionsModel.value.split(',');
+        return list.length > 1 ? list[0] + '...' : list[0];
+      }
+      return '';
+    });
+
+    // accounts filter
+    const accountsModel = ref('');
+    const accountsDisplay = computed(() => {
+      if (accountsModel.value) {
+        const list = accountsModel.value.split(',');
+        return list.length > 1 ? list[0] + '...' : list[0];
+      }
+      return '';
+    });
+
+    // token filter
+    const tokenModel = ref(null as Token | null);
+    const tokenDisplay = computed(() => {
+      if (tokenModel.value) {
+        return tokenModel.value?.symbol ?? '';
+      }
+      return '';
+    });
+
+    // date filter
+    const now = new Date().toISOString();
+    const fromDateModel = ref('');
+    const toDateModel = ref<string>(now);
+    const dateDisplay = computed(() => {
+      try {
+        if (fromDateModel.value !== '' || toDateModel.value !== now) {
+          if (fromDateModel.value === '') {
+            return 'Until ' + toDateModel.value.split('T')[0];
+          } else if (toDateModel.value === now) {
+            return 'Since ' + fromDateModel.value.split('T')[0];
+          } else {
+            return (
+              fromDateModel.value.split('T')[0] +
+              ' - ' +
+              toDateModel.value.split('T')[0]
+            );
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      return '';
+    });
+
     const interval = ref<number>(null);
     const showAge = ref<boolean>(localStorage.getItem('showAge') === 'true');
 
@@ -104,23 +179,28 @@ export default defineComponent({
       isTransaction.value ? 'Actions' : 'Latest Transactions'
     );
 
-    const hasPages = computed(() => {
-      let count = 0;
-      rows.value.forEach((element: TransactionTableRow) => {
-        count += element.actions.length;
-      });
-      return count >= paginationSettings.value.rowsPerPage;
+    const lastPage = computed(() => {
+      const rowsPerPage = paginationSettings.value.rowsPerPage;
+      const rowsNumber = paginationSettings.value.rowsNumber;
+      return Math.ceil(rowsNumber / rowsPerPage);
     });
 
     const noData = computed(() => rows.value.length === 0);
     const hasActions = computed(() => actions.value != null);
+    const clearFilters = (): void => {
+      accountsModel.value = '';
+      actionsModel.value = '';
+      tokenModel.value = null;
+      fromDateModel.value = '';
+      toDateModel.value = now;
+    };
     const filter = computed(() => {
-      return {
-        actions: actionsFilter.value,
-        toDate: toDateFilter.value,
-        fromDate: fromDateFilter.value,
-        token: tokenFilter.value
-      };
+      return (
+        accountsDisplay.value +
+        actionsDisplay.value +
+        dateDisplay.value +
+        tokenDisplay.value
+      );
     });
 
     const loadTableData = async (): Promise<void> => {
@@ -130,19 +210,52 @@ export default defineComponent({
       } else if (hasActions.value) {
         tableData = actions.value;
       } else {
-        tableData =
-          account.value == null
-            ? await api.getTransactions(
-                paginationSettings.value.page,
-                paginationSettings.value.rowsPerPage
-              )
-            : await api.getTransactions(
-                paginationSettings.value.page,
-                paginationSettings.value.rowsPerPage,
-                account.value
-              );
+        const page = paginationSettings.value.page;
+        let limit = paginationSettings.value.rowsPerPage;
+
+        let notified = accountsModel.value ?? '';
+        let after = '';
+        let before = '';
+        if (toDateModel.value !== now) {
+          before = toDateModel.value;
+        }
+        if (fromDateModel.value !== '') {
+          after = fromDateModel.value;
+        }
+        const sort = paginationSettings.value.descending ? 'desc' : 'asc';
+
+        let extras: {[key:string]:string} | null = tokenModel.value ? {'act.account': tokenModel.value.contract} : null;
+        if (actionsModel.value) {
+          extras = extras ? {...extras, 'act.name': actionsModel.value} : {'act.name': actionsModel.value};
+        }
+
+        // if token is selected, we need to get all transactions and filter them
+        // so we eventually will need more than the current page size
+        if (tokenModel.value) {
+          limit = 100;
+        }
+
+        tableData = await api.getTransactions({
+          page,
+          limit,
+          account: account.value,
+          notified,
+          before,
+          after,
+          sort,
+          extras
+        });
       }
       if (tableData) {
+        if (tokenModel.value) {
+          tableData = tableData.filter((item) => {
+            return (item.act.data as {quantity?:string}).quantity?.includes(tokenModel.value.symbol);
+          });
+
+          // take only the first aginationSettings.value.rowsPerPage items
+          tableData = tableData.slice(0, paginationSettings.value.rowsPerPage);
+        }
+
         rows.value = tableData.map((item) => ({
           name: item.trx_id,
           transaction: { id: item.trx_id, type: 'transaction' },
@@ -189,6 +302,9 @@ export default defineComponent({
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const toggleDropdown = (dropdown: QBtnDropdown) => {
+      dropdown.toggle();
+    };
     const onPaginationChange = async (props: {
       pagination: {
         page: number;
@@ -255,7 +371,7 @@ export default defineComponent({
       void loadTableData();
     });
     watch(filter, () => {
-      void filterRows();
+      void loadTableData();
     });
     watch(showAge, (val) => {
       localStorage.setItem('showAge', val ? 'true' : 'false');
@@ -288,15 +404,22 @@ export default defineComponent({
       rows,
       filteredRows,
       loading,
+      showPagesSizes,
       paginationSettings,
-      fromDateFilter,
-      toDateFilter,
-      actionsFilter,
-      tokenFilter,
+      fromDateModel,
+      toDateModel,
+      dateDisplay,
+      actionsDisplay,
+      actionsModel,
+      auxModel,
+      accountsDisplay,
+      accountsModel,
+      tokenDisplay,
+      tokenModel,
       interval,
       showAge,
       tableTitle,
-      hasPages,
+      lastPage,
       noData,
       hasActions,
       filter,
@@ -305,8 +428,12 @@ export default defineComponent({
       checkIsMultiLine,
       filterRows,
       pageSizeOptions,
+      changePageSize,
+      switchPageSelector,
       setPagination,
-      onPaginationChange
+      onPaginationChange,
+      toggleDropdown,
+      clearFilters
     };
   }
 });
@@ -314,76 +441,121 @@ export default defineComponent({
 
 <template lang="pug">
 div.row.col-12.q-mt-xs.justify-center.text-left
-  div.row.col-11
-    div.row.col-12.q-mt-lg
-      div.col-auto
+  div.row.trx-table--main-container
+    div.row.col-12.q-mt-lg.justify-end
+      div.col-auto.q-mr-xl
           p.panel-title {{ tableTitle }}
       q-space
       div.col-auto.row.items-center.justify-end
         q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
+
+      // -- Filters  --
       div.col-auto.row.flex.filter-buttons
-        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
+        q-btn(
+          v-if="filter !== ''"
+          dense
+          flat
+          round
+          icon="close"
           color="primary"
-          label="Search")
+          @click="clearFilters"
+        )
+          span.q-pr-sm clear filters
+
+        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+          no-caps
+          ref="accounts_dropdown"
+          :color="accountsDisplay === '' ? 'primary': 'secondary'"
+          :label="accountsDisplay === '' ? 'Accounts' : accountsDisplay"
+          @click="accountsModel = ''"
+        )
           .q-pa-md.dropdown-filter
             .row
-              q-input(filled dense v-model='actionsFilter' label="Search")
-        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
-          color="primary"
-          label="Date")
+              AccountSearch(v-model="accountsModel" @update:model-value="$refs.accounts_dropdown.toggle()")
+        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+          ref="actions_dropdown"
+          :color="actionsDisplay === '' ? 'primary': 'secondary'"
+          :label="actionsDisplay === '' ? 'Actions' : actionsDisplay"
+        )
           .q-pa-md.dropdown-filter
             .row
-              q-input(filled dense v-model='fromDateFilter' label="From")
+              q-input(
+                filled dense v-model='auxModel'
+                label="actions"
+                placeholder="transfer, sellrex, etc."
+                @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+              )
+                template(v-slot:prepend)
+                  q-icon.cursor-pointer(name='search')
+                template(v-slot:append)
+                  q-btn(
+                    size="sm"
+                    color='primary'
+                    @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                  ) OK
+        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+          :color="dateDisplay === '' ? 'primary': 'secondary'"
+          :label="dateDisplay === '' ? 'Date' : dateDisplay"
+        )
+          .q-pa-md.dropdown-filter
+            .row
+              q-input(filled dense v-model='fromDateModel' label="From")
                 template(v-slot:prepend)
                   q-icon.cursor-pointer(name='event')
                     q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
-                      q-date(v-model='fromDateFilter' mask='YYYY-MM-DD HH:mm')
+                      q-date(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm')
                         .row.items-center.justify-end
                           q-btn(v-close-popup='' label='Close' color='primary' flat)
                 template(v-slot:append)
                   q-icon.cursor-pointer(name='access_time')
                     q-popup-proxy(cover transition-show='scale' transition-hide='scale')
-                      q-time(v-model='fromDateFilter' mask='YYYY-MM-DD HH:mm' format24h)
+                      q-time(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm' format24h)
                         .row.items-center.justify-end
                           q-btn(v-close-popup='' label='Close' color='primary' flat)
             .row.justify-center.full-width.q-py-xs
               q-icon(name="arrow_downward")
             .row
-              q-input(filled dense v-model='toDateFilter' label="To")
+              q-input(filled dense v-model='toDateModel' label="To")
                 template(v-slot:prepend)
                   q-icon.cursor-pointer(name='event')
                     q-popup-proxy(cover transition-show='scale' transition-hide='scale')
-                      q-date(v-model='toDateFilter' mask='YYYY-MM-DD HH:mm')
+                      q-date(v-model='toDateModel' mask='YYYY-MM-DD HH:mm')
                         .row.items-center.justify-end
                           q-btn(v-close-popup='' label='Close' color='primary' flat)
                 template(v-slot:append)
                   q-icon.cursor-pointer(name='access_time')
                     q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
-                      q-time(v-model='toDateFilter' mask='YYYY-MM-DD HH:mm' format24h)
+                      q-time(v-model='toDateModel' mask='YYYY-MM-DD HH:mm' format24h)
                         .row.items-center.justify-end
                           q-btn(v-close-popup='' label='Close' color='primary' flat)
-        q-btn-dropdown.q-ml-xs.q-mr-xs.col.button-primary(
-          color="primary"
-          label="Token")
+        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+          ref="token_dropdown"
+          :color="!tokenDisplay ? 'primary': 'secondary'"
+          :label="!tokenDisplay ? 'Token' : tokenDisplay"
+        )
           .q-pa-md.dropdown-filter
             .row
-              q-input(filled dense v-model='tokenFilter' label="Token")
+              TokenSearch(v-model='tokenModel' @update:model-value="toggleDropdown($refs.token_dropdown)")
     q-separator.row.col-12.q-mt-md.separator
     div.row.col-12.table-container
-      q-table.q-mt-lg.row.fixed-layout(
+      q-table.q-mt-lg.row.trx-table--fixed-layout(
+        flat
+        hide-pagination
+        table-header-class="table-header"
+        ref="main_table"
+        v-model:pagination="paginationSettings"
         :rows="filteredRows"
         :columns="columns"
         :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
-        flat
         :bordered="false"
         :square="true"
         :loading="loading"
-        table-header-class="table-header"
-        v-model:pagination="paginationSettings"
         :hide-pagination="noData"
-        @request='onPaginationChange'
         :rows-per-page-options='pageSizeOptions'
-        )
+        :dense="$q.screen.width < 1024"
+        @request='onPaginationChange'
+      )
         template(v-slot:header="props")
           q-tr(:props="props")
             q-th(
@@ -416,56 +588,89 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 ActionFormat(:action="action.action")
             q-td
               DataFormat(:actionData="action.data.data" :actionName="action.data.name ")
-        template( v-slot:pagination="scope")
-          div.col(align="left")
-            span.q-mr-sm page <b>{{ scope.pagination.page }}</b>
-          q-space
-          div.col-1(align="left")
+    div.row.col-12.items-center.justify-end.q-mt-md
+      // records per page selector
+      q-space
+      div.col-auto
+        small Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}
+        // dropdown button to select number of rows per page
+        q-icon(
+          :name="showPagesSizes ? 'expand_more' : 'expand_less'"
+          size="sm"
+          @click="switchPageSelector"
+        )
+          q-popup-proxy(
+            transition-show="scale"
+            transition-hide="scale"
+            ref="page_size_selector"
+          )
+            q-list
+              q-item.cursor-pointer(
+                v-for="size in pageSizeOptions"
+                :key="size"
+              )
+                q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }}
+      div.col-auto.q-ml-lg
+        div.row
+          div.col-auto.q-mr-xs
+            small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
+          div.col-auto.q-mr-xs
             q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              :disable="scope.isFirstPage"
-              @click="scope.prevPage") PREV
-          q-space
-          div.col-1(align="right")
+              size="sm"
+              :disable="paginationSettings.page === 1"
+              @click="$refs.main_table.prevPage()") PREV
+          div.col-auto.q-mr-xs
             q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              :disable="scope.isLastPage || ! hasPages"
-              @click="scope.nextPage") NEXT
+              size="sm"
+              :disable="paginationSettings.page === lastPage"
+              @click="$refs.main_table.nextPage()") NEXT
+
+
+
 </template>
 
 <style lang="sass">
-$medium:750px
+$medium:920px
 
 .table-container
   overflow-x: auto
 
-.fixed-layout
+.trx-table--main-container
+  width: 90%
+
+.trx-table--fixed-layout
   .q-table
-    min-width: 1300px
     table-layout: fixed
     tbody td
       vertical-align: text-top
     tbody td:first-child
       word-break: break-all
-    th:first-child
-      width: 5%
-    th:nth-child(2)
-      width: 12%
-    th:nth-child(3)
+    th:nth-child(1)
       width: 15%
+    th:nth-child(2)
+      width: 17%
+    th:nth-child(3)
+      width: 27%
     th:nth-child(4)
-      width: 25%
-    th:nth-child(5)
-      width: 43%
-    tbody tr
-      td:first-child
-        width: 5%
-      td:nth-child(2)
+      width: 41%
+
+@media screen and (max-width: $medium)
+  .trx-table--main-container
+    width: 100%
+  .trx-table--fixed-layout
+    min-width: 620px
+    .q-table
+      table-layout: auto
+      tbody td:first-child
+        word-break: break-all
+      th:nth-child(1)
         width: 12%
-      td:nth-child(3)
-        width: 15%
-      td:nth-child(4)
-        width: 25%
-      td:nth-child(5)
-        width: 43%
+      th:nth-child(2)
+        width: 17%
+      th:nth-child(3)
+        width: 17%
+      th:nth-child(4)
+        width: 54%
 
 .q-table--no-wrap td
   word-break: break-all
@@ -501,4 +706,7 @@ body
 
 .expanded-row
   background: var(--q-color-producer-card-background)
+
+.q-btn.q-btn--no-text-transform
+  text-transform: none
 </style>
