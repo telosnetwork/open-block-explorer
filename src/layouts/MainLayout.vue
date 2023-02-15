@@ -1,13 +1,13 @@
 <script lang="ts">
-import Footer from 'components/Footer.vue';
-import Header from 'components/Header.vue';
+import AppFooter from 'components/Footer.vue';
+import AppHeader from 'components/Header.vue';
 import ChainsSidebar from 'components/ChainsSidebar.vue';
 
 export default {
     name: 'MainLayout',
     components: {
-        Header,
-        Footer,
+        AppHeader,
+        AppFooter,
         ChainsSidebar,
     },
     setup() {
@@ -21,7 +21,7 @@ export default {
 <template lang="pug">
 q-layout( view="lHh lpR lff")
   q-header
-    Header
+    AppHeader
     q-separator.separator
 
   chains-sidebar(
@@ -32,7 +32,7 @@ q-layout( view="lHh lpR lff")
     router-view
     q-separator
   q-footer
-    Footer
+    AppFooter
 </template>
 
 <style lang="sass" scoped>

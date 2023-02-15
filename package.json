@@ -46,7 +46,7 @@
     "dotenv": "^14.3.0",
     "eslint": "^7.14.0",
     "eslint-plugin-jest": "^25.2.2",
-    "eslint-plugin-vue": "^7.0.0",
+    "eslint-plugin-vue": "^9.0.0",
     "husky": "^8.0.2",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "pug": "^3.0.2",

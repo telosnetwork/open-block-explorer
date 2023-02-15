@@ -103,10 +103,10 @@ module.exports = {
                 'max': 1,
             },
         }],
-        // 'vue/first-attribute-linebreak': ['error', {
-        //     'singleline': 'ignore',
-        //     'multiline': 'below',
-        // }],
+        'vue/first-attribute-linebreak': ['error', {
+            'singleline': 'ignore',
+            'multiline': 'below',
+        }],
         'vue/component-tags-order': ['error', {
             'order': ['script', 'template', 'style'],
         }],
@@ -142,7 +142,7 @@ module.exports = {
             'singleline': 'never',
             'multiline': 'always',
         }],
-        // 'vue/component-options-name-casing': ['error', 'PascalCase'],
+        'vue/component-options-name-casing': ['error', 'PascalCase'],
         'vue/component-definition-name-casing': ['error', 'PascalCase'],
         'vue/component-name-in-template-casing': ['error', 'PascalCase'],
     }

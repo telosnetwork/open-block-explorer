@@ -1,3 +1,9 @@
+<script lang="ts">
+export default {
+    name: 'AppFooter',
+};
+</script>
+
 <template lang="pug">
     .row.footer-background.justify-center.text-center.q-py-md
         .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md

@@ -17,7 +17,7 @@ exportingInit(Highcharts);
 export default defineComponent({
     name: 'PriceChart',
     components: {
-        highcharts: Chart,
+        Highcharts: Chart,
     },
     setup() {
         const hcInstance = Highcharts;
@@ -134,7 +134,7 @@ export default defineComponent({
 div.row.col-12.justify-center.actor-font(align="center")
     div.row.col-11.price-box.flex
         div.col-xs-12.col-sx-12.col-md-8.col-lg-8.col-xs-8.q-pa-md
-            highcharts.highcharts-description.col-12(:options="chartOptions" style="height:250px" :highcharts="hcInstance")
+            Highcharts.highcharts-description.col-12(:options="chartOptions" style="height:250px" :highcharts="hcInstance")
         div.col-xs-12.col-sx-12.col-md-4.col-lg-4.col-xs-4.q-pa-md
             div.col-12.flex.row.q-mt-md
                 div.col-6.chart-info
