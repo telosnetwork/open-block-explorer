@@ -11,8 +11,8 @@ setTheme();
 setMetaData();
 
 function setTheme(): void {
-    for (var themeVar of themeProps) {
-        if (theme[themeVar]) setCssVar(themeVar, theme[themeVar]);
+    for (let themeVar of themeProps) {
+        if (theme[themeVar]) {setCssVar(themeVar, theme[themeVar]);}
     }
 }
 

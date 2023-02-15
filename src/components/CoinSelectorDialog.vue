@@ -21,7 +21,7 @@ export default defineComponent({
         const filterTokens = () => {
             if (search.value.length > 0) {
                 filterByText(tokensWithBalance());
-            } else filteredTokens.value = tokensWithBalance();
+            } else {filteredTokens.value = tokensWithBalance();}
         };
 
         const filterByText = (tokens: Token[]) => {

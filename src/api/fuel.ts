@@ -299,8 +299,8 @@ async function confirmWithUser(user: User, fees: string | null) {
 
         const handler = function (approve: boolean) {
             GreymassFuelService.setPreferences(username, { approve });
-            if (approve) resolve();
-            else reject();
+            if (approve) {resolve();}
+            else {reject();}
         };
 
         // this are the normal texts for random wallet.
@@ -490,7 +490,7 @@ function validateActionsOriginalContent(
 ) {
     for (const [i] of modifiedTransaction.actions.entries()) {
     // Skip the expected new actions
-        if (i < expectedNewActions) continue;
+        if (i < expectedNewActions) {continue;}
         // Compare each action to the originally generated actions
         const original = transaction.actions[i - expectedNewActions];
         const action = modifiedTransaction.actions[i];

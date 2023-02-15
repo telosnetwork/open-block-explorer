@@ -70,7 +70,7 @@ export default class ConfigManager {
 
   private findChain(chainName: string) {
       const fromMainnet = this.mainnets.find(c => c.getName() === chainName);
-      if (fromMainnet) return fromMainnet;
+      if (fromMainnet) {return fromMainnet;}
 
       return this.testnets.find(c => c.getName() === chainName);
   }
