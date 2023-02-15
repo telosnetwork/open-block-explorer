@@ -111,7 +111,11 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-8 {{ `MATURED ${symbol}` }}
-            .col-4.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{maturedRex}}
+            .col-4
+              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxValue')
+                .text-weight-bold.text-right.balance-amount {{maturedRex}}
+                q-icon.q-ml-xs( name="info" )
+                q-tooltip Click to fill full amount
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="unstakeTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label='"Unstake " + symbol' flat @click="unstake" )
@@ -126,4 +130,6 @@ export default defineComponent({
   color: $grey-4
 .grey-3
   color: $grey-3
+.balance-amount:hover
+  color: $primary
 </style>
