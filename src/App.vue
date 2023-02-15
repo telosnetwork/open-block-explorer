@@ -22,7 +22,7 @@ function setMetaData(): void {
 }
 
 function setFavIcon(): void {
-    let link = document.querySelector("link[rel~='icon']");
+    let link = document.querySelector('link[rel~="icon"]');
     (link as HTMLLinkElement).href = `chains/${chainName}/favicon.png`;
 }
 
