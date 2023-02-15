@@ -78,5 +78,6 @@ module.exports = {
     'array-bracket-spacing': ['error', 'never'],
     'space-in-parens': ['error', 'never'],
     'computed-property-spacing': ['error', 'never'],
+    'comma-spacing': ['error', { 'before': false, 'after': true }],
   }
 }
