@@ -75,5 +75,6 @@ module.exports = {
     // 'max-len': ['error', { 'code': 120 }],
     'eol-last': ['error', 'always'],
     'object-curly-spacing': ['error', 'always'],
+    'array-bracket-spacing': ['error', 'never'],
   }
 }
