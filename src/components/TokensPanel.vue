@@ -81,13 +81,13 @@ div.row.col-12.q-my-xs.justify-center.text-left
     div.row.col-11
         div.row.col-12.q-mt-lg
             div
-                p.panel-title Tokens 
+                p.panel-title Tokens
             q-space
         q-separator.row.col-12.q-mt-md.separator
         div.col-12.q-mt-md.tokens-container
           div(v-if="tokens.length == 0") No tokens found
           q-card(v-for="token in tokens" :key="`${token.contract}-${token.symbol}`").token-card
-            q-item 
+            q-item
               q-item-section(avatar).items-center
                 q-avatar(color="white" size="2.8rem").shadow-3
                   q-avatar(size="1.2em")

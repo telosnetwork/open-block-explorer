@@ -39,7 +39,7 @@ div.row
     .row.gradient-box.justify-center
       .col-12
         Map
-      
+
   .col-12.map-data-position(v-if="displayMap" :class="{'overlap-map' : displayMap}")
     MapData(:mobile="true")
   PriceChart.price-box-position(:class="{'overlap-map' : displayMap}")

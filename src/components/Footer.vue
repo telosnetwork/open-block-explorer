@@ -15,8 +15,8 @@
     .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
         a.no-dec(href="https://telos.net/legal") LEGAL
     .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
-        a.no-dec(href="https://telos.net/privacy-policy") PRIVACY 
+        a.no-dec(href="https://telos.net/privacy-policy") PRIVACY
     .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
-        a.no-dec(href="https://github.com/telosnetwork/open-block-explorer") REPOSITORY 
+        a.no-dec(href="https://github.com/telosnetwork/open-block-explorer") REPOSITORY
 
 </template>
