@@ -84,5 +84,6 @@ module.exports = {
     'semi': ['error', 'always'],
     'arrow-parens': [2, 'as-needed', { 'requireForBlockBody': true }],
     'arrow-body-style': ['error', 'as-needed'],
+    'object-property-newline': ['error', { 'allowAllPropertiesOnSameLine': true }],
   }
 }
