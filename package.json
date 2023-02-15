@@ -45,13 +45,10 @@
     "@typescript-eslint/parser": "^4.16.1",
     "dotenv": "^14.3.0",
     "eslint": "^7.14.0",
-    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-jest": "^25.2.2",
-    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^7.0.0",
     "husky": "^8.0.2",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "prettier": "^2.5.1",
     "pug": "^3.0.2",
     "pug-plain-loader": "^1.1.0",
     "vue-property-decorator": "^9.1.2"

@@ -1,5 +1,4 @@
 /* eslint-disable quotes */
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Most of this code was taken and addapted from https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70
 import {
@@ -74,7 +73,7 @@ export class FuelUserWrapper extends User {
       if (!fuelrpc) {
         return this.user.signTransaction(originalTransaction, originalconfig);
       }
-      
+
       // Retrieve transaction headers
       const info = await client.v1.chain.get_info();
       const header = info.getTransactionHeader(expireSeconds);
@@ -249,7 +248,7 @@ export default class GreymassFuelService {
   }
   static drop() {
     localStorage.removeItem('fuel_preferences');
-  }  
+  }
   static load() {
     try {
       GreymassFuelService.preferences = GreymassFuelService.preferences || {};
