@@ -50,20 +50,6 @@ describe('PriceChart', () => {
     jest.clearAllMocks();
   });
 
-  describe('mounted', () => {
-    it.skip('calls fetchPriceChartData', () => {
-      const methodSpy = jest.spyOn(
-        PriceChart.methods as any,
-        'fetchPriceChartData'
-      );
-      const wrapper = shallowMount(PriceChart);
-
-      wrapper.vm.$nextTick(() => {
-        expect(methodSpy).toHaveBeenCalled();
-      });
-    });
-  });
-
   describe('methods', () => {
     describe('formatPercentage', () => {
       it('returns value rounded to 2 decimals as a % string', () => {

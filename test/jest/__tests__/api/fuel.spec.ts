@@ -3,11 +3,7 @@ import { AnyTransaction } from '@greymass/eosio';
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import { FuelUserWrapper } from 'src/api/fuel';
-import {
-  SignTransactionConfig,
-  SignTransactionResponse,
-  User
-} from 'universal-authenticator-library';
+import { SignTransactionResponse, User } from 'universal-authenticator-library';
 import { QDialogOptions } from 'quasar';
 import rp_response_file from './rp_response.json';
 
@@ -79,7 +75,7 @@ jest.mock('@greymass/eosio', () => ({
       v1: {
         chain: {
           get_info: () => ({
-            getTransactionHeader: (_s: number) => transactionHeaders
+            getTransactionHeader: () => transactionHeaders
           }),
           get_abi: () => Promise.resolve({ abi: 'abi' }),
           push_transaction: () => ({
@@ -131,20 +127,15 @@ class UserStub extends User {
   }
 
   async signTransaction(
-    trx: AnyTransaction,
-    _conf?: SignTransactionConfig
+    trx: AnyTransaction
   ): Promise<SignTransactionResponse> {
     return Promise.resolve({
       transaction: { ...trx, signatures: ['local-signature'] }
     } as SignTransactionResponse);
   }
 
-  signArbitrary = async (
-    _publicKey: string,
-    _data: string,
-    _helpText: string
-  ): Promise<string> => Promise.resolve('');
-  verifyKeyOwnership = async (_challenge: string): Promise<boolean> =>
+  signArbitrary = async (): Promise<string> => Promise.resolve('');
+  verifyKeyOwnership = async (): Promise<boolean> =>
     Promise.resolve(false);
   getAccountName = async (): Promise<string> =>
     Promise.resolve(signer.actor.toString());
@@ -240,7 +231,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
           rpResponseCode = Number(200);
           const trx = getOriginalTransaction();
 
-          createDialog.mockImplementationOnce((options: QDialogOptions) => {
+          createDialog.mockImplementationOnce(() => {
             return {
               onOk: jest.fn((resolve: (payload?: unknown) => void) => {
                 resolve(); // the user approves
