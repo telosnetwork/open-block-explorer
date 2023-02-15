@@ -90,5 +90,6 @@ module.exports = {
     'no-restricted-imports': ['error', {
       'patterns': ['.*'], // disallow relative imports
     }],
+    'no-return-assign': ['error', 'always'],
   }
 }
