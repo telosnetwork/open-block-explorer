@@ -1,44 +1,3 @@
-<template lang="pug">
-q-page(padding)
-  div.row.justify-between.items-center.q-pt-lg.q-pb-sm
-    h1.text-h5.q-ma-none Multisig Transactions
-    q-btn(
-      v-if="isAuthenticated"
-      padding="sm md"
-      color="primary"
-      label="New proposal"
-      to="/proposal/new")
-
-  q-tabs(v-model="tab" align="left" active-color="primary" content-class="text-grey-7"  no-caps)
-    q-tab(v-if="isAuthenticated" name="myProposal" label="My proposals")
-    q-tab(name="allProposal" label="All proposals")
-
-  q-separator
-
-  q-tab-panels(v-model="tab")
-    q-tab-panel(v-if="isAuthenticated" name="myProposal").q-pa-none
-      div.q-py-lg
-        ProposalTable(
-          title="Needs your signature"
-          type="needsYourSignature"
-          :account="account"
-        )
-        ProposalTable(
-          title="Proposals created"
-          type="proposalsCreated"
-          :account="account"
-        )
-
-    q-tab-panel(name="allProposal").q-pa-none
-      div.q-py-lg
-        ProposalTable(
-          title="Proposals"
-          type="allProposals"
-          :account="account"
-          :blockProducers="blockProducers"
-        )
-</template>
-
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch, computed } from 'vue';
 import ProposalTable from 'src/components/ProposalTable.vue';
@@ -47,7 +6,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-    name: 'Proposal',
+    name: 'ProposalPage',
     components: {
         ProposalTable,
     },
@@ -99,3 +58,44 @@ export default defineComponent({
     },
 });
 </script>
+
+<template lang="pug">
+q-page(padding)
+  div.row.justify-between.items-center.q-pt-lg.q-pb-sm
+    h1.text-h5.q-ma-none Multisig Transactions
+    q-btn(
+      v-if="isAuthenticated"
+      padding="sm md"
+      color="primary"
+      label="New proposal"
+      to="/proposal/new")
+
+  q-tabs(v-model="tab" align="left" active-color="primary" content-class="text-grey-7"  no-caps)
+    q-tab(v-if="isAuthenticated" name="myProposal" label="My proposals")
+    q-tab(name="allProposal" label="All proposals")
+
+  q-separator
+
+  q-tab-panels(v-model="tab")
+    q-tab-panel(v-if="isAuthenticated" name="myProposal").q-pa-none
+      div.q-py-lg
+        ProposalTable(
+          title="Needs your signature"
+          type="needsYourSignature"
+          :account="account"
+        )
+        ProposalTable(
+          title="Proposals created"
+          type="proposalsCreated"
+          :account="account"
+        )
+
+    q-tab-panel(name="allProposal").q-pa-none
+      div.q-py-lg
+        ProposalTable(
+          title="Proposals"
+          type="allProposals"
+          :account="account"
+          :blockProducers="blockProducers"
+        )
+</template>

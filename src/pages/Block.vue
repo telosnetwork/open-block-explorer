@@ -7,7 +7,7 @@ import { api } from 'src/api/index';
 import { Action, Block } from 'src/types';
 
 export default defineComponent({
-    name: 'Block',
+    name: 'BlockPage',
     setup() {
         const route = useRoute();
         const router = useRouter();

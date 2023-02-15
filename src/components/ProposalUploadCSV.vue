@@ -1,3 +1,79 @@
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import csvToJson from 'csvtojson';
+import { useQuasar } from 'quasar';
+
+export default defineComponent({
+    name: 'ProposalUploadCSV',
+    emits: ['actions'],
+    setup(_, context) {
+        const $q = useQuasar();
+        const file = ref<File | null>(null);
+
+        function handleError(message: string) {
+            $q.notify({
+                color: 'negative',
+                message,
+                actions: [
+                    {
+                        label: 'Dismiss',
+                        color: 'white',
+                    },
+                ],
+            });
+        }
+
+        /* eslint-disable */
+        async function handleUploadCSV() {
+            const csvString = await file.value.text();
+            const result: any = await csvToJson().fromString(csvString);
+
+            if (result.length === 0) {
+                handleError('CSV Invalid');
+                return;
+            }
+
+            const transferKeys = ['from', 'to', 'quantity', 'memo'];
+            const objectKeys = Object.keys(result[0]);
+            const isObjectCorrect = transferKeys.every(key => objectKeys.includes(key))
+
+            if (!isObjectCorrect || transferKeys.length !== objectKeys.length) {
+                handleError('CSV Invalid');
+                return;
+            }
+
+            const actions = result.map((item: any) => {
+                return {
+                    account: 'eosio.token',
+                    name: 'transfer',
+                    authorization: [
+                        {
+                            actor: item.from.toLowerCase(),
+                            permission: 'active'
+                        }
+                    ],
+                    data: {
+                        from: item.from.toLowerCase(),
+                        to: item.to.toLowerCase(),
+                        quantity: item.quantity,
+                        memo: item.memo,
+                    }
+                }
+            });
+
+            context.emit('actions', actions)
+            file.value = null;
+        }
+        /* eslint-enable */
+
+        return {
+            handleUploadCSV,
+            file,
+        };
+    },
+});
+</script>
+
 <template lang="pug">
 ol.q-px-lg
   li.text-subtitle1.q-mb-md Download the example
@@ -53,79 +129,3 @@ ol.q-px-lg
           :disabled="file === null"
         )
 </template>
-
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import csvToJson from 'csvtojson';
-import { useQuasar } from 'quasar';
-
-export default defineComponent({
-    name: 'ProposalUploadCSV',
-    emits: ['actions'],
-    setup(_, context) {
-        const $q = useQuasar();
-        const file = ref<File | null>(null);
-
-        function handleError(message: string) {
-            $q.notify({
-                color: 'negative',
-                message,
-                actions: [
-                    {
-                        label: 'Dismiss',
-                        color: 'white',
-                    },
-                ],
-            });
-        }
-
-        /* eslint-disable */
-    async function handleUploadCSV() {
-      const csvString = await file.value.text();
-      const result: any = await csvToJson().fromString(csvString);
-
-      if (result.length === 0) {
-        handleError('CSV Invalid');
-        return;
-      }
-
-      const transferKeys = ['from', 'to', 'quantity', 'memo'];
-      const objectKeys = Object.keys(result[0]);
-      const isObjectCorrect = transferKeys.every(key => objectKeys.includes(key))
-
-      if (!isObjectCorrect || transferKeys.length !== objectKeys.length) {
-        handleError('CSV Invalid');
-        return;
-      }
-
-      const actions = result.map((item: any) => {
-        return {
-          account: 'eosio.token',
-          name: 'transfer',
-          authorization: [
-            {
-              actor: item.from.toLowerCase(),
-              permission: 'active'
-            }
-          ],
-          data: {
-            from: item.from.toLowerCase(),
-            to: item.to.toLowerCase(),
-            quantity: item.quantity,
-            memo: item.memo,
-          }
-        }
-      });
-
-      context.emit('actions', actions)
-      file.value = null;
-    }
-    /* eslint-enable */
-
-        return {
-            handleUploadCSV,
-            file,
-        };
-    },
-});
-</script>

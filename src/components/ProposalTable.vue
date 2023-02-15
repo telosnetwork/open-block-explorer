@@ -1,66 +1,3 @@
-<template lang="pug">
-q-table(
-  color="primary"
-  flat
-  :bordered="false"
-  :square="true"
-  :title="title"
-  table-header-class="text-grey-7"
-  :rows="rows"
-  :columns="columns"
-  row-key="proposalName"
-  :rows-per-page-options="[20,40,80,160]"
-  v-model:pagination="pagination"
-  @request="onRequest"
-)
-  template(v-slot:top)
-    div.q-table__control.full-width.justify-between
-      div.q-table__title(v-text="title")
-      div
-        q-btn-dropdown(outlined flat :color="hasSomeFilterActive ? 'primary': ''" :label="hasSomeFilterActive ? '• Filter by': 'Filter by'" v-model="filterDropdown")
-          div.q-pt-md.q-px-md
-            div(v-if="type === 'needsYourSignature'").q-pr-md.q-pb-md
-              q-toggle(label="Already signed" v-model="isSigned")
-
-            div(v-if="type === 'allProposals'").q-pb-md
-              span.block.q-mb-sm.text-body3 Pending signature from
-              q-select(
-                outlined
-                dense
-                v-model="blockProducer"
-                label="Block Producer"
-                hide-bottom-space
-                hide-selected
-                fill-input
-                :options="optionsBlockProducers"
-                use-input
-                input-debounce="0"
-                clearable
-                @filter="onFilterBlockProducer"
-              )
-                template(v-slot:no-option)
-                  q-item
-                    q-item-section No results
-
-            div.q-pr-md.q-pb-md
-              q-toggle(label="Inactive proposals" v-model="isExecuted")
-
-  template(v-slot:no-data)
-    span.q-pa-md.full-width.text-center.text-body2.
-      No proposals
-
-  template(v-slot:body="props")
-    q-tr(:props="props")
-      q-td(key="proposalName" :props="props")
-        router-link(:to="'/proposal/' + props.row.proposalName" style="text-decoration:none").text-primary.cursor-pointer {{props.row.proposalName}}
-      q-td(key="approvalStatus" :props="props")
-        span {{ props.row.approvalStatus }}
-      q-td(key="proposer" :props="props")
-        router-link(:to="'/account/' + props.row.proposer" style="text-decoration:none").text-primary.cursor-pointer {{props.row.proposer}}
-      q-td(key="executed" :props="props")
-        q-badge(:color="props.row.executed ? 'green' : 'orange'" :label="props.row.executed ? 'EXECUTED' : 'NOT EXECUTED'")
-</template>
-
 <script lang="ts">
 import {
     defineComponent,
@@ -100,8 +37,8 @@ export default defineComponent({
         },
         type: {
             type: String as PropType<
-        'needsYourSignature' | 'proposalsCreated' | 'allProposals'
-      >,
+                'needsYourSignature' | 'proposalsCreated' | 'allProposals'
+            >,
             required: true,
         },
         blockProducers: {
@@ -183,7 +120,7 @@ export default defineComponent({
                 rows.value = data.proposals.map((proposal) => {
                     const approvalStatus = `${proposal.provided_approvals.length}/${
                         proposal.provided_approvals.length +
-            proposal.requested_approvals.length
+                        proposal.requested_approvals.length
                     }`;
 
                     return {
@@ -258,3 +195,66 @@ export default defineComponent({
     },
 });
 </script>
+
+<template lang="pug">
+q-table(
+  color="primary"
+  flat
+  :bordered="false"
+  :square="true"
+  :title="title"
+  table-header-class="text-grey-7"
+  :rows="rows"
+  :columns="columns"
+  row-key="proposalName"
+  :rows-per-page-options="[20,40,80,160]"
+  v-model:pagination="pagination"
+  @request="onRequest"
+)
+  template(v-slot:top)
+    div.q-table__control.full-width.justify-between
+      div.q-table__title(v-text="title")
+      div
+        q-btn-dropdown(outlined flat :color="hasSomeFilterActive ? 'primary': ''" :label="hasSomeFilterActive ? '• Filter by': 'Filter by'" v-model="filterDropdown")
+          div.q-pt-md.q-px-md
+            div(v-if="type === 'needsYourSignature'").q-pr-md.q-pb-md
+              q-toggle(label="Already signed" v-model="isSigned")
+
+            div(v-if="type === 'allProposals'").q-pb-md
+              span.block.q-mb-sm.text-body3 Pending signature from
+              q-select(
+                outlined
+                dense
+                v-model="blockProducer"
+                label="Block Producer"
+                hide-bottom-space
+                hide-selected
+                fill-input
+                :options="optionsBlockProducers"
+                use-input
+                input-debounce="0"
+                clearable
+                @filter="onFilterBlockProducer"
+              )
+                template(v-slot:no-option)
+                  q-item
+                    q-item-section No results
+
+            div.q-pr-md.q-pb-md
+              q-toggle(label="Inactive proposals" v-model="isExecuted")
+
+  template(v-slot:no-data)
+    span.q-pa-md.full-width.text-center.text-body2.
+      No proposals
+
+  template(v-slot:body="props")
+    q-tr(:props="props")
+      q-td(key="proposalName" :props="props")
+        router-link(:to="'/proposal/' + props.row.proposalName" style="text-decoration:none").text-primary.cursor-pointer {{props.row.proposalName}}
+      q-td(key="approvalStatus" :props="props")
+        span {{ props.row.approvalStatus }}
+      q-td(key="proposer" :props="props")
+        router-link(:to="'/account/' + props.row.proposer" style="text-decoration:none").text-primary.cursor-pointer {{props.row.proposer}}
+      q-td(key="executed" :props="props")
+        q-badge(:color="props.row.executed ? 'green' : 'orange'" :label="props.row.executed ? 'EXECUTED' : 'NOT EXECUTED'")
+</template>

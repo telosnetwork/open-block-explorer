@@ -1,79 +1,3 @@
-<template lang="pug">
-div(style="height: fit-content; min-height: 25rem;").full-width.row.justify-center.items-center.gradient-box
-  div(v-if="isLoading").col.text-center
-    q-spinner(color="white" size="2em")
-
-  div(v-else style="height: 22rem; padding-top: 6rem;").col.text-center
-    h1.text-h4.text-white.q-ma-none Proposal {{proposalName}}
-    p.text-caption.text-white.text-uppercase.q-mt-xs(:style="{opacity:'0.5'}").
-      PROPOSER <router-link :to="'/account/' + proposer" class="text-white cursor-pointer">{{proposer}}</router-link> • APPROVAL STATUS {{approvalStatus}} • EXPIRATION {{expirationDate}}
-    div.q-mb-lg
-      q-badge(v-if="isExecuted && !isCanceled" color="green" label="EXECUTED")
-      q-badge(v-if="!isExecuted && !isCanceled" color="orange" label="NOT EXECUTED")
-      q-badge(v-if="isCanceled" color="red" label="CANCELED")
-
-    div.row.q-gutter-sm.justify-center.items-center
-      q-btn(v-if="isShowExecuteButton" outline padding="sm md" color="white" text-color="white" label="Execute" @click="onExecute")
-      q-btn(v-if="isShowCancelButton" outline padding="sm md" color="white" text-color="white" label="Cancel" @click="onCancel")
-      q-btn(v-if="isShowApproveButton" outline padding="sm md" color="white" text-color="white" label="Approve" @click="onApprove")
-      q-btn(v-if="isShowUnapproveButton" outline padding="sm md" color="white" text-color="white" label="Unapprove" @click="onUnapprove")
-
-q-page(padding)
-  h2.text-h6.text-weight-regular Multisig Transaction
-  q-card(
-    v-for="(multsigTransactionItem, multsigTransactionIndex) in multsigTransactionData"
-    :key="multsigTransactionIndex"
-  ).q-mt-md
-    q-expansion-item(
-      switch-toggle-side
-      default-opened
-    )
-      template(v-slot:header)
-        span.text-h6.text-weight-regular {{(multsigTransactionItem.account)}} - {{multsigTransactionItem.name}}
-      json-viewer(
-        :value="multsigTransactionItem"
-        :expand-depth="5"
-        preview-mode
-        boxed
-        copyable
-        sort
-      )
-
-  h2.text-h6.text-weight-regular.q-mt-xl
-    span Requested Approvals
-    span.text-body1.q-ml-sm.text-grey {{approvalStatus}}
-    span.q-mx-sm •
-    span Active BPs
-    span.text-body1.q-ml-sm.text-grey {{producersApprovalStatus}}
-  q-card.q-mb-xl
-    q-table(
-      color="primary"
-      flat
-      :bordered="false"
-      :square="true"
-      table-header-class="text-grey-7"
-      :rows="requestedApprovalsRows"
-      :columns="requestedApprovalsColumns"
-      row-key="index"
-      :rows-per-page-options="[25,40,80,160]"
-    )
-      template(v-slot:body="props")
-        q-tr(:props="props")
-          q-td(key="actor" :props="props")
-            router-link(
-              :to="'/account/' + props.row.actor"
-              style="text-decoration:none"
-            ).text-primary.cursor-pointer {{props.row.actor}}
-            q-badge(v-if="props.row.isBp" label="Active BP" class="q-ml-xs")
-          q-td(key="permission" :props="props")
-            span {{props.row.permission}}
-          q-td(key="status" :props="props")
-            q-badge(
-              :color="props.row.status ? 'green' : 'orange'"
-              :label="props.row.status ? 'APPROVED' : 'PENDING'"
-            )
-</template>
-
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -162,8 +86,8 @@ export default defineComponent({
             isAuthenticated.value &&
             !hasProposalAlreadyExpired.value &&
             (account.value === proposer.value ||
-              isUserApprovalList.value ||
-              hasUserAlreadyApproved.value) &&
+                isUserApprovalList.value ||
+                hasUserAlreadyApproved.value) &&
             !isExecuted.value &&
             !isCanceled.value
         ));
@@ -236,7 +160,7 @@ export default defineComponent({
                 .sort(
                     (a, b) =>
                         Number(b.isBp) - Number(a.isBp) ||
-            Number(a.status) - Number(b.status),
+                        Number(a.status) - Number(b.status),
                 );
 
             return requestedApprovals;
@@ -257,76 +181,76 @@ export default defineComponent({
         }
 
         /* eslint-disable */
-    async function handleMultsigTransaction(proposal: Proposal): Promise<Action[]> {
-      let action;
-      let actionSkip = 0;
-      const actionLimit = 100;
+        async function handleMultsigTransaction(proposal: Proposal): Promise<Action[]> {
+            let action;
+            let actionSkip = 0;
+            const actionLimit = 100;
 
-      while (typeof action === 'undefined') {
-        try {
-          const { actions } = await api.getActions(
-            proposal.proposer,
-            'eosio.msig:propose',
-            actionLimit,
-            actionSkip
-          );
+            while (typeof action === 'undefined') {
+                try {
+                    const { actions } = await api.getActions(
+                        proposal.proposer,
+                        'eosio.msig:propose',
+                        actionLimit,
+                        actionSkip
+                    );
 
-          [action] = actions.filter((action) => {
-            const { proposal_name } = action.act.data as {
-              proposal_name: string;
-            };
-            return proposal_name === proposal.proposal_name;
-          });
+                    [action] = actions.filter((action) => {
+                        const { proposal_name } = action.act.data as {
+                            proposal_name: string;
+                        };
+                        return proposal_name === proposal.proposal_name;
+                    });
 
-          actionSkip += actionLimit;
-        } catch (error) {
-          console.log(error);
+                    actionSkip += actionLimit;
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            const { trx } = action.act.data;
+
+            const transaction = Transaction.from(trx);
+            expirationDate.value = transaction.expiration.toString();
+
+            const setAbiCache : {[key: string]: ABIDef} = {};
+            const actions: Action[] = [];
+
+            for (let i = 0; i < transaction.actions.length; i++) {
+                const action = transaction.actions[i];
+                const contract = action.account.toString();
+                let data;
+
+                if (setAbiCache.hasOwnProperty(contract)) {
+                    data = deserializeActionDataFromAbi(action, setAbiCache[contract]) as {
+                        code: string,
+                        abi: string,
+                        account: string
+                    };
+                } else {
+                    data = await api.deserializeActionData(action) as {
+                        code: string,
+                        abi: string,
+                        account: string
+                    };
+                }
+
+
+                if (contract === 'eosio' && action.name.toString() === 'setcode') {
+                    data.code = `Binary data with SHA <${getShaForCode(data.code)}>`
+                } else if (action.account.toString() === 'eosio' && action.name.toString() === 'setabi') {
+                    const abi = Serializer.decode({data: data.abi, type: ABI})
+                    setAbiCache[data.account] = abi;
+                }
+                actions.push({
+                    ...Serializer.objectify(action),
+                    data
+                })
+            }
+
+            return actions;
         }
-      }
-
-      const { trx } = action.act.data;
-
-      const transaction = Transaction.from(trx);
-      expirationDate.value = transaction.expiration.toString();
-
-      const setAbiCache : {[key: string]: ABIDef} = {};
-      const actions: Action[] = [];
-
-      for (let i = 0; i < transaction.actions.length; i++) {
-        const action = transaction.actions[i];
-        const contract = action.account.toString();
-        let data;
-
-        if (setAbiCache.hasOwnProperty(contract)) {
-          data = deserializeActionDataFromAbi(action, setAbiCache[contract]) as {
-            code: string,
-            abi: string,
-            account: string
-          };
-        } else {
-          data = await api.deserializeActionData(action) as {
-            code: string,
-            abi: string,
-            account: string
-          };
-        }
-
-
-        if (contract === 'eosio' && action.name.toString() === 'setcode') {
-          data.code = `Binary data with SHA <${getShaForCode(data.code)}>`
-        } else if (action.account.toString() === 'eosio' && action.name.toString() === 'setabi') {
-          const abi = Serializer.decode({data: data.abi, type: ABI})
-          setAbiCache[data.account] = abi;
-        }
-        actions.push({
-          ...Serializer.objectify(action),
-          data
-        })
-      }
-
-      return actions;
-    }
-    /* eslint-enable */
+        /* eslint-enable */
 
         async function handleTransactionHistory(blockNumber: number) {
             const block = await api.getBlock(String(blockNumber));
@@ -369,10 +293,10 @@ export default defineComponent({
             );
 
             const [requestedApprovalsRowsValue, multsigTransactionDataValue] =
-        await Promise.all([
-            handleRequestedApprovals(proposal),
-            handleMultsigTransaction(proposal),
-        ]);
+                await Promise.all([
+                    handleRequestedApprovals(proposal),
+                    handleMultsigTransaction(proposal),
+                ]);
 
             requestedApprovalsRows.value = requestedApprovalsRowsValue;
             multsigTransactionData.value = multsigTransactionDataValue;
@@ -391,9 +315,9 @@ export default defineComponent({
             name,
             data,
         }: {
-      name: 'approve' | 'unapprove' | 'cancel' | 'exec';
-      data: unknown;
-    }) {
+            name: 'approve' | 'unapprove' | 'cancel' | 'exec';
+            data: unknown;
+        }) {
             const response = await store.state.account.user.signTransaction(
                 {
                     actions: [
@@ -532,3 +456,79 @@ export default defineComponent({
     },
 });
 </script>
+
+<template lang="pug">
+div(style="height: fit-content; min-height: 25rem;").full-width.row.justify-center.items-center.gradient-box
+  div(v-if="isLoading").col.text-center
+    q-spinner(color="white" size="2em")
+
+  div(v-else style="height: 22rem; padding-top: 6rem;").col.text-center
+    h1.text-h4.text-white.q-ma-none Proposal {{proposalName}}
+    p.text-caption.text-white.text-uppercase.q-mt-xs(:style="{opacity:'0.5'}").
+      PROPOSER <router-link :to="'/account/' + proposer" class="text-white cursor-pointer">{{proposer}}</router-link> • APPROVAL STATUS {{approvalStatus}} • EXPIRATION {{expirationDate}}
+    div.q-mb-lg
+      q-badge(v-if="isExecuted && !isCanceled" color="green" label="EXECUTED")
+      q-badge(v-if="!isExecuted && !isCanceled" color="orange" label="NOT EXECUTED")
+      q-badge(v-if="isCanceled" color="red" label="CANCELED")
+
+    div.row.q-gutter-sm.justify-center.items-center
+      q-btn(v-if="isShowExecuteButton" outline padding="sm md" color="white" text-color="white" label="Execute" @click="onExecute")
+      q-btn(v-if="isShowCancelButton" outline padding="sm md" color="white" text-color="white" label="Cancel" @click="onCancel")
+      q-btn(v-if="isShowApproveButton" outline padding="sm md" color="white" text-color="white" label="Approve" @click="onApprove")
+      q-btn(v-if="isShowUnapproveButton" outline padding="sm md" color="white" text-color="white" label="Unapprove" @click="onUnapprove")
+
+q-page(padding)
+  h2.text-h6.text-weight-regular Multisig Transaction
+  q-card(
+    v-for="(multsigTransactionItem, multsigTransactionIndex) in multsigTransactionData"
+    :key="multsigTransactionIndex"
+  ).q-mt-md
+    q-expansion-item(
+      switch-toggle-side
+      default-opened
+    )
+      template(v-slot:header)
+        span.text-h6.text-weight-regular {{(multsigTransactionItem.account)}} - {{multsigTransactionItem.name}}
+      json-viewer(
+        :value="multsigTransactionItem"
+        :expand-depth="5"
+        preview-mode
+        boxed
+        copyable
+        sort
+      )
+
+  h2.text-h6.text-weight-regular.q-mt-xl
+    span Requested Approvals
+    span.text-body1.q-ml-sm.text-grey {{approvalStatus}}
+    span.q-mx-sm •
+    span Active BPs
+    span.text-body1.q-ml-sm.text-grey {{producersApprovalStatus}}
+  q-card.q-mb-xl
+    q-table(
+      color="primary"
+      flat
+      :bordered="false"
+      :square="true"
+      table-header-class="text-grey-7"
+      :rows="requestedApprovalsRows"
+      :columns="requestedApprovalsColumns"
+      row-key="index"
+      :rows-per-page-options="[25,40,80,160]"
+    )
+      template(v-slot:body="props")
+        q-tr(:props="props")
+          q-td(key="actor" :props="props")
+            router-link(
+              :to="'/account/' + props.row.actor"
+              style="text-decoration:none"
+            ).text-primary.cursor-pointer {{props.row.actor}}
+            q-badge(v-if="props.row.isBp" label="Active BP" class="q-ml-xs")
+          q-td(key="permission" :props="props")
+            span {{props.row.permission}}
+          q-td(key="status" :props="props")
+            q-badge(
+              :color="props.row.status ? 'green' : 'orange'"
+              :label="props.row.status ? 'APPROVED' : 'PENDING'"
+            )
+</template>

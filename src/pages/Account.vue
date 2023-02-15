@@ -11,7 +11,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-    name: 'Account',
+    name: 'AccountPage',
     components: {
         TransactionsTable,
         TokensPanel,

@@ -7,7 +7,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-    name: 'Header',
+    name: 'AppHeader',
     components: {
         LoginHandler,
         HeaderSearch,

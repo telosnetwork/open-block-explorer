@@ -4,7 +4,7 @@ import { defineComponent, onMounted } from 'vue';
 import { useStore } from 'src/store';
 import { api } from 'src/api';
 export default defineComponent({
-    name: 'Vote',
+    name: 'VotePage',
     components: { ValidatorData },
     setup() {
         const store = useStore();

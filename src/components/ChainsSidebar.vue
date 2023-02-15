@@ -1,31 +1,3 @@
-<template lang="pug">
-q-drawer(
-  show-if-above
-  :mini="miniState"
-  @mouseover="miniState = false"
-  @mouseout="miniState = true"
-  mini-to-overlay
-  :width="175"
-  :breakpoint="500"
-  bordered
-)
-  q-scroll-area.fit
-    q-list
-      template( v-for="(chain, index) in getMainnets()" :key="index" )
-        q-item(clickable v-ripple @click="chainSelected(chain)" :class="{ selected: isSelected(chain) }")
-          q-avatar
-            img( :src="chain.getSmallLogoPath()" ).sidebar-logo
-          q-item-section.margin-left
-            div {{ chain.getDisplay() }}
-      q-separator.separator
-      template( v-for="(chain, index) in getTestnets()" :key="index" )
-        q-item(clickable v-ripple @click="chainSelected(chain)" :class="{ selected: isSelected(chain) }")
-          q-avatar
-            img( :src="chain.getSmallLogoPath()" ).sidebar-logo
-          q-item-section.margin-left
-            div {{ chain.getDisplay() }}
-</template>
-
 <script lang="ts">
 import { ref } from 'vue';
 import ConfigManager from 'src/config/ConfigManager';
@@ -62,6 +34,34 @@ export default {
     },
 };
 </script>
+
+<template lang="pug">
+    q-drawer(
+        show-if-above
+        :mini="miniState"
+        @mouseover="miniState = false"
+        @mouseout="miniState = true"
+        mini-to-overlay
+        :width="175"
+        :breakpoint="500"
+        bordered
+    )
+        q-scroll-area.fit
+            q-list
+                template( v-for="(chain, index) in getMainnets()" :key="index" )
+                    q-item(clickable v-ripple @click="chainSelected(chain)" :class="{ selected: isSelected(chain) }")
+                        q-avatar
+                            img( :src="chain.getSmallLogoPath()" ).sidebar-logo
+                        q-item-section.margin-left
+                            div {{ chain.getDisplay() }}
+                q-separator.separator
+                template( v-for="(chain, index) in getTestnets()" :key="index" )
+                    q-item(clickable v-ripple @click="chainSelected(chain)" :class="{ selected: isSelected(chain) }")
+                        q-avatar
+                            img( :src="chain.getSmallLogoPath()" ).sidebar-logo
+                        q-item-section.margin-left
+                            div {{ chain.getDisplay() }}
+</template>
 
 <style lang="sass" scoped>
 .margin-left

@@ -1,86 +1,16 @@
-<template lang="pug">
-div.row.q-col-gutter-md.q-mb-md
-  div.col-6.col-sm
-    q-select(
-      outlined
-      dense
-      use-input
-      hide-selected
-      fill-input
-      hide-bottom-space
-      bg-color="white"
-      label="Actor"
-      :loading="isLoading"
-      :model-value="actorValue"
-      @input-value="(value) => actorValue = value"
-      :options="actorsOptions"
-      :rules="[value => !!value || 'Field is required', (value) => isLoading || actorsOptions.includes(value) || 'Field invalid']"
-      reactive-rules
-      :error="isActorError"
-    )
-      template(#no-option)
-        q-item
-          q-item-section.text-center
-            q-item-label(v-if="isLoading") Searching...
-            q-item-label(v-else) {{ actor ? 'Nothing found' : 'Search by actor' }}
-
-  div.col-6.col-sm
-    q-select(
-      outlined
-      dense
-      hide-bottom-space
-      bg-color="white"
-      label="Permission"
-      :loading="isLoading"
-      v-model="permissionValue"
-      :options="permissionsOptions"
-      :rules="[value => !!value || 'Field is required']"
-    )
-      template(#no-option)
-        q-item
-          q-item-section.text-center
-            q-item-label(v-if="isLoading") Searching...
-            q-item-label(v-else) {{ actor ? 'Nothing found' : 'Search by actor before' }}
-
-  div.col-auto(v-if="requiredAccounts?.accounts?.length > 0")
-    q-btn(flat padding="sm md" color="white" text-color="primary" title="Required accounts")
-      q-icon(name="people" class="cursor-pointer" size="20px")
-      q-popup-proxy(transition-show="scale" transition-hide="scale")
-        q-card
-          q-card-section
-            div.text-body1.text-weight-bold.text-center {{ requiredAccounts.permissionName }} ({{ requiredAccounts.threshold }})
-            q-separator.q-my-sm
-            table
-              tr(v-for="(item, index) in requiredAccounts.accounts" :key="index").q-pb-xs
-                td.text-body2.text-no-wrap {{ item.weight }}
-                td.text-body2.text-weight-bold.text-no-wrap.q-px-md {{ item.actor }}
-                td.text-body2.text-no-wrap {{ item.permission }}
-
-  div.col-auto
-    q-btn(
-      outline
-      padding="sm md"
-      color="white"
-      text-color="primary"
-      label="Remove"
-      @click="$emit('remove')"
-      :disabled="disabledRemoveButton"
-    )
-</template>
-
 <script lang="ts">
 import { defineComponent, ref, watch, computed, onMounted } from 'vue';
 import { api } from 'src/api';
 import { Name, UInt32 } from '@greymass/eosio';
 
 interface RequiredAccounts {
-  permissionName: Name;
-  threshold: UInt32;
-  accounts: {
-    weight: string;
-    actor: Name;
-    permission: Name;
-  }[];
+    permissionName: Name;
+    threshold: UInt32;
+    accounts: {
+        weight: string;
+        actor: Name;
+        permission: Name;
+    }[];
 }
 
 export default defineComponent({
@@ -232,3 +162,73 @@ export default defineComponent({
     },
 });
 </script>
+
+<template lang="pug">
+div.row.q-col-gutter-md.q-mb-md
+  div.col-6.col-sm
+    q-select(
+      outlined
+      dense
+      use-input
+      hide-selected
+      fill-input
+      hide-bottom-space
+      bg-color="white"
+      label="Actor"
+      :loading="isLoading"
+      :model-value="actorValue"
+      @input-value="(value) => actorValue = value"
+      :options="actorsOptions"
+      :rules="[value => !!value || 'Field is required', (value) => isLoading || actorsOptions.includes(value) || 'Field invalid']"
+      reactive-rules
+      :error="isActorError"
+    )
+      template(#no-option)
+        q-item
+          q-item-section.text-center
+            q-item-label(v-if="isLoading") Searching...
+            q-item-label(v-else) {{ actor ? 'Nothing found' : 'Search by actor' }}
+
+  div.col-6.col-sm
+    q-select(
+      outlined
+      dense
+      hide-bottom-space
+      bg-color="white"
+      label="Permission"
+      :loading="isLoading"
+      v-model="permissionValue"
+      :options="permissionsOptions"
+      :rules="[value => !!value || 'Field is required']"
+    )
+      template(#no-option)
+        q-item
+          q-item-section.text-center
+            q-item-label(v-if="isLoading") Searching...
+            q-item-label(v-else) {{ actor ? 'Nothing found' : 'Search by actor before' }}
+
+  div.col-auto(v-if="requiredAccounts?.accounts?.length > 0")
+    q-btn(flat padding="sm md" color="white" text-color="primary" title="Required accounts")
+      q-icon(name="people" class="cursor-pointer" size="20px")
+      q-popup-proxy(transition-show="scale" transition-hide="scale")
+        q-card
+          q-card-section
+            div.text-body1.text-weight-bold.text-center {{ requiredAccounts.permissionName }} ({{ requiredAccounts.threshold }})
+            q-separator.q-my-sm
+            table
+              tr(v-for="(item, index) in requiredAccounts.accounts" :key="index").q-pb-xs
+                td.text-body2.text-no-wrap {{ item.weight }}
+                td.text-body2.text-weight-bold.text-no-wrap.q-px-md {{ item.actor }}
+                td.text-body2.text-no-wrap {{ item.permission }}
+
+  div.col-auto
+    q-btn(
+      outline
+      padding="sm md"
+      color="white"
+      text-color="primary"
+      label="Remove"
+      @click="$emit('remove')"
+      :disabled="disabledRemoveButton"
+    )
+</template>
