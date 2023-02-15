@@ -72,5 +72,7 @@ module.exports = {
     'comma-dangle': ['error', 'always-multiline'],
     'indent': ['error', 4],
     'quotes': ['error', 'single'],
+    // 'max-len': ['error', { 'code': 120 }],
+    'eol-last': ['error', 'always'],
   }
 }
