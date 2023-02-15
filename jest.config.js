@@ -75,6 +75,7 @@ module.exports = {
         '^quasar$': 'quasar/dist/quasar.esm.prod.js',
         '^~/(.*)$': '<rootDir>/$1',
         '^src/(.*)$': '<rootDir>/src/$1',
+        '^test/(.*)$': '<rootDir>/test/$1',
         '^app/(.*)$': '<rootDir>/$1',
         '^components/(.*)$': '<rootDir>/src/components/$1',
         '^layouts/(.*)$': '<rootDir>/src/layouts/$1',
