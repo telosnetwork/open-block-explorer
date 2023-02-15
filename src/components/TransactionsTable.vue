@@ -106,6 +106,11 @@ export default defineComponent({
       paginationSettings.value.rowsPerPage = size;
       await onPaginationChange({ pagination: paginationSettings.value});
     };
+    const changePagination = async (page: number, size: number) => {
+      paginationSettings.value.page = page;
+      paginationSettings.value.rowsPerPage = size;
+      await onPaginationChange({ pagination: paginationSettings.value});
+    };
     const paginationSettings = ref<PaginationSettings>({
       sortBy: 'timestamp',
       descending: true,
@@ -114,8 +119,13 @@ export default defineComponent({
       rowsNumber: 10000
     });
 
-    const showFilters = ref<boolean>(!!account.value);
-    const useLiveTransactions = ref<boolean>(!showFilters.value);
+    const userWantLiveTransactions = ref<boolean>(true);
+    const enableLiveTransactions = computed(() => {
+      return (
+        filter.value === '' &&
+        paginationSettings.value.page === 1
+      );
+    });
 
     // actions filter
     const auxModel = ref('');
@@ -334,7 +344,7 @@ export default defineComponent({
       });
     };
 
-    const setPagination = async (
+    const applyPagination = async (
       page: string | number,
       size: string | number
     ) => {
@@ -344,6 +354,8 @@ export default defineComponent({
       if (size) {
         paginationSettings.value.rowsPerPage = Number(size);
       }
+      // try to restore live transactions
+      userWantLiveTransactions.value = enableLiveTransactions.value;
       await onRequest({
         pagination: paginationSettings.value
       });
@@ -354,13 +366,10 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      if (useLiveTransactions.value) {
-        interval.value = window.setInterval(() => {
-          //only automatically refresh data on first page, disable on page navigation
-          if (account.value == null && paginationSettings.value.page === 1)
-            void loadTableData();
-        }, FIVE_SECONDS);
-      }
+      interval.value = window.setInterval(() => {
+        if (userWantLiveTransactions.value && enableLiveTransactions.value)
+          void loadTableData();
+      }, FIVE_SECONDS);
     });
     onBeforeUnmount(() => {
       clearInterval(interval.value);
@@ -368,11 +377,25 @@ export default defineComponent({
     watch([account, actions], () => {
       void loadTableData();
     });
-    watch(filter, () => {
-      void loadTableData();
+    watch(filter, async () => {
+      if (paginationSettings.value.page !== 1) {
+        await changePagination(1,paginationSettings.value.rowsPerPage);
+      } else {
+        await loadTableData();
+      }
+
+      userWantLiveTransactions.value =
+        filter.value === '' &&
+        paginationSettings.value.page === 1;
+
     });
     watch(showAge, (val) => {
       localStorage.setItem('showAge', val ? 'true' : 'false');
+    });
+    watch(enableLiveTransactions, (val) => {
+      if (!val) {
+        userWantLiveTransactions.value = false;
+      }
     });
     // create a watch for pagination and make sure it is called inmediately
     watch(
@@ -392,7 +415,7 @@ export default defineComponent({
           size = Number(s);
         }
 
-        await setPagination(page, size);
+        await applyPagination(page, size);
       },
       { immediate: true }
     );
@@ -428,12 +451,13 @@ export default defineComponent({
       pageSizeOptions,
       changePageSize,
       switchPageSelector,
-      setPagination,
+      applyPagination,
+      changePagination,
       onPaginationChange,
       toggleDropdown,
       clearFilters,
-      showFilters,
-      useLiveTransactions
+      enableLiveTransactions,
+      userWantLiveTransactions
     };
   }
 });
@@ -442,103 +466,116 @@ export default defineComponent({
 <template lang="pug">
 div.row.col-12.q-mt-xs.justify-center.text-left
   div.row.trx-table--main-container
-    div.row.col-12.q-mt-lg.justify-end
-      div.col-auto.q-mr-xl
-          p.panel-title {{ tableTitle }}
-      q-space
-      div.col-auto.row.items-center.justify-end
-        q-toggle(v-model="showAge" left-label label="Show timestamp as relative")
-   
-      // -- Filters  --
-      div.col-auto.row.flex.filter-buttons(
-        v-if="showFilters"
-      )
-        q-btn(
-          v-if="filter !== ''"
-          dense
-          flat
-          round
-          icon="close"
-          color="primary"
-          @click="clearFilters"
-        )
-          span.q-pr-sm clear filters
+    div.row.col-12.q-mt-lg
+      // Left column
+      div.col-auto.q-mr-xl.justify-start.trx-table--topleft-col
+        div.row.flex-grow-1
+          div.col
+            // -- Title --
+            p.text-no-wrap.trx-table--title {{ tableTitle }}
+        div.row
+          div.col
+            q-toggle.text-no-wrap(v-model="showAge" left-label label="Show timestamp as relative")
+        div.row
+          div.col
+            q-toggle.text-no-wrap(
+              v-model="userWantLiveTransactions"
+              left-label
+              label="Live transactions"
+              :disable="!enableLiveTransactions"
+            )
+      // Right column
+      div.col.trx-table--topright-col
+        div.row.justify-end
+          // -- Filters  --
+          div.col-auto.row.flex.trx-table--filter-buttons
+            q-btn(
+              v-if="filter !== ''"
+              dense
+              flat
+              round
+              icon="close"
+              color="primary"
+              @click="clearFilters"
+            )
+              span.q-pr-sm clear filters
 
-        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-          no-caps
-          ref="accounts_dropdown"
-          :color="accountsDisplay === '' ? 'primary': 'secondary'"
-          :label="accountsDisplay === '' ? 'Accounts' : accountsDisplay"
-          @click="accountsModel = ''"
-        )
-          .q-pa-md.dropdown-filter
-            .row
-              AccountSearch(v-model="accountsModel" @update:model-value="$refs.accounts_dropdown.toggle()")
-        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-          ref="actions_dropdown"
-          :color="actionsDisplay === '' ? 'primary': 'secondary'"
-          :label="actionsDisplay === '' ? 'Actions' : actionsDisplay"
-        )
-          .q-pa-md.dropdown-filter
-            .row
-              q-input(
-                filled dense v-model='auxModel'
-                label="actions"
-                placeholder="transfer, sellrex, etc."
-                @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-              )
-                template(v-slot:prepend)
-                  q-icon.cursor-pointer(name='search')
-                template(v-slot:append)
-                  q-btn(
-                    size="sm"
-                    color='primary'
-                    @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                  ) OK
-        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-          :color="dateDisplay === '' ? 'primary': 'secondary'"
-          :label="dateDisplay === '' ? 'Date' : dateDisplay"
-        )
-          .q-pa-md.dropdown-filter
-            .row
-              q-input(filled dense v-model='fromDateModel' label="From")
-                template(v-slot:prepend)
-                  q-icon.cursor-pointer(name='event')
-                    q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
-                      q-date(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm')
-                        .row.items-center.justify-end
-                          q-btn(v-close-popup='' label='Close' color='primary' flat)
-                template(v-slot:append)
-                  q-icon.cursor-pointer(name='access_time')
-                    q-popup-proxy(cover transition-show='scale' transition-hide='scale')
-                      q-time(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm' format24h)
-                        .row.items-center.justify-end
-                          q-btn(v-close-popup='' label='Close' color='primary' flat)
-            .row.justify-center.full-width.q-py-xs
-              q-icon(name="arrow_downward")
-            .row
-              q-input(filled dense v-model='toDateModel' label="To")
-                template(v-slot:prepend)
-                  q-icon.cursor-pointer(name='event')
-                    q-popup-proxy(cover transition-show='scale' transition-hide='scale')
-                      q-date(v-model='toDateModel' mask='YYYY-MM-DD HH:mm')
-                        .row.items-center.justify-end
-                          q-btn(v-close-popup='' label='Close' color='primary' flat)
-                template(v-slot:append)
-                  q-icon.cursor-pointer(name='access_time')
-                    q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
-                      q-time(v-model='toDateModel' mask='YYYY-MM-DD HH:mm' format24h)
-                        .row.items-center.justify-end
-                          q-btn(v-close-popup='' label='Close' color='primary' flat)
-        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-          ref="token_dropdown"
-          :color="!tokenDisplay ? 'primary': 'secondary'"
-          :label="!tokenDisplay ? 'Token' : tokenDisplay"
-        )
-          .q-pa-md.dropdown-filter
-            .row
-              TokenSearch(v-model='tokenModel' @update:model-value="toggleDropdown($refs.token_dropdown)")
+            q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+              no-caps
+              ref="accounts_dropdown"
+              :color="accountsDisplay === '' ? 'primary': 'secondary'"
+              :label="accountsDisplay === '' ? 'Accounts' : accountsDisplay"
+              @click="accountsModel = ''"
+            )
+              .q-pa-md.dropdown-filter
+                .row
+                  AccountSearch(v-model="accountsModel" @update:model-value="$refs.accounts_dropdown.toggle()")
+            q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+              ref="actions_dropdown"
+              :color="actionsDisplay === '' ? 'primary': 'secondary'"
+              :label="actionsDisplay === '' ? 'Actions' : actionsDisplay"
+            )
+              .q-pa-md.dropdown-filter
+                .row
+                  q-input(
+                    filled dense v-model='auxModel'
+                    label="actions"
+                    placeholder="transfer, sellrex, etc."
+                    @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                    @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                  )
+                    template(v-slot:prepend)
+                      q-icon.cursor-pointer(name='search')
+                    template(v-slot:append)
+                      q-btn(
+                        size="sm"
+                        color='primary'
+                        @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                      ) OK
+            q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+              :color="dateDisplay === '' ? 'primary': 'secondary'"
+              :label="dateDisplay === '' ? 'Date' : dateDisplay"
+            )
+              .q-pa-md.dropdown-filter
+                .row
+                  q-input(filled dense v-model='fromDateModel' label="From")
+                    template(v-slot:prepend)
+                      q-icon.cursor-pointer(name='event')
+                        q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
+                          q-date(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm')
+                            .row.items-center.justify-end
+                              q-btn(v-close-popup='' label='Close' color='primary' flat)
+                    template(v-slot:append)
+                      q-icon.cursor-pointer(name='access_time')
+                        q-popup-proxy(cover transition-show='scale' transition-hide='scale')
+                          q-time(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm' format24h)
+                            .row.items-center.justify-end
+                              q-btn(v-close-popup='' label='Close' color='primary' flat)
+                .row.justify-center.full-width.q-py-xs
+                  q-icon(name="arrow_downward")
+                .row
+                  q-input(filled dense v-model='toDateModel' label="To")
+                    template(v-slot:prepend)
+                      q-icon.cursor-pointer(name='event')
+                        q-popup-proxy(cover transition-show='scale' transition-hide='scale')
+                          q-date(v-model='toDateModel' mask='YYYY-MM-DD HH:mm')
+                            .row.items-center.justify-end
+                              q-btn(v-close-popup='' label='Close' color='primary' flat)
+                    template(v-slot:append)
+                      q-icon.cursor-pointer(name='access_time')
+                        q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
+                          q-time(v-model='toDateModel' mask='YYYY-MM-DD HH:mm' format24h)
+                            .row.items-center.justify-end
+                              q-btn(v-close-popup='' label='Close' color='primary' flat)
+            q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+              ref="token_dropdown"
+              :color="!tokenDisplay ? 'primary': 'secondary'"
+              :label="!tokenDisplay ? 'Token' : tokenDisplay"
+            )
+              .q-pa-md.dropdown-filter
+                .row
+                  TokenSearch(v-model='tokenModel' @update:model-value="toggleDropdown($refs.token_dropdown)")
+
     q-separator.row.col-12.q-mt-md.separator
     div.row.col-12.table-container
       q-table.q-mt-lg.row.trx-table--fixed-layout(
@@ -637,9 +674,16 @@ $medium:920px
 .table-container
   overflow-x: auto
 
+.trx-table--title
+  font-size: 22.75px
+  font-style: normal
+  font-weight: 400
+  line-height: 27px
+
 .trx-table--main-container
   width: 90%
-
+.trx-table--filter-buttons
+  gap: 10px 0px
 .trx-table--fixed-layout
   .q-table
     table-layout: fixed
@@ -657,6 +701,13 @@ $medium:920px
       width: 41%
 
 @media screen and (max-width: $medium)
+  .trx-table--topright-col
+    justify-content: end
+  .trx-table--topleft-col, .trx-table--topright-col
+    display: flex
+    padding-left: 16px
+    padding-right: 16px
+    min-width: 100% !important
   .trx-table--main-container
     width: 100%
   .trx-table--fixed-layout
@@ -673,6 +724,11 @@ $medium:920px
         width: 17%
       th:nth-child(4)
         width: 54%
+
+@media screen and (max-width: 665px)
+  .trx-table--topleft-col, .trx-table--topright-col
+    display: block
+
 
 .q-table--no-wrap td
   word-break: break-all

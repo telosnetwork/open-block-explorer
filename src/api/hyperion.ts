@@ -43,9 +43,10 @@ const tokenListPromise = fetch(url)
   .then((object) => object.tokens)
   .then((originals: any[]) =>
     originals.map(
-      (token: { logo_sm: string }) =>
+      (token: { logo_sm: string; account: string }) =>
         ({
           ...token,
+          contract: token.account,
           logo: token.logo_sm,
           // currently, the token list is only for telos, so we can hardcode this for now
           chain: 'telos'
@@ -53,7 +54,6 @@ const tokenListPromise = fetch(url)
     )
   )
   .then((list) => {
-    console.log('Token list loaded', list);
     return list;
   })
   .catch((error) => {

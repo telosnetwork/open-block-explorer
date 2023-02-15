@@ -44,20 +44,7 @@ export default defineComponent({
         setTimeout(async () => {
           const result = await searchAccounts(value);
           if (inputValue.value === value) {
-            console.log(
-              'searchAccounts OK - inputValue: ',
-              inputValue.value,
-              ' value: ',
-              value
-            );
             resolve(result);
-          } else {
-            console.log(
-              'searchAccounts CANCELLED - inputValue: ',
-              inputValue.value,
-              ' value: ',
-              value
-            );
           }
         }, 500);
       });
