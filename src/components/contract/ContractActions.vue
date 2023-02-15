@@ -44,9 +44,11 @@ export default defineComponent({
                         memo.value[key] === 'True' ||
                         memo.value[key] === 'T' ||
                         memo.value[key] === 't'
-                    )
-                    {memo.value[key] = true;}
-                    else {memo.value[key] = false;}
+                    ) {
+                        memo.value[key] = true;
+                    } else {
+                        memo.value[key] = false;
+                    }
                 }
             }
         }

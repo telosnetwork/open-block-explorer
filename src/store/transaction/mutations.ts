@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { TransactionStateInterface } from './state';
+import { TransactionStateInterface } from 'src/store/transaction/state';
 import { ActionData } from 'src/types';
 
 export const mutations: MutationTree<TransactionStateInterface> = {

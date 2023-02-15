@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
-import { StateInterface } from '../index';
-import { TransactionStateInterface } from './state';
+import { StateInterface } from 'src/store/index';
+import { TransactionStateInterface } from 'src/store/transaction/state';
 import { api } from 'src/api/index';
 
 export const actions: ActionTree<TransactionStateInterface, StateInterface> = {

@@ -1,4 +1,4 @@
-import BaseChain from '../../BaseChain';
+import BaseChain from 'src/config/BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { getEmptyPriceChartData } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';

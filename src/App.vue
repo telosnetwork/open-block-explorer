@@ -1,7 +1,7 @@
 <script lang="ts">
 import { setCssVar } from 'quasar';
 import ConfigManager from 'src/config/ConfigManager';
-import { themeProps } from './types/Theme';
+import { themeProps } from 'src/types/Theme';
 
 const chain = ConfigManager.get().getCurrentChain();
 const chainName = chain.getName();
@@ -12,7 +12,9 @@ setMetaData();
 
 function setTheme(): void {
     for (let themeVar of themeProps) {
-        if (theme[themeVar]) {setCssVar(themeVar, theme[themeVar]);}
+        if (theme[themeVar]) {
+            setCssVar(themeVar, theme[themeVar]);
+        }
     }
 }
 

@@ -16,7 +16,7 @@ PRODUCER_BUCKET_URL=
 
  */
 
-import BaseChain from '../../BaseChain';
+import BaseChain from 'src/config/BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { getEmptyPriceChartData } from 'src/api/price';

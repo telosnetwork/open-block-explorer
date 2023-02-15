@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
-import { StateInterface } from '../index';
-import { ContractStateInterface } from './state';
+import { StateInterface } from 'src/store/index';
+import { ContractStateInterface } from 'src/store/contract/state';
 
 export const actions: ActionTree<ContractStateInterface, StateInterface> = {
     async setContract({ dispatch, commit }, contractAddress) {

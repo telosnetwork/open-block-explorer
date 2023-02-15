@@ -150,7 +150,9 @@ export default defineComponent({
         });
 
         watch(waitToSearch, async (currentValue) => {
-            if (currentValue) {return;}
+            if (currentValue) {
+                return;
+            }
 
             const queryValue = props.actor.toLowerCase();
             actorsOptions.value = [];
@@ -210,7 +212,9 @@ export default defineComponent({
         }
 
         const requiredAccounts = computed(() => {
-            if (!permissionValue.value) {return [];}
+            if (!permissionValue.value) {
+                return [];
+            }
             return allRequiredAccounts.value.find(
                 item => item.permissionName.toString() === permissionValue.value,
             );

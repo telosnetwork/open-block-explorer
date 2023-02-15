@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import WalletModal from './WalletModal.vue';
+import WalletModal from 'src/components/WalletModal.vue';
 import { useStore } from 'src/store';
 import { authenticators } from 'src/boot/ual';
 import { Authenticator } from 'universal-authenticator-library';

@@ -1,5 +1,5 @@
-import chainsConfig from './configuredChains';
-import { Chain } from '../types/Chain';
+import chainsConfig from 'src/config/configuredChains';
+import { Chain } from 'src/types/Chain';
 import { LocalStorage } from 'quasar';
 
 export function getChain(): Chain {
@@ -70,7 +70,9 @@ export default class ConfigManager {
 
   private findChain(chainName: string) {
       const fromMainnet = this.mainnets.find(c => c.getName() === chainName);
-      if (fromMainnet) {return fromMainnet;}
+      if (fromMainnet) {
+          return fromMainnet;
+      }
 
       return this.testnets.find(c => c.getName() === chainName);
   }

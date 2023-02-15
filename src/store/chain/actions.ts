@@ -1,6 +1,6 @@
 import { ActionTree } from 'vuex';
-import { StateInterface } from '../index';
-import { ChainStateInterface } from './state';
+import { StateInterface } from 'src/store/index';
+import { ChainStateInterface } from 'src/store/chain/state';
 import { BP, GetTableRowsParams } from 'src/types';
 import axios from 'axios';
 import { api } from 'src/api/index';

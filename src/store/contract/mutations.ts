@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { ContractStateInterface } from './state';
+import { ContractStateInterface } from 'src/store/contract/state';
 
 export const mutations: MutationTree<ContractStateInterface> = {
     setContract(state: ContractStateInterface, contractAddress: string) {

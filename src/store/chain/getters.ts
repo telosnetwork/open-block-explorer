@@ -1,7 +1,7 @@
 import { Token } from 'src/types';
 import { GetterTree } from 'vuex';
-import { StateInterface } from '../index';
-import { ChainStateInterface } from './state';
+import { StateInterface } from 'src/store/index';
+import { ChainStateInterface } from 'src/store/chain/state';
 
 export const getters: GetterTree<ChainStateInterface, StateInterface> = {
     getToken({ token }): Token {

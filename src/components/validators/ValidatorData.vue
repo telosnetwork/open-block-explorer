@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
-import ValidatorDataTable from './ValidatorDataTable.vue';
+import ValidatorDataTable from 'src/components/validators/ValidatorDataTable.vue';
 import { api } from 'src/api';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
@@ -26,8 +26,11 @@ export default defineComponent({
             () => (Number(lastWeight.value).toFixed(2) || '0') + ` ${symbol}`,
         );
         const activecount = computed(() => {
-            if (store.state.chain.producers.length > 42) {return 42;}
-            else {return store.state.chain.producers.length;}
+            if (store.state.chain.producers.length > 42) {
+                return 42;
+            } else {
+                return store.state.chain.producers.length;
+            }
         });
         const lastUpdated = ref<string>('');
         const producerVotes = ref<Name[]>([]);
@@ -54,7 +57,9 @@ export default defineComponent({
             try {
                 let qty: string = asset.split(' ')[0];
                 let val: number = parseFloat(qty);
-                if (decimals > -1) {qty = val.toFixed(decimals);}
+                if (decimals > -1) {
+                    qty = val.toFixed(decimals);
+                }
                 return val;
             } catch (error) {
                 return 0;

@@ -1,4 +1,4 @@
-import { Chain } from '../types/Chain';
+import { Chain } from 'src/types/Chain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';

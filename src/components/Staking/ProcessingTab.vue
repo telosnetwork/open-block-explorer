@@ -19,7 +19,9 @@ export default defineComponent({
         const maturingRex = computed(() => store.state?.account.maturingRex);
 
         function refundProgress(): number {
-            if (maturingRex.value === '0') {return 0;}
+            if (maturingRex.value === '0') {
+                return 0;
+            }
             let diff =
         Math.round(
             new Date(
@@ -35,7 +37,9 @@ export default defineComponent({
         }
 
         function maturitiesCountdown(): string {
-            if (maturingRex.value === '0') {return 'No maturing TLOS';}
+            if (maturingRex.value === '0') {
+                return 'No maturing TLOS';
+            }
             let diff =
         Math.round(
             new Date(

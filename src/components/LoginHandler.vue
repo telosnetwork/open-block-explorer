@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue';
-import LoginHandlerDropdown from './LoginHandlerDropdown.vue';
-import WalletModal from './WalletModal.vue';
+import LoginHandlerDropdown from 'src/components/LoginHandlerDropdown.vue';
+import WalletModal from 'src/components/WalletModal.vue';
 import { Authenticator } from 'universal-authenticator-library';
 import { useStore } from 'src/store';
 import { authenticators } from 'src/boot/ual';

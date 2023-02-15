@@ -22,7 +22,7 @@ import {
     getProducers,
     getABI,
     getProducerSchedule,
-} from './hyperion'; //  e.g. './new-service' method name stays the same
+} from 'src/api/hyperion'; //  e.g. './new-service' method name stays the same
 
 import {
     getAccount,
@@ -31,9 +31,9 @@ import {
     getTokenBalances,
     deserializeActionData,
     serializeActionData,
-} from './eosio_core';
+} from 'src/api/eosio_core';
 
-import { getApy } from './telosApi';
+import { getApy } from 'src/api/telosApi';
 
 export const api = {
     getAccount,

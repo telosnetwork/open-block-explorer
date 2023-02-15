@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { AccountStateInterface } from './state';
+import { AccountStateInterface } from 'src/store/account/state';
 import { Action, Rexbal, ABI } from 'src/types';
 import { User } from 'universal-authenticator-library';
 import { markRaw } from 'vue';

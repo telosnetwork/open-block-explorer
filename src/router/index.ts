@@ -1,7 +1,7 @@
 import { route } from 'quasar/wrappers';
 import { createRouter, createWebHistory } from 'vue-router';
-import { StateInterface } from '../store';
-import routes from './routes';
+import { StateInterface } from 'src/store';
+import routes from 'src/router/routes';
 
 /*
  * If not building with SSR mode, you can

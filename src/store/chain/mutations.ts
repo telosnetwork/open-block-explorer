@@ -1,6 +1,6 @@
 import { Token, BP, Producer } from 'src/types';
 import { MutationTree } from 'vuex';
-import { ChainStateInterface } from './state';
+import { ChainStateInterface } from 'src/store/chain/state';
 
 export const mutations: MutationTree<ChainStateInterface> = {
     setToken(state: ChainStateInterface, token: Token) {

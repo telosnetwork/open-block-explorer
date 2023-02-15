@@ -86,5 +86,9 @@ module.exports = {
     'arrow-body-style': ['error', 'as-needed'],
     'object-property-newline': ['error', { 'allowAllPropertiesOnSameLine': true }],
     'curly': 'error',
+    'brace-style': ['error', '1tbs', { 'allowSingleLine': false }],
+    'no-restricted-imports': ['error', {
+      'patterns': ['.*'], // disallow relative imports
+    }],
   }
 }

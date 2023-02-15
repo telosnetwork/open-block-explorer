@@ -6,14 +6,14 @@ import {
     useStore as vuexUseStore,
 } from 'vuex';
 
-import { contract } from './contract';
-import { ContractStateInterface } from './contract/state';
-import { chain } from './chain';
-import { ChainStateInterface } from './chain/state';
-import { account } from './account';
-import { AccountStateInterface } from './account/state';
-import { transaction } from './transaction';
-import { TransactionStateInterface } from './transaction/state';
+import { contract } from 'src/store/contract';
+import { ContractStateInterface } from 'src/store/contract/state';
+import { chain } from 'src/store/chain';
+import { ChainStateInterface } from 'src/store/chain/state';
+import { account } from 'src/store/account';
+import { AccountStateInterface } from 'src/store/account/state';
+import { transaction } from 'src/store/transaction';
+import { TransactionStateInterface } from 'src/store/transaction/state';
 
 /*
  * If not building with SSR mode, you can

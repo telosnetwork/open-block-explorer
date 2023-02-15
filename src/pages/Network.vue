@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
-import Index from './Index.vue';
+import Index from 'src/pages/Index.vue';
 import PriceChart from 'components/PriceChart.vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 import Map from 'components/Map.vue';
@@ -22,7 +22,9 @@ export default defineComponent({
         const displayMap = ConfigManager.get().getCurrentChain().getMapDisplay();
         onMounted(() => {
             window.setInterval(() => {
-                if (displayMap) {void store.dispatch('chain/updateBlockData');}
+                if (displayMap) {
+                    void store.dispatch('chain/updateBlockData');
+                }
             }, 2000);
         });
 

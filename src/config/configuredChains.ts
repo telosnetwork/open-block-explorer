@@ -1,10 +1,10 @@
-import EOS from './chains/eos';
-import Telos from './chains/telos';
-import UX from './chains/ux';
-import Wax from './chains/wax';
+import EOS from 'src/config/chains/eos';
+import Telos from 'src/config/chains/telos';
+import UX from 'src/config/chains/ux';
+import Wax from 'src/config/chains/wax';
 
-import TelosTestnet from './chains/telos-testnet';
-import Jungle from './chains/jungle';
+import TelosTestnet from 'src/config/chains/telos-testnet';
+import Jungle from 'src/config/chains/jungle';
 
 import { ChainsConfig } from 'src/types/ChainsConfig';
 

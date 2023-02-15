@@ -63,7 +63,9 @@ export default defineComponent({
             try {
                 let qty: string = asset.split(' ')[0];
                 let val: number = parseFloat(qty);
-                if (decimals > -1) {qty = val.toFixed(decimals);}
+                if (decimals > -1) {
+                    qty = val.toFixed(decimals);
+                }
                 return val;
             } catch (error) {
                 return 0;

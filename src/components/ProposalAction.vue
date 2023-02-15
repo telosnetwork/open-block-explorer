@@ -162,7 +162,9 @@ export default defineComponent({
         );
 
         watch(waitToSearch, async (currentValue) => {
-            if (currentValue) {return;}
+            if (currentValue) {
+                return;
+            }
 
             const queryValue = action.value.account.toLowerCase();
 
@@ -178,7 +180,9 @@ export default defineComponent({
         });
 
         onMounted(async () => {
-            if (!props.modelValue.account || !props.modelValue.name) {return;}
+            if (!props.modelValue.account || !props.modelValue.name) {
+                return;
+            }
 
             const queryValue = props.modelValue.account.toLowerCase();
 
@@ -197,12 +201,16 @@ export default defineComponent({
         });
 
         const actionOptions = computed(() => {
-            if (structs.value.length === 0) {return [];}
+            if (structs.value.length === 0) {
+                return [];
+            }
             return structs.value.map(item => item.name);
         });
 
         const fields = computed(() => {
-            if (structs.value.length === 0) {return [];}
+            if (structs.value.length === 0) {
+                return [];
+            }
 
             const { fields } = structs.value.find(
                 item => item.name === action.value.name,

@@ -11,7 +11,7 @@ import {
     API,
     PublicKey,
 } from '@greymass/eosio';
-import { Transaction } from './Transaction';
+import { Transaction } from 'src/types/Transaction';
 import {
     AccountDetails,
     Action,
@@ -21,7 +21,7 @@ import {
     Block,
     ActionData,
     Get_actions,
-} from './Actions';
+} from 'src/types/Actions';
 
 export type TableIndexType =
   | Name

@@ -246,8 +246,9 @@ export default defineComponent({
         onMounted(() => {
             interval.value = window.setInterval(() => {
                 //only automatically refresh data on first page, disable on page navigation
-                if (account.value === null && paginationSettings.value.page === 1)
-                {void loadTableData();}
+                if (account.value === null && paginationSettings.value.page === 1) {
+                    void loadTableData();
+                }
             }, FIVE_SECONDS);
         });
         onBeforeUnmount(() => {

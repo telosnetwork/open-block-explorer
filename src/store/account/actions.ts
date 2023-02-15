@@ -1,7 +1,7 @@
 import { Authenticator } from 'universal-authenticator-library';
 import { ActionTree } from 'vuex';
-import { StateInterface } from '../index';
-import { AccountStateInterface } from './state';
+import { StateInterface } from 'src/store/index';
+import { AccountStateInterface } from 'src/store/account/state';
 import { api } from 'src/api/index';
 import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';

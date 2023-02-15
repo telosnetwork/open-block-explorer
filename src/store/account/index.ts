@@ -1,9 +1,9 @@
 import { Module } from 'vuex';
-import { StateInterface } from '../index';
-import { state, AccountStateInterface } from './state';
-import { getters } from './getters';
-import { mutations } from './mutations';
-import { actions } from './actions';
+import { StateInterface } from 'src/store/index';
+import { state, AccountStateInterface } from 'src/store/account/state';
+import { getters } from 'src/store/account/getters';
+import { mutations } from 'src/store/account/mutations';
+import { actions } from 'src/store/account/actions';
 
 export const account: Module<AccountStateInterface, StateInterface> = {
     namespaced: true,
