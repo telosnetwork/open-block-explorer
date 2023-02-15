@@ -5,120 +5,120 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
 
 export default defineComponent({
-  name: 'SavingsTab',
-  components: {
-    ViewTransaction,
-  },
-  setup() {
-    const store = useStore();
-    const openTransaction = ref<boolean>(false);
-    const stakingAccount = computed(
-      (): string => store.state.account.accountName,
-    );
-    const toSavingAmount = ref<string>('');
-    const fromSavingAmount = ref<string>('');
-    const transactionId = ref<string>(store.state.account.TransactionId);
-    const transactionError = ref<unknown>(store.state.account.TransactionError);
-    const accountData = computed((): API.v1.AccountObject => {
-      return store.state?.account.data;
-    });
-    const maturedRex = computed(() => {
-      return store.state?.account.maturedRex;
-    });
-    const rexSavings = computed(() => {
-      return store.state?.account.savingsRex;
-    });
+    name: 'SavingsTab',
+    components: {
+        ViewTransaction,
+    },
+    setup() {
+        const store = useStore();
+        const openTransaction = ref<boolean>(false);
+        const stakingAccount = computed(
+            (): string => store.state.account.accountName,
+        );
+        const toSavingAmount = ref<string>('');
+        const fromSavingAmount = ref<string>('');
+        const transactionId = ref<string>(store.state.account.TransactionId);
+        const transactionError = ref<unknown>(store.state.account.TransactionError);
+        const accountData = computed((): API.v1.AccountObject => {
+            return store.state?.account.data;
+        });
+        const maturedRex = computed(() => {
+            return store.state?.account.maturedRex;
+        });
+        const rexSavings = computed(() => {
+            return store.state?.account.savingsRex;
+        });
 
-    function formatDec() {
-      if (toSavingAmount.value != '') {
-        toSavingAmount.value = Number(toSavingAmount.value)
-          .toLocaleString('en-US', {
-            style: 'decimal',
-            maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision,
-          })
-          .replace(/[^0-9.]/g, '');
-      }
-      if (fromSavingAmount.value != '') {
-        fromSavingAmount.value = Number(fromSavingAmount.value)
-          .toLocaleString('en-US', {
-            style: 'decimal',
-            maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision,
-          })
-          .replace(/[^0-9.]/g, '');
-      }
-    }
+        function formatDec() {
+            if (toSavingAmount.value != '') {
+                toSavingAmount.value = Number(toSavingAmount.value)
+                    .toLocaleString('en-US', {
+                        style: 'decimal',
+                        maximumFractionDigits: store.state.chain.token.precision,
+                        minimumFractionDigits: store.state.chain.token.precision,
+                    })
+                    .replace(/[^0-9.]/g, '');
+            }
+            if (fromSavingAmount.value != '') {
+                fromSavingAmount.value = Number(fromSavingAmount.value)
+                    .toLocaleString('en-US', {
+                        style: 'decimal',
+                        maximumFractionDigits: store.state.chain.token.precision,
+                        minimumFractionDigits: store.state.chain.token.precision,
+                    })
+                    .replace(/[^0-9.]/g, '');
+            }
+        }
 
-    async function moveToSavings() {
-      void store.dispatch('account/resetTransaction');
-      if (
-        toSavingAmount.value === '0.0000' ||
+        async function moveToSavings() {
+            void store.dispatch('account/resetTransaction');
+            if (
+                toSavingAmount.value === '0.0000' ||
         toSavingAmount.value === '' ||
         Number(toSavingAmount.value) >= assetToAmount(maturedRex.value)
-      ) {
-        return;
-      }
-      await store.dispatch('account/moveToSavings', {
-        amount: toSavingAmount.value,
-      });
-      openTransaction.value = true;
-    }
+            ) {
+                return;
+            }
+            await store.dispatch('account/moveToSavings', {
+                amount: toSavingAmount.value,
+            });
+            openTransaction.value = true;
+        }
 
-    async function moveFromSavings() {
-      void store.dispatch('account/resetTransaction');
-      if (
-        fromSavingAmount.value === '0.0000' ||
+        async function moveFromSavings() {
+            void store.dispatch('account/resetTransaction');
+            if (
+                fromSavingAmount.value === '0.0000' ||
         fromSavingAmount.value === '' ||
         Number(fromSavingAmount.value) >= assetToAmount(rexSavings.value)
-      ) {
-        return;
-      }
-      await store.dispatch('account/moveFromSavings', {
-        amount: fromSavingAmount.value,
-      });
-      openTransaction.value = true;
-    }
+            ) {
+                return;
+            }
+            await store.dispatch('account/moveFromSavings', {
+                amount: fromSavingAmount.value,
+            });
+            openTransaction.value = true;
+        }
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
+        function assetToAmount(asset: string, decimals = -1): number {
+            try {
+                let qty: string = asset.split(' ')[0];
+                let val: number = parseFloat(qty);
+                if (decimals > -1) qty = val.toFixed(decimals);
+                return val;
+            } catch (error) {
+                return 0;
+            }
+        }
 
-    function setMaxSavingsValue() {
-      toSavingAmount.value = assetToAmount(maturedRex.value).toString();
-      void formatDec();
-    }
+        function setMaxSavingsValue() {
+            toSavingAmount.value = assetToAmount(maturedRex.value).toString();
+            void formatDec();
+        }
 
-    function setMaxWithdrawValue() {
-      fromSavingAmount.value = assetToAmount(rexSavings.value).toString();
-      void formatDec();
-    }
+        function setMaxWithdrawValue() {
+            fromSavingAmount.value = assetToAmount(rexSavings.value).toString();
+            void formatDec();
+        }
 
-    return {
-      openTransaction,
-      stakingAccount,
-      accountData,
-      toSavingAmount,
-      fromSavingAmount,
-      maturedRex,
-      rexSavings,
-      transactionId,
-      transactionError,
-      formatDec,
-      moveToSavings,
-      moveFromSavings,
-      assetToAmount,
-      setMaxSavingsValue,
-      setMaxWithdrawValue,
-    };
-  },
+        return {
+            openTransaction,
+            stakingAccount,
+            accountData,
+            toSavingAmount,
+            fromSavingAmount,
+            maturedRex,
+            rexSavings,
+            transactionId,
+            transactionError,
+            formatDec,
+            moveToSavings,
+            moveFromSavings,
+            assetToAmount,
+            setMaxSavingsValue,
+            setMaxWithdrawValue,
+        };
+    },
 });
 </script>
 

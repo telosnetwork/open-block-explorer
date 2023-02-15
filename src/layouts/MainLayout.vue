@@ -4,19 +4,19 @@ import Header from 'components/Header.vue';
 import ChainsSidebar from 'components/ChainsSidebar.vue';
 
 export default {
-  name: 'MainLayout',
-  components: {
-    Header,
-    Footer,
-    ChainsSidebar,
-  },
-  setup() {
-    return {
-      showSidebar: () => {
-        return process.env.SHOW_SIDEBAR === 'true';
-      },
-    };
-  },
+    name: 'MainLayout',
+    components: {
+        Header,
+        Footer,
+        ChainsSidebar,
+    },
+    setup() {
+        return {
+            showSidebar: () => {
+                return process.env.SHOW_SIDEBAR === 'true';
+            },
+        };
+    },
 };
 </script>
 

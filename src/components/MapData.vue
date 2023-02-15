@@ -3,33 +3,33 @@ import { defineComponent, computed } from 'vue';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'MapData',
-  props: {
-    mobile: {
-      type: Boolean,
-      required: true,
+    name: 'MapData',
+    props: {
+        mobile: {
+            type: Boolean,
+            required: true,
+        },
     },
-  },
-  setup(props) {
-    const store = useStore();
-    const HeadBlockProducer = computed(
-      (): string => store.state.chain.head_block_producer,
-    );
-    const HeadBlock = computed((): number => store.state.chain.head_block_num);
-    const lastIrreversibleBlock = computed(
-      (): number => store.state.chain.last_irreversible_block_num,
-    );
-    const isMobile = computed((): boolean => {
-      return props.mobile;
-    });
+    setup(props) {
+        const store = useStore();
+        const HeadBlockProducer = computed(
+            (): string => store.state.chain.head_block_producer,
+        );
+        const HeadBlock = computed((): number => store.state.chain.head_block_num);
+        const lastIrreversibleBlock = computed(
+            (): number => store.state.chain.last_irreversible_block_num,
+        );
+        const isMobile = computed((): boolean => {
+            return props.mobile;
+        });
 
-    return {
-      isMobile,
-      HeadBlock,
-      HeadBlockProducer,
-      lastIrreversibleBlock,
-    };
-  },
+        return {
+            isMobile,
+            HeadBlock,
+            HeadBlockProducer,
+            lastIrreversibleBlock,
+        };
+    },
 });
 </script>
 

@@ -63,198 +63,198 @@ q-table(
 
 <script lang="ts">
 import {
-  defineComponent,
-  ref,
-  onMounted,
-  watch,
-  PropType,
-  computed,
+    defineComponent,
+    ref,
+    onMounted,
+    watch,
+    PropType,
+    computed,
 } from 'vue';
 import { useQuasar } from 'quasar';
 import {
-  GetProposals,
-  ProposalTableRow,
-  PaginationSettings,
-  Error,
+    GetProposals,
+    ProposalTableRow,
+    PaginationSettings,
+    Error,
 } from 'src/types';
 import { api } from 'src/api';
 
 const initialStatePagination = {
-  sortBy: 'desc',
-  descending: false,
-  page: 1,
-  rowsPerPage: 20,
-  rowsNumber: 20,
+    sortBy: 'desc',
+    descending: false,
+    page: 1,
+    rowsPerPage: 20,
+    rowsNumber: 20,
 };
 
 export default defineComponent({
-  name: 'ProposalTable',
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    account: {
-      type: String,
-      required: true,
-    },
-    type: {
-      type: String as PropType<
+    name: 'ProposalTable',
+    props: {
+        title: {
+            type: String,
+            required: true,
+        },
+        account: {
+            type: String,
+            required: true,
+        },
+        type: {
+            type: String as PropType<
         'needsYourSignature' | 'proposalsCreated' | 'allProposals'
       >,
-      required: true,
+            required: true,
+        },
+        blockProducers: {
+            type: Array as PropType<string[]>,
+        },
     },
-    blockProducers: {
-      type: Array as PropType<string[]>,
-    },
-  },
-  setup(setupProps) {
-    const $q = useQuasar();
+    setup(setupProps) {
+        const $q = useQuasar();
 
-    const rows = ref<ProposalTableRow[]>([]);
-    const pagination = ref(initialStatePagination);
-    const isSigned = ref(false);
-    const isExecuted = ref(false);
-    const blockProducer = ref('');
-    const filterDropdown = ref(false);
+        const rows = ref<ProposalTableRow[]>([]);
+        const pagination = ref(initialStatePagination);
+        const isSigned = ref(false);
+        const isExecuted = ref(false);
+        const blockProducer = ref('');
+        const filterDropdown = ref(false);
 
-    const hasSomeFilterActive = computed(
-      () => isSigned.value || isExecuted.value || blockProducer.value,
-    );
-
-    const columns = [
-      {
-        name: 'proposalName',
-        align: 'left',
-        label: 'PROPOSAL NAME',
-        field: 'proposalNameSliced',
-      },
-      {
-        name: 'approvalStatus',
-        align: 'left',
-        label: 'APPROVAL STATUS',
-        field: 'approvalStatus',
-      },
-      {
-        name: 'proposer',
-        align: 'left',
-        label: 'PROPOSER',
-        field: 'proposer',
-      },
-    ];
-
-    async function onRequest(props: { pagination: PaginationSettings }) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      const { account } = setupProps;
-
-      const proposer = setupProps.type === 'proposalsCreated' ? account : '';
-
-      let requested = '';
-      if (setupProps.type === 'allProposals' && blockProducer.value) {
-        requested = blockProducer.value;
-      }
-      if (setupProps.type === 'needsYourSignature' && !isSigned.value) {
-        requested = account;
-      }
-
-      let provided = '';
-      if (setupProps.type === 'needsYourSignature' && isSigned.value) {
-        provided = account;
-      }
-
-      try {
-        const data: GetProposals = await api.getProposals({
-          proposer,
-          requested,
-          provided,
-          executed: isExecuted.value,
-          limit: rowsPerPage,
-          skip: (page - 1) * rowsPerPage,
-        });
-
-        pagination.value = {
-          rowsNumber: data.total.value,
-          page: page,
-          rowsPerPage: rowsPerPage,
-          sortBy: sortBy,
-          descending: descending,
-        };
-
-        rows.value = data.proposals.map((proposal) => {
-          const approvalStatus = `${proposal.provided_approvals.length}/${
-            proposal.provided_approvals.length +
-            proposal.requested_approvals.length
-          }`;
-
-          return {
-            primaryKey: proposal.primary_key,
-            proposalName: proposal.proposal_name,
-            approvalStatus,
-            proposer: proposal.proposer,
-          };
-        });
-      } catch (e) {
-        const error = JSON.parse(JSON.stringify(e)) as Error;
-        $q.notify({
-          color: 'negative',
-          message: error?.cause?.json?.error?.what || 'Unable load proposals',
-          actions: [
-            {
-              label: 'Dismiss',
-              color: 'white',
-            },
-          ],
-        });
-      }
-    }
-
-    onMounted(async () => {
-      await onRequest({
-        pagination: pagination.value,
-      });
-    });
-
-    watch([isSigned, isExecuted, blockProducer], async () => {
-      filterDropdown.value = false;
-      pagination.value = initialStatePagination;
-      await onRequest({
-        pagination: pagination.value,
-      });
-    });
-
-    const optionsBlockProducers = ref<string[]>(setupProps.blockProducers);
-    function onFilterBlockProducer(
-      inputValue: string,
-      update: (callback: () => void) => void,
-    ) {
-      if (inputValue === '') {
-        update(() => {
-          optionsBlockProducers.value = setupProps.blockProducers;
-        });
-        return;
-      }
-
-      update(() => {
-        const formattedValue = inputValue.toLowerCase();
-        optionsBlockProducers.value = setupProps.blockProducers.filter(
-          (item) => item.toLowerCase().indexOf(formattedValue) > -1,
+        const hasSomeFilterActive = computed(
+            () => isSigned.value || isExecuted.value || blockProducer.value,
         );
-      });
-    }
 
-    return {
-      columns,
-      rows,
-      pagination,
-      isSigned,
-      isExecuted,
-      blockProducer,
-      hasSomeFilterActive,
-      optionsBlockProducers,
-      filterDropdown,
-      onRequest,
-      onFilterBlockProducer,
-    };
-  },
+        const columns = [
+            {
+                name: 'proposalName',
+                align: 'left',
+                label: 'PROPOSAL NAME',
+                field: 'proposalNameSliced',
+            },
+            {
+                name: 'approvalStatus',
+                align: 'left',
+                label: 'APPROVAL STATUS',
+                field: 'approvalStatus',
+            },
+            {
+                name: 'proposer',
+                align: 'left',
+                label: 'PROPOSER',
+                field: 'proposer',
+            },
+        ];
+
+        async function onRequest(props: { pagination: PaginationSettings }) {
+            const { page, rowsPerPage, sortBy, descending } = props.pagination;
+            const { account } = setupProps;
+
+            const proposer = setupProps.type === 'proposalsCreated' ? account : '';
+
+            let requested = '';
+            if (setupProps.type === 'allProposals' && blockProducer.value) {
+                requested = blockProducer.value;
+            }
+            if (setupProps.type === 'needsYourSignature' && !isSigned.value) {
+                requested = account;
+            }
+
+            let provided = '';
+            if (setupProps.type === 'needsYourSignature' && isSigned.value) {
+                provided = account;
+            }
+
+            try {
+                const data: GetProposals = await api.getProposals({
+                    proposer,
+                    requested,
+                    provided,
+                    executed: isExecuted.value,
+                    limit: rowsPerPage,
+                    skip: (page - 1) * rowsPerPage,
+                });
+
+                pagination.value = {
+                    rowsNumber: data.total.value,
+                    page: page,
+                    rowsPerPage: rowsPerPage,
+                    sortBy: sortBy,
+                    descending: descending,
+                };
+
+                rows.value = data.proposals.map((proposal) => {
+                    const approvalStatus = `${proposal.provided_approvals.length}/${
+                        proposal.provided_approvals.length +
+            proposal.requested_approvals.length
+                    }`;
+
+                    return {
+                        primaryKey: proposal.primary_key,
+                        proposalName: proposal.proposal_name,
+                        approvalStatus,
+                        proposer: proposal.proposer,
+                    };
+                });
+            } catch (e) {
+                const error = JSON.parse(JSON.stringify(e)) as Error;
+                $q.notify({
+                    color: 'negative',
+                    message: error?.cause?.json?.error?.what || 'Unable load proposals',
+                    actions: [
+                        {
+                            label: 'Dismiss',
+                            color: 'white',
+                        },
+                    ],
+                });
+            }
+        }
+
+        onMounted(async () => {
+            await onRequest({
+                pagination: pagination.value,
+            });
+        });
+
+        watch([isSigned, isExecuted, blockProducer], async () => {
+            filterDropdown.value = false;
+            pagination.value = initialStatePagination;
+            await onRequest({
+                pagination: pagination.value,
+            });
+        });
+
+        const optionsBlockProducers = ref<string[]>(setupProps.blockProducers);
+        function onFilterBlockProducer(
+            inputValue: string,
+            update: (callback: () => void) => void,
+        ) {
+            if (inputValue === '') {
+                update(() => {
+                    optionsBlockProducers.value = setupProps.blockProducers;
+                });
+                return;
+            }
+
+            update(() => {
+                const formattedValue = inputValue.toLowerCase();
+                optionsBlockProducers.value = setupProps.blockProducers.filter(
+                    (item) => item.toLowerCase().indexOf(formattedValue) > -1,
+                );
+            });
+        }
+
+        return {
+            columns,
+            rows,
+            pagination,
+            isSigned,
+            isExecuted,
+            blockProducer,
+            hasSomeFilterActive,
+            optionsBlockProducers,
+            filterDropdown,
+            onRequest,
+            onFilterBlockProducer,
+        };
+    },
 });
 </script>

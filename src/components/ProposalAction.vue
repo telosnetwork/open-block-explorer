@@ -82,12 +82,12 @@ q-card.q-mt-md
 
 <script lang="ts">
 import {
-  defineComponent,
-  ref,
-  watch,
-  computed,
-  PropType,
-  onMounted,
+    defineComponent,
+    ref,
+    watch,
+    computed,
+    PropType,
+    onMounted,
 } from 'vue';
 import ProposalAuthorization from 'components/ProposalAuthorization.vue';
 import { api } from 'src/api';
@@ -113,107 +113,107 @@ interface Action {
 }
 
 export default defineComponent({
-  name: 'ProposalAction',
-  components: {
-    ProposalAuthorization,
-  },
-  props: {
-    modelValue: {
-      type: Object as PropType<Action>,
+    name: 'ProposalAction',
+    components: {
+        ProposalAuthorization,
     },
-  },
-  emits: ['update:modelValue', 'remove'],
-  setup(props, context) {
-    const structs = ref<Struct[]>([]);
-    const isAccountLoading = ref(false);
-    const isAccountError = ref(false);
-    const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
+    props: {
+        modelValue: {
+            type: Object as PropType<Action>,
+        },
+    },
+    emits: ['update:modelValue', 'remove'],
+    setup(props, context) {
+        const structs = ref<Struct[]>([]);
+        const isAccountLoading = ref(false);
+        const isAccountError = ref(false);
+        const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
 
-    const action = computed({
-      get: () => {
-        return props.modelValue;
-      },
-      set: (value) => {
-        context.emit('update:modelValue', value);
-      },
-    });
+        const action = computed({
+            get: () => {
+                return props.modelValue;
+            },
+            set: (value) => {
+                context.emit('update:modelValue', value);
+            },
+        });
 
-    watch(
-      () => action.value.account,
-      (currentValue) => {
-        isAccountLoading.value = true;
-        isAccountError.value = false;
+        watch(
+            () => action.value.account,
+            (currentValue) => {
+                isAccountLoading.value = true;
+                isAccountError.value = false;
 
-        if (structs.value.length > 0) {
-          structs.value = [];
-        }
+                if (structs.value.length > 0) {
+                    structs.value = [];
+                }
 
-        if (waitToSearch.value) {
-          clearTimeout(waitToSearch.value);
-        }
+                if (waitToSearch.value) {
+                    clearTimeout(waitToSearch.value);
+                }
 
-        if (currentValue === '') {
-          isAccountLoading.value = false;
-          return;
-        }
+                if (currentValue === '') {
+                    isAccountLoading.value = false;
+                    return;
+                }
 
-        waitToSearch.value = setTimeout(() => {
-          waitToSearch.value = null;
-        }, 1000);
-      },
-    );
-
-    watch(waitToSearch, async (currentValue) => {
-      if (currentValue) return;
-
-      const queryValue = action.value.account.toLowerCase();
-
-      try {
-        const { abi } = await api.getABI(queryValue);
-        action.value.name = abi.structs[0].name;
-        structs.value = abi.structs;
-      } catch (error) {
-        isAccountError.value = true;
-      }
-
-      isAccountLoading.value = false;
-    });
-
-    onMounted(async () => {
-      if (!props.modelValue.account || !props.modelValue.name) return;
-
-      const queryValue = props.modelValue.account.toLowerCase();
-
-      try {
-        const { abi } = await api.getABI(queryValue);
-        const actionNameIndex = abi.structs.findIndex(
-          (item) => props.modelValue.name === item.name,
+                waitToSearch.value = setTimeout(() => {
+                    waitToSearch.value = null;
+                }, 1000);
+            },
         );
-        action.value.name = abi.structs[actionNameIndex ?? 0].name;
-        structs.value = abi.structs;
-      } catch (error) {
-        isAccountError.value = true;
-      }
 
-      isAccountLoading.value = false;
-    });
+        watch(waitToSearch, async (currentValue) => {
+            if (currentValue) return;
 
-    const actionOptions = computed(() => {
-      if (structs.value.length === 0) return [];
-      return structs.value.map((item) => item.name);
-    });
+            const queryValue = action.value.account.toLowerCase();
 
-    const fields = computed(() => {
-      if (structs.value.length === 0) return [];
+            try {
+                const { abi } = await api.getABI(queryValue);
+                action.value.name = abi.structs[0].name;
+                structs.value = abi.structs;
+            } catch (error) {
+                isAccountError.value = true;
+            }
 
-      const { fields } = structs.value.find(
-        (item) => item.name === action.value.name,
-      );
+            isAccountLoading.value = false;
+        });
 
-      return fields;
-    });
+        onMounted(async () => {
+            if (!props.modelValue.account || !props.modelValue.name) return;
 
-    /* eslint-disable */
+            const queryValue = props.modelValue.account.toLowerCase();
+
+            try {
+                const { abi } = await api.getABI(queryValue);
+                const actionNameIndex = abi.structs.findIndex(
+                    (item) => props.modelValue.name === item.name,
+                );
+                action.value.name = abi.structs[actionNameIndex ?? 0].name;
+                structs.value = abi.structs;
+            } catch (error) {
+                isAccountError.value = true;
+            }
+
+            isAccountLoading.value = false;
+        });
+
+        const actionOptions = computed(() => {
+            if (structs.value.length === 0) return [];
+            return structs.value.map((item) => item.name);
+        });
+
+        const fields = computed(() => {
+            if (structs.value.length === 0) return [];
+
+            const { fields } = structs.value.find(
+                (item) => item.name === action.value.name,
+            );
+
+            return fields;
+        });
+
+        /* eslint-disable */
     watch(fields, (currentValue) => {
       const actionFields = {} as any;
 
@@ -226,13 +226,13 @@ export default defineComponent({
     });
     /* eslint-enable */
 
-    return {
-      action,
-      isAccountLoading,
-      isAccountError,
-      actionOptions,
-      fields,
-    };
-  },
+        return {
+            action,
+            isAccountLoading,
+            isAccountError,
+            actionOptions,
+            fields,
+        };
+    },
 });
 </script>

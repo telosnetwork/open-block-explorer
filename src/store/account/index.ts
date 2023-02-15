@@ -6,9 +6,9 @@ import { mutations } from './mutations';
 import { actions } from './actions';
 
 export const account: Module<AccountStateInterface, StateInterface> = {
-  namespaced: true,
-  getters,
-  mutations,
-  actions,
-  state,
+    namespaced: true,
+    getters,
+    mutations,
+    actions,
+    state,
 };

@@ -9,8 +9,8 @@ import Jungle from './chains/jungle';
 import { ChainsConfig } from 'src/types/ChainsConfig';
 
 const chains: ChainsConfig = {
-  mainnets: [new EOS('eos'), new Telos('telos'), new UX('ux'), new Wax('wax')],
-  testnets: [new Jungle('jungle'), new TelosTestnet('telos-testnet')],
+    mainnets: [new EOS('eos'), new Telos('telos'), new UX('ux'), new Wax('wax')],
+    testnets: [new Jungle('jungle'), new TelosTestnet('telos-testnet')],
 };
 
 export default chains;

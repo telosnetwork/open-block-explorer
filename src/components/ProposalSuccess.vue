@@ -30,33 +30,33 @@ q-dialog(v-model="value" maximized)
 import { defineComponent, computed } from 'vue';
 
 export default defineComponent({
-  name: 'ProposalSuccess',
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false,
+    name: 'ProposalSuccess',
+    props: {
+        modelValue: {
+            type: Boolean,
+            default: false,
+        },
+        transactionId: {
+            type: String,
+        },
+        proposalName: {
+            type: String,
+        },
     },
-    transactionId: {
-      type: String,
-    },
-    proposalName: {
-      type: String,
-    },
-  },
-  emits: ['update:modelValue'],
-  setup(props, context) {
-    const value = computed({
-      get: () => {
-        return props.modelValue;
-      },
-      set: (value) => {
-        context.emit('update:modelValue', value);
-      },
-    });
+    emits: ['update:modelValue'],
+    setup(props, context) {
+        const value = computed({
+            get: () => {
+                return props.modelValue;
+            },
+            set: (value) => {
+                context.emit('update:modelValue', value);
+            },
+        });
 
-    return {
-      value,
-    };
-  },
+        return {
+            value,
+        };
+    },
 });
 </script>

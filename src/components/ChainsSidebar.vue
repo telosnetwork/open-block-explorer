@@ -34,38 +34,38 @@ import { Chain } from 'src/types/Chain';
 const configMgr = ConfigManager.get();
 
 export default {
-  name: 'ChainsSidebar',
-  setup() {
-    return {
-      miniState: ref(true),
-      getAllChains: () => {
-        return configMgr.getAllChains();
-      },
-      getMainnets: () => {
-        return configMgr.getMainnets();
-      },
-      getTestnets: () => {
-        return configMgr.getTestnets();
-      },
-      chainSelected(chain: Chain) {
-        if (this.isSelected(chain)) {
-          return;
-        }
-        // TODO: maybe we can reload vue store and boot files instead of full reload?
-        localStorage.setItem(
-          ConfigManager.CHAIN_LOCAL_STORAGE,
-          chain.getName(),
-        );
-        location.reload();
-      },
-      isSelected(chain: Chain): boolean {
-        return (
-          localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) ===
+    name: 'ChainsSidebar',
+    setup() {
+        return {
+            miniState: ref(true),
+            getAllChains: () => {
+                return configMgr.getAllChains();
+            },
+            getMainnets: () => {
+                return configMgr.getMainnets();
+            },
+            getTestnets: () => {
+                return configMgr.getTestnets();
+            },
+            chainSelected(chain: Chain) {
+                if (this.isSelected(chain)) {
+                    return;
+                }
+                // TODO: maybe we can reload vue store and boot files instead of full reload?
+                localStorage.setItem(
+                    ConfigManager.CHAIN_LOCAL_STORAGE,
+                    chain.getName(),
+                );
+                location.reload();
+            },
+            isSelected(chain: Chain): boolean {
+                return (
+                    localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) ===
           chain.getName()
-        );
-      },
-    };
-  },
+                );
+            },
+        };
+    },
 };
 </script>
 

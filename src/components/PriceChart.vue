@@ -15,122 +15,122 @@ const ONE_BILLION = 1000000000;
 
 exportingInit(Highcharts);
 export default defineComponent({
-  name: 'PriceChart',
-  components: {
-    highcharts: Chart,
-  },
-  setup() {
-    const hcInstance = Highcharts;
-    const chartOptions = ref({
-      //   uncomment to fill area
-      chart: {
-        type: 'area',
-      },
-      title: {
-        text: 'Past 24h',
-      },
-      xAxis: {
-        dateTimeLabelFormats: {
-          day: '%A, %b %e, %l %p',
-          millisecond: '%A, %b %e, %l %p',
-        },
-        type: 'datetime',
-      },
-      yAxis: {
-        title: {
-          text: 'Price',
-        },
-      },
-      legend: {
-        enabled: true,
-      },
-      plotOptions: {
-        area: {
-          // uncomment to display gradient
-          fillColor: {
-            linearGradient: {
-              x1: 0,
-              y1: 0,
-              x2: 0,
-              y2: 1,
+    name: 'PriceChart',
+    components: {
+        highcharts: Chart,
+    },
+    setup() {
+        const hcInstance = Highcharts;
+        const chartOptions = ref({
+            //   uncomment to fill area
+            chart: {
+                type: 'area',
             },
-            stops: [
-              // [0, '#571AFF'],
-              [0, 'rgba(234 , 227 , 252 , 0.6)'],
-              [1, 'rgba(87, 26, 255, 0.003)'],
-              [2, 'rgba(87, 26, 255, 0.0001)'],
-              [3, 'rgba(87, 26, 255, 0)'],
+            title: {
+                text: 'Past 24h',
+            },
+            xAxis: {
+                dateTimeLabelFormats: {
+                    day: '%A, %b %e, %l %p',
+                    millisecond: '%A, %b %e, %l %p',
+                },
+                type: 'datetime',
+            },
+            yAxis: {
+                title: {
+                    text: 'Price',
+                },
+            },
+            legend: {
+                enabled: true,
+            },
+            plotOptions: {
+                area: {
+                    // uncomment to display gradient
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1,
+                        },
+                        stops: [
+                            // [0, '#571AFF'],
+                            [0, 'rgba(234 , 227 , 252 , 0.6)'],
+                            [1, 'rgba(87, 26, 255, 0.003)'],
+                            [2, 'rgba(87, 26, 255, 0.0001)'],
+                            [3, 'rgba(87, 26, 255, 0)'],
+                        ],
+                    },
+                    marker: {
+                        radius: 0.5,
+                    },
+                    lineWidth: 2,
+                    states: {
+                        hover: {
+                            lineWidth: 4,
+                        },
+                    },
+                    threshold: null,
+                },
+            },
+            series: [
+                {
+                    name: chain.getSystemToken().symbol,
+                    color: getCssVar('primary'),
+                    data: [] as DateTuple[],
+                },
             ],
-          },
-          marker: {
-            radius: 0.5,
-          },
-          lineWidth: 2,
-          states: {
-            hover: {
-              lineWidth: 4,
+            tooltip: {
+                dateTimeLabelFormats: {
+                    hour: '%A, %b %e, %l %p',
+                },
             },
-          },
-          threshold: null,
-        },
-      },
-      series: [
-        {
-          name: chain.getSystemToken().symbol,
-          color: getCssVar('primary'),
-          data: [] as DateTuple[],
-        },
-      ],
-      tooltip: {
-        dateTimeLabelFormats: {
-          hour: '%A, %b %e, %l %p',
-        },
-      },
-    });
-    const lastUpdated = ref(0);
-    const tokenPrice = ref('');
-    const marketCap = ref('');
-    const rank = ref('');
-    const dayVolume = ref('');
-    const dayChange = ref('');
+        });
+        const lastUpdated = ref(0);
+        const tokenPrice = ref('');
+        const marketCap = ref('');
+        const rank = ref('');
+        const dayVolume = ref('');
+        const dayChange = ref('');
 
-    const fetchPriceChartData = async () => {
-      const data: PriceChartData = await chain.getPriceData();
-      lastUpdated.value = data.lastUpdated;
-      tokenPrice.value = formatCurrencyValue(data.tokenPrice);
-      dayChange.value = formatPercentage(data.dayChange);
-      dayVolume.value = formatCurrencyValue(data.dayVolume);
-      marketCap.value = formatCurrencyValue(data.marketCap);
-      chartOptions.value.series[0].data = data.prices;
-    };
-    const formatPercentage = (val: number): string => {
-      return `${val.toFixed(2)} %`;
-    };
-    const formatCurrencyValue = (val: number): string => {
-      return val < ONE_MILLION
-        ? `$${val.toFixed(2)}`
-        : val < ONE_BILLION
-        ? `$${(val / ONE_MILLION).toFixed(2)}M`
-        : `$${(val / ONE_BILLION).toFixed(2)}B`;
-    };
+        const fetchPriceChartData = async () => {
+            const data: PriceChartData = await chain.getPriceData();
+            lastUpdated.value = data.lastUpdated;
+            tokenPrice.value = formatCurrencyValue(data.tokenPrice);
+            dayChange.value = formatPercentage(data.dayChange);
+            dayVolume.value = formatCurrencyValue(data.dayVolume);
+            marketCap.value = formatCurrencyValue(data.marketCap);
+            chartOptions.value.series[0].data = data.prices;
+        };
+        const formatPercentage = (val: number): string => {
+            return `${val.toFixed(2)} %`;
+        };
+        const formatCurrencyValue = (val: number): string => {
+            return val < ONE_MILLION
+                ? `$${val.toFixed(2)}`
+                : val < ONE_BILLION
+                    ? `$${(val / ONE_MILLION).toFixed(2)}M`
+                    : `$${(val / ONE_BILLION).toFixed(2)}B`;
+        };
 
-    onMounted(async () => {
-      await fetchPriceChartData();
-    });
-    return {
-      hcInstance,
-      chartOptions,
-      lastUpdated,
-      tokenPrice,
-      marketCap,
-      rank,
-      dayVolume,
-      dayChange,
-      fetchPriceChartData,
-      formatPercentage,
-      formatCurrencyValue,
-    };
-  },
+        onMounted(async () => {
+            await fetchPriceChartData();
+        });
+        return {
+            hcInstance,
+            chartOptions,
+            lastUpdated,
+            tokenPrice,
+            marketCap,
+            rank,
+            dayVolume,
+            dayChange,
+            fetchPriceChartData,
+            formatPercentage,
+            formatCurrencyValue,
+        };
+    },
 });
 </script>
 

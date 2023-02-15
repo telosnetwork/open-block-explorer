@@ -2,8 +2,8 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'PageIndex',
-  components: {},
+    name: 'PageIndex',
+    components: {},
 });
 </script>
 

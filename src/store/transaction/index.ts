@@ -6,9 +6,9 @@ import { getters } from './getters';
 import { mutations } from './mutations';
 
 export const transaction: Module<TransactionStateInterface, StateInterface> = {
-  namespaced: true,
-  actions,
-  getters,
-  mutations,
-  state,
+    namespaced: true,
+    actions,
+    getters,
+    mutations,
+    state,
 };

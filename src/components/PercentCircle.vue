@@ -4,68 +4,68 @@ import { computed, defineComponent, ref, toRefs } from 'vue';
 const PI = 3.1459;
 
 export default defineComponent({
-  name: 'PercentCircle',
-  props: {
-    fraction: {
-      type: Number,
-      required: true,
+    name: 'PercentCircle',
+    props: {
+        fraction: {
+            type: Number,
+            required: true,
+        },
+        total: {
+            type: Number,
+            required: true,
+        },
+        label: {
+            type: String,
+            default: '',
+        },
+        radius: {
+            type: Number,
+            required: true,
+        },
+        unit: {
+            type: String,
+            default: '',
+        },
     },
-    total: {
-      type: Number,
-      required: true,
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    radius: {
-      type: Number,
-      required: true,
-    },
-    unit: {
-      type: String,
-      default: '',
-    },
-  },
-  setup(props) {
-    const offset = ref(5);
-    const { fraction, total, radius, unit } = toRefs(props);
-    const diameter = computed(() => radius.value * 2);
-    const circumference = computed(() => 2 * PI * radius.value);
-    const containerWidth = computed(() => diameter.value + 2 * offset.value);
-    const formatResourcePercent = computed(() =>
-      fraction.value && total.value
-        ? ((fraction.value / total.value) * 100.0).toFixed(2)
-        : '0.00',
-    );
-    const strokeColor = computed(() =>
-      parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white',
-    );
-    const fractionUnits = computed(
-      () => `${fraction.value}${unit.value}/${total.value}${unit.value}`,
-    );
-    const available = computed(() => (total.value - fraction.value).toFixed(3));
-    const dashArray = computed(() => {
-      if (Number.isNaN(formatResourcePercent.value)) {
-        return '0';
-      }
-      const scaledPath =
+    setup(props) {
+        const offset = ref(5);
+        const { fraction, total, radius, unit } = toRefs(props);
+        const diameter = computed(() => radius.value * 2);
+        const circumference = computed(() => 2 * PI * radius.value);
+        const containerWidth = computed(() => diameter.value + 2 * offset.value);
+        const formatResourcePercent = computed(() =>
+            fraction.value && total.value
+                ? ((fraction.value / total.value) * 100.0).toFixed(2)
+                : '0.00',
+        );
+        const strokeColor = computed(() =>
+            parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white',
+        );
+        const fractionUnits = computed(
+            () => `${fraction.value}${unit.value}/${total.value}${unit.value}`,
+        );
+        const available = computed(() => (total.value - fraction.value).toFixed(3));
+        const dashArray = computed(() => {
+            if (Number.isNaN(formatResourcePercent.value)) {
+                return '0';
+            }
+            const scaledPath =
         (parseFloat(formatResourcePercent.value) / 100) * circumference.value;
-      return `${scaledPath}, ${circumference.value}`;
-    });
+            return `${scaledPath}, ${circumference.value}`;
+        });
 
-    return {
-      offset,
-      diameter,
-      circumference,
-      containerWidth,
-      formatResourcePercent,
-      strokeColor,
-      fractionUnits,
-      available,
-      dashArray,
-    };
-  },
+        return {
+            offset,
+            diameter,
+            circumference,
+            containerWidth,
+            formatResourcePercent,
+            strokeColor,
+            fractionUnits,
+            available,
+            dashArray,
+        };
+    },
 });
 </script>
 

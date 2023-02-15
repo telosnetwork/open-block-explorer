@@ -6,9 +6,9 @@ import { mutations } from './mutations';
 import { actions } from './actions';
 
 export const chain: Module<ChainStateInterface, StateInterface> = {
-  namespaced: true,
-  actions,
-  getters,
-  mutations,
-  state,
+    namespaced: true,
+    actions,
+    getters,
+    mutations,
+    state,
 };

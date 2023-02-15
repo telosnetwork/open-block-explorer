@@ -6,88 +6,88 @@ import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 
 export default defineComponent({
-  name: 'SellRam',
-  components: {
-    ViewTransaction,
-  },
-  setup() {
-    const store = useStore();
-    const chain = getChain();
-    let openTransaction = ref<boolean>(false);
-    const sellAmount = ref('');
-    const symbol = ref<string>(chain.getSystemToken().symbol);
-    const transactionId = computed(
-      (): string => store.state.account.TransactionId,
-    );
-    const transactionError = computed(
-      () => store.state.account.TransactionError,
-    );
-    const ramPrice = computed((): string => {
-      return store.state?.chain.ram_price;
-    });
-    const sellPreview = computed(
-      () =>
-        ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
-          4,
-        ) + ` ${symbol.value}`,
-    );
-    const ramAvailable = computed(
-      () =>
-        Number(store.state.account.data.ram_quota.value) -
+    name: 'SellRam',
+    components: {
+        ViewTransaction,
+    },
+    setup() {
+        const store = useStore();
+        const chain = getChain();
+        let openTransaction = ref<boolean>(false);
+        const sellAmount = ref('');
+        const symbol = ref<string>(chain.getSystemToken().symbol);
+        const transactionId = computed(
+            (): string => store.state.account.TransactionId,
+        );
+        const transactionError = computed(
+            () => store.state.account.TransactionError,
+        );
+        const ramPrice = computed((): string => {
+            return store.state?.chain.ram_price;
+        });
+        const sellPreview = computed(
+            () =>
+                ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
+                    4,
+                ) + ` ${symbol.value}`,
+        );
+        const ramAvailable = computed(
+            () =>
+                Number(store.state.account.data.ram_quota.value) -
         Number(store.state.account.data.ram_usage.value),
-    );
-    const accountData = computed((): API.v1.AccountObject => {
-      return store.state?.account.data;
-    });
+        );
+        const accountData = computed((): API.v1.AccountObject => {
+            return store.state?.account.data;
+        });
 
-    function formatDec() {
-      sellAmount.value = parseInt(sellAmount.value)
-        .toString()
-        .replace(/[^0-9.]/g, '');
-    }
-    async function sell() {
-      void store.dispatch('account/resetTransaction');
-      if (
-        sellAmount.value === '0.0000' ||
+        function formatDec() {
+            sellAmount.value = parseInt(sellAmount.value)
+                .toString()
+                .replace(/[^0-9.]/g, '');
+        }
+        async function sell() {
+            void store.dispatch('account/resetTransaction');
+            if (
+                sellAmount.value === '0.0000' ||
         !ramAvailable.value ||
         Number(sellAmount.value) >= ramAvailable.value
-      ) {
-        return;
-      }
-      await store.dispatch('account/sellRam', {
-        amount: sellAmount.value,
-      });
+            ) {
+                return;
+            }
+            await store.dispatch('account/sellRam', {
+                amount: sellAmount.value,
+            });
 
-      if (localStorage.getItem('autoLogin') !== 'cleos') {
-        openTransaction.value = true;
-      }
-    }
+            if (localStorage.getItem('autoLogin') !== 'cleos') {
+                openTransaction.value = true;
+            }
+        }
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
+        function assetToAmount(asset: string, decimals = -1): number {
+            try {
+                let qty: string = asset.split(' ')[0];
+                let val: number = parseFloat(qty);
+                if (decimals > -1) qty = val.toFixed(decimals);
+                return val;
+            } catch (error) {
+                return 0;
+            }
+        }
 
-    return {
-      openTransaction,
-      sellAmount,
-      transactionId,
-      transactionError,
-      ramAvailable,
-      accountData,
-      symbol,
-      sellPreview,
-      formatDec,
-      sell,
-      assetToAmount,
-    };
-  },
+        return {
+            openTransaction,
+            sellAmount,
+            transactionId,
+            transactionError,
+            ramAvailable,
+            accountData,
+            symbol,
+            sellPreview,
+            formatDec,
+            sell,
+            assetToAmount,
+        };
+    },
 });
 </script>
 

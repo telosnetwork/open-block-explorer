@@ -8,20 +8,20 @@ import BuyRam from 'src/components/Resources/BuyRam.vue';
 import SellRam from 'src/components/Resources/SellRam.vue';
 
 export default defineComponent({
-  name: 'ResourcesDialog',
-  components: {
-    StakingInfo,
-    StakingTab,
-    UnstakingTab,
-    RefundTab,
-    BuyRam,
-    SellRam,
-  },
-  setup() {
-    return {
-      tab: ref('stake'),
-    };
-  },
+    name: 'ResourcesDialog',
+    components: {
+        StakingInfo,
+        StakingTab,
+        UnstakingTab,
+        RefundTab,
+        BuyRam,
+        SellRam,
+    },
+    setup() {
+        return {
+            tab: ref('stake'),
+        };
+    },
 });
 </script>
 

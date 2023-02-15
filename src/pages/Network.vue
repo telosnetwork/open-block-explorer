@@ -9,27 +9,27 @@ import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
 
 export default defineComponent({
-  name: 'PageIndex',
-  components: {
-    Index,
-    PriceChart,
-    TransactionsTable,
-    Map,
-    MapData,
-  },
-  setup() {
-    const store = useStore();
-    const displayMap = ConfigManager.get().getCurrentChain().getMapDisplay();
-    onMounted(() => {
-      window.setInterval(() => {
-        if (displayMap) void store.dispatch('chain/updateBlockData');
-      }, 2000);
-    });
+    name: 'PageIndex',
+    components: {
+        Index,
+        PriceChart,
+        TransactionsTable,
+        Map,
+        MapData,
+    },
+    setup() {
+        const store = useStore();
+        const displayMap = ConfigManager.get().getCurrentChain().getMapDisplay();
+        onMounted(() => {
+            window.setInterval(() => {
+                if (displayMap) void store.dispatch('chain/updateBlockData');
+            }, 2000);
+        });
 
-    return {
-      displayMap,
-    };
-  },
+        return {
+            displayMap,
+        };
+    },
 });
 </script>
 

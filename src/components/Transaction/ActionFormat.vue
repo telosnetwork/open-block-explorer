@@ -1,52 +1,52 @@
 <script lang="ts">
 import {
-  defineComponent,
-  computed,
-  ref,
-  PropType,
-  toRef,
-  onMounted,
+    defineComponent,
+    computed,
+    ref,
+    PropType,
+    toRef,
+    onMounted,
 } from 'vue';
 import { useStore } from 'src/store';
 import { Action, TransferData } from 'src/types';
 import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 
 export default defineComponent({
-  name: 'ActionFormat',
-  components: { AccountFormat },
-  props: {
-    action: {
-      type: Object as PropType<Action>,
-      required: true,
+    name: 'ActionFormat',
+    components: { AccountFormat },
+    props: {
+        action: {
+            type: Object as PropType<Action>,
+            required: true,
+        },
     },
-  },
-  setup(props) {
-    const store = useStore();
-    const account = computed((): string => store.state.account.accountName);
-    const divClass = ref<string>('');
-    const divContent = ref<string>('');
-    const tx = toRef(props, 'action');
+    setup(props) {
+        const store = useStore();
+        const account = computed((): string => store.state.account.accountName);
+        const divClass = ref<string>('');
+        const divContent = ref<string>('');
+        const tx = toRef(props, 'action');
 
-    onMounted(() => {
-      const data = tx.value.act.data as TransferData;
-      if (data.from === account.value) {
-        divContent.value = 'SEND';
-        divClass.value = 'action-transfer';
-      } else if (data.to === account.value) {
-        divContent.value = 'RECEIVE';
-        divClass.value = 'action-transfer';
-      } else {
-        divContent.value = 'TRANSFER';
-        divClass.value = 'action-transfer';
-      }
-    });
+        onMounted(() => {
+            const data = tx.value.act.data as TransferData;
+            if (data.from === account.value) {
+                divContent.value = 'SEND';
+                divClass.value = 'action-transfer';
+            } else if (data.to === account.value) {
+                divContent.value = 'RECEIVE';
+                divClass.value = 'action-transfer';
+            } else {
+                divContent.value = 'TRANSFER';
+                divClass.value = 'action-transfer';
+            }
+        });
 
-    return {
-      divClass,
-      divContent,
-      tx,
-    };
-  },
+        return {
+            divClass,
+            divContent,
+            tx,
+        };
+    },
 });
 </script>
 

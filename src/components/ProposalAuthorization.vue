@@ -84,153 +84,153 @@ interface RequiredAccounts {
 }
 
 export default defineComponent({
-  name: 'ProposalAuthorization',
-  props: {
-    actor: {
-      type: String,
-      default: '',
+    name: 'ProposalAuthorization',
+    props: {
+        actor: {
+            type: String,
+            default: '',
+        },
+        permission: {
+            type: String,
+            default: '',
+        },
+        disabledRemoveButton: {
+            type: Boolean,
+            default: false,
+        },
     },
-    permission: {
-      type: String,
-      default: '',
-    },
-    disabledRemoveButton: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ['update:actor', 'update:permission', 'remove'],
-  setup(props, context) {
-    const actorsOptions = ref<string[]>([]);
-    const permissionsOptions = ref<Name[]>([]);
-    const allRequiredAccounts = ref<RequiredAccounts[]>([]);
+    emits: ['update:actor', 'update:permission', 'remove'],
+    setup(props, context) {
+        const actorsOptions = ref<string[]>([]);
+        const permissionsOptions = ref<Name[]>([]);
+        const allRequiredAccounts = ref<RequiredAccounts[]>([]);
 
-    const isActorError = ref(false);
-    const isLoading = ref(false);
-    const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
+        const isActorError = ref(false);
+        const isLoading = ref(false);
+        const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
 
-    const actorValue = computed({
-      get: () => {
-        return props.actor;
-      },
-      set: (value) => {
-        context.emit('update:actor', value);
-      },
-    });
-
-    const permissionValue = computed({
-      get: () => {
-        return props.permission;
-      },
-      set: (value) => {
-        context.emit('update:permission', value);
-      },
-    });
-
-    onMounted(async () => {
-      if (props.actor) {
-        await searchAccounts(props.actor);
-      }
-    });
-
-    watch(actorValue, (currentValue) => {
-      isLoading.value = true;
-      isActorError.value = false;
-
-      if (waitToSearch.value) {
-        clearTimeout(waitToSearch.value);
-      }
-
-      if (currentValue === '') {
-        actorsOptions.value = [];
-        isLoading.value = false;
-        context.emit('update:permission', '');
-        return;
-      }
-
-      waitToSearch.value = setTimeout(() => {
-        waitToSearch.value = null;
-      }, 1000);
-    });
-
-    watch(waitToSearch, async (currentValue) => {
-      if (currentValue) return;
-
-      const queryValue = props.actor.toLowerCase();
-      actorsOptions.value = [];
-
-      await searchAccounts(queryValue);
-
-      isLoading.value = false;
-    });
-
-    async function searchAccounts(value: string): Promise<void> {
-      try {
-        const accounts = await api.getTableByScope({
-          code: 'eosio',
-          limit: 5,
-          lower_bound: value,
-          table: 'userres',
-          upper_bound: value.padEnd(12, 'z'),
+        const actorValue = computed({
+            get: () => {
+                return props.actor;
+            },
+            set: (value) => {
+                context.emit('update:actor', value);
+            },
         });
 
-        if (accounts.length > 0) {
-          // because the get table by scope for userres does not include eosio account
-          if ('eosio'.includes(value)) {
-            actorsOptions.value.push('eosio');
-          }
+        const permissionValue = computed({
+            get: () => {
+                return props.permission;
+            },
+            set: (value) => {
+                context.emit('update:permission', value);
+            },
+        });
 
-          accounts.forEach((user) => {
-            actorsOptions.value.push(user.payer);
-          });
+        onMounted(async () => {
+            if (props.actor) {
+                await searchAccounts(props.actor);
+            }
+        });
 
-          const account = await api.getAccount(value);
+        watch(actorValue, (currentValue) => {
+            isLoading.value = true;
+            isActorError.value = false;
 
-          if (typeof account !== 'undefined') {
-            allRequiredAccounts.value = account.permissions.map(
-              (permission) => {
-                return {
-                  permissionName: permission.perm_name,
-                  threshold: permission.required_auth.threshold,
-                  accounts: permission.required_auth.accounts.map((item) => ({
-                    weight: `+ ${item.weight.toString()}`,
-                    actor: item.permission.actor,
-                    permission: item.permission.permission,
-                  })),
-                };
-              },
-            );
+            if (waitToSearch.value) {
+                clearTimeout(waitToSearch.value);
+            }
 
-            permissionsOptions.value = account.permissions.map(
-              (permission) => permission.perm_name,
-            );
-            context.emit('update:permission', permissionsOptions.value[0]);
-          }
-        } else {
-          isActorError.value = true;
+            if (currentValue === '') {
+                actorsOptions.value = [];
+                isLoading.value = false;
+                context.emit('update:permission', '');
+                return;
+            }
+
+            waitToSearch.value = setTimeout(() => {
+                waitToSearch.value = null;
+            }, 1000);
+        });
+
+        watch(waitToSearch, async (currentValue) => {
+            if (currentValue) return;
+
+            const queryValue = props.actor.toLowerCase();
+            actorsOptions.value = [];
+
+            await searchAccounts(queryValue);
+
+            isLoading.value = false;
+        });
+
+        async function searchAccounts(value: string): Promise<void> {
+            try {
+                const accounts = await api.getTableByScope({
+                    code: 'eosio',
+                    limit: 5,
+                    lower_bound: value,
+                    table: 'userres',
+                    upper_bound: value.padEnd(12, 'z'),
+                });
+
+                if (accounts.length > 0) {
+                    // because the get table by scope for userres does not include eosio account
+                    if ('eosio'.includes(value)) {
+                        actorsOptions.value.push('eosio');
+                    }
+
+                    accounts.forEach((user) => {
+                        actorsOptions.value.push(user.payer);
+                    });
+
+                    const account = await api.getAccount(value);
+
+                    if (typeof account !== 'undefined') {
+                        allRequiredAccounts.value = account.permissions.map(
+                            (permission) => {
+                                return {
+                                    permissionName: permission.perm_name,
+                                    threshold: permission.required_auth.threshold,
+                                    accounts: permission.required_auth.accounts.map((item) => ({
+                                        weight: `+ ${item.weight.toString()}`,
+                                        actor: item.permission.actor,
+                                        permission: item.permission.permission,
+                                    })),
+                                };
+                            },
+                        );
+
+                        permissionsOptions.value = account.permissions.map(
+                            (permission) => permission.perm_name,
+                        );
+                        context.emit('update:permission', permissionsOptions.value[0]);
+                    }
+                } else {
+                    isActorError.value = true;
+                }
+            } catch (error) {
+                isActorError.value = true;
+                context.emit('update:permission', '');
+            }
         }
-      } catch (error) {
-        isActorError.value = true;
-        context.emit('update:permission', '');
-      }
-    }
 
-    const requiredAccounts = computed(() => {
-      if (!permissionValue.value) return [];
-      return allRequiredAccounts.value.find(
-        (item) => item.permissionName.toString() === permissionValue.value,
-      );
-    });
+        const requiredAccounts = computed(() => {
+            if (!permissionValue.value) return [];
+            return allRequiredAccounts.value.find(
+                (item) => item.permissionName.toString() === permissionValue.value,
+            );
+        });
 
-    return {
-      actorValue,
-      permissionValue,
-      isActorError,
-      requiredAccounts,
-      actorsOptions,
-      permissionsOptions,
-      isLoading,
-    };
-  },
+        return {
+            actorValue,
+            permissionValue,
+            isActorError,
+            requiredAccounts,
+            actorsOptions,
+            permissionsOptions,
+            isLoading,
+        };
+    },
 });
 </script>

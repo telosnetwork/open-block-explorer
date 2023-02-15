@@ -89,182 +89,182 @@ import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
 import { sleep } from 'src/utils/sleep';
 
 export default defineComponent({
-  name: 'ProposalItem',
-  components: {
-    JsonViewer: JsonViewer as unknown,
-  },
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const $q = useQuasar();
-    const store = useStore();
+    name: 'ProposalItem',
+    components: {
+        JsonViewer: JsonViewer as unknown,
+    },
+    setup() {
+        const route = useRoute();
+        const router = useRouter();
+        const $q = useQuasar();
+        const store = useStore();
 
-    const { proposalName } = route.params;
-    const account = computed(() => store.state.account.accountName);
-    const isAuthenticated = computed(() => store.state.account.isAuthenticated);
-    const isLoading = ref(true);
+        const { proposalName } = route.params;
+        const account = computed(() => store.state.account.accountName);
+        const isAuthenticated = computed(() => store.state.account.isAuthenticated);
+        const isLoading = ref(true);
 
-    const proposer = ref('');
-    const approvalStatus = ref('');
-    const expirationDate = ref('');
+        const proposer = ref('');
+        const approvalStatus = ref('');
+        const expirationDate = ref('');
 
-    const hasUserAlreadyApproved = ref(false);
-    const isExecuted = ref(false);
-    const isCanceled = ref(false);
-    const isUserApprovalList = ref(false);
+        const hasUserAlreadyApproved = ref(false);
+        const isExecuted = ref(false);
+        const isCanceled = ref(false);
+        const isUserApprovalList = ref(false);
 
-    const multsigTransactionData = ref<unknown>({});
-    const requestedApprovalsRows = ref<RequestedApprovals[]>([]);
+        const multsigTransactionData = ref<unknown>({});
+        const requestedApprovalsRows = ref<RequestedApprovals[]>([]);
 
-    const requestedApprovalsColumns = [
-      {
-        name: 'actor',
-        align: 'left',
-        label: 'ACTOR',
-        field: 'actor',
-      },
-      {
-        name: 'permission',
-        align: 'left',
-        label: 'PERMISSION',
-        field: 'permission',
-      },
-      {
-        name: 'status',
-        align: 'left',
-        label: 'STATUS',
-        field: 'status',
-      },
-    ];
+        const requestedApprovalsColumns = [
+            {
+                name: 'actor',
+                align: 'left',
+                label: 'ACTOR',
+                field: 'actor',
+            },
+            {
+                name: 'permission',
+                align: 'left',
+                label: 'PERMISSION',
+                field: 'permission',
+            },
+            {
+                name: 'status',
+                align: 'left',
+                label: 'STATUS',
+                field: 'status',
+            },
+        ];
 
-    const hasProposalAlreadyExpired = computed(() =>
-      moment(new Date()).isAfter(new Date(expirationDate.value)),
-    );
+        const hasProposalAlreadyExpired = computed(() =>
+            moment(new Date()).isAfter(new Date(expirationDate.value)),
+        );
 
-    const isShowApproveButton = computed(() => {
-      return (
-        isAuthenticated.value &&
+        const isShowApproveButton = computed(() => {
+            return (
+                isAuthenticated.value &&
         isUserApprovalList.value &&
         !hasProposalAlreadyExpired.value &&
         !hasUserAlreadyApproved.value &&
         !isExecuted.value &&
         !isCanceled.value
-      );
-    });
+            );
+        });
 
-    const isShowUnapproveButton = computed(() => {
-      return (
-        isAuthenticated.value &&
+        const isShowUnapproveButton = computed(() => {
+            return (
+                isAuthenticated.value &&
         hasUserAlreadyApproved.value &&
         !hasProposalAlreadyExpired.value &&
         !isExecuted.value &&
         !isCanceled.value
-      );
-    });
+            );
+        });
 
-    const isShowExecuteButton = computed(() => {
-      return (
-        isAuthenticated.value &&
+        const isShowExecuteButton = computed(() => {
+            return (
+                isAuthenticated.value &&
         !hasProposalAlreadyExpired.value &&
         (account.value === proposer.value ||
           isUserApprovalList.value ||
           hasUserAlreadyApproved.value) &&
         !isExecuted.value &&
         !isCanceled.value
-      );
-    });
+            );
+        });
 
-    const isShowCancelButton = computed(() => {
-      return (
-        isAuthenticated.value &&
+        const isShowCancelButton = computed(() => {
+            return (
+                isAuthenticated.value &&
         account.value === proposer.value &&
         !hasProposalAlreadyExpired.value &&
         !isExecuted.value &&
         !isCanceled.value
-      );
-    });
-
-    const producersApprovalStatus = computed(() => {
-      const allProducers = requestedApprovalsRows.value.filter(
-        (item) => item.isBp,
-      );
-      const producersHaveAlreadyApproved = allProducers.filter(
-        (item) => item.status,
-      );
-      return `${producersHaveAlreadyApproved.length}/${allProducers.length}`;
-    });
-
-    function handleError(e: unknown, defaultMessage: string) {
-      const error = JSON.parse(JSON.stringify(e)) as Error;
-      $q.notify({
-        color: 'negative',
-        message: error?.cause?.json?.error?.what || defaultMessage,
-        actions: [
-          {
-            label: 'Dismiss',
-            color: 'white',
-          },
-        ],
-      });
-    }
-
-    async function handleRequestedApprovals(proposal: Proposal) {
-      const activeProducers = await api.getProducerSchedule();
-
-      const activeProducersAccount = activeProducers.active.producers.map(
-        (producer) => producer.producer_name,
-      );
-
-      let requestedApprovals: RequestedApprovals[] = [];
-
-      proposal.requested_approvals.forEach((item) => {
-        requestedApprovals.push({
-          actor: item.actor,
-          permission: item.permission,
-          status: false,
-          isBp: false,
+            );
         });
-      });
 
-      proposal.provided_approvals.forEach((item) => {
-        requestedApprovals.push({
-          actor: item.actor,
-          permission: item.permission,
-          status: true,
-          isBp: false,
+        const producersApprovalStatus = computed(() => {
+            const allProducers = requestedApprovalsRows.value.filter(
+                (item) => item.isBp,
+            );
+            const producersHaveAlreadyApproved = allProducers.filter(
+                (item) => item.status,
+            );
+            return `${producersHaveAlreadyApproved.length}/${allProducers.length}`;
         });
-      });
 
-      requestedApprovals = requestedApprovals
-        .map((item) => ({
-          ...item,
-          isBp: activeProducersAccount.includes(item.actor),
-        }))
-        .sort((a, b) => a.actor.localeCompare(b.actor))
-        .sort(
-          (a, b) =>
-            Number(b.isBp) - Number(a.isBp) ||
+        function handleError(e: unknown, defaultMessage: string) {
+            const error = JSON.parse(JSON.stringify(e)) as Error;
+            $q.notify({
+                color: 'negative',
+                message: error?.cause?.json?.error?.what || defaultMessage,
+                actions: [
+                    {
+                        label: 'Dismiss',
+                        color: 'white',
+                    },
+                ],
+            });
+        }
+
+        async function handleRequestedApprovals(proposal: Proposal) {
+            const activeProducers = await api.getProducerSchedule();
+
+            const activeProducersAccount = activeProducers.active.producers.map(
+                (producer) => producer.producer_name,
+            );
+
+            let requestedApprovals: RequestedApprovals[] = [];
+
+            proposal.requested_approvals.forEach((item) => {
+                requestedApprovals.push({
+                    actor: item.actor,
+                    permission: item.permission,
+                    status: false,
+                    isBp: false,
+                });
+            });
+
+            proposal.provided_approvals.forEach((item) => {
+                requestedApprovals.push({
+                    actor: item.actor,
+                    permission: item.permission,
+                    status: true,
+                    isBp: false,
+                });
+            });
+
+            requestedApprovals = requestedApprovals
+                .map((item) => ({
+                    ...item,
+                    isBp: activeProducersAccount.includes(item.actor),
+                }))
+                .sort((a, b) => a.actor.localeCompare(b.actor))
+                .sort(
+                    (a, b) =>
+                        Number(b.isBp) - Number(a.isBp) ||
             Number(a.status) - Number(b.status),
-        );
+                );
 
-      return requestedApprovals;
-    }
+            return requestedApprovals;
+        }
 
-    async function loadProposal() {
-      try {
-        const { proposals } = await api.getProposals({
-          proposal: proposalName as string,
-          limit: 1,
-        });
+        async function loadProposal() {
+            try {
+                const { proposals } = await api.getProposals({
+                    proposal: proposalName as string,
+                    limit: 1,
+                });
 
-        return proposals[0];
-      } catch (e) {
-        handleError(e, 'Proposal not found');
-        await router.push('/proposal');
-      }
-    }
+                return proposals[0];
+            } catch (e) {
+                handleError(e, 'Proposal not found');
+                await router.push('/proposal');
+            }
+        }
 
-    /* eslint-disable */
+        /* eslint-disable */
     async function handleMultsigTransaction(proposal: Proposal): Promise<Action[]> {
       let action;
       let actionSkip = 0;
@@ -336,207 +336,207 @@ export default defineComponent({
     }
     /* eslint-enable */
 
-    async function handleTransactionHistory(blockNumber: number) {
-      const block = await api.getBlock(String(blockNumber));
-      const transactionsPromise = block.transactions.map(
-        async (transaction) => {
-          let trxId = transaction.trx.id;
-          if (typeof trxId !== 'string') {
-            trxId = transaction.trx.toString();
-          }
-          const { actions } = await api.getTransaction(trxId);
-          return actions;
-        },
-      );
-      return await Promise.all(transactionsPromise);
-    }
+        async function handleTransactionHistory(blockNumber: number) {
+            const block = await api.getBlock(String(blockNumber));
+            const transactionsPromise = block.transactions.map(
+                async (transaction) => {
+                    let trxId = transaction.trx.id;
+                    if (typeof trxId !== 'string') {
+                        trxId = transaction.trx.toString();
+                    }
+                    const { actions } = await api.getTransaction(trxId);
+                    return actions;
+                },
+            );
+            return await Promise.all(transactionsPromise);
+        }
 
-    onMounted(loadProposalAndUpdateFields);
+        onMounted(loadProposalAndUpdateFields);
 
-    async function loadProposalAndUpdateFields() {
-      isLoading.value = true;
+        async function loadProposalAndUpdateFields() {
+            isLoading.value = true;
 
-      const proposal = await loadProposal();
+            const proposal = await loadProposal();
 
-      if (typeof proposal === 'undefined') {
-        handleError(null, 'Proposal not found');
-        await router.push('/proposal');
-        return;
-      }
+            if (typeof proposal === 'undefined') {
+                handleError(null, 'Proposal not found');
+                await router.push('/proposal');
+                return;
+            }
 
-      proposer.value = proposal.proposer;
-      approvalStatus.value = `${proposal.provided_approvals.length}/${
-        proposal.provided_approvals.length + proposal.requested_approvals.length
-      }`;
-      isExecuted.value = proposal.executed;
-      hasUserAlreadyApproved.value = proposal.provided_approvals.some(
-        (item) => item.actor === account.value,
-      );
-      isUserApprovalList.value = proposal.requested_approvals.some(
-        (item) => item.actor === account.value,
-      );
+            proposer.value = proposal.proposer;
+            approvalStatus.value = `${proposal.provided_approvals.length}/${
+                proposal.provided_approvals.length + proposal.requested_approvals.length
+            }`;
+            isExecuted.value = proposal.executed;
+            hasUserAlreadyApproved.value = proposal.provided_approvals.some(
+                (item) => item.actor === account.value,
+            );
+            isUserApprovalList.value = proposal.requested_approvals.some(
+                (item) => item.actor === account.value,
+            );
 
-      const [requestedApprovalsRowsValue, multsigTransactionDataValue] =
+            const [requestedApprovalsRowsValue, multsigTransactionDataValue] =
         await Promise.all([
-          handleRequestedApprovals(proposal),
-          handleMultsigTransaction(proposal),
+            handleRequestedApprovals(proposal),
+            handleMultsigTransaction(proposal),
         ]);
 
-      requestedApprovalsRows.value = requestedApprovalsRowsValue;
-      multsigTransactionData.value = multsigTransactionDataValue;
+            requestedApprovalsRows.value = requestedApprovalsRowsValue;
+            multsigTransactionData.value = multsigTransactionDataValue;
 
-      const transactions = await handleTransactionHistory(proposal.block_num);
+            const transactions = await handleTransactionHistory(proposal.block_num);
 
-      isCanceled.value = transactions.some(
-        (item) =>
-          item[0].act.account === 'eosio.msig' && item[0].act.name === 'cancel',
-      );
+            isCanceled.value = transactions.some(
+                (item) =>
+                    item[0].act.account === 'eosio.msig' && item[0].act.name === 'cancel',
+            );
 
-      isLoading.value = false;
-    }
+            isLoading.value = false;
+        }
 
-    async function signTransaction({
-      name,
-      data,
-    }: {
+        async function signTransaction({
+            name,
+            data,
+        }: {
       name: 'approve' | 'unapprove' | 'cancel' | 'exec';
       data: unknown;
     }) {
-      const response = await store.state.account.user.signTransaction(
-        {
-          actions: [
-            {
-              account: 'eosio.msig',
-              name,
-              authorization: [
+            const response = await store.state.account.user.signTransaction(
                 {
-                  actor: account.value,
-                  permission: 'active',
+                    actions: [
+                        {
+                            account: 'eosio.msig',
+                            name,
+                            authorization: [
+                                {
+                                    actor: account.value,
+                                    permission: 'active',
+                                },
+                            ],
+                            data,
+                        },
+                    ],
                 },
-              ],
-              data,
-            },
-          ],
-        },
-        {
-          blocksBehind: 3,
-          expireSeconds: 30,
-        },
-      );
+                {
+                    blocksBehind: 3,
+                    expireSeconds: 30,
+                },
+            );
 
-      return response;
-    }
+            return response;
+        }
 
-    async function onApprove() {
-      try {
-        await signTransaction({
-          name: 'approve',
-          data: {
-            proposer: proposer.value,
-            proposal_name: proposalName,
-            level: {
-              actor: account.value,
-              permission: 'active',
-            },
-          },
-        });
-        await sleep();
-        await loadProposalAndUpdateFields();
-      } catch (e) {
-        console.log(e);
-        handleError(e, 'Unable approve proposal');
-      }
-    }
+        async function onApprove() {
+            try {
+                await signTransaction({
+                    name: 'approve',
+                    data: {
+                        proposer: proposer.value,
+                        proposal_name: proposalName,
+                        level: {
+                            actor: account.value,
+                            permission: 'active',
+                        },
+                    },
+                });
+                await sleep();
+                await loadProposalAndUpdateFields();
+            } catch (e) {
+                console.log(e);
+                handleError(e, 'Unable approve proposal');
+            }
+        }
 
-    async function onUnapprove() {
-      try {
-        await signTransaction({
-          name: 'unapprove',
-          data: {
-            proposer: proposer.value,
-            proposal_name: proposalName,
-            level: {
-              actor: account.value,
-              permission: 'active',
-            },
-          },
-        });
-        await sleep();
-        await loadProposalAndUpdateFields();
-      } catch (e) {
-        console.log(e);
-        handleError(e, 'Unable approve proposal');
-      }
-    }
+        async function onUnapprove() {
+            try {
+                await signTransaction({
+                    name: 'unapprove',
+                    data: {
+                        proposer: proposer.value,
+                        proposal_name: proposalName,
+                        level: {
+                            actor: account.value,
+                            permission: 'active',
+                        },
+                    },
+                });
+                await sleep();
+                await loadProposalAndUpdateFields();
+            } catch (e) {
+                console.log(e);
+                handleError(e, 'Unable approve proposal');
+            }
+        }
 
-    async function onExecute() {
-      try {
-        await signTransaction({
-          name: 'exec',
-          data: {
-            proposer: proposer.value,
-            proposal_name: proposalName,
-            executer: account.value,
-          },
-        });
-        await sleep();
-        await loadProposalAndUpdateFields();
-      } catch (e) {
-        handleError(e, 'Unable execute proposal');
-      }
-    }
+        async function onExecute() {
+            try {
+                await signTransaction({
+                    name: 'exec',
+                    data: {
+                        proposer: proposer.value,
+                        proposal_name: proposalName,
+                        executer: account.value,
+                    },
+                });
+                await sleep();
+                await loadProposalAndUpdateFields();
+            } catch (e) {
+                handleError(e, 'Unable execute proposal');
+            }
+        }
 
-    async function onCancel() {
-      try {
-        await signTransaction({
-          name: 'cancel',
-          data: {
-            proposer: proposer.value,
-            proposal_name: proposalName,
-            canceler: account.value,
-          },
-        });
-        await sleep();
-        await loadProposalAndUpdateFields();
-      } catch (e) {
-        handleError(e, 'Unable cancel proposal');
-      }
-    }
+        async function onCancel() {
+            try {
+                await signTransaction({
+                    name: 'cancel',
+                    data: {
+                        proposer: proposer.value,
+                        proposal_name: proposalName,
+                        canceler: account.value,
+                    },
+                });
+                await sleep();
+                await loadProposalAndUpdateFields();
+            } catch (e) {
+                handleError(e, 'Unable cancel proposal');
+            }
+        }
 
-    function getShaForCode(code: string): string {
-      const codeArray = Uint8Array.from(Buffer.from(code, 'hex'));
-      const sha: Uint8Array = sha256(codeArray);
-      return Buffer.from(sha).toString('hex');
-    }
+        function getShaForCode(code: string): string {
+            const codeArray = Uint8Array.from(Buffer.from(code, 'hex'));
+            const sha: Uint8Array = sha256(codeArray);
+            return Buffer.from(sha).toString('hex');
+        }
 
-    return {
-      isLoading,
-      account,
+        return {
+            isLoading,
+            account,
 
-      proposalName,
-      proposer,
-      approvalStatus,
-      producersApprovalStatus,
-      expirationDate,
+            proposalName,
+            proposer,
+            approvalStatus,
+            producersApprovalStatus,
+            expirationDate,
 
-      isShowApproveButton,
-      isShowUnapproveButton,
-      isShowExecuteButton,
-      isShowCancelButton,
-      isExecuted,
-      isCanceled,
+            isShowApproveButton,
+            isShowUnapproveButton,
+            isShowExecuteButton,
+            isShowCancelButton,
+            isExecuted,
+            isCanceled,
 
-      multsigTransactionData,
-      requestedApprovalsRows,
-      requestedApprovalsColumns,
+            multsigTransactionData,
+            requestedApprovalsRows,
+            requestedApprovalsColumns,
 
-      onApprove,
-      onUnapprove,
-      onExecute,
-      onCancel,
+            onApprove,
+            onUnapprove,
+            onExecute,
+            onCancel,
 
-      getShaForCode,
-    };
-  },
+            getShaForCode,
+        };
+    },
 });
 </script>

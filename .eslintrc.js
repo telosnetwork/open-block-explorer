@@ -70,5 +70,6 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 
     'comma-dangle': ['error', 'always-multiline'],
+    'indent': ['error', 4],
   }
 }

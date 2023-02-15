@@ -8,5 +8,5 @@ declare module '@vue/runtime-core' {
 }
 
 export default boot(({ app }) => {
-  app.config.globalProperties.$config = ConfigManager.get();
+    app.config.globalProperties.$config = ConfigManager.get();
 });

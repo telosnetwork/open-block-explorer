@@ -3,7 +3,7 @@ import { Chain } from '../types/Chain';
 import { LocalStorage } from 'quasar';
 
 export function getChain(): Chain {
-  return ConfigManager.get().getCurrentChain();
+    return ConfigManager.get().getCurrentChain();
 }
 
 export default class ConfigManager {
@@ -14,64 +14,64 @@ export default class ConfigManager {
   private currentChain: Chain;
 
   public constructor() {
-    this.init();
+      this.init();
   }
 
   private init(): void {
-    const showSidebar = process.env.SHOW_SIDEBAR;
-    const configuredChain = process.env.CHAIN_NAME;
-    this.testnets = chainsConfig.testnets;
-    this.mainnets = chainsConfig.mainnets;
-    if (showSidebar) {
+      const showSidebar = process.env.SHOW_SIDEBAR;
+      const configuredChain = process.env.CHAIN_NAME;
+      this.testnets = chainsConfig.testnets;
+      this.mainnets = chainsConfig.mainnets;
+      if (showSidebar) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const userConfiguredChain = this.getSelectedChain();
+          const userConfiguredChain = this.getSelectedChain();
 
-      if (userConfiguredChain) {
-        this.currentChain = this.findChain(userConfiguredChain);
+          if (userConfiguredChain) {
+              this.currentChain = this.findChain(userConfiguredChain);
 
-        if (!this.currentChain) {
-          this.currentChain = this.findChain(configuredChain);
-        }
+              if (!this.currentChain) {
+                  this.currentChain = this.findChain(configuredChain);
+              }
+          } else {
+              this.currentChain = this.findChain(configuredChain);
+          }
       } else {
-        this.currentChain = this.findChain(configuredChain);
+          this.currentChain = this.findChain(configuredChain);
       }
-    } else {
-      this.currentChain = this.findChain(configuredChain);
-    }
   }
 
   public static get(): ConfigManager {
-    if (!ConfigManager.thisManager) {
-      ConfigManager.thisManager = new ConfigManager();
-    }
+      if (!ConfigManager.thisManager) {
+          ConfigManager.thisManager = new ConfigManager();
+      }
 
-    return ConfigManager.thisManager;
+      return ConfigManager.thisManager;
   }
 
   public getCurrentChain(): Chain {
-    return this.currentChain;
+      return this.currentChain;
   }
 
   private getSelectedChain(): string {
-    return LocalStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
+      return LocalStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
   }
 
   public getAllChains(): Chain[] {
-    return this.mainnets.concat(this.testnets);
+      return this.mainnets.concat(this.testnets);
   }
 
   public getMainnets(): Chain[] {
-    return this.mainnets;
+      return this.mainnets;
   }
 
   public getTestnets(): Chain[] {
-    return this.testnets;
+      return this.testnets;
   }
 
   private findChain(chainName: string) {
-    const fromMainnet = this.mainnets.find((c) => c.getName() === chainName);
-    if (fromMainnet) return fromMainnet;
+      const fromMainnet = this.mainnets.find((c) => c.getName() === chainName);
+      if (fromMainnet) return fromMainnet;
 
-    return this.testnets.find((c) => c.getName() === chainName);
+      return this.testnets.find((c) => c.getName() === chainName);
   }
 }

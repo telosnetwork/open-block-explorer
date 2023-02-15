@@ -6,64 +6,64 @@ import ActionFormat from 'src/components/Transaction/ActionFormat.vue';
 import DataFormat from 'src/components/Transaction/DataFormat.vue';
 
 export default defineComponent({
-  name: 'TraceTree',
-  components: { ActionFormat, DataFormat },
-  setup() {
-    const store = useStore();
-    const account = computed((): string => store.state.account.accountName);
-    function getTree(actions: Action[]): TreeNode[] {
-      var array = [] as TreeNode[];
-      for (var action of actions) {
-        var act = action.act;
-        var obj = {} as TreeNode;
-        var children = [] as TreeNode[];
-        if (action.notified.length > 1) {
-          children.push({
-            label: action.global_sequence.toString(),
-            body: 'notification',
-            name: act.name,
-            header: 'notification',
-            account: act.account,
-            authorization: act.authorization,
-            data: act.data,
-            action,
-            children: [],
-            notifications: action.notified,
-          });
+    name: 'TraceTree',
+    components: { ActionFormat, DataFormat },
+    setup() {
+        const store = useStore();
+        const account = computed((): string => store.state.account.accountName);
+        function getTree(actions: Action[]): TreeNode[] {
+            var array = [] as TreeNode[];
+            for (var action of actions) {
+                var act = action.act;
+                var obj = {} as TreeNode;
+                var children = [] as TreeNode[];
+                if (action.notified.length > 1) {
+                    children.push({
+                        label: action.global_sequence.toString(),
+                        body: 'notification',
+                        name: act.name,
+                        header: 'notification',
+                        account: act.account,
+                        authorization: act.authorization,
+                        data: act.data,
+                        action,
+                        children: [],
+                        notifications: action.notified,
+                    });
+                }
+                obj = {
+                    label: action.global_sequence.toString() + 'notification',
+                    body: 'trace',
+                    name: act.name,
+                    header: 'trace',
+                    account: act.account,
+                    authorization: act.authorization,
+                    data: act.data,
+                    action,
+                    children: children,
+                    notifications: action.notified,
+                };
+                array.push(obj);
+            }
+            return array;
         }
-        obj = {
-          label: action.global_sequence.toString() + 'notification',
-          body: 'trace',
-          name: act.name,
-          header: 'trace',
-          account: act.account,
-          authorization: act.authorization,
-          data: act.data,
-          action,
-          children: children,
-          notifications: action.notified,
-        };
-        array.push(obj);
-      }
-      return array;
-    }
 
-    return {
-      transaction: computed(() => store.state.transaction.transactionId),
-      transactionData: computed(() => store.state.transaction.transaction),
-      blockNum: computed(() => store.state.transaction.blockNum),
-      timestamp: computed(() => store.state.transaction.timestamp),
-      executed: computed(() => store.state.transaction.executed),
-      irreversable: computed(() => store.state.transaction.irreversable),
-      cpuUsage: computed(() => store.state.transaction.cpuUsage),
-      netUsage: computed(() => store.state.transaction.netUsage),
-      actionsTraces: ref<string>(''),
-      actionNum: computed(() => store.state.transaction.actionCount),
-      actions: computed(() => store.state.transaction.actions),
-      getTree,
-      account,
-    };
-  },
+        return {
+            transaction: computed(() => store.state.transaction.transactionId),
+            transactionData: computed(() => store.state.transaction.transaction),
+            blockNum: computed(() => store.state.transaction.blockNum),
+            timestamp: computed(() => store.state.transaction.timestamp),
+            executed: computed(() => store.state.transaction.executed),
+            irreversable: computed(() => store.state.transaction.irreversable),
+            cpuUsage: computed(() => store.state.transaction.cpuUsage),
+            netUsage: computed(() => store.state.transaction.netUsage),
+            actionsTraces: ref<string>(''),
+            actionNum: computed(() => store.state.transaction.actionCount),
+            actions: computed(() => store.state.transaction.actions),
+            getTree,
+            account,
+        };
+    },
 });
 </script>
 

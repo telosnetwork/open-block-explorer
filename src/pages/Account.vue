@@ -11,44 +11,44 @@ import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'Account',
-  components: {
-    TransactionsTable,
-    TokensPanel,
-    KeysPanel,
-    ChildrenPanel,
-    AccountCard,
-    ContractTabs,
-  },
-  setup() {
-    const store = useStore();
-    const route = useRoute();
-    const router = useRouter();
-    const tab = ref<string>((route.query['tab'] as string) || 'transactions');
-    const account = computed(() => (route.params.account as string) || '');
-    const abi = computed(() => store.state.account.abi.abi);
-    const tokenList = ref(api.getTokens(account.value));
+    name: 'Account',
+    components: {
+        TransactionsTable,
+        TokensPanel,
+        KeysPanel,
+        ChildrenPanel,
+        AccountCard,
+        ContractTabs,
+    },
+    setup() {
+        const store = useStore();
+        const route = useRoute();
+        const router = useRouter();
+        const tab = ref<string>((route.query['tab'] as string) || 'transactions');
+        const account = computed(() => (route.params.account as string) || '');
+        const abi = computed(() => store.state.account.abi.abi);
+        const tokenList = ref(api.getTokens(account.value));
 
-    onMounted(async () => {
-      await store.dispatch('account/updateABI', route.params.account);
-    });
+        onMounted(async () => {
+            await store.dispatch('account/updateABI', route.params.account);
+        });
 
-    watch([tab], () => {
-      void router.push({
-        path: router.currentRoute.value.path,
-        query: {
-          tab: tab.value,
-        },
-      });
-    });
+        watch([tab], () => {
+            void router.push({
+                path: router.currentRoute.value.path,
+                query: {
+                    tab: tab.value,
+                },
+            });
+        });
 
-    return {
-      tab,
-      account,
-      abi,
-      tokenList,
-    };
-  },
+        return {
+            tab,
+            account,
+            abi,
+            tokenList,
+        };
+    },
 });
 </script>
 

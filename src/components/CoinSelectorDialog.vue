@@ -3,53 +3,53 @@ import { defineComponent, PropType, ref, watch } from 'vue';
 import { Token } from 'src/types';
 
 export default defineComponent({
-  name: 'CoinSelectorDialog',
-  props: {
-    availableTokens: {
-      required: true,
-      type: Array as PropType<Token[]>,
+    name: 'CoinSelectorDialog',
+    props: {
+        availableTokens: {
+            required: true,
+            type: Array as PropType<Token[]>,
+        },
+        updateSelectedCoin: {
+            type: Function,
+            required: true,
+        },
     },
-    updateSelectedCoin: {
-      type: Function,
-      required: true,
-    },
-  },
-  setup(props) {
-    const search = ref('');
-    const filteredTokens = ref<Token[]>([]);
+    setup(props) {
+        const search = ref('');
+        const filteredTokens = ref<Token[]>([]);
 
-    const filterTokens = () => {
-      if (search.value.length > 0) {
-        filterByText(tokensWithBalance());
-      } else filteredTokens.value = tokensWithBalance();
-    };
+        const filterTokens = () => {
+            if (search.value.length > 0) {
+                filterByText(tokensWithBalance());
+            } else filteredTokens.value = tokensWithBalance();
+        };
 
-    const filterByText = (tokens: Token[]) => {
-      filteredTokens.value = tokens.filter((token) => {
-        return (
-          token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
+        const filterByText = (tokens: Token[]) => {
+            filteredTokens.value = tokens.filter((token) => {
+                return (
+                    token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
           token.contract.toLowerCase().includes(search.value.toLowerCase())
-        );
-      });
-    };
+                );
+            });
+        };
 
-    const tokensWithBalance = () => {
-      return props.availableTokens.filter((token) => {
-        return token.amount > 0;
-      });
-    };
+        const tokensWithBalance = () => {
+            return props.availableTokens.filter((token) => {
+                return token.amount > 0;
+            });
+        };
 
-    watch(search, () => {
-      void filterTokens();
-    });
+        watch(search, () => {
+            void filterTokens();
+        });
 
-    return {
-      search,
-      filteredTokens,
-      filterTokens,
-      filterByText,
-    };
-  },
+        return {
+            search,
+            filteredTokens,
+            filterTokens,
+            filterByText,
+        };
+    },
 });
 </script>
 

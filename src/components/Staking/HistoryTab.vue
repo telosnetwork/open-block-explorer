@@ -5,28 +5,28 @@ import { Action } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
-  name: 'HistoryTab',
-  components: {},
-  setup() {
-    const store = useStore();
-    const symbol = getChain().getSystemToken().symbol;
-    const rexActions = computed((): Action[] => store.state.account.rexActions);
+    name: 'HistoryTab',
+    components: {},
+    setup() {
+        const store = useStore();
+        const symbol = getChain().getSystemToken().symbol;
+        const rexActions = computed((): Action[] => store.state.account.rexActions);
 
-    function formatDate(date: string): string {
-      return new Date(date).toLocaleDateString('en-US', {
-        month: 'long',
-        year: 'numeric',
-        day: 'numeric',
-      });
-    }
+        function formatDate(date: string): string {
+            return new Date(date).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+                day: 'numeric',
+            });
+        }
 
-    return {
-      store,
-      rexActions,
-      formatDate,
-      symbol,
-    };
-  },
+        return {
+            store,
+            rexActions,
+            formatDate,
+            symbol,
+        };
+    },
 });
 </script>
 

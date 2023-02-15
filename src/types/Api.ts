@@ -1,26 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Checksum160,
-  Checksum256,
-  Float64,
-  Name,
-  NameType,
-  UInt128,
-  UInt64,
-  UInt32Type,
-  API,
-  PublicKey,
+    Checksum160,
+    Checksum256,
+    Float64,
+    Name,
+    NameType,
+    UInt128,
+    UInt64,
+    UInt32Type,
+    API,
+    PublicKey,
 } from '@greymass/eosio';
 import { Transaction } from './Transaction';
 import {
-  AccountDetails,
-  Action,
-  Token,
-  PermissionLinks,
-  TableByScope,
-  Block,
-  ActionData,
-  Get_actions,
+    AccountDetails,
+    Action,
+    Token,
+    PermissionLinks,
+    TableByScope,
+    Block,
+    ActionData,
+    Get_actions,
 } from './Actions';
 
 export type TableIndexType =

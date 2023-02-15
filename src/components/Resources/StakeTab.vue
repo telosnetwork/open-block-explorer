@@ -12,115 +12,115 @@ const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
 
 export default defineComponent({
-  name: 'StakeTab',
-  components: {
-    ViewTransaction,
-  },
-  setup() {
-    const store = useStore();
-    const openTransaction = ref<boolean>(false);
-    const stakingAccount = ref<string>(store.state.account.accountName || '');
-    const accountTotal = computed((): string =>
-      store.state.account.data.core_liquid_balance.toString(),
-    );
-    const cpuTokens = ref<string>('0');
-    const netTokens = ref<string>('0');
+    name: 'StakeTab',
+    components: {
+        ViewTransaction,
+    },
+    setup() {
+        const store = useStore();
+        const openTransaction = ref<boolean>(false);
+        const stakingAccount = ref<string>(store.state.account.accountName || '');
+        const accountTotal = computed((): string =>
+            store.state.account.data.core_liquid_balance.toString(),
+        );
+        const cpuTokens = ref<string>('0');
+        const netTokens = ref<string>('0');
 
-    function formatDec() {
-      if (cpuTokens.value != '0') {
-        cpuTokens.value = Number(cpuTokens.value)
-          .toLocaleString('en-US', {
-            style: 'decimal',
-            maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision,
-          })
-          .replace(/[^0-9.]/g, '');
-      }
-      if (netTokens.value != '0') {
-        netTokens.value = Number(netTokens.value)
-          .toLocaleString('en-US', {
-            style: 'decimal',
-            maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision,
-          })
-          .replace(/[^0-9.]/g, '');
-      }
-    }
+        function formatDec() {
+            if (cpuTokens.value != '0') {
+                cpuTokens.value = Number(cpuTokens.value)
+                    .toLocaleString('en-US', {
+                        style: 'decimal',
+                        maximumFractionDigits: store.state.chain.token.precision,
+                        minimumFractionDigits: store.state.chain.token.precision,
+                    })
+                    .replace(/[^0-9.]/g, '');
+            }
+            if (netTokens.value != '0') {
+                netTokens.value = Number(netTokens.value)
+                    .toLocaleString('en-US', {
+                        style: 'decimal',
+                        maximumFractionDigits: store.state.chain.token.precision,
+                        minimumFractionDigits: store.state.chain.token.precision,
+                    })
+                    .replace(/[^0-9.]/g, '');
+            }
+        }
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
+        function assetToAmount(asset: string, decimals = -1): number {
+            try {
+                let qty: string = asset.split(' ')[0];
+                let val: number = parseFloat(qty);
+                if (decimals > -1) qty = val.toFixed(decimals);
+                return val;
+            } catch (error) {
+                return 0;
+            }
+        }
 
-    return {
-      openTransaction,
-      stakingAccount,
-      cpuTokens,
-      netTokens,
-      ...mapActions({ signTransaction: 'account/sendTransaction' }),
-      transactionId: ref<string>(null),
-      transactionError: null,
-      formatDec,
-      accountTotal: assetToAmount(accountTotal.value),
-      isValidAccount,
-    };
-  },
-  methods: {
-    async sendTransaction(): Promise<void> {
-      this.transactionError = '';
-      if (parseFloat(this.cpuTokens) <= 0 && parseFloat(this.netTokens) <= 0) {
-        this.$q.notify('Enter valid value for CPU or NET to stake');
-        return;
-      }
-      const data = {
-        from: this.$store.state.account.accountName.toLowerCase(),
-        receiver: this.stakingAccount.toLowerCase(),
-        transfer: false,
-        stake_cpu_quantity:
+        return {
+            openTransaction,
+            stakingAccount,
+            cpuTokens,
+            netTokens,
+            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            transactionId: ref<string>(null),
+            transactionError: null,
+            formatDec,
+            accountTotal: assetToAmount(accountTotal.value),
+            isValidAccount,
+        };
+    },
+    methods: {
+        async sendTransaction(): Promise<void> {
+            this.transactionError = '';
+            if (parseFloat(this.cpuTokens) <= 0 && parseFloat(this.netTokens) <= 0) {
+                this.$q.notify('Enter valid value for CPU or NET to stake');
+                return;
+            }
+            const data = {
+                from: this.$store.state.account.accountName.toLowerCase(),
+                receiver: this.stakingAccount.toLowerCase(),
+                transfer: false,
+                stake_cpu_quantity:
           parseFloat(this.cpuTokens) > 0
-            ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-            : `0.0000 ${symbol}`,
-        stake_net_quantity:
+              ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+              : `0.0000 ${symbol}`,
+                stake_net_quantity:
           parseFloat(this.netTokens) > 0
-            ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-            : `0.0000 ${symbol}`,
-      } as StakeResourcesTransactionData;
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.transactionId = (
+              ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+              : `0.0000 ${symbol}`,
+            } as StakeResourcesTransactionData;
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                this.transactionId = (
           await this.signTransaction({
-            account: 'eosio',
-            name: 'delegatebw',
-            data,
+              account: 'eosio',
+              name: 'delegatebw',
+              data,
           })
         ).transactionId as string;
-        this.$store.commit('account/setTransaction', this.transactionId);
-      } catch (e) {
-        this.transactionError = e;
-        this.$store.commit('account/setTransactionError', e);
-      }
-      await this.loadAccountData();
+                this.$store.commit('account/setTransaction', this.transactionId);
+            } catch (e) {
+                this.transactionError = e;
+                this.$store.commit('account/setTransactionError', e);
+            }
+            await this.loadAccountData();
 
-      if (localStorage.getItem('autoLogin') !== 'cleos') {
-        this.openTransaction = true;
-      }
+            if (localStorage.getItem('autoLogin') !== 'cleos') {
+                this.openTransaction = true;
+            }
+        },
+        async loadAccountData(): Promise<void> {
+            let data: API.v1.AccountObject;
+            try {
+                data = await this.$api.getAccount(this.stakingAccount);
+                this.$store.commit('account/setAccountData', data);
+            } catch (e) {
+                return;
+            }
+        },
     },
-    async loadAccountData(): Promise<void> {
-      let data: API.v1.AccountObject;
-      try {
-        data = await this.$api.getAccount(this.stakingAccount);
-        this.$store.commit('account/setAccountData', data);
-      } catch (e) {
-        return;
-      }
-    },
-  },
 });
 </script>
 

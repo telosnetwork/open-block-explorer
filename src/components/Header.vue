@@ -7,24 +7,24 @@ import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'Header',
-  components: {
-    LoginHandler,
-    HeaderSearch,
-  },
-  setup() {
-    const $q = useQuasar();
-    const chain = getChain();
-    const store = useStore();
-    const account = computed(() => store.state.account.accountName);
-    const isLarge = computed((): boolean => $q.screen.gt.sm);
+    name: 'Header',
+    components: {
+        LoginHandler,
+        HeaderSearch,
+    },
+    setup() {
+        const $q = useQuasar();
+        const chain = getChain();
+        const store = useStore();
+        const account = computed(() => store.state.account.accountName);
+        const isLarge = computed((): boolean => $q.screen.gt.sm);
 
-    return {
-      account,
-      isLarge: isLarge,
-      chain,
-    };
-  },
+        return {
+            account,
+            isLarge: isLarge,
+            chain,
+        };
+    },
 });
 </script>
 

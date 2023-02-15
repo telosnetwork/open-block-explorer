@@ -1,126 +1,126 @@
 <script lang="ts">
 import {
-  defineComponent,
-  ref,
-  computed,
-  PropType,
-  watch,
-  onMounted,
+    defineComponent,
+    ref,
+    computed,
+    PropType,
+    watch,
+    onMounted,
 } from 'vue';
 import { copyToClipboard, useQuasar } from 'quasar';
 import { Block } from 'src/types';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'BlockCard',
-  props: {
-    block: {
-      type: Object as PropType<Block>,
-      required: false,
-      default: null,
+    name: 'BlockCard',
+    props: {
+        block: {
+            type: Object as PropType<Block>,
+            required: false,
+            default: null,
+        },
     },
-  },
-  setup(props) {
-    const router = useRouter();
-    const q = useQuasar();
-    const Block = computed(() => props.block);
-    const blockInfo = ref<{ key: string; value: string }[]>([]);
-    async function nextBlock() {
-      await router.push({
-        name: 'block',
-        params: {
-          block: Block.value.block_num + 1,
-        },
-      });
-      router.go(0);
-    }
-    async function previousBlock() {
-      await router.push({
-        name: 'block',
-        params: {
-          block: Block.value.block_num - 1,
-        },
-      });
-      void router.go(0);
-    }
-    function copy(value: string) {
-      copyToClipboard(value)
-        .then((): void => {
-          q.notify({
-            color: 'green-4',
-            textColor: 'white',
-            message: 'Copied to clipboard',
-            timeout: 1000,
-          });
-        })
-        .catch(() => {
-          q.notify({
-            color: 'red-8',
-            textColor: 'white',
-            message: 'Could not copy',
-            timeout: 1000,
-          });
+    setup(props) {
+        const router = useRouter();
+        const q = useQuasar();
+        const Block = computed(() => props.block);
+        const blockInfo = ref<{ key: string; value: string }[]>([]);
+        async function nextBlock() {
+            await router.push({
+                name: 'block',
+                params: {
+                    block: Block.value.block_num + 1,
+                },
+            });
+            router.go(0);
+        }
+        async function previousBlock() {
+            await router.push({
+                name: 'block',
+                params: {
+                    block: Block.value.block_num - 1,
+                },
+            });
+            void router.go(0);
+        }
+        function copy(value: string) {
+            copyToClipboard(value)
+                .then((): void => {
+                    q.notify({
+                        color: 'green-4',
+                        textColor: 'white',
+                        message: 'Copied to clipboard',
+                        timeout: 1000,
+                    });
+                })
+                .catch(() => {
+                    q.notify({
+                        color: 'red-8',
+                        textColor: 'white',
+                        message: 'Could not copy',
+                        timeout: 1000,
+                    });
+                });
+        }
+        function numberWithCommas(x: number) {
+            if (!x) return 0;
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        function formatDate(date: string): string {
+            return new Date(date).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+            });
+        }
+        function setBlockData() {
+            if (Block.value) {
+                let actionCount = 0;
+                let cpu = 0;
+                let net = 0;
+                Block.value.transactions.forEach((tx) => {
+                    if (tx.trx.transaction && tx.trx.transaction.actions) {
+                        actionCount += tx.trx.transaction.actions.length;
+                    }
+                    cpu += tx.cpu_usage_us;
+                    net += tx.net_usage_words;
+                });
+                blockInfo.value = [
+                    { key: 'Producer', value: Block.value.producer },
+                    { key: 'Block time', value: formatDate(Block.value.timestamp) },
+                    { key: 'CPU usage', value: cpu.toString() + ' μs' },
+                    { key: 'Net usage', value: (net * 8).toString() + ' Bytes' },
+                    {
+                        key: 'Schedule Version',
+                        value: Block.value.schedule_version.toString(),
+                    },
+                    {
+                        key: 'Transactions',
+                        value: Block.value.transactions.length.toString(),
+                    },
+                    { key: 'Actions', value: actionCount.toString() },
+                ];
+            }
+        }
+        watch(Block, () => {
+            setBlockData();
         });
-    }
-    function numberWithCommas(x: number) {
-      if (!x) return 0;
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    }
-    function formatDate(date: string): string {
-      return new Date(date).toLocaleDateString('en-US', {
-        month: 'long',
-        year: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-      });
-    }
-    function setBlockData() {
-      if (Block.value) {
-        let actionCount = 0;
-        let cpu = 0;
-        let net = 0;
-        Block.value.transactions.forEach((tx) => {
-          if (tx.trx.transaction && tx.trx.transaction.actions) {
-            actionCount += tx.trx.transaction.actions.length;
-          }
-          cpu += tx.cpu_usage_us;
-          net += tx.net_usage_words;
+        onMounted(() => {
+            setBlockData();
         });
-        blockInfo.value = [
-          { key: 'Producer', value: Block.value.producer },
-          { key: 'Block time', value: formatDate(Block.value.timestamp) },
-          { key: 'CPU usage', value: cpu.toString() + ' μs' },
-          { key: 'Net usage', value: (net * 8).toString() + ' Bytes' },
-          {
-            key: 'Schedule Version',
-            value: Block.value.schedule_version.toString(),
-          },
-          {
-            key: 'Transactions',
-            value: Block.value.transactions.length.toString(),
-          },
-          { key: 'Actions', value: actionCount.toString() },
-        ];
-      }
-    }
-    watch(Block, () => {
-      setBlockData();
-    });
-    onMounted(() => {
-      setBlockData();
-    });
-    return {
-      block_num: computed(() => Block.value?.block_num || 0),
-      nextBlock,
-      previousBlock,
-      numberWithCommas,
-      formatDate,
-      copy,
-      blockInfo,
-    };
-  },
+        return {
+            block_num: computed(() => Block.value?.block_num || 0),
+            nextBlock,
+            previousBlock,
+            numberWithCommas,
+            formatDate,
+            copy,
+            blockInfo,
+        };
+    },
 });
 </script>
 

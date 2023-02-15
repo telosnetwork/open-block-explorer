@@ -1,14 +1,14 @@
 <script lang="ts">
 import { Action, PaginationSettings, TransactionTableRow } from 'src/types';
 import {
-  computed,
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  PropType,
-  ref,
-  toRefs,
-  watch,
+    computed,
+    defineComponent,
+    onBeforeUnmount,
+    onMounted,
+    PropType,
+    ref,
+    toRefs,
+    watch,
 } from 'vue';
 import DateField from 'src/components/DateField.vue';
 import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
@@ -20,303 +20,303 @@ import { useRoute, useRouter } from 'vue-router';
 const FIVE_SECONDS = 5000;
 
 export default defineComponent({
-  name: 'TransactionsTable',
-  components: {
-    DateField,
-    AccountFormat,
-    ActionFormat,
-    DataFormat,
-  },
-  props: {
-    account: {
-      type: String || null,
-      required: false,
-      default: null,
+    name: 'TransactionsTable',
+    components: {
+        DateField,
+        AccountFormat,
+        ActionFormat,
+        DataFormat,
     },
-    actions: {
-      type: Object as PropType<Action[]>,
-      required: false,
-      default: null,
-    },
-  },
-  setup(props) {
-    const route = useRoute();
-    const router = useRouter();
-    const pagination = computed(
-      () => (route.query['page'] as string) || '1,10',
-    );
-    const pageSizeOptions = [10, 20, 50, 100, 200];
-    const { account, actions } = toRefs(props);
-    const columns = [
-      {
-        name: 'transaction',
-        required: true,
-        label: 'TRANSACTION',
-        align: 'left',
-        field: 'transaction',
-        sortable: true,
-      },
-      {
-        name: 'timestamp',
-        required: true,
-        align: 'left',
-        label: 'TIMESTAMP',
-        field: 'timestamp',
-        sortable: true,
-      },
-      {
-        name: 'action',
-        required: true,
-        align: 'left',
-        label: 'ACTION',
-        field: 'action',
-        sortable: true,
-      },
-      {
-        name: 'data',
-        required: true,
-        align: 'left',
-        label: 'DATA',
-        field: 'data',
-      },
-    ];
-    const rows = ref<TransactionTableRow[]>([]);
-    const filteredRows = ref<TransactionTableRow[]>([]);
-    const loading = ref<boolean>(false);
-    const paginationSettings = ref<PaginationSettings>({
-      sortBy: 'timestamp',
-      descending: true,
-      page: 1,
-      rowsPerPage: pageSizeOptions[0],
-      rowsNumber: 10000,
-    });
-    const fromDateFilter = ref('');
-    const toDateFilter = ref<string>(new Date().toLocaleString());
-    const actionsFilter = ref('');
-    const tokenFilter = ref('');
-    const interval = ref<number>(null);
-    const showAge = ref<boolean>(localStorage.getItem('showAge') === 'true');
-
-    const isTransaction = computed(
-      () => account.value != null && account.value.length > 12,
-    );
-    const tableTitle = computed(() =>
-      isTransaction.value ? 'Actions' : 'Latest Transactions',
-    );
-
-    const hasPages = computed(() => {
-      let count = 0;
-      rows.value.forEach((element: TransactionTableRow) => {
-        count += element.actions.length;
-      });
-      return count >= paginationSettings.value.rowsPerPage;
-    });
-
-    const noData = computed(() => rows.value.length === 0);
-    const hasActions = computed(() => actions.value != null);
-    const filter = computed(() => {
-      return {
-        actions: actionsFilter.value,
-        toDate: toDateFilter.value,
-        fromDate: fromDateFilter.value,
-        token: tokenFilter.value,
-      };
-    });
-
-    const loadTableData = async (): Promise<void> => {
-      let tableData: Action[];
-      if (isTransaction.value) {
-        tableData = (await api.getTransaction(account.value)).actions;
-      } else if (hasActions.value) {
-        tableData = actions.value;
-      } else {
-        tableData =
-          account.value == null
-            ? await api.getTransactions(
-                paginationSettings.value.page,
-                paginationSettings.value.rowsPerPage,
-              )
-            : await api.getTransactions(
-                paginationSettings.value.page,
-                paginationSettings.value.rowsPerPage,
-                account.value,
-              );
-      }
-      if (tableData) {
-        rows.value = tableData.map((item) => ({
-          name: item.trx_id,
-          transaction: { id: item.trx_id, type: 'transaction' },
-          timestamp: item['@timestamp'] || item.timestamp,
-          action: item,
-          data: hasActions.value
-            ? { data: item.data as unknown, name: item.account }
-            : { data: item.act.data as unknown, name: item.act.name },
-          actions: [
-            {
-              name: item.trx_id,
-              transaction: { id: item.trx_id, type: 'transaction' },
-              timestamp: item['@timestamp'],
-              action: item,
-              data: hasActions.value
-                ? {
-                    data: item.data as unknown,
-                    name: item.account,
-                  }
-                : { data: item.act.data as unknown, name: item.act.name },
-            },
-          ],
-        }));
-      }
-      void filterRows();
-    };
-
-    const onRequest = async (props: {
-      pagination: {
-        page: number;
-        rowsPerPage: number;
-        sortBy: string;
-        descending: boolean;
-      };
-    }) => {
-      loading.value = true;
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      paginationSettings.value.page = page;
-      paginationSettings.value.rowsPerPage = rowsPerPage;
-      paginationSettings.value.sortBy = sortBy;
-      paginationSettings.value.descending = descending;
-      await loadTableData();
-      loading.value = false;
-    };
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onPaginationChange = async (props: {
-      pagination: {
-        page: number;
-        rowsPerPage: number;
-        sortBy: string;
-        descending: boolean;
-      };
-    }) => {
-      const { page, rowsPerPage } = props.pagination;
-
-      // we need to change the URL to keep the pagination state by changing the route.query.page
-      // with a string like 'page,rowsPerPage'
-      await router.push({
-        // taking care to preserve the current #hash anchor and the current query parameters
-        hash: window.location.hash,
-        query: {
-          ...route.query,
-          page: `${page},${rowsPerPage}`,
+    props: {
+        account: {
+            type: String || null,
+            required: false,
+            default: null,
         },
-      });
-    };
+        actions: {
+            type: Object as PropType<Action[]>,
+            required: false,
+            default: null,
+        },
+    },
+    setup(props) {
+        const route = useRoute();
+        const router = useRouter();
+        const pagination = computed(
+            () => (route.query['page'] as string) || '1,10',
+        );
+        const pageSizeOptions = [10, 20, 50, 100, 200];
+        const { account, actions } = toRefs(props);
+        const columns = [
+            {
+                name: 'transaction',
+                required: true,
+                label: 'TRANSACTION',
+                align: 'left',
+                field: 'transaction',
+                sortable: true,
+            },
+            {
+                name: 'timestamp',
+                required: true,
+                align: 'left',
+                label: 'TIMESTAMP',
+                field: 'timestamp',
+                sortable: true,
+            },
+            {
+                name: 'action',
+                required: true,
+                align: 'left',
+                label: 'ACTION',
+                field: 'action',
+                sortable: true,
+            },
+            {
+                name: 'data',
+                required: true,
+                align: 'left',
+                label: 'DATA',
+                field: 'data',
+            },
+        ];
+        const rows = ref<TransactionTableRow[]>([]);
+        const filteredRows = ref<TransactionTableRow[]>([]);
+        const loading = ref<boolean>(false);
+        const paginationSettings = ref<PaginationSettings>({
+            sortBy: 'timestamp',
+            descending: true,
+            page: 1,
+            rowsPerPage: pageSizeOptions[0],
+            rowsNumber: 10000,
+        });
+        const fromDateFilter = ref('');
+        const toDateFilter = ref<string>(new Date().toLocaleString());
+        const actionsFilter = ref('');
+        const tokenFilter = ref('');
+        const interval = ref<number>(null);
+        const showAge = ref<boolean>(localStorage.getItem('showAge') === 'true');
 
-    const setPagination = async (
-      page: string | number,
-      size: string | number,
-    ) => {
-      if (page) {
-        paginationSettings.value.page = Number(page);
-      }
-      if (size) {
-        paginationSettings.value.rowsPerPage = Number(size);
-      }
-      await onRequest({
-        pagination: paginationSettings.value,
-      });
-    };
+        const isTransaction = computed(
+            () => account.value != null && account.value.length > 12,
+        );
+        const tableTitle = computed(() =>
+            isTransaction.value ? 'Actions' : 'Latest Transactions',
+        );
 
-    const checkIsMultiLine = (data: string): boolean => {
-      return data.length > 0 && data.split('\n').length > 1;
-    };
+        const hasPages = computed(() => {
+            let count = 0;
+            rows.value.forEach((element: TransactionTableRow) => {
+                count += element.actions.length;
+            });
+            return count >= paginationSettings.value.rowsPerPage;
+        });
 
-    const filterRows = () => {
-      filteredRows.value = rows.value.filter((row) =>
-        row.action.act.name.includes(actionsFilter.value),
-      );
-      filteredRows.value = filteredRows.value.filter((row) =>
-        JSON.stringify(row.data).includes(tokenFilter.value.toUpperCase()),
-      );
-      if (!!fromDateFilter.value && !!toDateFilter.value) {
-        filteredRows.value = filteredRows.value.filter((item) => {
-          return (
-            new Date(item.timestamp).getTime() >=
+        const noData = computed(() => rows.value.length === 0);
+        const hasActions = computed(() => actions.value != null);
+        const filter = computed(() => {
+            return {
+                actions: actionsFilter.value,
+                toDate: toDateFilter.value,
+                fromDate: fromDateFilter.value,
+                token: tokenFilter.value,
+            };
+        });
+
+        const loadTableData = async (): Promise<void> => {
+            let tableData: Action[];
+            if (isTransaction.value) {
+                tableData = (await api.getTransaction(account.value)).actions;
+            } else if (hasActions.value) {
+                tableData = actions.value;
+            } else {
+                tableData =
+          account.value == null
+              ? await api.getTransactions(
+                  paginationSettings.value.page,
+                  paginationSettings.value.rowsPerPage,
+              )
+              : await api.getTransactions(
+                  paginationSettings.value.page,
+                  paginationSettings.value.rowsPerPage,
+                  account.value,
+              );
+            }
+            if (tableData) {
+                rows.value = tableData.map((item) => ({
+                    name: item.trx_id,
+                    transaction: { id: item.trx_id, type: 'transaction' },
+                    timestamp: item['@timestamp'] || item.timestamp,
+                    action: item,
+                    data: hasActions.value
+                        ? { data: item.data as unknown, name: item.account }
+                        : { data: item.act.data as unknown, name: item.act.name },
+                    actions: [
+                        {
+                            name: item.trx_id,
+                            transaction: { id: item.trx_id, type: 'transaction' },
+                            timestamp: item['@timestamp'],
+                            action: item,
+                            data: hasActions.value
+                                ? {
+                                    data: item.data as unknown,
+                                    name: item.account,
+                                }
+                                : { data: item.act.data as unknown, name: item.act.name },
+                        },
+                    ],
+                }));
+            }
+            void filterRows();
+        };
+
+        const onRequest = async (props: {
+      pagination: {
+        page: number;
+        rowsPerPage: number;
+        sortBy: string;
+        descending: boolean;
+      };
+    }) => {
+            loading.value = true;
+            const { page, rowsPerPage, sortBy, descending } = props.pagination;
+            paginationSettings.value.page = page;
+            paginationSettings.value.rowsPerPage = rowsPerPage;
+            paginationSettings.value.sortBy = sortBy;
+            paginationSettings.value.descending = descending;
+            await loadTableData();
+            loading.value = false;
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const onPaginationChange = async (props: {
+      pagination: {
+        page: number;
+        rowsPerPage: number;
+        sortBy: string;
+        descending: boolean;
+      };
+    }) => {
+            const { page, rowsPerPage } = props.pagination;
+
+            // we need to change the URL to keep the pagination state by changing the route.query.page
+            // with a string like 'page,rowsPerPage'
+            await router.push({
+                // taking care to preserve the current #hash anchor and the current query parameters
+                hash: window.location.hash,
+                query: {
+                    ...route.query,
+                    page: `${page},${rowsPerPage}`,
+                },
+            });
+        };
+
+        const setPagination = async (
+            page: string | number,
+            size: string | number,
+        ) => {
+            if (page) {
+                paginationSettings.value.page = Number(page);
+            }
+            if (size) {
+                paginationSettings.value.rowsPerPage = Number(size);
+            }
+            await onRequest({
+                pagination: paginationSettings.value,
+            });
+        };
+
+        const checkIsMultiLine = (data: string): boolean => {
+            return data.length > 0 && data.split('\n').length > 1;
+        };
+
+        const filterRows = () => {
+            filteredRows.value = rows.value.filter((row) =>
+                row.action.act.name.includes(actionsFilter.value),
+            );
+            filteredRows.value = filteredRows.value.filter((row) =>
+                JSON.stringify(row.data).includes(tokenFilter.value.toUpperCase()),
+            );
+            if (!!fromDateFilter.value && !!toDateFilter.value) {
+                filteredRows.value = filteredRows.value.filter((item) => {
+                    return (
+                        new Date(item.timestamp).getTime() >=
               new Date(fromDateFilter.value).getTime() &&
             new Date(item.timestamp).getTime() <=
               new Date(toDateFilter.value).getTime()
-          );
+                    );
+                });
+            }
+        };
+
+        onMounted(() => {
+            interval.value = window.setInterval(() => {
+                //only automatically refresh data on first page, disable on page navigation
+                if (account.value == null && paginationSettings.value.page === 1)
+                    void loadTableData();
+            }, FIVE_SECONDS);
         });
-      }
-    };
+        onBeforeUnmount(() => {
+            clearInterval(interval.value);
+        });
+        watch([account, actions], () => {
+            void loadTableData();
+        });
+        watch(filter, () => {
+            void filterRows();
+        });
+        watch(showAge, (val) => {
+            localStorage.setItem('showAge', val ? 'true' : 'false');
+        });
+        // create a watch for pagination and make sure it is called inmediately
+        watch(
+            () => pagination.value,
+            async () => {
+                let pageValue = pagination.value;
+                let page = 1;
+                let size = pageSizeOptions[0];
 
-    onMounted(() => {
-      interval.value = window.setInterval(() => {
-        //only automatically refresh data on first page, disable on page navigation
-        if (account.value == null && paginationSettings.value.page === 1)
-          void loadTableData();
-      }, FIVE_SECONDS);
-    });
-    onBeforeUnmount(() => {
-      clearInterval(interval.value);
-    });
-    watch([account, actions], () => {
-      void loadTableData();
-    });
-    watch(filter, () => {
-      void filterRows();
-    });
-    watch(showAge, (val) => {
-      localStorage.setItem('showAge', val ? 'true' : 'false');
-    });
-    // create a watch for pagination and make sure it is called inmediately
-    watch(
-      () => pagination.value,
-      async () => {
-        let pageValue = pagination.value;
-        let page = 1;
-        let size = pageSizeOptions[0];
+                // we also allow to pass a single number as the page number
+                if (typeof pageValue === 'number') {
+                    page = pageValue;
+                } else if (typeof pageValue === 'string') {
+                    // we also allow to pass a string of two numbers: 'page,rowsPerPage'
+                    const [p, s] = pageValue.split(',');
+                    page = Number(p);
+                    size = Number(s);
+                }
 
-        // we also allow to pass a single number as the page number
-        if (typeof pageValue === 'number') {
-          page = pageValue;
-        } else if (typeof pageValue === 'string') {
-          // we also allow to pass a string of two numbers: 'page,rowsPerPage'
-          const [p, s] = pageValue.split(',');
-          page = Number(p);
-          size = Number(s);
-        }
+                await setPagination(page, size);
+            },
+            { immediate: true },
+        );
 
-        await setPagination(page, size);
-      },
-      { immediate: true },
-    );
-
-    return {
-      columns,
-      rows,
-      filteredRows,
-      loading,
-      paginationSettings,
-      fromDateFilter,
-      toDateFilter,
-      actionsFilter,
-      tokenFilter,
-      interval,
-      showAge,
-      tableTitle,
-      hasPages,
-      noData,
-      hasActions,
-      filter,
-      onRequest,
-      loadTableData,
-      checkIsMultiLine,
-      filterRows,
-      pageSizeOptions,
-      setPagination,
-      onPaginationChange,
-    };
-  },
+        return {
+            columns,
+            rows,
+            filteredRows,
+            loading,
+            paginationSettings,
+            fromDateFilter,
+            toDateFilter,
+            actionsFilter,
+            tokenFilter,
+            interval,
+            showAge,
+            tableTitle,
+            hasPages,
+            noData,
+            hasActions,
+            filter,
+            onRequest,
+            loadTableData,
+            checkIsMultiLine,
+            filterRows,
+            pageSizeOptions,
+            setPagination,
+            onPaginationChange,
+        };
+    },
 });
 </script>
 

@@ -8,100 +8,100 @@ import { API } from '@greymass/eosio';
 const chain = getChain();
 
 export default defineComponent({
-  name: 'StakingTab',
-  components: {
-    ViewTransaction,
-  },
-  setup() {
-    const store = useStore();
-    let openTransaction = ref<boolean>(false);
-    const stakeTokens = ref<string>('');
-    const symbol = ref<string>(chain.getSystemToken().symbol);
-    const transactionId = computed(
-      (): string => store.state.account.TransactionId,
-    );
-    const transactionError = computed(
-      () => store.state.account.TransactionError,
-    );
-    const accountData = computed((): API.v1.AccountObject => {
-      return store.state?.account.data;
-    });
-    const rexInfo = computed(() => {
-      return store.state.account.data.rex_info;
-    });
-    const rexbal = computed(() => {
-      return store.state.account.rexbal;
-    });
-    const maturedRex = computed(() => {
-      return store.state.account.maturedRex;
-    });
-    const liquidBalance = computed(
-      () => accountData.value?.core_liquid_balance.value,
-    );
+    name: 'StakingTab',
+    components: {
+        ViewTransaction,
+    },
+    setup() {
+        const store = useStore();
+        let openTransaction = ref<boolean>(false);
+        const stakeTokens = ref<string>('');
+        const symbol = ref<string>(chain.getSystemToken().symbol);
+        const transactionId = computed(
+            (): string => store.state.account.TransactionId,
+        );
+        const transactionError = computed(
+            () => store.state.account.TransactionError,
+        );
+        const accountData = computed((): API.v1.AccountObject => {
+            return store.state?.account.data;
+        });
+        const rexInfo = computed(() => {
+            return store.state.account.data.rex_info;
+        });
+        const rexbal = computed(() => {
+            return store.state.account.rexbal;
+        });
+        const maturedRex = computed(() => {
+            return store.state.account.maturedRex;
+        });
+        const liquidBalance = computed(
+            () => accountData.value?.core_liquid_balance.value,
+        );
 
-    function formatDec() {
-      const precision = store.state.chain.token.precision;
-      if (stakeTokens.value != '') {
-        stakeTokens.value = Number(stakeTokens.value)
-          .toLocaleString('en-US', {
-            style: 'decimal',
-            maximumFractionDigits: precision,
-            minimumFractionDigits: precision,
-          })
-          .replace(/[^0-9.]/g, '');
-      }
-    }
+        function formatDec() {
+            const precision = store.state.chain.token.precision;
+            if (stakeTokens.value != '') {
+                stakeTokens.value = Number(stakeTokens.value)
+                    .toLocaleString('en-US', {
+                        style: 'decimal',
+                        maximumFractionDigits: precision,
+                        minimumFractionDigits: precision,
+                    })
+                    .replace(/[^0-9.]/g, '');
+            }
+        }
 
-    async function stake() {
-      void store.dispatch('account/resetTransaction');
-      if (
-        stakeTokens.value === '0.0000' ||
+        async function stake() {
+            void store.dispatch('account/resetTransaction');
+            if (
+                stakeTokens.value === '0.0000' ||
         Number(stakeTokens.value) >=
           Number(accountData.value.core_liquid_balance.toString())
-      ) {
-        return;
-      }
-      await store.dispatch('account/stakeRex', {
-        amount: stakeTokens.value,
-      });
-      openTransaction.value = true;
-    }
+            ) {
+                return;
+            }
+            await store.dispatch('account/stakeRex', {
+                amount: stakeTokens.value,
+            });
+            openTransaction.value = true;
+        }
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
+        function assetToAmount(asset: string, decimals = -1): number {
+            try {
+                let qty: string = asset.split(' ')[0];
+                let val: number = parseFloat(qty);
+                if (decimals > -1) qty = val.toFixed(decimals);
+                return val;
+            } catch (error) {
+                return 0;
+            }
+        }
 
-    function setMaxValue() {
-      stakeTokens.value = (
-        assetToAmount(accountData.value.core_liquid_balance.toString()) - 0.1
-      ).toString();
-      void formatDec();
-    }
+        function setMaxValue() {
+            stakeTokens.value = (
+                assetToAmount(accountData.value.core_liquid_balance.toString()) - 0.1
+            ).toString();
+            void formatDec();
+        }
 
-    return {
-      openTransaction,
-      stakeTokens,
-      transactionId,
-      transactionError,
-      accountData,
-      rexInfo,
-      rexbal,
-      maturedRex,
-      liquidBalance,
-      symbol,
-      formatDec,
-      stake,
-      assetToAmount,
-      setMaxValue,
-    };
-  },
+        return {
+            openTransaction,
+            stakeTokens,
+            transactionId,
+            transactionError,
+            accountData,
+            rexInfo,
+            rexbal,
+            maturedRex,
+            liquidBalance,
+            symbol,
+            formatDec,
+            stake,
+            assetToAmount,
+            setMaxValue,
+        };
+    },
 });
 </script>
 

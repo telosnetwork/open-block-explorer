@@ -7,55 +7,55 @@ import { api } from 'src/api/index';
 import { Action, Block } from 'src/types';
 
 export default defineComponent({
-  name: 'Block',
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const found = ref(true);
-    const block = ref<Block>(null);
-    const actions = ref<Action[]>([]);
-    const tab = ref<string>((route.query['tab'] as string) || 'actions');
-    onMounted(async () => {
-      // api get block and set block
-      block.value = await api.getBlock(route.params.block as string);
-      block.value.transactions.forEach((tr) => {
-        const act = tr.trx.transaction?.actions.map((act) => {
-          return {
-            ...act,
-            trx_id: tr.trx.id,
-            act: {
-              ...act.act,
-              name: act.name,
-              data: act.data,
-              account: act.account,
-            },
-            '@timestamp': block.value.timestamp,
-          };
+    name: 'Block',
+    setup() {
+        const route = useRoute();
+        const router = useRouter();
+        const found = ref(true);
+        const block = ref<Block>(null);
+        const actions = ref<Action[]>([]);
+        const tab = ref<string>((route.query['tab'] as string) || 'actions');
+        onMounted(async () => {
+            // api get block and set block
+            block.value = await api.getBlock(route.params.block as string);
+            block.value.transactions.forEach((tr) => {
+                const act = tr.trx.transaction?.actions.map((act) => {
+                    return {
+                        ...act,
+                        trx_id: tr.trx.id,
+                        act: {
+                            ...act.act,
+                            name: act.name,
+                            data: act.data,
+                            account: act.account,
+                        },
+                        '@timestamp': block.value.timestamp,
+                    };
+                });
+                actions.value = actions.value.concat(act);
+            });
+            found.value = block.value ? true : false;
         });
-        actions.value = actions.value.concat(act);
-      });
-      found.value = block.value ? true : false;
-    });
-    watch([tab], () => {
-      void router.push({
-        path: router.currentRoute.value.path,
-        query: {
-          tab: tab.value,
-        },
-      });
-    });
-    return {
-      tab,
-      transaction: route.params.transaction,
-      found,
-      Actions: actions,
-      block,
-    };
-  },
-  components: {
-    TransactionTable,
-    BlockCard,
-  },
+        watch([tab], () => {
+            void router.push({
+                path: router.currentRoute.value.path,
+                query: {
+                    tab: tab.value,
+                },
+            });
+        });
+        return {
+            tab,
+            transaction: route.params.transaction,
+            found,
+            Actions: actions,
+            block,
+        };
+    },
+    components: {
+        TransactionTable,
+        BlockCard,
+    },
 });
 </script>
 

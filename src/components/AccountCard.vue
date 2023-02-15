@@ -17,377 +17,377 @@ import { API, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
 export default defineComponent({
-  name: 'AccountCard',
-  components: {
-    PercentCircle,
-    SendDialog,
-    ResourcesDialog,
-    DateField,
-    StakingDialog,
-  },
-  props: {
-    account: {
-      type: String,
-      required: true,
+    name: 'AccountCard',
+    components: {
+        PercentCircle,
+        SendDialog,
+        ResourcesDialog,
+        DateField,
+        StakingDialog,
     },
-  },
-  setup(props) {
-    const $q = useQuasar();
-    const router = useRouter();
-    const store = useStore();
+    props: {
+        account: {
+            type: String,
+            required: true,
+        },
+    },
+    setup(props) {
+        const $q = useQuasar();
+        const router = useRouter();
+        const store = useStore();
 
-    const createTime = ref<string>('2019-01-01T00:00:00.000');
-    const createTransaction = ref<string>('');
-    const creatingAccount = ref('');
-    const system_account = ref('eosio');
+        const createTime = ref<string>('2019-01-01T00:00:00.000');
+        const createTransaction = ref<string>('');
+        const creatingAccount = ref('');
+        const system_account = ref('eosio');
 
-    const isLoading = ref<boolean>(true);
-    const tokensLoading = ref<boolean>(true);
-    const none = ref<UInt64>(UInt64.from(0));
-    const MICRO_UNIT = ref<number>(Math.pow(10, -6));
-    const KILO_UNIT = ref<number>(Math.pow(10, 3));
-    const resources = ref<number>(0);
-    const delegatedResources = ref<number>(0.0);
-    const rex = ref<number>(0);
-    const usdPrice = ref<number>();
-    const cpu_used = ref<number>(0);
-    const cpu_max = ref<number>(0);
-    const totalTokens = ref<number | string>('');
-    const net_used = ref(0);
-    const net_max = ref(0);
-    const ram_used = ref(0);
-    const ram_max = ref(0);
-    const radius = ref(44);
-    const stakedResources = ref(0);
+        const isLoading = ref<boolean>(true);
+        const tokensLoading = ref<boolean>(true);
+        const none = ref<UInt64>(UInt64.from(0));
+        const MICRO_UNIT = ref<number>(Math.pow(10, -6));
+        const KILO_UNIT = ref<number>(Math.pow(10, 3));
+        const resources = ref<number>(0);
+        const delegatedResources = ref<number>(0.0);
+        const rex = ref<number>(0);
+        const usdPrice = ref<number>();
+        const cpu_used = ref<number>(0);
+        const cpu_max = ref<number>(0);
+        const totalTokens = ref<number | string>('');
+        const net_used = ref(0);
+        const net_max = ref(0);
+        const ram_used = ref(0);
+        const ram_max = ref(0);
+        const radius = ref(44);
+        const stakedResources = ref(0);
 
-    const accountExists = ref<boolean>(true);
-    const openSendDialog = ref<boolean>(false);
-    const openResourcesDialog = ref<boolean>(false);
-    const openStakingDialog = ref<boolean>(false);
+        const accountExists = ref<boolean>(true);
+        const openSendDialog = ref<boolean>(false);
+        const openResourcesDialog = ref<boolean>(false);
+        const openStakingDialog = ref<boolean>(false);
 
-    const accountData = ref<API.v1.AccountObject>();
-    const availableTokens = ref<Token[]>([]);
+        const accountData = ref<API.v1.AccountObject>();
+        const availableTokens = ref<Token[]>([]);
 
-    const totalRefund = computed((): number =>
-      accountData.value && accountData.value.refund_request
-        ? accountData.value.refund_request?.cpu_amount.value +
+        const totalRefund = computed((): number =>
+            accountData.value && accountData.value.refund_request
+                ? accountData.value.refund_request?.cpu_amount.value +
           accountData.value.refund_request?.net_amount.value
-        : 0,
-    );
-
-    const token = computed((): Token => store.state.chain.token);
-
-    const liquid = computed((): number => {
-      return accountData.value?.core_liquid_balance?.value
-        ? accountData.value.core_liquid_balance.value
-        : 0;
-    });
-
-    const totalValue = computed((): number => {
-      if (typeof totalTokens.value === 'number') {
-        return usdPrice.value * totalTokens.value;
-      }
-      return 0;
-    });
-
-    const totalValueString = computed((): string => {
-      let result = '';
-      if (totalValue.value && usdPrice.value) {
-        result = `$${totalValue.value.toFixed(2)} (@ $${usdPrice.value.toFixed(
-          4,
-        )}/${chain.getSystemToken().symbol})`;
-      }
-      return result;
-    });
-
-    const isAccount = computed((): boolean => {
-      return store.state.account.accountName === props.account;
-    });
-
-    const createTimeFormat = computed((): string =>
-      date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A'),
-    );
-
-    const setToken = (value: Token) => {
-      store.commit('chain/setToken', value);
-    };
-
-    const loadAccountData = async (): Promise<void> => {
-      try {
-        isLoading.value = true;
-        accountData.value = await api.getAccount(props.account);
-        await loadAccountCreatorInfo();
-        await loadBalances();
-        loadResources();
-        setTotalBalance();
-        await updateTokenBalances();
-      } catch (e) {
-        $q.notify(`account ${props.account} not found!`);
-        accountExists.value = false;
-        return;
-      }
-    };
-
-    const loadBalances = async () => {
-      const rexBalance = await getRexBalance();
-      const rexFund = await getRexFund();
-      rex.value = rexBalance + rexFund;
-    };
-
-    const loadResources = () => {
-      ram_used.value = fixDec(
-        Number(accountData.value.ram_usage) / KILO_UNIT.value,
-      );
-
-      if (props.account !== system_account.value) {
-        ram_max.value = fixDec(
-          Number(accountData.value.ram_quota) / KILO_UNIT.value,
-        );
-        cpu_used.value = fixDec(
-          Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value,
-        );
-        cpu_max.value = fixDec(
-          Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value,
-        );
-        net_used.value = fixDec(
-          Number(accountData.value.net_limit.used) / KILO_UNIT.value,
-        );
-        net_max.value = fixDec(
-          Number(accountData.value.net_limit.max) / KILO_UNIT.value,
+                : 0,
         );
 
-        stakedResources.value =
+        const token = computed((): Token => store.state.chain.token);
+
+        const liquid = computed((): number => {
+            return accountData.value?.core_liquid_balance?.value
+                ? accountData.value.core_liquid_balance.value
+                : 0;
+        });
+
+        const totalValue = computed((): number => {
+            if (typeof totalTokens.value === 'number') {
+                return usdPrice.value * totalTokens.value;
+            }
+            return 0;
+        });
+
+        const totalValueString = computed((): string => {
+            let result = '';
+            if (totalValue.value && usdPrice.value) {
+                result = `$${totalValue.value.toFixed(2)} (@ $${usdPrice.value.toFixed(
+                    4,
+                )}/${chain.getSystemToken().symbol})`;
+            }
+            return result;
+        });
+
+        const isAccount = computed((): boolean => {
+            return store.state.account.accountName === props.account;
+        });
+
+        const createTimeFormat = computed((): string =>
+            date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A'),
+        );
+
+        const setToken = (value: Token) => {
+            store.commit('chain/setToken', value);
+        };
+
+        const loadAccountData = async (): Promise<void> => {
+            try {
+                isLoading.value = true;
+                accountData.value = await api.getAccount(props.account);
+                await loadAccountCreatorInfo();
+                await loadBalances();
+                loadResources();
+                setTotalBalance();
+                await updateTokenBalances();
+            } catch (e) {
+                $q.notify(`account ${props.account} not found!`);
+                accountExists.value = false;
+                return;
+            }
+        };
+
+        const loadBalances = async () => {
+            const rexBalance = await getRexBalance();
+            const rexFund = await getRexFund();
+            rex.value = rexBalance + rexFund;
+        };
+
+        const loadResources = () => {
+            ram_used.value = fixDec(
+                Number(accountData.value.ram_usage) / KILO_UNIT.value,
+            );
+
+            if (props.account !== system_account.value) {
+                ram_max.value = fixDec(
+                    Number(accountData.value.ram_quota) / KILO_UNIT.value,
+                );
+                cpu_used.value = fixDec(
+                    Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value,
+                );
+                cpu_max.value = fixDec(
+                    Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value,
+                );
+                net_used.value = fixDec(
+                    Number(accountData.value.net_limit.used) / KILO_UNIT.value,
+                );
+                net_max.value = fixDec(
+                    Number(accountData.value.net_limit.max) / KILO_UNIT.value,
+                );
+
+                stakedResources.value =
           Number(accountData.value.total_resources.cpu_weight.value) +
           Number(accountData.value.total_resources.net_weight.value);
 
-        delegatedResources.value = Math.abs(
-          stakedResources.value -
+                delegatedResources.value = Math.abs(
+                    stakedResources.value -
             Number(
-              accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
+                accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
             ) -
             Number(
-              accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
+                accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
             ),
-        );
-      }
-    };
+                );
+            }
+        };
 
-    const setTotalBalance = () => {
-      totalTokens.value =
+        const setTotalBalance = () => {
+            totalTokens.value =
         liquid.value +
         rex.value +
         totalRefund.value +
         (stakedResources.value - delegatedResources.value);
-      isLoading.value = false;
-    };
+            isLoading.value = false;
+        };
 
-    const updateTokenBalances = async () => {
-      tokensLoading.value = true;
-      availableTokens.value = await api.getTokens(props.account);
-      tokensLoading.value = false;
-    };
+        const updateTokenBalances = async () => {
+            tokensLoading.value = true;
+            availableTokens.value = await api.getTokens(props.account);
+            tokensLoading.value = false;
+        };
 
-    const loadAccountCreatorInfo = async () => {
-      try {
-        const creatorData = (await api.getCreator(props.account)) as {
+        const loadAccountCreatorInfo = async () => {
+            try {
+                const creatorData = (await api.getCreator(props.account)) as {
           creator: string;
           timestamp: string;
           trx_id: string;
         };
-        creatingAccount.value = creatorData.creator;
-        createTime.value = creatorData.timestamp;
-        createTransaction.value = creatorData.trx_id;
-      } catch (e) {
-        $q.notify(`creator account for ${props.account} not found!`);
-      }
-    };
+                creatingAccount.value = creatorData.creator;
+                createTime.value = creatorData.timestamp;
+                createTransaction.value = creatorData.trx_id;
+            } catch (e) {
+                $q.notify(`creator account for ${props.account} not found!`);
+            }
+        };
 
-    const getRexFund = async () => {
-      const paramsrexfund = {
-        code: 'eosio',
-        limit: '1',
-        lower_bound: props.account as unknown as TableIndexType,
-        scope: 'eosio',
-        table: 'rexfund',
-        reverse: false,
-        upper_bound: props.account as unknown as TableIndexType,
-      } as GetTableRowsParams;
-      const rexfund = (
+        const getRexFund = async () => {
+            const paramsrexfund = {
+                code: 'eosio',
+                limit: '1',
+                lower_bound: props.account as unknown as TableIndexType,
+                scope: 'eosio',
+                table: 'rexfund',
+                reverse: false,
+                upper_bound: props.account as unknown as TableIndexType,
+            } as GetTableRowsParams;
+            const rexfund = (
         (await api.getTableRows(paramsrexfund)) as {
           rows: {
             owner: string;
             balance: string;
           }[];
         }
-      ).rows[0];
-      const rexFundBalance =
+            ).rows[0];
+            const rexFundBalance =
         rexfund && rexfund.balance
-          ? Number(rexfund.balance.split(' ')[0])
-          : 0.0;
-      return rexFundBalance;
-    };
+            ? Number(rexfund.balance.split(' ')[0])
+            : 0.0;
+            return rexFundBalance;
+        };
 
-    const getRexBalance = async () => {
-      const paramsrexbal = {
-        code: 'eosio',
-        limit: '2',
-        lower_bound: props.account as unknown as TableIndexType,
-        scope: 'eosio',
-        table: 'rexbal',
-        reverse: false,
-        upper_bound: props.account as unknown as TableIndexType,
-      } as GetTableRowsParams;
+        const getRexBalance = async () => {
+            const paramsrexbal = {
+                code: 'eosio',
+                limit: '2',
+                lower_bound: props.account as unknown as TableIndexType,
+                scope: 'eosio',
+                table: 'rexbal',
+                reverse: false,
+                upper_bound: props.account as unknown as TableIndexType,
+            } as GetTableRowsParams;
 
-      const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
-        .rows[0];
-      const rexBalance =
+            const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
+                .rows[0];
+            const rexBalance =
         rexBal && rexBal.rex_balance
-          ? Number(rexBal.rex_balance.split(' ')[0])
-          : 0;
+            ? Number(rexBal.rex_balance.split(' ')[0])
+            : 0;
 
-      const paramsrexpool = {
-        code: 'eosio',
-        scope: 'eosio',
-        table: 'rexpool',
-        json: true,
-        reverse: false,
-      } as GetTableRowsParams;
+            const paramsrexpool = {
+                code: 'eosio',
+                scope: 'eosio',
+                table: 'rexpool',
+                json: true,
+                reverse: false,
+            } as GetTableRowsParams;
 
-      const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
-        .rows[0];
+            const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
+                .rows[0];
 
-      const totalRex = Number(rexpool.total_rex.split(' ')[0]);
-      const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
-      const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
-      return totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
-    };
+            const totalRex = Number(rexpool.total_rex.split(' ')[0]);
+            const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
+            const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
+            return totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
+        };
 
-    const fixDec = (val: number): number => {
-      return parseFloat(val.toFixed(3));
-    };
+        const fixDec = (val: number): number => {
+            return parseFloat(val.toFixed(3));
+        };
 
-    const loadSystemToken = (): void => {
-      if (token.value.symbol === '') {
-        setToken(chain.getSystemToken());
-      }
-    };
+        const loadSystemToken = (): void => {
+            if (token.value.symbol === '') {
+                setToken(chain.getSystemToken());
+            }
+        };
 
-    const loadCreatorAccount = async (): Promise<void> => {
-      await router.push({
-        name: 'account',
-        params: {
-          account: creatingAccount.value,
-        },
-      });
-      router.go(0);
-    };
+        const loadCreatorAccount = async (): Promise<void> => {
+            await router.push({
+                name: 'account',
+                params: {
+                    account: creatingAccount.value,
+                },
+            });
+            router.go(0);
+        };
 
-    const loadCreatorTransaction = async (): Promise<void> => {
-      await router.push({
-        name: 'transaction',
-        params: {
-          transaction: createTransaction.value,
-        },
-      });
-      router.go(0);
-    };
+        const loadCreatorTransaction = async (): Promise<void> => {
+            await router.push({
+                name: 'transaction',
+                params: {
+                    transaction: createTransaction.value,
+                },
+            });
+            router.go(0);
+        };
 
-    const copy = (value: string) => {
-      copyToClipboard(value)
-        .then((): void => {
-          $q.notify({
-            color: 'green-4',
-            textColor: 'white',
-            message: 'Copied to clipboard',
-            timeout: 1000,
-          });
-        })
-        .catch(() => {
-          $q.notify({
-            color: 'red-8',
-            textColor: 'white',
-            message: 'Could not copy',
-            timeout: 1000,
-          });
+        const copy = (value: string) => {
+            copyToClipboard(value)
+                .then((): void => {
+                    $q.notify({
+                        color: 'green-4',
+                        textColor: 'white',
+                        message: 'Copied to clipboard',
+                        timeout: 1000,
+                    });
+                })
+                .catch(() => {
+                    $q.notify({
+                        color: 'red-8',
+                        textColor: 'white',
+                        message: 'Could not copy',
+                        timeout: 1000,
+                    });
+                });
+        };
+
+        const formatAsset = (val: number | string): string => {
+            return typeof val === 'string'
+                ? val
+                : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
+        };
+
+        const resetBalances = () => {
+            totalTokens.value = '--';
+            rex.value = stakedResources.value = delegatedResources.value = 0;
+        };
+
+        onMounted(async () => {
+            usdPrice.value = await chain.getUsdPrice();
+            await loadAccountData();
+            await store.dispatch('account/updateRexData', {
+                account: props.account,
+            });
+            loadSystemToken();
+            void store.dispatch('chain/updateRamPrice');
         });
-    };
 
-    const formatAsset = (val: number | string): string => {
-      return typeof val === 'string'
-        ? val
-        : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
-    };
+        watch(
+            () => props.account,
+            async () => {
+                resetBalances();
+                await loadAccountData();
+                await store.dispatch('account/updateRexData', {
+                    account: props.account,
+                });
+            },
+        );
 
-    const resetBalances = () => {
-      totalTokens.value = '--';
-      rex.value = stakedResources.value = delegatedResources.value = 0;
-    };
-
-    onMounted(async () => {
-      usdPrice.value = await chain.getUsdPrice();
-      await loadAccountData();
-      await store.dispatch('account/updateRexData', {
-        account: props.account,
-      });
-      loadSystemToken();
-      void store.dispatch('chain/updateRamPrice');
-    });
-
-    watch(
-      () => props.account,
-      async () => {
-        resetBalances();
-        await loadAccountData();
-        await store.dispatch('account/updateRexData', {
-          account: props.account,
-        });
-      },
-    );
-
-    return {
-      MICRO_UNIT,
-      KILO_UNIT,
-      cpu_used,
-      cpu_max,
-      net_used,
-      net_max,
-      ram_used,
-      ram_max,
-      creatingAccount,
-      isLoading,
-      tokensLoading,
-      liquid,
-      totalRefund,
-      totalTokens,
-      totalValue,
-      totalValueString,
-      rex,
-      none,
-      system_account,
-      radius,
-      availableTokens,
-      createTime,
-      createTransaction,
-      openSendDialog,
-      openResourcesDialog,
-      openStakingDialog,
-      delegatedResources,
-      isAccount,
-      token,
-      createTimeFormat,
-      resources,
-      accountExists,
-      loadAccountData,
-      setToken,
-      fixDec,
-      loadSystemToken,
-      loadCreatorAccount,
-      loadCreatorTransaction,
-      copy,
-      formatAsset,
-      updateTokenBalances,
-    };
-  },
+        return {
+            MICRO_UNIT,
+            KILO_UNIT,
+            cpu_used,
+            cpu_max,
+            net_used,
+            net_max,
+            ram_used,
+            ram_max,
+            creatingAccount,
+            isLoading,
+            tokensLoading,
+            liquid,
+            totalRefund,
+            totalTokens,
+            totalValue,
+            totalValueString,
+            rex,
+            none,
+            system_account,
+            radius,
+            availableTokens,
+            createTime,
+            createTransaction,
+            openSendDialog,
+            openResourcesDialog,
+            openStakingDialog,
+            delegatedResources,
+            isAccount,
+            token,
+            createTimeFormat,
+            resources,
+            accountExists,
+            loadAccountData,
+            setToken,
+            fixDec,
+            loadSystemToken,
+            loadCreatorAccount,
+            loadCreatorTransaction,
+            copy,
+            formatAsset,
+            updateTokenBalances,
+        };
+    },
 });
 </script>
 

@@ -47,55 +47,55 @@ import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'Proposal',
-  components: {
-    ProposalTable,
-  },
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const store = useStore();
-    const blockProducers = ref<string[]>([]);
-    const account = computed(() => store.state.account.accountName);
-    const isAuthenticated = computed(() => store.state.account.isAuthenticated);
+    name: 'Proposal',
+    components: {
+        ProposalTable,
+    },
+    setup() {
+        const route = useRoute();
+        const router = useRouter();
+        const store = useStore();
+        const blockProducers = ref<string[]>([]);
+        const account = computed(() => store.state.account.accountName);
+        const isAuthenticated = computed(() => store.state.account.isAuthenticated);
 
-    const tab = ref<string>((route.query['tab'] as string) || 'myProposal');
+        const tab = ref<string>((route.query['tab'] as string) || 'myProposal');
 
-    onMounted(() => {
-      if (!isAuthenticated.value) {
-        tab.value = 'allProposal';
-      }
-    });
+        onMounted(() => {
+            if (!isAuthenticated.value) {
+                tab.value = 'allProposal';
+            }
+        });
 
-    onMounted(async () => {
-      const producers = await api.getProducers();
-      const producersAccount = [] as string[];
+        onMounted(async () => {
+            const producers = await api.getProducers();
+            const producersAccount = [] as string[];
 
-      for (let index = 0; index < producers.rows.length; index++) {
-        const item = producers.rows[index];
-        if (item.is_active === 1) {
-          producersAccount.push(item.owner);
-        }
-      }
+            for (let index = 0; index < producers.rows.length; index++) {
+                const item = producers.rows[index];
+                if (item.is_active === 1) {
+                    producersAccount.push(item.owner);
+                }
+            }
 
-      blockProducers.value = producersAccount;
-    });
+            blockProducers.value = producersAccount;
+        });
 
-    watch([tab], () => {
-      void router.push({
-        path: router.currentRoute.value.path,
-        query: {
-          tab: tab.value,
-        },
-      });
-    });
+        watch([tab], () => {
+            void router.push({
+                path: router.currentRoute.value.path,
+                query: {
+                    tab: tab.value,
+                },
+            });
+        });
 
-    return {
-      tab,
-      account,
-      isAuthenticated,
-      blockProducers,
-    };
-  },
+        return {
+            tab,
+            account,
+            isAuthenticated,
+            blockProducers,
+        };
+    },
 });
 </script>

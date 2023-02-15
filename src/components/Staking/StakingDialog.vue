@@ -17,126 +17,126 @@ import { API } from '@greymass/eosio';
 const symbol = getChain().getSystemToken().symbol;
 
 export default defineComponent({
-  name: 'StakingDialog',
-  components: {
-    StakingInfo,
-    StakeFromResources,
-    ProcessingTab,
-    StakingTab,
-    UnstakingTab,
-    HistoryTab,
-    SavingsTab,
-  },
-  data() {
-    return {
-      sendToken: {
-        symbol,
-        precision: 4,
-        amount: 0,
-        contract: 'eosio.token',
-      } as Token,
-      sendDialog: false,
-      apy: '--',
-    };
-  },
-  props: {
-    availableTokens: {
-      type: Array as PropType<Token[]>,
-      required: true,
+    name: 'StakingDialog',
+    components: {
+        StakingInfo,
+        StakeFromResources,
+        ProcessingTab,
+        StakingTab,
+        UnstakingTab,
+        HistoryTab,
+        SavingsTab,
     },
-  },
-  setup() {
-    const store = useStore();
-    const rexfund = computed(() => store.state.account.rexfund || 0);
-    const symbol = computed(() => store.state.chain.token.symbol);
-    const transactionId = ref<string>(null);
-    const transactionError = ref<string>(null);
+    data() {
+        return {
+            sendToken: {
+                symbol,
+                precision: 4,
+                amount: 0,
+                contract: 'eosio.token',
+            } as Token,
+            sendDialog: false,
+            apy: '--',
+        };
+    },
+    props: {
+        availableTokens: {
+            type: Array as PropType<Token[]>,
+            required: true,
+        },
+    },
+    setup() {
+        const store = useStore();
+        const rexfund = computed(() => store.state.account.rexfund || 0);
+        const symbol = computed(() => store.state.chain.token.symbol);
+        const transactionId = ref<string>(null);
+        const transactionError = ref<string>(null);
 
-    const withdrawRexFund = async () => {
-      await store.dispatch('account/unstakeRexFund', { amount: rexfund.value });
-      void store.dispatch('account/updateRexData', {
-        account: store.state.account.accountName,
-      });
-    };
-    return {
-      openCoinDialog: ref<boolean>(false),
-      recievingAccount: ref<string>(''),
-      sendAmount: ref<string>('0.0000'),
-      memo: ref<string>(''),
-      tab: ref('stake'),
-      rexfund,
-      symbol,
-      transactionError,
-      transactionId,
-      withdrawRexFund,
-      ...mapActions({ signTransaction: 'account/sendTransaction' }),
-    };
-  },
-  computed: {
-    ...mapGetters({ account: 'account/accountName' }),
-    transactionForm(): boolean {
-      return !(this.transactionError || this.transactionId);
+        const withdrawRexFund = async () => {
+            await store.dispatch('account/unstakeRexFund', { amount: rexfund.value });
+            void store.dispatch('account/updateRexData', {
+                account: store.state.account.accountName,
+            });
+        };
+        return {
+            openCoinDialog: ref<boolean>(false),
+            recievingAccount: ref<string>(''),
+            sendAmount: ref<string>('0.0000'),
+            memo: ref<string>(''),
+            tab: ref('stake'),
+            rexfund,
+            symbol,
+            transactionError,
+            transactionId,
+            withdrawRexFund,
+            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+        };
     },
-  },
-  methods: {
-    isValidAccount,
-    async sendTransaction(): Promise<void> {
-      const actionAccount = this.sendToken.contract;
-      const data = {
-        from: this.account as string,
-        to: this.recievingAccount,
-        quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
-        memo: this.memo,
-      };
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.transactionId = (
+    computed: {
+        ...mapGetters({ account: 'account/accountName' }),
+        transactionForm(): boolean {
+            return !(this.transactionError || this.transactionId);
+        },
+    },
+    methods: {
+        isValidAccount,
+        async sendTransaction(): Promise<void> {
+            const actionAccount = this.sendToken.contract;
+            const data = {
+                from: this.account as string,
+                to: this.recievingAccount,
+                quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
+                memo: this.memo,
+            };
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                this.transactionId = (
           await this.signTransaction({
-            account: actionAccount,
-            data,
-            name: 'transfer',
+              account: actionAccount,
+              data,
+              name: 'transfer',
           })
         ).transactionId as string;
-      } catch (e) {
-        this.transactionError = e as string;
-      }
+            } catch (e) {
+                this.transactionError = e as string;
+            }
+        },
+        setDefaults() {
+            if (this.availableTokens.length > 0) {
+                this.sendToken = this.availableTokens.find((token) => {
+                    return token.symbol === this.sendToken.symbol;
+                });
+            }
+        },
+        updateSelectedCoin(token: Token): void {
+            this.sendToken = token;
+        },
+        async navToTransaction() {
+            await this.$router.push({
+                name: 'transaction',
+                params: { transaction: this.transactionId },
+            });
+            this.$router.go(0);
+        },
+        async loadAccountData(): Promise<void> {
+            let data: API.v1.AccountObject;
+            try {
+                data = await this.$api.getAccount(this.account);
+                this.$store.commit('account/setAccountData', data);
+            } catch (e) {
+                return;
+            }
+        },
     },
-    setDefaults() {
-      if (this.availableTokens.length > 0) {
-        this.sendToken = this.availableTokens.find((token) => {
-          return token.symbol === this.sendToken.symbol;
-        });
-      }
+    async mounted() {
+        try {
+            const apyValue = await this.$api.getApy();
+            this.apy = `${apyValue}%`;
+        } catch (e) {
+            console.error(e);
+        }
+        await this.loadAccountData();
     },
-    updateSelectedCoin(token: Token): void {
-      this.sendToken = token;
-    },
-    async navToTransaction() {
-      await this.$router.push({
-        name: 'transaction',
-        params: { transaction: this.transactionId },
-      });
-      this.$router.go(0);
-    },
-    async loadAccountData(): Promise<void> {
-      let data: API.v1.AccountObject;
-      try {
-        data = await this.$api.getAccount(this.account);
-        this.$store.commit('account/setAccountData', data);
-      } catch (e) {
-        return;
-      }
-    },
-  },
-  async mounted() {
-    try {
-      const apyValue = await this.$api.getApy();
-      this.apy = `${apyValue}%`;
-    } catch (e) {
-      console.error(e);
-    }
-    await this.loadAccountData();
-  },
 });
 </script>
 

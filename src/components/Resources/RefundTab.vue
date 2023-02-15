@@ -7,141 +7,141 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
 
 export default defineComponent({
-  name: 'RefundTab',
-  components: {
-    ViewTransaction,
-  },
-  setup() {
-    const store = useStore();
-    const openTransaction = ref<boolean>(false);
-    const stakingAccount = ref<string>('');
-    const total = ref<string>('0.0000');
-    const progress = ref<number>(0.2);
-    const refundRequest = computed((): API.v1.AccountRefundRequest => {
-      return accountData.value?.refund_request;
-    });
-    const cpuAmount = computed(
-      (): number => refundRequest.value?.cpu_amount.value,
-    );
-    const netAmount = computed(
-      (): number => refundRequest.value?.net_amount.value,
-    );
-    const token = computed((): Token => store.state.chain.token);
-    const accountData = computed((): API.v1.AccountObject => {
-      return store.state?.account.data;
-    });
-    const totalRefund = computed((): string => {
-      const totalRefund = refundRequest.value
-        ? (
-            refundRequest.value.cpu_amount.value +
+    name: 'RefundTab',
+    components: {
+        ViewTransaction,
+    },
+    setup() {
+        const store = useStore();
+        const openTransaction = ref<boolean>(false);
+        const stakingAccount = ref<string>('');
+        const total = ref<string>('0.0000');
+        const progress = ref<number>(0.2);
+        const refundRequest = computed((): API.v1.AccountRefundRequest => {
+            return accountData.value?.refund_request;
+        });
+        const cpuAmount = computed(
+            (): number => refundRequest.value?.cpu_amount.value,
+        );
+        const netAmount = computed(
+            (): number => refundRequest.value?.net_amount.value,
+        );
+        const token = computed((): Token => store.state.chain.token);
+        const accountData = computed((): API.v1.AccountObject => {
+            return store.state?.account.data;
+        });
+        const totalRefund = computed((): string => {
+            const totalRefund = refundRequest.value
+                ? (
+                    refundRequest.value.cpu_amount.value +
             refundRequest.value.net_amount.value
-          ).toFixed(4)
-        : 0;
-      return `${totalRefund} ${token.value.symbol}`;
-    });
+                ).toFixed(4)
+                : 0;
+            return `${totalRefund} ${token.value.symbol}`;
+        });
 
-    function formatStaked(staked: number): string {
-      const stakedValue = (
-        staked / Math.pow(10, token.value.precision)
-      ).toFixed(2);
-      return `${stakedValue} ${token.value.symbol}`;
-    }
+        function formatStaked(staked: number): string {
+            const stakedValue = (
+                staked / Math.pow(10, token.value.precision)
+            ).toFixed(2);
+            return `${stakedValue} ${token.value.symbol}`;
+        }
 
-    function refundProgress(): number {
-      let diff =
+        function refundProgress(): number {
+            let diff =
         Math.round(
-          new Date(
             new Date(
-              accountData.value.refund_request?.request_time.toString() + 'Z',
-            ).toUTCString(),
-          ).getTime() / 1000,
+                new Date(
+                    accountData.value.refund_request?.request_time.toString() + 'Z',
+                ).toUTCString(),
+            ).getTime() / 1000,
         ) +
         259200 -
         Math.round(new Date(Date.now()).getTime() / 1000);
-      let time = diff / 259200;
-      return time > 0 ? time : 0;
-    }
+            let time = diff / 259200;
+            return time > 0 ? time : 0;
+        }
 
-    function refundCountdown(): string {
-      let diff =
+        function refundCountdown(): string {
+            let diff =
         Math.round(
-          new Date(
             new Date(
-              accountData.value?.refund_request?.request_time.toString() + 'Z',
-            ),
-          ).getTime() / 1000,
+                new Date(
+                    accountData.value?.refund_request?.request_time.toString() + 'Z',
+                ),
+            ).getTime() / 1000,
         ) +
         259200 -
         Math.round(new Date(new Date().toISOString()).getTime() / 1000);
-      if (diff > 0) {
-        var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
-          hours = component(diff, 60 * 60) % 24; // hours
-        return `${days} days, ${hours} hours remaining`;
-      } else {
-        return 'No pending refund';
-      }
-    }
+            if (diff > 0) {
+                var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
+                    hours = component(diff, 60 * 60) % 24; // hours
+                return `${days} days, ${hours} hours remaining`;
+            } else {
+                return 'No pending refund';
+            }
+        }
 
-    function component(x: number, v: number) {
-      return Math.floor(x / v);
-    }
+        function component(x: number, v: number) {
+            return Math.floor(x / v);
+        }
 
-    return {
-      store,
-      openTransaction,
-      stakingAccount,
-      total,
-      totalRefund,
-      accountData,
-      refundRequest,
-      cpuAmount,
-      netAmount,
-      token,
-      progress,
-      formatStaked,
-      refundProgress,
-      refundCountdown,
-      ...mapActions({ signTransaction: 'account/sendTransaction' }),
-      transactionId: ref<string>(null),
-      transactionError: null,
-    };
-  },
-  methods: {
-    async sendTransaction(): Promise<void> {
-      this.transactionError = '';
-      const data = {
-        owner: this.accountData.account_name,
-        transfer: false,
-      };
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        this.transactionId = (
+        return {
+            store,
+            openTransaction,
+            stakingAccount,
+            total,
+            totalRefund,
+            accountData,
+            refundRequest,
+            cpuAmount,
+            netAmount,
+            token,
+            progress,
+            formatStaked,
+            refundProgress,
+            refundCountdown,
+            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            transactionId: ref<string>(null),
+            transactionError: null,
+        };
+    },
+    methods: {
+        async sendTransaction(): Promise<void> {
+            this.transactionError = '';
+            const data = {
+                owner: this.accountData.account_name,
+                transfer: false,
+            };
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                this.transactionId = (
           await this.signTransaction({
-            account: 'eosio',
-            name: 'refund',
-            data,
+              account: 'eosio',
+              name: 'refund',
+              data,
           })
         ).transactionId as string;
-      } catch (e) {
-        this.transactionError = e;
-      }
-      await this.loadAccountData();
+            } catch (e) {
+                this.transactionError = e;
+            }
+            await this.loadAccountData();
 
-      if (localStorage.getItem('autoLogin') !== 'cleos') {
-        this.openTransaction = true;
-      }
+            if (localStorage.getItem('autoLogin') !== 'cleos') {
+                this.openTransaction = true;
+            }
+        },
+        async loadAccountData(): Promise<void> {
+            try {
+                const data = await this.$api.getAccount(
+                    this.store.state.account.abi.account_name,
+                );
+                this.$store.commit('account/setAccountData', data);
+            } catch (e) {
+                return;
+            }
+        },
     },
-    async loadAccountData(): Promise<void> {
-      try {
-        const data = await this.$api.getAccount(
-          this.store.state.account.abi.account_name,
-        );
-        this.$store.commit('account/setAccountData', data);
-      } catch (e) {
-        return;
-      }
-    },
-  },
 });
 </script>
 

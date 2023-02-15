@@ -4,47 +4,47 @@ import { api } from 'src/api';
 import { Action, NewAccountData } from 'src/types';
 import { defineComponent, onMounted, ref } from 'vue';
 export default defineComponent({
-  name: 'ChildrenPanel',
-  components: {},
-  props: {
-    account: {
-      type: String,
-      required: false,
-      default: null,
+    name: 'ChildrenPanel',
+    components: {},
+    props: {
+        account: {
+            type: String,
+            required: false,
+            default: null,
+        },
     },
-  },
-  setup(props) {
-    const $q = useQuasar();
-    const children = ref<string[]>([]);
+    setup(props) {
+        const $q = useQuasar();
+        const children = ref<string[]>([]);
 
-    const loadAccountData = async (): Promise<void> => {
-      let data: Action[];
-      try {
-        data = await api.getChildren(props.account);
-      } catch (e) {
-        $q.notify(`Keys for account ${props.account} not found!`);
-        return;
-      }
-      children.value = data.map((el) =>
-        formatAccount((el.act.data as NewAccountData).newact, 'account'),
-      );
-    };
-    // TODO Refactor
-    const formatAccount = (
-      name: string,
-      type: 'account' | 'transaction' | 'block',
-    ): string => {
-      return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
-    };
+        const loadAccountData = async (): Promise<void> => {
+            let data: Action[];
+            try {
+                data = await api.getChildren(props.account);
+            } catch (e) {
+                $q.notify(`Keys for account ${props.account} not found!`);
+                return;
+            }
+            children.value = data.map((el) =>
+                formatAccount((el.act.data as NewAccountData).newact, 'account'),
+            );
+        };
+        // TODO Refactor
+        const formatAccount = (
+            name: string,
+            type: 'account' | 'transaction' | 'block',
+        ): string => {
+            return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
+        };
 
-    onMounted(async () => {
-      await loadAccountData();
-    });
-    return {
-      children,
-      loadAccountData,
-    };
-  },
+        onMounted(async () => {
+            await loadAccountData();
+        });
+        return {
+            children,
+            loadAccountData,
+        };
+    },
 });
 </script>
 <template lang="pug">

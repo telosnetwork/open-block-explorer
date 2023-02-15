@@ -8,95 +8,95 @@ import { API } from '@greymass/eosio';
 const chain = getChain();
 
 export default defineComponent({
-  name: 'UnstakingTab',
-  components: {
-    ViewTransaction,
-  },
-  setup() {
-    const store = useStore();
-    let openTransaction = ref<boolean>(false);
-    const unstakeTokens = ref<string>('');
-    const symbol = ref<string>(chain.getSystemToken().symbol);
-    const transactionId = computed(
-      (): string => store.state.account.TransactionId,
-    );
-    const transactionError = computed(
-      () => store.state.account.TransactionError,
-    );
-    const accountData = computed((): API.v1.AccountObject => {
-      return store.state?.account.data;
-    });
-    const rexInfo = computed(() => {
-      return store.state.account.data.rex_info;
-    });
-    const rexbal = computed(() => {
-      return store.state.account.rexbal;
-    });
-    const maturedRex = computed(() => {
-      return store.state?.account.maturedRex;
-    });
+    name: 'UnstakingTab',
+    components: {
+        ViewTransaction,
+    },
+    setup() {
+        const store = useStore();
+        let openTransaction = ref<boolean>(false);
+        const unstakeTokens = ref<string>('');
+        const symbol = ref<string>(chain.getSystemToken().symbol);
+        const transactionId = computed(
+            (): string => store.state.account.TransactionId,
+        );
+        const transactionError = computed(
+            () => store.state.account.TransactionError,
+        );
+        const accountData = computed((): API.v1.AccountObject => {
+            return store.state?.account.data;
+        });
+        const rexInfo = computed(() => {
+            return store.state.account.data.rex_info;
+        });
+        const rexbal = computed(() => {
+            return store.state.account.rexbal;
+        });
+        const maturedRex = computed(() => {
+            return store.state?.account.maturedRex;
+        });
 
-    function formatDec() {
-      const precision = store.state.chain.token.precision;
-      if (unstakeTokens.value != '') {
-        unstakeTokens.value = Number(unstakeTokens.value)
-          .toLocaleString('en-US', {
-            style: 'decimal',
-            maximumFractionDigits: precision,
-            minimumFractionDigits: precision,
-          })
-          .replace(/[^0-9.]/g, '');
-      }
-    }
+        function formatDec() {
+            const precision = store.state.chain.token.precision;
+            if (unstakeTokens.value != '') {
+                unstakeTokens.value = Number(unstakeTokens.value)
+                    .toLocaleString('en-US', {
+                        style: 'decimal',
+                        maximumFractionDigits: precision,
+                        minimumFractionDigits: precision,
+                    })
+                    .replace(/[^0-9.]/g, '');
+            }
+        }
 
-    async function unstake() {
-      void store.dispatch('account/resetTransaction');
-      if (
-        unstakeTokens.value === '0.0000' ||
+        async function unstake() {
+            void store.dispatch('account/resetTransaction');
+            if (
+                unstakeTokens.value === '0.0000' ||
         !rexbal.value.vote_stake ||
         Number(unstakeTokens.value) >=
           Number(rexbal.value.vote_stake.split(' ')[0])
-      ) {
-        return;
-      }
-      await store.dispatch('account/unstakeRex', {
-        amount: unstakeTokens.value,
-      });
-      openTransaction.value = true;
-    }
+            ) {
+                return;
+            }
+            await store.dispatch('account/unstakeRex', {
+                amount: unstakeTokens.value,
+            });
+            openTransaction.value = true;
+        }
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
+        function assetToAmount(asset: string, decimals = -1): number {
+            try {
+                let qty: string = asset.split(' ')[0];
+                let val: number = parseFloat(qty);
+                if (decimals > -1) qty = val.toFixed(decimals);
+                return val;
+            } catch (error) {
+                return 0;
+            }
+        }
 
-    function setMaxValue() {
-      unstakeTokens.value = assetToAmount(maturedRex.value).toString();
-      void formatDec();
-    }
+        function setMaxValue() {
+            unstakeTokens.value = assetToAmount(maturedRex.value).toString();
+            void formatDec();
+        }
 
-    return {
-      openTransaction,
-      unstakeTokens,
-      transactionId,
-      transactionError,
-      formatDec,
-      unstake,
-      assetToAmount,
-      accountData,
-      rexInfo,
-      rexbal,
-      maturedRex,
-      symbol,
-      setMaxValue,
-    };
-  },
+        return {
+            openTransaction,
+            unstakeTokens,
+            transactionId,
+            transactionError,
+            formatDec,
+            unstake,
+            assetToAmount,
+            accountData,
+            rexInfo,
+            rexbal,
+            maturedRex,
+            symbol,
+            setMaxValue,
+        };
+    },
 });
 </script>
 

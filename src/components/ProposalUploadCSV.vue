@@ -60,26 +60,26 @@ import csvToJson from 'csvtojson';
 import { useQuasar } from 'quasar';
 
 export default defineComponent({
-  name: 'ProposalUploadCSV',
-  emits: ['actions'],
-  setup(_, context) {
-    const $q = useQuasar();
-    const file = ref<File | null>(null);
+    name: 'ProposalUploadCSV',
+    emits: ['actions'],
+    setup(_, context) {
+        const $q = useQuasar();
+        const file = ref<File | null>(null);
 
-    function handleError(message: string) {
-      $q.notify({
-        color: 'negative',
-        message,
-        actions: [
-          {
-            label: 'Dismiss',
-            color: 'white',
-          },
-        ],
-      });
-    }
+        function handleError(message: string) {
+            $q.notify({
+                color: 'negative',
+                message,
+                actions: [
+                    {
+                        label: 'Dismiss',
+                        color: 'white',
+                    },
+                ],
+            });
+        }
 
-    /* eslint-disable */
+        /* eslint-disable */
     async function handleUploadCSV() {
       const csvString = await file.value.text();
       const result: any = await csvToJson().fromString(csvString);
@@ -122,10 +122,10 @@ export default defineComponent({
     }
     /* eslint-enable */
 
-    return {
-      handleUploadCSV,
-      file,
-    };
-  },
+        return {
+            handleUploadCSV,
+            file,
+        };
+    },
 });
 </script>
