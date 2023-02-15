@@ -153,7 +153,7 @@ export default defineComponent({
         .row.q-pb-sm
             .col-6 REMOVE CPU
             .col-6
-              .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = (cpuStake - 0.1).toString()" )
+              .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = cpuStake.toString()" )
                 span.text-weight-bold.balance-amount {{ cpuStake ? `${cpuStake } AVAILABLE` : '--' }}
                 q-icon.q-ml-xs( name="info" )
                 q-tooltip Click to fill full amount
@@ -163,7 +163,7 @@ export default defineComponent({
         .row.q-pb-sm
             .col-6 REMOVE NET
             .col-6
-              .color-grey-3.flex.justify-end.items-center( @click="netTokens = (netStake - 0.1).toString()" )
+              .color-grey-3.flex.justify-end.items-center( @click="netTokens = netStake.toString()" )
                 span.text-weight-bold.balance-amount {{ netStake ? `${netStake } AVAILABLE` : '--' }}
                 q-icon.q-ml-xs( name="info" )
                 q-tooltip Click to fill full amount
