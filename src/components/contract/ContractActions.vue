@@ -35,15 +35,15 @@ export default defineComponent({
         }
 
         function formatMemo() {
-            for (var key in memo.value) {
-                const field = fields.value.find((val) => val.name == key);
+            for (let key in memo.value) {
+                const field = fields.value.find((val) => val.name === key);
                 if (field.type === 'bool') {
                     if (
                         memo.value[key] === 'true' ||
-            memo.value[key] === '1' ||
-            memo.value[key] === 'True' ||
-            memo.value[key] === 'T' ||
-            memo.value[key] === 't'
+                        memo.value[key] === '1' ||
+                        memo.value[key] === 'True' ||
+                        memo.value[key] === 'T' ||
+                        memo.value[key] === 't'
                     )
                         memo.value[key] = true;
                     else memo.value[key] = false;

@@ -40,7 +40,7 @@ export default defineComponent({
             }
             for (let p of permissions) {
                 p['permission_links'] = links.filter(
-                    (l) => l.permission == p.perm_name.toString(),
+                    (l) => l.permission === p.perm_name.toString(),
                 );
             }
 

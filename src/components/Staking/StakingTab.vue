@@ -41,7 +41,7 @@ export default defineComponent({
 
         function formatDec() {
             const precision = store.state.chain.token.precision;
-            if (stakeTokens.value != '') {
+            if (stakeTokens.value !== '') {
                 stakeTokens.value = Number(stakeTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',

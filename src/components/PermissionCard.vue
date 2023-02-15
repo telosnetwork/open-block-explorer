@@ -29,7 +29,7 @@ export default defineComponent({
             isLast.value ? '' : 'branch-side',
         );
         const permissionCardClass = computed(() =>
-            depth.value == 0 ? 'owner-permission' : '',
+            depth.value === 0 ? 'owner-permission' : '',
         );
         const formatAccount = (
             name: string,

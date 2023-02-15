@@ -313,7 +313,7 @@ async function confirmWithUser(user: User, fees: string | null) {
 
         // If the wallet is Greymass Anchor is not possible to avoid Fuel service (it is incorporated)
         try {
-            if (typeof fees == 'string') {
+            if (typeof fees === 'string') {
                 message =
           "Your account doesn't have sufficient resources (CPU, NET, or RAM) to pay for your next transaction and it can not be processed without fees. " +
           'Telos has partnered with Greymass to proceed with your transaction using "Greymass Fuel", reducing cost significantly.<br/><br/>' +
@@ -335,7 +335,7 @@ async function confirmWithUser(user: User, fees: string | null) {
                 model: mymodel,
                 isValid: (model: string | string[]) => {
                     GreymassFuelService.setPreferences(username, {
-                        remember: model.length == 1,
+                        remember: model.length === 1,
                     });
                     return true;
                 },

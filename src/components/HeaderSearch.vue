@@ -153,7 +153,7 @@ export default defineComponent({
             }
 
             // transaction validation
-            if (isValidHex(inputValue.value) && inputValue.value.length == 64) {
+            if (isValidHex(inputValue.value) && inputValue.value.length === 64) {
                 await router.push({
                     name: 'transaction',
                     params: { transaction: inputValue.value },
@@ -162,8 +162,8 @@ export default defineComponent({
 
                 // key validation
             } else if (
-                (inputValue.value.length == 53 && inputValue.value.startsWith('EOS')) ||
-        (inputValue.value.length == 57 && inputValue.value.startsWith('PUB_K1'))
+                (inputValue.value.length === 53 && inputValue.value.startsWith('EOS')) ||
+        (inputValue.value.length === 57 && inputValue.value.startsWith('PUB_K1'))
             ) {
                 await router.push({
                     name: 'key',

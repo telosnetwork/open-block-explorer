@@ -35,7 +35,7 @@ export default defineComponent({
         );
 
         function formatDec() {
-            if (cpuTokens.value != '') {
+            if (cpuTokens.value !== '') {
                 cpuTokens.value = Number(cpuTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
@@ -44,7 +44,7 @@ export default defineComponent({
                     })
                     .replace(/[^0-9.]/g, '');
             }
-            if (netTokens.value != '') {
+            if (netTokens.value !== '') {
                 netTokens.value = Number(netTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',

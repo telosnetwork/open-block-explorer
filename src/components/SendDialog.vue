@@ -101,7 +101,7 @@ export default defineComponent({
 
         const formatDec = () => {
             let amount = Number(sendAmount.value);
-            if (sendAmount.value != '') {
+            if (sendAmount.value !== '') {
                 sendAmount.value = amount
                     .toLocaleString('en-US', {
                         style: 'decimal',

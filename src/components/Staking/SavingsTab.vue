@@ -30,7 +30,7 @@ export default defineComponent({
         });
 
         function formatDec() {
-            if (toSavingAmount.value != '') {
+            if (toSavingAmount.value !== '') {
                 toSavingAmount.value = Number(toSavingAmount.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
@@ -39,7 +39,7 @@ export default defineComponent({
                     })
                     .replace(/[^0-9.]/g, '');
             }
-            if (fromSavingAmount.value != '') {
+            if (fromSavingAmount.value !== '') {
                 fromSavingAmount.value = Number(fromSavingAmount.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',

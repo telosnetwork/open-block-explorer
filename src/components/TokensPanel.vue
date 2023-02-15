@@ -35,11 +35,11 @@ export default defineComponent({
             let filtered = tokenList
                 .filter(
                     (token: Token) =>
-                        codes.length === 0 || codes.some((c) => c == token.contract),
+                        codes.length === 0 || codes.some((c) => c === token.contract),
                 )
                 .filter(
                     (token: Token) =>
-                        symbols.length === 0 || symbols.some((c) => c == token.symbol),
+                        symbols.length === 0 || symbols.some((c) => c === token.symbol),
                 );
 
             tokens.value = filtered.map(
@@ -85,7 +85,7 @@ div.row.col-12.q-my-xs.justify-center.text-left
             q-space
         q-separator.row.col-12.q-mt-md.separator
         div.col-12.q-mt-md.tokens-container
-          div(v-if="tokens.length == 0") No tokens found
+          div(v-if="tokens.length === 0") No tokens found
           q-card(v-for="token in tokens" :key="`${token.contract}-${token.symbol}`").token-card
             q-item
               q-item-section(avatar).items-center

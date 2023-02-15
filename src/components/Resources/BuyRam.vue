@@ -69,7 +69,7 @@ export default defineComponent({
                         minimumFractionDigits: precision,
                     })
                     .replace(/[^0-9.]/g, '');
-            } else if (buyAmount.value != '') {
+            } else if (buyAmount.value !== '') {
                 buyAmount.value = parseInt(buyAmount.value)
                     .toString()
                     .replace(/[^0-9.]/g, '');

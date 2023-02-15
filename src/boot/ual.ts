@@ -44,7 +44,7 @@ async function loginHandler() {
                 persistent: true,
             })
                 .onOk((data: string) => {
-                    accountName = data != '' ? data : 'eosio';
+                    accountName = data !== '' ? data : 'eosio';
                 })
                 .onCancel(() => {
                     throw 'Cancelled!';

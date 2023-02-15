@@ -379,7 +379,7 @@ export default defineComponent({
                         expireSeconds: 30,
                     },
                 );
-                if (store.state.account.autoLogin != 'cleos') {
+                if (store.state.account.autoLogin !== 'cleos') {
                     success.showModal = true;
                 }
 

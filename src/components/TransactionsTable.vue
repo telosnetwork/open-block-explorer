@@ -98,7 +98,7 @@ export default defineComponent({
         const showAge = ref<boolean>(localStorage.getItem('showAge') === 'true');
 
         const isTransaction = computed(
-            () => account.value != null && account.value.length > 12,
+            () => account.value !== null && account.value.length > 12,
         );
         const tableTitle = computed(() =>
             isTransaction.value ? 'Actions' : 'Latest Transactions',
@@ -113,7 +113,7 @@ export default defineComponent({
         });
 
         const noData = computed(() => rows.value.length === 0);
-        const hasActions = computed(() => actions.value != null);
+        const hasActions = computed(() => actions.value !== null);
         const filter = computed(() => {
             return {
                 actions: actionsFilter.value,
@@ -131,7 +131,7 @@ export default defineComponent({
                 tableData = actions.value;
             } else {
                 tableData =
-          account.value == null
+          account.value === null
               ? await api.getTransactions(
                   paginationSettings.value.page,
                   paginationSettings.value.rowsPerPage,
@@ -252,7 +252,7 @@ export default defineComponent({
         onMounted(() => {
             interval.value = window.setInterval(() => {
                 //only automatically refresh data on first page, disable on page navigation
-                if (account.value == null && paginationSettings.value.page === 1)
+                if (account.value === null && paginationSettings.value.page === 1)
                     void loadTableData();
             }, FIVE_SECONDS);
         });
@@ -411,7 +411,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                   .q-pt-xs
                     ActionFormat(:action="action.action")
             q-td
-              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1')
+              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length === 1')
 
           q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
             q-td(auto-width)
@@ -493,7 +493,7 @@ $medium:750px
   cursor: pointer
 
 body
-    height:1000px
+    height: 1000px
 
 .table-header
     color: #000000 !important
