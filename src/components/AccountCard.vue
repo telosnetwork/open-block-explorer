@@ -77,11 +77,9 @@ export default defineComponent({
 
         const token = computed((): Token => store.state.chain.token);
 
-        const liquid = computed((): number => {
-            return accountData.value?.core_liquid_balance?.value
-                ? accountData.value.core_liquid_balance.value
-                : 0;
-        });
+        const liquid = computed((): number => accountData.value?.core_liquid_balance?.value
+            ? accountData.value.core_liquid_balance.value
+            : 0);
 
         const totalValue = computed((): number => {
             if (typeof totalTokens.value === 'number') {
@@ -100,9 +98,7 @@ export default defineComponent({
             return result;
         });
 
-        const isAccount = computed((): boolean => {
-            return store.state.account.accountName === props.account;
-        });
+        const isAccount = computed((): boolean => store.state.account.accountName === props.account);
 
         const createTimeFormat = computed((): string =>
             date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A'),
@@ -262,9 +258,7 @@ export default defineComponent({
             return totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
         };
 
-        const fixDec = (val: number): number => {
-            return parseFloat(val.toFixed(3));
-        };
+        const fixDec = (val: number): number => parseFloat(val.toFixed(3));
 
         const loadSystemToken = (): void => {
             if (token.value.symbol === '') {
@@ -312,11 +306,9 @@ export default defineComponent({
                 });
         };
 
-        const formatAsset = (val: number | string): string => {
-            return typeof val === 'string'
-                ? val
-                : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
-        };
+        const formatAsset = (val: number | string): string => typeof val === 'string'
+            ? val
+            : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
 
         const resetBalances = () => {
             totalTokens.value = '--';

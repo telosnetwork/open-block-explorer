@@ -103,9 +103,7 @@ export default defineComponent({
         },
         setDefaults() {
             if (this.availableTokens.length > 0) {
-                this.sendToken = this.availableTokens.find((token) => {
-                    return token.symbol === this.sendToken.symbol;
-                });
+                this.sendToken = this.availableTokens.find(token => token.symbol === this.sendToken.symbol);
             }
         },
         updateSelectedCoin(token: Token): void {

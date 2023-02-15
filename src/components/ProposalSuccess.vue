@@ -46,9 +46,7 @@ export default defineComponent({
     emits: ['update:modelValue'],
     setup(props, context) {
         const value = computed({
-            get: () => {
-                return props.modelValue;
-            },
+            get: () => props.modelValue,
             set: (value) => {
                 context.emit('update:modelValue', value);
             },

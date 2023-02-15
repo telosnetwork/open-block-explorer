@@ -114,14 +114,12 @@ export default defineComponent({
 
         const noData = computed(() => rows.value.length === 0);
         const hasActions = computed(() => actions.value !== null);
-        const filter = computed(() => {
-            return {
-                actions: actionsFilter.value,
-                toDate: toDateFilter.value,
-                fromDate: fromDateFilter.value,
-                token: tokenFilter.value,
-            };
-        });
+        const filter = computed(() => ({
+            actions: actionsFilter.value,
+            toDate: toDateFilter.value,
+            fromDate: fromDateFilter.value,
+            token: tokenFilter.value,
+        }));
 
         const loadTableData = async (): Promise<void> => {
             let tableData: Action[];
@@ -226,9 +224,7 @@ export default defineComponent({
             });
         };
 
-        const checkIsMultiLine = (data: string): boolean => {
-            return data.length > 0 && data.split('\n').length > 1;
-        };
+        const checkIsMultiLine = (data: string): boolean => data.length > 0 && data.split('\n').length > 1;
 
         const filterRows = () => {
             filteredRows.value = rows.value.filter(row =>
@@ -238,14 +234,12 @@ export default defineComponent({
                 JSON.stringify(row.data).includes(tokenFilter.value.toUpperCase()),
             );
             if (!!fromDateFilter.value && !!toDateFilter.value) {
-                filteredRows.value = filteredRows.value.filter((item) => {
-                    return (
-                        new Date(item.timestamp).getTime() >=
+                filteredRows.value = filteredRows.value.filter(item => (
+                    new Date(item.timestamp).getTime() >=
               new Date(fromDateFilter.value).getTime() &&
             new Date(item.timestamp).getTime() <=
               new Date(toDateFilter.value).getTime()
-                    );
-                });
+                ));
             }
         };
 

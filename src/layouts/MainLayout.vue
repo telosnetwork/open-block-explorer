@@ -12,9 +12,7 @@ export default {
     },
     setup() {
         return {
-            showSidebar: () => {
-                return process.env.SHOW_SIDEBAR === 'true';
-            },
+            showSidebar: () => process.env.SHOW_SIDEBAR === 'true',
         };
     },
 };

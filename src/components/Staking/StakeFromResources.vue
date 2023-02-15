@@ -24,9 +24,7 @@ export default defineComponent({
         const stakingAccount = computed(
             (): string => store.state.account.accountName,
         );
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state?.account.data;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
         const cpuWeight = computed(
             (): Asset => accountData.value.total_resources.cpu_weight,
         );

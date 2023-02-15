@@ -130,9 +130,7 @@ export default defineComponent({
         const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
 
         const action = computed({
-            get: () => {
-                return props.modelValue;
-            },
+            get: () => props.modelValue,
             set: (value) => {
                 context.emit('update:modelValue', value);
             },

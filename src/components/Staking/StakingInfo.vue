@@ -15,23 +15,13 @@ export default defineComponent({
         const stakingAccount = ref<string>('');
         const total = ref<string>('0.0000');
         const token = computed((): Token => store.state.chain.token);
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state.account.data;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state.account.data);
         const liquidBalance = computed(() => accountData.value.core_liquid_balance);
         const rexInfo = computed(() => accountData.value.rex_info);
-        const coreRexBalance = computed(() => {
-            return store.state?.account.coreRexBalance;
-        });
-        const maturingRex = computed(() => {
-            return store.state?.account.maturingRex;
-        });
-        const maturedRex = computed(() => {
-            return store.state?.account.maturedRex;
-        });
-        const rexSavings = computed(() => {
-            return store.state?.account.savingsRex;
-        });
+        const coreRexBalance = computed(() => store.state?.account.coreRexBalance);
+        const maturingRex = computed(() => store.state?.account.maturingRex);
+        const maturedRex = computed(() => store.state?.account.maturedRex);
+        const rexSavings = computed(() => store.state?.account.savingsRex);
 
         return {
             store,

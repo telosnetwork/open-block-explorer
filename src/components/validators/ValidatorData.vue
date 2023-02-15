@@ -31,9 +31,7 @@ export default defineComponent({
         });
         const lastUpdated = ref<string>('');
         const producerVotes = ref<Name[]>([]);
-        const currentVote = computed(() => {
-            return store.state.account.vote;
-        });
+        const currentVote = computed(() => store.state.account.vote);
         const showCpu = ref<boolean>(false);
         const voteChanged = ref<boolean>(false);
         const resetFlag = ref<boolean>(false);
@@ -50,9 +48,7 @@ export default defineComponent({
         const supply = ref(0);
         const voters = ref(0);
         const amount_voted = ref(0);
-        const votesProgress = computed(() => {
-            return amount_voted.value / supply.value || 0;
-        });
+        const votesProgress = computed(() => amount_voted.value / supply.value || 0);
 
         function assetToAmount(asset: string, decimals = -1): number {
             try {

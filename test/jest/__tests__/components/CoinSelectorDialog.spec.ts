@@ -17,16 +17,14 @@ const mockToken = {
     contract: 'mock.token',
 } as Token;
 
-const setMount = () => {
-    return mount(CoinSelectorDialog, {
-        props: {
-            callback: jest.fn(),
-            openCoinDialog: true,
-            availableTokens: [mockToken],
-            updateSelectedCoin: jest.fn(),
-        },
-    });
-};
+const setMount = () => mount(CoinSelectorDialog, {
+    props: {
+        callback: jest.fn(),
+        openCoinDialog: true,
+        availableTokens: [mockToken],
+        updateSelectedCoin: jest.fn(),
+    },
+});
 
 describe('CoinSelectorDialog', () => {
     let wrapper: { vm: any };

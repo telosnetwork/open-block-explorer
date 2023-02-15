@@ -38,15 +38,9 @@ export default {
     setup() {
         return {
             miniState: ref(true),
-            getAllChains: () => {
-                return configMgr.getAllChains();
-            },
-            getMainnets: () => {
-                return configMgr.getMainnets();
-            },
-            getTestnets: () => {
-                return configMgr.getTestnets();
-            },
+            getAllChains: () => configMgr.getAllChains(),
+            getMainnets: () => configMgr.getMainnets(),
+            getTestnets: () => configMgr.getTestnets(),
             chainSelected(chain: Chain) {
                 if (this.isSelected(chain)) {
                     return;

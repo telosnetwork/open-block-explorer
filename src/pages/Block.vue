@@ -19,19 +19,17 @@ export default defineComponent({
             // api get block and set block
             block.value = await api.getBlock(route.params.block as string);
             block.value.transactions.forEach((tr) => {
-                const act = tr.trx.transaction?.actions.map((act) => {
-                    return {
-                        ...act,
-                        trx_id: tr.trx.id,
-                        act: {
-                            ...act.act,
-                            name: act.name,
-                            data: act.data,
-                            account: act.account,
-                        },
-                        '@timestamp': block.value.timestamp,
-                    };
-                });
+                const act = tr.trx.transaction?.actions.map(act => ({
+                    ...act,
+                    trx_id: tr.trx.id,
+                    act: {
+                        ...act.act,
+                        name: act.name,
+                        data: act.data,
+                        account: act.account,
+                    },
+                    '@timestamp': block.value.timestamp,
+                }));
                 actions.value = actions.value.concat(act);
             });
             found.value = block.value ? true : false;

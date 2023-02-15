@@ -25,19 +25,13 @@ export default defineComponent({
         };
 
         const filterByText = (tokens: Token[]) => {
-            filteredTokens.value = tokens.filter((token) => {
-                return (
-                    token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
+            filteredTokens.value = tokens.filter(token => (
+                token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
           token.contract.toLowerCase().includes(search.value.toLowerCase())
-                );
-            });
+            ));
         };
 
-        const tokensWithBalance = () => {
-            return props.availableTokens.filter((token) => {
-                return token.amount > 0;
-            });
-        };
+        const tokensWithBalance = () => props.availableTokens.filter(token => token.amount > 0);
 
         watch(search, () => {
             void filterTokens();

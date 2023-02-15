@@ -23,18 +23,10 @@ export default defineComponent({
         const transactionError = computed(
             () => store.state.account.TransactionError,
         );
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state?.account.data;
-        });
-        const rexInfo = computed(() => {
-            return store.state.account.data.rex_info;
-        });
-        const rexbal = computed(() => {
-            return store.state.account.rexbal;
-        });
-        const maturedRex = computed(() => {
-            return store.state?.account.maturedRex;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const rexInfo = computed(() => store.state.account.data.rex_info);
+        const rexbal = computed(() => store.state.account.rexbal);
+        const maturedRex = computed(() => store.state?.account.maturedRex);
 
         function formatDec() {
             const precision = store.state.chain.token.precision;

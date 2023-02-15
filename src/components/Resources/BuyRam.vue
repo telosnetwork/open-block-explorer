@@ -46,18 +46,14 @@ export default defineComponent({
         const transactionError = computed(
             () => store.state.account.TransactionError,
         );
-        const ramPrice = computed((): string => {
-            return store.state?.chain.ram_price;
-        });
+        const ramPrice = computed((): string => store.state?.chain.ram_price);
         const ramAvailable = computed(() =>
             UInt64.sub(
                 store.state.account.data.ram_quota,
                 store.state.account.data.ram_usage,
             ),
         );
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state?.account.data;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
 
         function formatDec() {
             const precision = store.state.chain.token.precision;

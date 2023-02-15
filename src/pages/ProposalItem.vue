@@ -141,48 +141,40 @@ export default defineComponent({
             moment(new Date()).isAfter(new Date(expirationDate.value)),
         );
 
-        const isShowApproveButton = computed(() => {
-            return (
-                isAuthenticated.value &&
-        isUserApprovalList.value &&
-        !hasProposalAlreadyExpired.value &&
-        !hasUserAlreadyApproved.value &&
-        !isExecuted.value &&
-        !isCanceled.value
-            );
-        });
+        const isShowApproveButton = computed(() => (
+            isAuthenticated.value &&
+            isUserApprovalList.value &&
+            !hasProposalAlreadyExpired.value &&
+            !hasUserAlreadyApproved.value &&
+            !isExecuted.value &&
+            !isCanceled.value
+        ));
 
-        const isShowUnapproveButton = computed(() => {
-            return (
-                isAuthenticated.value &&
-        hasUserAlreadyApproved.value &&
-        !hasProposalAlreadyExpired.value &&
-        !isExecuted.value &&
-        !isCanceled.value
-            );
-        });
+        const isShowUnapproveButton = computed(() => (
+            isAuthenticated.value &&
+            hasUserAlreadyApproved.value &&
+            !hasProposalAlreadyExpired.value &&
+            !isExecuted.value &&
+            !isCanceled.value
+        ));
 
-        const isShowExecuteButton = computed(() => {
-            return (
-                isAuthenticated.value &&
-        !hasProposalAlreadyExpired.value &&
-        (account.value === proposer.value ||
-          isUserApprovalList.value ||
-          hasUserAlreadyApproved.value) &&
-        !isExecuted.value &&
-        !isCanceled.value
-            );
-        });
+        const isShowExecuteButton = computed(() => (
+            isAuthenticated.value &&
+            !hasProposalAlreadyExpired.value &&
+            (account.value === proposer.value ||
+              isUserApprovalList.value ||
+              hasUserAlreadyApproved.value) &&
+            !isExecuted.value &&
+            !isCanceled.value
+        ));
 
-        const isShowCancelButton = computed(() => {
-            return (
-                isAuthenticated.value &&
-        account.value === proposer.value &&
-        !hasProposalAlreadyExpired.value &&
-        !isExecuted.value &&
-        !isCanceled.value
-            );
-        });
+        const isShowCancelButton = computed(() => (
+            isAuthenticated.value &&
+            account.value === proposer.value &&
+            !hasProposalAlreadyExpired.value &&
+            !isExecuted.value &&
+            !isCanceled.value
+        ));
 
         const producersApprovalStatus = computed(() => {
             const allProducers = requestedApprovalsRows.value.filter(

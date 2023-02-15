@@ -19,9 +19,7 @@ export default defineComponent({
         const lastIrreversibleBlock = computed(
             (): number => store.state.chain.last_irreversible_block_num,
         );
-        const isMobile = computed((): boolean => {
-            return props.mobile;
-        });
+        const isMobile = computed((): boolean => props.mobile);
 
         return {
             isMobile,

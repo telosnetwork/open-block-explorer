@@ -15,14 +15,10 @@ export default defineComponent({
         const netTokens = ref<string>('0.0000');
         const total = ref<string>('0.0000');
         const token = ref<Token>(getChain().getSystemToken());
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state?.account.data;
-        });
-        const ramPrice = computed((): string => {
-            return store.state?.chain.ram_price === '0'
-                ? '0.0000'
-                : store.state.chain.ram_price;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const ramPrice = computed((): string => store.state?.chain.ram_price === '0'
+            ? '0.0000'
+            : store.state.chain.ram_price);
         const ramAvailable = computed(
             () =>
                 Number(accountData.value.ram_quota) -
@@ -71,9 +67,7 @@ export default defineComponent({
                 : 0,
         );
 
-        const formatValue = (val: number): string => {
-            return `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
-        };
+        const formatValue = (val: number): string => `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
 
         return {
             store,

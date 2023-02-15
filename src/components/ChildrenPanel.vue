@@ -33,9 +33,7 @@ export default defineComponent({
         const formatAccount = (
             name: string,
             type: 'account' | 'transaction' | 'block',
-        ): string => {
-            return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
-        };
+        ): string => `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
 
         onMounted(async () => {
             await loadAccountData();

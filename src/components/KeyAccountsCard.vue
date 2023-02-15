@@ -23,11 +23,9 @@ export default defineComponent({
         const legacyKeyFormat = ref<boolean>(false);
         const Accounts = computed(() => props.accounts);
         const $q = useQuasar();
-        const keyDisplay = computed(() => {
-            return legacyKeyFormat.value
-                ? key.value.toLegacyString()
-                : key.value.toString();
-        });
+        const keyDisplay = computed(() => legacyKeyFormat.value
+            ? key.value.toLegacyString()
+            : key.value.toString());
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         const tokenLogo = computed(() => chain.getSmallLogoPath());
         function copy(value: string) {

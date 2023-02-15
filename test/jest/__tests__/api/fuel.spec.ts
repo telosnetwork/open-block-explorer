@@ -43,9 +43,7 @@ const createDialog = jest.fn();
 jest.mock('quasar', () => ({
     // mocking static functions create
     Dialog: {
-        create: (options: QDialogOptions) => {
-            return createDialog(options);
-        },
+        create: (options: QDialogOptions) => createDialog(options),
     },
 }));
 
@@ -70,22 +68,20 @@ jest.mock('@greymass/eosio', () => ({
         encode: () => '',
     },
     // mocking the constructor of APIClient
-    APIClient: jest.fn().mockImplementation(() => {
-        return {
-            v1: {
-                chain: {
-                    get_info: () => ({
-                        getTransactionHeader: () => transactionHeaders,
-                    }),
-                    get_abi: () => Promise.resolve({ abi: 'abi' }),
-                    push_transaction: () => ({
-                        transaction_id: 'transaction_id',
-                        processed: { receipt: { status: 'status' } },
-                    }),
-                },
+    APIClient: jest.fn().mockImplementation(() => ({
+        v1: {
+            chain: {
+                get_info: () => ({
+                    getTransactionHeader: () => transactionHeaders,
+                }),
+                get_abi: () => Promise.resolve({ abi: 'abi' }),
+                push_transaction: () => ({
+                    transaction_id: 'transaction_id',
+                    processed: { receipt: { status: 'status' } },
+                }),
             },
-        };
-    }),
+        },
+    })),
 }));
 
 let rpResponseCode = Number(0);
@@ -194,9 +190,7 @@ const configData = {
     expireSeconds: 3600,
 };
 
-const getWrapper = () => {
-    return new FuelUserWrapper(new UserStub());
-};
+const getWrapper = () => new FuelUserWrapper(new UserStub());
 
 const getOriginalTransaction = () => ({
     ...transactionHeaders,
@@ -231,14 +225,12 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
                     rpResponseCode = Number(200);
                     const trx = getOriginalTransaction();
 
-                    createDialog.mockImplementationOnce(() => {
-                        return {
-                            onOk: jest.fn((resolve: (payload?: unknown) => void) => {
-                                resolve(); // the user approves
-                                return { onCancel: jest.fn() };
-                            }),
-                        };
-                    });
+                    createDialog.mockImplementationOnce(() => ({
+                        onOk: jest.fn((resolve: (payload?: unknown) => void) => {
+                            resolve(); // the user approves
+                            return { onCancel: jest.fn() };
+                        }),
+                    }));
 
                     const response = await wrapper.signTransaction(trx, configData);
                     const response_actions_json = JSON.stringify(

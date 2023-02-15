@@ -15,12 +15,8 @@ export default defineComponent({
         const store = useStore();
         const progress = ref<number>(0.2);
         const token = computed((): Token => store.state.chain.token);
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state?.account.data;
-        });
-        const maturingRex = computed(() => {
-            return store.state?.account.maturingRex;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const maturingRex = computed(() => store.state?.account.maturingRex);
 
         function refundProgress(): number {
             if (maturingRex.value === '0') return 0;

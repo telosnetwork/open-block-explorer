@@ -22,9 +22,7 @@ export default defineComponent({
         const transactionError = computed(
             () => store.state.account.TransactionError,
         );
-        const ramPrice = computed((): string => {
-            return store.state?.chain.ram_price;
-        });
+        const ramPrice = computed((): string => store.state?.chain.ram_price);
         const sellPreview = computed(
             () =>
                 ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
@@ -36,9 +34,7 @@ export default defineComponent({
                 Number(store.state.account.data.ram_quota.value) -
         Number(store.state.account.data.ram_usage.value),
         );
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state?.account.data;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
 
         function formatDec() {
             sellAmount.value = parseInt(sellAmount.value)

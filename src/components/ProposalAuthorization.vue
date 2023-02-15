@@ -110,18 +110,14 @@ export default defineComponent({
         const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
 
         const actorValue = computed({
-            get: () => {
-                return props.actor;
-            },
+            get: () => props.actor,
             set: (value) => {
                 context.emit('update:actor', value);
             },
         });
 
         const permissionValue = computed({
-            get: () => {
-                return props.permission;
-            },
+            get: () => props.permission,
             set: (value) => {
                 context.emit('update:permission', value);
             },
@@ -188,17 +184,15 @@ export default defineComponent({
 
                     if (typeof account !== 'undefined') {
                         allRequiredAccounts.value = account.permissions.map(
-                            (permission) => {
-                                return {
-                                    permissionName: permission.perm_name,
-                                    threshold: permission.required_auth.threshold,
-                                    accounts: permission.required_auth.accounts.map(item => ({
-                                        weight: `+ ${item.weight.toString()}`,
-                                        actor: item.permission.actor,
-                                        permission: item.permission.permission,
-                                    })),
-                                };
-                            },
+                            permission => ({
+                                permissionName: permission.perm_name,
+                                threshold: permission.required_auth.threshold,
+                                accounts: permission.required_auth.accounts.map(item => ({
+                                    weight: `+ ${item.weight.toString()}`,
+                                    actor: item.permission.actor,
+                                    permission: item.permission.permission,
+                                })),
+                            }),
                         );
 
                         permissionsOptions.value = account.permissions.map(

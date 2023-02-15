@@ -35,17 +35,13 @@ export const getCoingeckoPriceChartData = async (
 };
 
 // eslint-disable-next-line @typescript-eslint/require-await
-export const getEmptyPriceChartData = async (): Promise<PriceChartData> => {
-    return {
-        lastUpdated: 0,
-        tokenPrice: 0,
-        dayChange: 0,
-        dayVolume: 0,
-        marketCap: 0,
-        prices: [],
-    };
-};
+export const getEmptyPriceChartData = async (): Promise<PriceChartData> => ({
+    lastUpdated: 0,
+    tokenPrice: 0,
+    dayChange: 0,
+    dayVolume: 0,
+    marketCap: 0,
+    prices: [],
+});
 
-const getCoingeckoExchangeStatsUrl = (tokenId: string): string => {
-    return `https://api.coingecko.com/api/v3/simple/price?ids=${tokenId}&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true`;
-};
+const getCoingeckoExchangeStatsUrl = (tokenId: string): string => `https://api.coingecko.com/api/v3/simple/price?ids=${tokenId}&vs_currencies=USD&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true`;

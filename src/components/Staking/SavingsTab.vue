@@ -19,15 +19,9 @@ export default defineComponent({
         const fromSavingAmount = ref<string>('');
         const transactionId = ref<string>(store.state.account.TransactionId);
         const transactionError = ref<unknown>(store.state.account.TransactionError);
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state?.account.data;
-        });
-        const maturedRex = computed(() => {
-            return store.state?.account.maturedRex;
-        });
-        const rexSavings = computed(() => {
-            return store.state?.account.savingsRex;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const maturedRex = computed(() => store.state?.account.maturedRex);
+        const rexSavings = computed(() => store.state?.account.savingsRex);
 
         function formatDec() {
             if (toSavingAmount.value !== '') {

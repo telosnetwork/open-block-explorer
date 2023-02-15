@@ -17,9 +17,7 @@ export default defineComponent({
         const stakingAccount = ref<string>('');
         const total = ref<string>('0.0000');
         const progress = ref<number>(0.2);
-        const refundRequest = computed((): API.v1.AccountRefundRequest => {
-            return accountData.value?.refund_request;
-        });
+        const refundRequest = computed((): API.v1.AccountRefundRequest => accountData.value?.refund_request);
         const cpuAmount = computed(
             (): number => refundRequest.value?.cpu_amount.value,
         );
@@ -27,9 +25,7 @@ export default defineComponent({
             (): number => refundRequest.value?.net_amount.value,
         );
         const token = computed((): Token => store.state.chain.token);
-        const accountData = computed((): API.v1.AccountObject => {
-            return store.state?.account.data;
-        });
+        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
         const totalRefund = computed((): string => {
             const totalRefund = refundRequest.value
                 ? (

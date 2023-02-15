@@ -83,5 +83,6 @@ module.exports = {
     'eqeqeq': 'error',
     'semi': ['error', 'always'],
     'arrow-parens': [2, 'as-needed', { 'requireForBlockBody': true }],
+    'arrow-body-style': ['error', 'as-needed'],
   }
 }
