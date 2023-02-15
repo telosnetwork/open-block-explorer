@@ -34,14 +34,14 @@ export default defineComponent({
   props: {
     modelValue: {
       type: Boolean,
-      default: false
+      default: false,
     },
     transactionId: {
-      type: String
+      type: String,
     },
     proposalName: {
-      type: String
-    }
+      type: String,
+    },
   },
   emits: ['update:modelValue'],
   setup(props, context) {
@@ -51,12 +51,12 @@ export default defineComponent({
       },
       set: (value) => {
         context.emit('update:modelValue', value);
-      }
+      },
     });
 
     return {
-      value
+      value,
     };
-  }
+  },
 });
 </script>

@@ -25,7 +25,7 @@ export default defineComponent({
     StakingTab,
     UnstakingTab,
     HistoryTab,
-    SavingsTab
+    SavingsTab,
   },
   data() {
     return {
@@ -33,17 +33,17 @@ export default defineComponent({
         symbol,
         precision: 4,
         amount: 0,
-        contract: 'eosio.token'
+        contract: 'eosio.token',
       } as Token,
       sendDialog: false,
-      apy: '--'
+      apy: '--',
     };
   },
   props: {
     availableTokens: {
       type: Array as PropType<Token[]>,
-      required: true
-    }
+      required: true,
+    },
   },
   setup() {
     const store = useStore();
@@ -55,7 +55,7 @@ export default defineComponent({
     const withdrawRexFund = async () => {
       await store.dispatch('account/unstakeRexFund', { amount: rexfund.value });
       void store.dispatch('account/updateRexData', {
-        account: store.state.account.accountName
+        account: store.state.account.accountName,
       });
     };
     return {
@@ -69,14 +69,14 @@ export default defineComponent({
       transactionError,
       transactionId,
       withdrawRexFund,
-      ...mapActions({ signTransaction: 'account/sendTransaction' })
+      ...mapActions({ signTransaction: 'account/sendTransaction' }),
     };
   },
   computed: {
     ...mapGetters({ account: 'account/accountName' }),
     transactionForm(): boolean {
       return !(this.transactionError || this.transactionId);
-    }
+    },
   },
   methods: {
     isValidAccount,
@@ -86,7 +86,7 @@ export default defineComponent({
         from: this.account as string,
         to: this.recievingAccount,
         quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
-        memo: this.memo
+        memo: this.memo,
       };
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -94,7 +94,7 @@ export default defineComponent({
           await this.signTransaction({
             account: actionAccount,
             data,
-            name: 'transfer'
+            name: 'transfer',
           })
         ).transactionId as string;
       } catch (e) {
@@ -114,7 +114,7 @@ export default defineComponent({
     async navToTransaction() {
       await this.$router.push({
         name: 'transaction',
-        params: { transaction: this.transactionId }
+        params: { transaction: this.transactionId },
       });
       this.$router.go(0);
     },
@@ -126,7 +126,7 @@ export default defineComponent({
       } catch (e) {
         return;
       }
-    }
+    },
   },
   async mounted() {
     try {
@@ -136,7 +136,7 @@ export default defineComponent({
       console.error(e);
     }
     await this.loadAccountData();
-  }
+  },
 });
 </script>
 

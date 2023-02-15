@@ -13,13 +13,13 @@ const chain = getChain();
 export default defineComponent({
   name: 'SendDialog',
   components: {
-    CoinSelectorDialog
+    CoinSelectorDialog,
   },
   props: {
     availableTokens: {
       type: Array as PropType<Token[]>,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: ['update-token-balances'],
   setup(props, context) {
@@ -35,17 +35,17 @@ export default defineComponent({
 
     const account = computed(() => store.state.account.accountName);
     const transactionId = computed(
-      (): string => store.state.account.TransactionId
+      (): string => store.state.account.TransactionId,
     );
     const transactionError = computed(
-      () => store.state.account.TransactionError
+      () => store.state.account.TransactionError,
     );
     const transactionForm = computed(
-      () => !(transactionError.value || transactionId.value)
+      () => !(transactionError.value || transactionId.value),
     );
     const validated = computed(
       () =>
-        parseFloat(sendAmount.value) > 0 && recievingAccount.value.length > 0
+        parseFloat(sendAmount.value) > 0 && recievingAccount.value.length > 0,
     );
 
     const sendTransaction = async (): Promise<void> => {
@@ -55,12 +55,12 @@ export default defineComponent({
         from: account.value,
         to: recievingAccount.value,
         quantity: `${sendAmount.value} ${sendToken.value.symbol}`,
-        memo: memo.value
+        memo: memo.value,
       };
       await store.dispatch('account/sendTransaction', {
         account: actionAccount,
         data,
-        name: 'transfer'
+        name: 'transfer',
       });
       context.emit('update-token-balances');
     };
@@ -86,14 +86,14 @@ export default defineComponent({
         symbol: chain.getSystemToken().symbol,
         precision: 4,
         amount: 0,
-        contract: 'eosio.token'
+        contract: 'eosio.token',
       };
     };
 
     const navToTransaction = async () => {
       await router.push({
         name: 'transaction',
-        params: { transaction: transactionId.value }
+        params: { transaction: transactionId.value },
       });
       router.go(0);
       void store.dispatch('account/resetTransaction');
@@ -106,7 +106,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: sendToken.value.precision,
-            minimumFractionDigits: sendToken.value.precision
+            minimumFractionDigits: sendToken.value.precision,
           })
           .replace(/,/g, '');
       }
@@ -138,9 +138,9 @@ export default defineComponent({
       isValidAccount,
       formatDec,
       resetForm,
-      ...mapActions({ signTransaction: 'account/sendTransaction' })
+      ...mapActions({ signTransaction: 'account/sendTransaction' }),
     };
-  }
+  },
 });
 </script>
 

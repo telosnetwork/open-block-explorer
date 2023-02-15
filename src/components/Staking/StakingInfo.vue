@@ -45,9 +45,9 @@ export default defineComponent({
       maturingRex,
       coreRexBalance,
       maturedRex,
-      rexSavings
+      rexSavings,
     };
-  }
+  },
 });
 </script>
 

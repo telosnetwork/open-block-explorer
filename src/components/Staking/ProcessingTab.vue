@@ -9,7 +9,7 @@ import { API } from '@greymass/eosio';
 export default defineComponent({
   name: 'ProcessingTab',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
@@ -28,9 +28,9 @@ export default defineComponent({
         Math.round(
           new Date(
             new Date(
-              accountData.value?.refund_request?.request_time.toString() + 'Z'
-            ).toUTCString()
-          ).getTime() / 1000
+              accountData.value?.refund_request?.request_time.toString() + 'Z',
+            ).toUTCString(),
+          ).getTime() / 1000,
         ) +
         604800 - //The max amount it can take in seconds
         Math.round(new Date(Date.now()).getTime() / 1000);
@@ -45,9 +45,9 @@ export default defineComponent({
           new Date(
             new Date(
               accountData.value?.rex_info?.rex_maturities[0].first.toString() +
-                'Z'
-            )
-          ).getTime() / 1000
+                'Z',
+            ),
+          ).getTime() / 1000,
         ) - Math.round(new Date(new Date().toISOString()).getTime() / 1000);
       if (diff > 0) {
         var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
@@ -74,9 +74,9 @@ export default defineComponent({
       maturingRex,
       ...mapActions({ refund: 'account/refund' }),
       transactionId: ref<string>(null),
-      transactionError: null
+      transactionError: null,
     };
-  }
+  },
 });
 </script>
 

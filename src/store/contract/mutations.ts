@@ -7,5 +7,5 @@ export const mutations: MutationTree<ContractStateInterface> = {
   },
   setCreator(state: ContractStateInterface, creatorAddress: string) {
     state.creator = creatorAddress;
-  }
+  },
 };

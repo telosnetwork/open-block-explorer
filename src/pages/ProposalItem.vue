@@ -91,7 +91,7 @@ import { sleep } from 'src/utils/sleep';
 export default defineComponent({
   name: 'ProposalItem',
   components: {
-    JsonViewer: JsonViewer as unknown
+    JsonViewer: JsonViewer as unknown,
   },
   setup() {
     const route = useRoute();
@@ -121,24 +121,24 @@ export default defineComponent({
         name: 'actor',
         align: 'left',
         label: 'ACTOR',
-        field: 'actor'
+        field: 'actor',
       },
       {
         name: 'permission',
         align: 'left',
         label: 'PERMISSION',
-        field: 'permission'
+        field: 'permission',
       },
       {
         name: 'status',
         align: 'left',
         label: 'STATUS',
-        field: 'status'
-      }
+        field: 'status',
+      },
     ];
 
     const hasProposalAlreadyExpired = computed(() =>
-      moment(new Date()).isAfter(new Date(expirationDate.value))
+      moment(new Date()).isAfter(new Date(expirationDate.value)),
     );
 
     const isShowApproveButton = computed(() => {
@@ -186,10 +186,10 @@ export default defineComponent({
 
     const producersApprovalStatus = computed(() => {
       const allProducers = requestedApprovalsRows.value.filter(
-        (item) => item.isBp
+        (item) => item.isBp,
       );
       const producersHaveAlreadyApproved = allProducers.filter(
-        (item) => item.status
+        (item) => item.status,
       );
       return `${producersHaveAlreadyApproved.length}/${allProducers.length}`;
     });
@@ -202,9 +202,9 @@ export default defineComponent({
         actions: [
           {
             label: 'Dismiss',
-            color: 'white'
-          }
-        ]
+            color: 'white',
+          },
+        ],
       });
     }
 
@@ -212,7 +212,7 @@ export default defineComponent({
       const activeProducers = await api.getProducerSchedule();
 
       const activeProducersAccount = activeProducers.active.producers.map(
-        (producer) => producer.producer_name
+        (producer) => producer.producer_name,
       );
 
       let requestedApprovals: RequestedApprovals[] = [];
@@ -222,7 +222,7 @@ export default defineComponent({
           actor: item.actor,
           permission: item.permission,
           status: false,
-          isBp: false
+          isBp: false,
         });
       });
 
@@ -231,20 +231,20 @@ export default defineComponent({
           actor: item.actor,
           permission: item.permission,
           status: true,
-          isBp: false
+          isBp: false,
         });
       });
 
       requestedApprovals = requestedApprovals
         .map((item) => ({
           ...item,
-          isBp: activeProducersAccount.includes(item.actor)
+          isBp: activeProducersAccount.includes(item.actor),
         }))
         .sort((a, b) => a.actor.localeCompare(b.actor))
         .sort(
           (a, b) =>
             Number(b.isBp) - Number(a.isBp) ||
-            Number(a.status) - Number(b.status)
+            Number(a.status) - Number(b.status),
         );
 
       return requestedApprovals;
@@ -254,7 +254,7 @@ export default defineComponent({
       try {
         const { proposals } = await api.getProposals({
           proposal: proposalName as string,
-          limit: 1
+          limit: 1,
         });
 
         return proposals[0];
@@ -346,7 +346,7 @@ export default defineComponent({
           }
           const { actions } = await api.getTransaction(trxId);
           return actions;
-        }
+        },
       );
       return await Promise.all(transactionsPromise);
     }
@@ -370,16 +370,16 @@ export default defineComponent({
       }`;
       isExecuted.value = proposal.executed;
       hasUserAlreadyApproved.value = proposal.provided_approvals.some(
-        (item) => item.actor === account.value
+        (item) => item.actor === account.value,
       );
       isUserApprovalList.value = proposal.requested_approvals.some(
-        (item) => item.actor === account.value
+        (item) => item.actor === account.value,
       );
 
       const [requestedApprovalsRowsValue, multsigTransactionDataValue] =
         await Promise.all([
           handleRequestedApprovals(proposal),
-          handleMultsigTransaction(proposal)
+          handleMultsigTransaction(proposal),
         ]);
 
       requestedApprovalsRows.value = requestedApprovalsRowsValue;
@@ -389,7 +389,7 @@ export default defineComponent({
 
       isCanceled.value = transactions.some(
         (item) =>
-          item[0].act.account === 'eosio.msig' && item[0].act.name === 'cancel'
+          item[0].act.account === 'eosio.msig' && item[0].act.name === 'cancel',
       );
 
       isLoading.value = false;
@@ -397,7 +397,7 @@ export default defineComponent({
 
     async function signTransaction({
       name,
-      data
+      data,
     }: {
       name: 'approve' | 'unapprove' | 'cancel' | 'exec';
       data: unknown;
@@ -411,17 +411,17 @@ export default defineComponent({
               authorization: [
                 {
                   actor: account.value,
-                  permission: 'active'
-                }
+                  permission: 'active',
+                },
               ],
-              data
-            }
-          ]
+              data,
+            },
+          ],
         },
         {
           blocksBehind: 3,
-          expireSeconds: 30
-        }
+          expireSeconds: 30,
+        },
       );
 
       return response;
@@ -436,9 +436,9 @@ export default defineComponent({
             proposal_name: proposalName,
             level: {
               actor: account.value,
-              permission: 'active'
-            }
-          }
+              permission: 'active',
+            },
+          },
         });
         await sleep();
         await loadProposalAndUpdateFields();
@@ -457,9 +457,9 @@ export default defineComponent({
             proposal_name: proposalName,
             level: {
               actor: account.value,
-              permission: 'active'
-            }
-          }
+              permission: 'active',
+            },
+          },
         });
         await sleep();
         await loadProposalAndUpdateFields();
@@ -476,8 +476,8 @@ export default defineComponent({
           data: {
             proposer: proposer.value,
             proposal_name: proposalName,
-            executer: account.value
-          }
+            executer: account.value,
+          },
         });
         await sleep();
         await loadProposalAndUpdateFields();
@@ -493,8 +493,8 @@ export default defineComponent({
           data: {
             proposer: proposer.value,
             proposal_name: proposalName,
-            canceler: account.value
-          }
+            canceler: account.value,
+          },
         });
         await sleep();
         await loadProposalAndUpdateFields();
@@ -535,8 +535,8 @@ export default defineComponent({
       onExecute,
       onCancel,
 
-      getShaForCode
+      getShaForCode,
     };
-  }
+  },
 });
 </script>

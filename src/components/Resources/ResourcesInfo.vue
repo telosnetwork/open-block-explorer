@@ -26,7 +26,7 @@ export default defineComponent({
     const ramAvailable = computed(
       () =>
         Number(accountData.value.ram_quota) -
-        Number(accountData.value.ram_usage)
+        Number(accountData.value.ram_usage),
     );
     const delegatedResources = computed(() => {
       const totalStakedResources =
@@ -38,12 +38,12 @@ export default defineComponent({
         Number(
           accountData.value.self_delegated_bandwidth?.net_weight.value
             ? accountData.value.self_delegated_bandwidth.net_weight.value
-            : '0'
+            : '0',
         ) +
         Number(
           accountData.value.self_delegated_bandwidth?.cpu_weight.value
             ? accountData.value.self_delegated_bandwidth.cpu_weight.value
-            : '0'
+            : '0',
         );
       return totalStakedResources - selfStakedResources;
     });
@@ -57,18 +57,18 @@ export default defineComponent({
     });
 
     const currentCpu = computed(
-      () => accountData.value?.total_resources?.cpu_weight.value
+      () => accountData.value?.total_resources?.cpu_weight.value,
     );
 
     const currentNet = computed(
-      () => accountData.value?.total_resources?.net_weight.value
+      () => accountData.value?.total_resources?.net_weight.value,
     );
 
     const totalRefund = computed((): number =>
       accountData.value && accountData.value.refund_request
         ? accountData.value.refund_request.cpu_amount.value +
           accountData.value.refund_request.net_amount.value
-        : 0
+        : 0,
     );
 
     const formatValue = (val: number): string => {
@@ -91,9 +91,9 @@ export default defineComponent({
       currentCpu,
       currentNet,
       totalRefund,
-      formatValue
+      formatValue,
     };
-  }
+  },
 });
 </script>
 

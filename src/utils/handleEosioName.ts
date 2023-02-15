@@ -4,7 +4,7 @@ export function randomEosioName(length = 12): string {
 
   for (let i = 0; i < length; i++) {
     result += validCharacters.charAt(
-      Math.floor(Math.random() * validCharacters.length)
+      Math.floor(Math.random() * validCharacters.length),
     );
   }
 

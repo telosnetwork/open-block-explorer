@@ -9,5 +9,5 @@ export const getters: GetterTree<TransactionStateInterface, StateInterface> = {
   },
   getTransactionId({ transactionId }): string {
     return transactionId;
-  }
+  },
 };

@@ -16,14 +16,14 @@ export default defineComponent({
   components: {
     ValidatorDataTable,
     ViewTransaction,
-    WalletModal
+    WalletModal,
   },
   setup() {
     const store = useStore();
     const symbol = chain.getSystemToken().symbol;
     const account = computed(() => store.state.account.accountName);
     const balance = computed(
-      () => (Number(lastWeight.value).toFixed(2) || '0') + ` ${symbol}`
+      () => (Number(lastWeight.value).toFixed(2) || '0') + ` ${symbol}`,
     );
     const activecount = computed(() => {
       if (store.state.chain.producers.length > 42) return 42;
@@ -77,7 +77,7 @@ export default defineComponent({
         scope: 'eosio',
         table: 'voters',
         lower_bound: Name.from(account.value),
-        limit: 1
+        limit: 1,
       } as GetTableRowsParams;
       lastWeight.value = (
         (await api.getTableRows(paramsVoteWeight)) as {
@@ -94,7 +94,7 @@ export default defineComponent({
       const paramsPayrate = {
         code: 'eosio',
         scope: 'eosio',
-        table: 'payrate'
+        table: 'payrate',
       } as GetTableRowsParams;
       payrate.value = (
         (await api.getTableRows(paramsPayrate)) as {
@@ -111,14 +111,14 @@ export default defineComponent({
       const paramsSupply = {
         code: 'eosio.token',
         scope: chain.getSystemToken().symbol,
-        table: 'stat'
+        table: 'stat',
       } as GetTableRowsParams;
       supply.value = assetToAmount(
         (
           (await api.getTableRows(paramsSupply)) as {
             rows: { supply: string }[];
           }
-        ).rows[0].supply
+        ).rows[0].supply,
       );
     }
 
@@ -126,13 +126,13 @@ export default defineComponent({
       const request = {
         code: 'eosio',
         lower_bound: 'eosio',
-        table: 'voters'
+        table: 'voters',
       };
       voters.value = (await api.getTableByScope(request))[0].count;
       const totalStakeParams = {
         code: 'eosio',
         scope: 'eosio',
-        table: 'global'
+        table: 'global',
       } as GetTableRowsParams;
       amount_voted.value =
         (
@@ -188,9 +188,9 @@ export default defineComponent({
       showWalletModal,
       symbol,
       toggleView,
-      sendVoteTransaction
+      sendVoteTransaction,
     };
-  }
+  },
 });
 </script>
 

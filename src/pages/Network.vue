@@ -15,7 +15,7 @@ export default defineComponent({
     PriceChart,
     TransactionsTable,
     Map,
-    MapData
+    MapData,
   },
   setup() {
     const store = useStore();
@@ -27,9 +27,9 @@ export default defineComponent({
     });
 
     return {
-      displayMap
+      displayMap,
     };
-  }
+  },
 });
 </script>
 

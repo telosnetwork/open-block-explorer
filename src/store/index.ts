@@ -3,7 +3,7 @@ import { InjectionKey } from 'vue';
 import {
   createStore,
   Store as VuexStore,
-  useStore as vuexUseStore
+  useStore as vuexUseStore,
 } from 'vuex';
 
 import { contract } from './contract';
@@ -49,12 +49,12 @@ export default store(function () {
       contract,
       chain,
       account,
-      transaction
+      transaction,
     },
 
     // enable strict mode (adds overhead!)
     // for dev mode and --debug builds only
-    strict: !!process.env.DEBUGGING
+    strict: !!process.env.DEBUGGING,
   });
 
   return Store;

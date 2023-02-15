@@ -14,14 +14,14 @@ const symbol = chain.getSystemToken().symbol;
 export default defineComponent({
   name: 'StakeTab',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
     const openTransaction = ref<boolean>(false);
     const stakingAccount = ref<string>(store.state.account.accountName || '');
     const accountTotal = computed((): string =>
-      store.state.account.data.core_liquid_balance.toString()
+      store.state.account.data.core_liquid_balance.toString(),
     );
     const cpuTokens = ref<string>('0');
     const netTokens = ref<string>('0');
@@ -32,7 +32,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision
+            minimumFractionDigits: store.state.chain.token.precision,
           })
           .replace(/[^0-9.]/g, '');
       }
@@ -41,7 +41,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision
+            minimumFractionDigits: store.state.chain.token.precision,
           })
           .replace(/[^0-9.]/g, '');
       }
@@ -68,7 +68,7 @@ export default defineComponent({
       transactionError: null,
       formatDec,
       accountTotal: assetToAmount(accountTotal.value),
-      isValidAccount
+      isValidAccount,
     };
   },
   methods: {
@@ -89,7 +89,7 @@ export default defineComponent({
         stake_net_quantity:
           parseFloat(this.netTokens) > 0
             ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-            : `0.0000 ${symbol}`
+            : `0.0000 ${symbol}`,
       } as StakeResourcesTransactionData;
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -97,7 +97,7 @@ export default defineComponent({
           await this.signTransaction({
             account: 'eosio',
             name: 'delegatebw',
-            data
+            data,
           })
         ).transactionId as string;
         this.$store.commit('account/setTransaction', this.transactionId);
@@ -119,8 +119,8 @@ export default defineComponent({
       } catch (e) {
         return;
       }
-    }
-  }
+    },
+  },
 });
 </script>
 

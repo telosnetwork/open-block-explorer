@@ -10,7 +10,7 @@ const chain = getChain();
 export default defineComponent({
   name: 'UnstakingTab',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
@@ -18,10 +18,10 @@ export default defineComponent({
     const unstakeTokens = ref<string>('');
     const symbol = ref<string>(chain.getSystemToken().symbol);
     const transactionId = computed(
-      (): string => store.state.account.TransactionId
+      (): string => store.state.account.TransactionId,
     );
     const transactionError = computed(
-      () => store.state.account.TransactionError
+      () => store.state.account.TransactionError,
     );
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
@@ -43,7 +43,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: precision,
-            minimumFractionDigits: precision
+            minimumFractionDigits: precision,
           })
           .replace(/[^0-9.]/g, '');
       }
@@ -60,7 +60,7 @@ export default defineComponent({
         return;
       }
       await store.dispatch('account/unstakeRex', {
-        amount: unstakeTokens.value
+        amount: unstakeTokens.value,
       });
       openTransaction.value = true;
     }
@@ -94,9 +94,9 @@ export default defineComponent({
       rexbal,
       maturedRex,
       symbol,
-      setMaxValue
+      setMaxValue,
     };
-  }
+  },
 });
 </script>
 

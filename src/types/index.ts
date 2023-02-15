@@ -18,11 +18,11 @@ export {
   TableByScope,
   Block,
   Get_actions,
-  Error
+  Error,
 } from './Actions';
 export {
   TransactionTableRow,
-  TransactionTableActionRow
+  TransactionTableActionRow,
 } from './TransactionTableRow';
 export { PaginationSettings } from './PaginationSettings';
 export { GenericObj } from './GenericObj';
@@ -36,7 +36,7 @@ export {
   ProducerRows,
   GenericTable,
   RexPoolRows,
-  RexPool
+  RexPool,
 } from './TableRows';
 export { BP } from './BP';
 export { ChainInfo } from './ChainInfo';
@@ -47,7 +47,7 @@ export {
   Proposal,
   ProposalTableRow,
   ProposalForm,
-  RequestedApprovals
+  RequestedApprovals,
 } from './Proposal';
 export { GetProducers, Producer } from './Producers';
 export { ABI } from './ABI';

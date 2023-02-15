@@ -5,7 +5,7 @@ import {
   computed,
   PropType,
   watch,
-  onMounted
+  onMounted,
 } from 'vue';
 import { copyToClipboard, useQuasar } from 'quasar';
 import { Block } from 'src/types';
@@ -17,8 +17,8 @@ export default defineComponent({
     block: {
       type: Object as PropType<Block>,
       required: false,
-      default: null
-    }
+      default: null,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -29,8 +29,8 @@ export default defineComponent({
       await router.push({
         name: 'block',
         params: {
-          block: Block.value.block_num + 1
-        }
+          block: Block.value.block_num + 1,
+        },
       });
       router.go(0);
     }
@@ -38,8 +38,8 @@ export default defineComponent({
       await router.push({
         name: 'block',
         params: {
-          block: Block.value.block_num - 1
-        }
+          block: Block.value.block_num - 1,
+        },
       });
       void router.go(0);
     }
@@ -50,7 +50,7 @@ export default defineComponent({
             color: 'green-4',
             textColor: 'white',
             message: 'Copied to clipboard',
-            timeout: 1000
+            timeout: 1000,
           });
         })
         .catch(() => {
@@ -58,7 +58,7 @@ export default defineComponent({
             color: 'red-8',
             textColor: 'white',
             message: 'Could not copy',
-            timeout: 1000
+            timeout: 1000,
           });
         });
     }
@@ -73,7 +73,7 @@ export default defineComponent({
         day: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
-        second: 'numeric'
+        second: 'numeric',
       });
     }
     function setBlockData() {
@@ -95,13 +95,13 @@ export default defineComponent({
           { key: 'Net usage', value: (net * 8).toString() + ' Bytes' },
           {
             key: 'Schedule Version',
-            value: Block.value.schedule_version.toString()
+            value: Block.value.schedule_version.toString(),
           },
           {
             key: 'Transactions',
-            value: Block.value.transactions.length.toString()
+            value: Block.value.transactions.length.toString(),
           },
-          { key: 'Actions', value: actionCount.toString() }
+          { key: 'Actions', value: actionCount.toString() },
         ];
       }
     }
@@ -118,9 +118,9 @@ export default defineComponent({
       numberWithCommas,
       formatDate,
       copy,
-      blockInfo
+      blockInfo,
     };
-  }
+  },
 });
 </script>
 

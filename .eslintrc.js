@@ -63,12 +63,12 @@ module.exports = {
 
   // add your custom rules here
   rules: {
-    // TypeScript
-    quotes: ['warn', 'single', { avoidEscape: true }],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+
+    'comma-dangle': ['error', 'always-multiline'],
   }
 }

@@ -10,5 +10,5 @@ export const transaction: Module<TransactionStateInterface, StateInterface> = {
   actions,
   getters,
   mutations,
-  state
+  state,
 };

@@ -10,8 +10,8 @@ export default defineComponent({
     account: {
       type: String,
       required: false,
-      default: null
-    }
+      default: null,
+    },
   },
   setup(props) {
     const $q = useQuasar();
@@ -26,13 +26,13 @@ export default defineComponent({
         return;
       }
       children.value = data.map((el) =>
-        formatAccount((el.act.data as NewAccountData).newact, 'account')
+        formatAccount((el.act.data as NewAccountData).newact, 'account'),
       );
     };
     // TODO Refactor
     const formatAccount = (
       name: string,
-      type: 'account' | 'transaction' | 'block'
+      type: 'account' | 'transaction' | 'block',
     ): string => {
       return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
     };
@@ -42,9 +42,9 @@ export default defineComponent({
     });
     return {
       children,
-      loadAccountData
+      loadAccountData,
     };
-  }
+  },
 });
 </script>
 <template lang="pug">

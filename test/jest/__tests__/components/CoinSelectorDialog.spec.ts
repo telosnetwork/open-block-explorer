@@ -14,7 +14,7 @@ const mockToken = {
   symbol: 'MOCK',
   precision: 4,
   amount: 99,
-  contract: 'mock.token'
+  contract: 'mock.token',
 } as Token;
 
 const setMount = () => {
@@ -23,8 +23,8 @@ const setMount = () => {
       callback: jest.fn(),
       openCoinDialog: true,
       availableTokens: [mockToken],
-      updateSelectedCoin: jest.fn()
-    }
+      updateSelectedCoin: jest.fn(),
+    },
   });
 };
 

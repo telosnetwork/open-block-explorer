@@ -18,7 +18,7 @@ export default defineComponent({
     KeysPanel,
     ChildrenPanel,
     AccountCard,
-    ContractTabs
+    ContractTabs,
   },
   setup() {
     const store = useStore();
@@ -37,8 +37,8 @@ export default defineComponent({
       void router.push({
         path: router.currentRoute.value.path,
         query: {
-          tab: tab.value
-        }
+          tab: tab.value,
+        },
       });
     });
 
@@ -46,9 +46,9 @@ export default defineComponent({
       tab,
       account,
       abi,
-      tokenList
+      tokenList,
     };
-  }
+  },
 });
 </script>
 

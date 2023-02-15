@@ -16,7 +16,7 @@ export default defineComponent({
       return new Date(date).toLocaleDateString('en-US', {
         month: 'long',
         year: 'numeric',
-        day: 'numeric'
+        day: 'numeric',
       });
     }
 
@@ -24,9 +24,9 @@ export default defineComponent({
       store,
       rexActions,
       formatDate,
-      symbol
+      symbol,
     };
-  }
+  },
 });
 </script>
 

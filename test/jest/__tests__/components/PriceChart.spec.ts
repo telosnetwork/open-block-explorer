@@ -7,7 +7,7 @@ import {
   it,
   jest,
   afterEach,
-  beforeEach
+  beforeEach,
 } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import { shallowMount } from '@vue/test-utils';
@@ -22,9 +22,9 @@ const mockExchangeStats: PriceStats = {
       usd: 2.01,
       usd_24h_change: 30000000,
       usd_24h_vol: 4444444,
-      usd_market_cap: 1123456789
-    }
-  }
+      usd_market_cap: 1123456789,
+    },
+  },
 };
 
 const mockHistoryData: PriceHistory = {
@@ -32,9 +32,9 @@ const mockHistoryData: PriceHistory = {
     prices: [
       [123, 111],
       [456, 222],
-      [789, 333]
-    ]
-  }
+      [789, 333],
+    ],
+  },
 };
 
 installQuasarPlugin();

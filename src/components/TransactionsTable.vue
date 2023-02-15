@@ -8,7 +8,7 @@ import {
   PropType,
   ref,
   toRefs,
-  watch
+  watch,
 } from 'vue';
 import DateField from 'src/components/DateField.vue';
 import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
@@ -25,25 +25,25 @@ export default defineComponent({
     DateField,
     AccountFormat,
     ActionFormat,
-    DataFormat
+    DataFormat,
   },
   props: {
     account: {
       type: String || null,
       required: false,
-      default: null
+      default: null,
     },
     actions: {
       type: Object as PropType<Action[]>,
       required: false,
-      default: null
-    }
+      default: null,
+    },
   },
   setup(props) {
     const route = useRoute();
     const router = useRouter();
     const pagination = computed(
-      () => (route.query['page'] as string) || '1,10'
+      () => (route.query['page'] as string) || '1,10',
     );
     const pageSizeOptions = [10, 20, 50, 100, 200];
     const { account, actions } = toRefs(props);
@@ -54,7 +54,7 @@ export default defineComponent({
         label: 'TRANSACTION',
         align: 'left',
         field: 'transaction',
-        sortable: true
+        sortable: true,
       },
       {
         name: 'timestamp',
@@ -62,7 +62,7 @@ export default defineComponent({
         align: 'left',
         label: 'TIMESTAMP',
         field: 'timestamp',
-        sortable: true
+        sortable: true,
       },
       {
         name: 'action',
@@ -70,15 +70,15 @@ export default defineComponent({
         align: 'left',
         label: 'ACTION',
         field: 'action',
-        sortable: true
+        sortable: true,
       },
       {
         name: 'data',
         required: true,
         align: 'left',
         label: 'DATA',
-        field: 'data'
-      }
+        field: 'data',
+      },
     ];
     const rows = ref<TransactionTableRow[]>([]);
     const filteredRows = ref<TransactionTableRow[]>([]);
@@ -88,7 +88,7 @@ export default defineComponent({
       descending: true,
       page: 1,
       rowsPerPage: pageSizeOptions[0],
-      rowsNumber: 10000
+      rowsNumber: 10000,
     });
     const fromDateFilter = ref('');
     const toDateFilter = ref<string>(new Date().toLocaleString());
@@ -98,10 +98,10 @@ export default defineComponent({
     const showAge = ref<boolean>(localStorage.getItem('showAge') === 'true');
 
     const isTransaction = computed(
-      () => account.value != null && account.value.length > 12
+      () => account.value != null && account.value.length > 12,
     );
     const tableTitle = computed(() =>
-      isTransaction.value ? 'Actions' : 'Latest Transactions'
+      isTransaction.value ? 'Actions' : 'Latest Transactions',
     );
 
     const hasPages = computed(() => {
@@ -119,7 +119,7 @@ export default defineComponent({
         actions: actionsFilter.value,
         toDate: toDateFilter.value,
         fromDate: fromDateFilter.value,
-        token: tokenFilter.value
+        token: tokenFilter.value,
       };
     });
 
@@ -134,12 +134,12 @@ export default defineComponent({
           account.value == null
             ? await api.getTransactions(
                 paginationSettings.value.page,
-                paginationSettings.value.rowsPerPage
+                paginationSettings.value.rowsPerPage,
               )
             : await api.getTransactions(
                 paginationSettings.value.page,
                 paginationSettings.value.rowsPerPage,
-                account.value
+                account.value,
               );
       }
       if (tableData) {
@@ -160,11 +160,11 @@ export default defineComponent({
               data: hasActions.value
                 ? {
                     data: item.data as unknown,
-                    name: item.account
+                    name: item.account,
                   }
-                : { data: item.act.data as unknown, name: item.act.name }
-            }
-          ]
+                : { data: item.act.data as unknown, name: item.act.name },
+            },
+          ],
         }));
       }
       void filterRows();
@@ -206,14 +206,14 @@ export default defineComponent({
         hash: window.location.hash,
         query: {
           ...route.query,
-          page: `${page},${rowsPerPage}`
-        }
+          page: `${page},${rowsPerPage}`,
+        },
       });
     };
 
     const setPagination = async (
       page: string | number,
-      size: string | number
+      size: string | number,
     ) => {
       if (page) {
         paginationSettings.value.page = Number(page);
@@ -222,7 +222,7 @@ export default defineComponent({
         paginationSettings.value.rowsPerPage = Number(size);
       }
       await onRequest({
-        pagination: paginationSettings.value
+        pagination: paginationSettings.value,
       });
     };
 
@@ -232,10 +232,10 @@ export default defineComponent({
 
     const filterRows = () => {
       filteredRows.value = rows.value.filter((row) =>
-        row.action.act.name.includes(actionsFilter.value)
+        row.action.act.name.includes(actionsFilter.value),
       );
       filteredRows.value = filteredRows.value.filter((row) =>
-        JSON.stringify(row.data).includes(tokenFilter.value.toUpperCase())
+        JSON.stringify(row.data).includes(tokenFilter.value.toUpperCase()),
       );
       if (!!fromDateFilter.value && !!toDateFilter.value) {
         filteredRows.value = filteredRows.value.filter((item) => {
@@ -288,7 +288,7 @@ export default defineComponent({
 
         await setPagination(page, size);
       },
-      { immediate: true }
+      { immediate: true },
     );
 
     return {
@@ -314,9 +314,9 @@ export default defineComponent({
       filterRows,
       pageSizeOptions,
       setPagination,
-      onPaginationChange
+      onPaginationChange,
     };
-  }
+  },
 });
 </script>
 

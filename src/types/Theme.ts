@@ -31,5 +31,5 @@ export const themeProps: (keyof Theme)[] = [
   'color-tertiary-gradient',
   'color-progress-gradient',
   'color-producer-card-background',
-  'color-select-box-background'
+  'color-select-box-background',
 ];

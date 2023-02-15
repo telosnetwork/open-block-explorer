@@ -73,9 +73,9 @@ export default defineComponent({
         actions: [
           {
             label: 'Dismiss',
-            color: 'white'
-          }
-        ]
+            color: 'white',
+          },
+        ],
       });
     }
 
@@ -124,8 +124,8 @@ export default defineComponent({
 
     return {
       handleUploadCSV,
-      file
+      file,
     };
-  }
+  },
 });
 </script>

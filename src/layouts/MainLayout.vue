@@ -8,15 +8,15 @@ export default {
   components: {
     Header,
     Footer,
-    ChainsSidebar
+    ChainsSidebar,
   },
   setup() {
     return {
       showSidebar: () => {
         return process.env.SHOW_SIDEBAR === 'true';
-      }
+      },
     };
-  }
+  },
 };
 </script>
 

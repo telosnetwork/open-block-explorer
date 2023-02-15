@@ -7,12 +7,12 @@ export default defineComponent({
   props: {
     availableTokens: {
       required: true,
-      type: Array as PropType<Token[]>
+      type: Array as PropType<Token[]>,
     },
     updateSelectedCoin: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const search = ref('');
@@ -47,9 +47,9 @@ export default defineComponent({
       search,
       filteredTokens,
       filterTokens,
-      filterByText
+      filterByText,
     };
-  }
+  },
 });
 </script>
 

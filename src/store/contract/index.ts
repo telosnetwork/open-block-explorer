@@ -10,5 +10,5 @@ export const contract: Module<ContractStateInterface, StateInterface> = {
   actions,
   getters,
   mutations,
-  state
+  state,
 };

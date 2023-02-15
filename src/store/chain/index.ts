@@ -10,5 +10,5 @@ export const chain: Module<ChainStateInterface, StateInterface> = {
   actions,
   getters,
   mutations,
-  state
+  state,
 };

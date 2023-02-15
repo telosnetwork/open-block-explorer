@@ -10,5 +10,5 @@ export const account: Module<AccountStateInterface, StateInterface> = {
   getters,
   mutations,
   actions,
-  state
+  state,
 };

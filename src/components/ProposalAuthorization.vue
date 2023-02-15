@@ -88,16 +88,16 @@ export default defineComponent({
   props: {
     actor: {
       type: String,
-      default: ''
+      default: '',
     },
     permission: {
       type: String,
-      default: ''
+      default: '',
     },
     disabledRemoveButton: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   emits: ['update:actor', 'update:permission', 'remove'],
   setup(props, context) {
@@ -115,7 +115,7 @@ export default defineComponent({
       },
       set: (value) => {
         context.emit('update:actor', value);
-      }
+      },
     });
 
     const permissionValue = computed({
@@ -124,7 +124,7 @@ export default defineComponent({
       },
       set: (value) => {
         context.emit('update:permission', value);
-      }
+      },
     });
 
     onMounted(async () => {
@@ -171,7 +171,7 @@ export default defineComponent({
           limit: 5,
           lower_bound: value,
           table: 'userres',
-          upper_bound: value.padEnd(12, 'z')
+          upper_bound: value.padEnd(12, 'z'),
         });
 
         if (accounts.length > 0) {
@@ -195,14 +195,14 @@ export default defineComponent({
                   accounts: permission.required_auth.accounts.map((item) => ({
                     weight: `+ ${item.weight.toString()}`,
                     actor: item.permission.actor,
-                    permission: item.permission.permission
-                  }))
+                    permission: item.permission.permission,
+                  })),
                 };
-              }
+              },
             );
 
             permissionsOptions.value = account.permissions.map(
-              (permission) => permission.perm_name
+              (permission) => permission.perm_name,
             );
             context.emit('update:permission', permissionsOptions.value[0]);
           }
@@ -218,7 +218,7 @@ export default defineComponent({
     const requiredAccounts = computed(() => {
       if (!permissionValue.value) return [];
       return allRequiredAccounts.value.find(
-        (item) => item.permissionName.toString() === permissionValue.value
+        (item) => item.permissionName.toString() === permissionValue.value,
       );
     });
 
@@ -229,8 +229,8 @@ export default defineComponent({
       requiredAccounts,
       actorsOptions,
       permissionsOptions,
-      isLoading
+      isLoading,
     };
-  }
+  },
 });
 </script>

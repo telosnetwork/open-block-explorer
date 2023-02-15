@@ -26,6 +26,6 @@ export function state(): TransactionStateInterface {
     actionCount: 0,
     irreversable: false,
     actions: [] as Action[],
-    transactionFound: true
+    transactionFound: true,
   };
 }

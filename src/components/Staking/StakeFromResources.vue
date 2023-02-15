@@ -8,7 +8,7 @@ import { API, Asset } from '@greymass/eosio';
 export default defineComponent({
   name: 'StakeFromResources',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
@@ -22,16 +22,16 @@ export default defineComponent({
     const transactionId = ref<string>(store.state.account.TransactionId);
     const transactionError = ref<unknown>(store.state.account.TransactionError);
     const stakingAccount = computed(
-      (): string => store.state.account.accountName
+      (): string => store.state.account.accountName,
     );
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
     const cpuWeight = computed(
-      (): Asset => accountData.value.total_resources.cpu_weight
+      (): Asset => accountData.value.total_resources.cpu_weight,
     );
     const netWeight = computed(
-      (): Asset => accountData.value.total_resources.net_weight
+      (): Asset => accountData.value.total_resources.net_weight,
     );
 
     function formatDec() {
@@ -40,7 +40,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision
+            minimumFractionDigits: store.state.chain.token.precision,
           })
           .replace(/[^0-9.]/g, '');
       }
@@ -49,7 +49,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision
+            minimumFractionDigits: store.state.chain.token.precision,
           })
           .replace(/[^0-9.]/g, '');
       }
@@ -67,7 +67,7 @@ export default defineComponent({
       }
       await store.dispatch('account/stakeCpuNetRex', {
         cpuAmount: cpuTokens.value,
-        netAmount: netTokens.value
+        netAmount: netTokens.value,
       });
       openTransaction.value = true;
     }
@@ -79,7 +79,7 @@ export default defineComponent({
       }
       await store.dispatch('account/unstakeCpuNetRex', {
         cpuAmount: cpuWithdraw.value,
-        netAmount: netWithdraw.value
+        netAmount: netWithdraw.value,
       });
       openTransaction.value = true;
     }
@@ -111,9 +111,9 @@ export default defineComponent({
       stake,
       unstake,
       setMaxNetValue,
-      setMaxCpuValue
+      setMaxCpuValue,
     };
-  }
+  },
 });
 </script>
 

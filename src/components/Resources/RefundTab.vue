@@ -9,7 +9,7 @@ import { API } from '@greymass/eosio';
 export default defineComponent({
   name: 'RefundTab',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
@@ -21,10 +21,10 @@ export default defineComponent({
       return accountData.value?.refund_request;
     });
     const cpuAmount = computed(
-      (): number => refundRequest.value?.cpu_amount.value
+      (): number => refundRequest.value?.cpu_amount.value,
     );
     const netAmount = computed(
-      (): number => refundRequest.value?.net_amount.value
+      (): number => refundRequest.value?.net_amount.value,
     );
     const token = computed((): Token => store.state.chain.token);
     const accountData = computed((): API.v1.AccountObject => {
@@ -52,9 +52,9 @@ export default defineComponent({
         Math.round(
           new Date(
             new Date(
-              accountData.value.refund_request?.request_time.toString() + 'Z'
-            ).toUTCString()
-          ).getTime() / 1000
+              accountData.value.refund_request?.request_time.toString() + 'Z',
+            ).toUTCString(),
+          ).getTime() / 1000,
         ) +
         259200 -
         Math.round(new Date(Date.now()).getTime() / 1000);
@@ -67,9 +67,9 @@ export default defineComponent({
         Math.round(
           new Date(
             new Date(
-              accountData.value?.refund_request?.request_time.toString() + 'Z'
-            )
-          ).getTime() / 1000
+              accountData.value?.refund_request?.request_time.toString() + 'Z',
+            ),
+          ).getTime() / 1000,
         ) +
         259200 -
         Math.round(new Date(new Date().toISOString()).getTime() / 1000);
@@ -103,7 +103,7 @@ export default defineComponent({
       refundCountdown,
       ...mapActions({ signTransaction: 'account/sendTransaction' }),
       transactionId: ref<string>(null),
-      transactionError: null
+      transactionError: null,
     };
   },
   methods: {
@@ -111,7 +111,7 @@ export default defineComponent({
       this.transactionError = '';
       const data = {
         owner: this.accountData.account_name,
-        transfer: false
+        transfer: false,
       };
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -119,7 +119,7 @@ export default defineComponent({
           await this.signTransaction({
             account: 'eosio',
             name: 'refund',
-            data
+            data,
           })
         ).transactionId as string;
       } catch (e) {
@@ -134,14 +134,14 @@ export default defineComponent({
     async loadAccountData(): Promise<void> {
       try {
         const data = await this.$api.getAccount(
-          this.store.state.account.abi.account_name
+          this.store.state.account.abi.account_name,
         );
         this.$store.commit('account/setAccountData', data);
       } catch (e) {
         return;
       }
-    }
-  }
+    },
+  },
 });
 </script>
 

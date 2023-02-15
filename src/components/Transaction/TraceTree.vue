@@ -28,7 +28,7 @@ export default defineComponent({
             data: act.data,
             action,
             children: [],
-            notifications: action.notified
+            notifications: action.notified,
           });
         }
         obj = {
@@ -41,7 +41,7 @@ export default defineComponent({
           data: act.data,
           action,
           children: children,
-          notifications: action.notified
+          notifications: action.notified,
         };
         array.push(obj);
       }
@@ -61,9 +61,9 @@ export default defineComponent({
       actionNum: computed(() => store.state.transaction.actionCount),
       actions: computed(() => store.state.transaction.actions),
       getTree,
-      account
+      account,
     };
-  }
+  },
 });
 </script>
 

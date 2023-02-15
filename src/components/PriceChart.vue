@@ -17,32 +17,32 @@ exportingInit(Highcharts);
 export default defineComponent({
   name: 'PriceChart',
   components: {
-    highcharts: Chart
+    highcharts: Chart,
   },
   setup() {
     const hcInstance = Highcharts;
     const chartOptions = ref({
       //   uncomment to fill area
       chart: {
-        type: 'area'
+        type: 'area',
       },
       title: {
-        text: 'Past 24h'
+        text: 'Past 24h',
       },
       xAxis: {
         dateTimeLabelFormats: {
           day: '%A, %b %e, %l %p',
-          millisecond: '%A, %b %e, %l %p'
+          millisecond: '%A, %b %e, %l %p',
         },
-        type: 'datetime'
+        type: 'datetime',
       },
       yAxis: {
         title: {
-          text: 'Price'
-        }
+          text: 'Price',
+        },
       },
       legend: {
-        enabled: true
+        enabled: true,
       },
       plotOptions: {
         area: {
@@ -52,40 +52,40 @@ export default defineComponent({
               x1: 0,
               y1: 0,
               x2: 0,
-              y2: 1
+              y2: 1,
             },
             stops: [
               // [0, '#571AFF'],
               [0, 'rgba(234 , 227 , 252 , 0.6)'],
               [1, 'rgba(87, 26, 255, 0.003)'],
               [2, 'rgba(87, 26, 255, 0.0001)'],
-              [3, 'rgba(87, 26, 255, 0)']
-            ]
+              [3, 'rgba(87, 26, 255, 0)'],
+            ],
           },
           marker: {
-            radius: 0.5
+            radius: 0.5,
           },
           lineWidth: 2,
           states: {
             hover: {
-              lineWidth: 4
-            }
+              lineWidth: 4,
+            },
           },
-          threshold: null
-        }
+          threshold: null,
+        },
       },
       series: [
         {
           name: chain.getSystemToken().symbol,
           color: getCssVar('primary'),
-          data: [] as DateTuple[]
-        }
+          data: [] as DateTuple[],
+        },
       ],
       tooltip: {
         dateTimeLabelFormats: {
-          hour: '%A, %b %e, %l %p'
-        }
-      }
+          hour: '%A, %b %e, %l %p',
+        },
+      },
     });
     const lastUpdated = ref(0);
     const tokenPrice = ref('');
@@ -128,9 +128,9 @@ export default defineComponent({
       dayChange,
       fetchPriceChartData,
       formatPercentage,
-      formatCurrencyValue
+      formatCurrencyValue,
     };
-  }
+  },
 });
 </script>
 

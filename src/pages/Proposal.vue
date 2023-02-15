@@ -49,7 +49,7 @@ import { useStore } from 'src/store';
 export default defineComponent({
   name: 'Proposal',
   components: {
-    ProposalTable
+    ProposalTable,
   },
   setup() {
     const route = useRoute();
@@ -85,8 +85,8 @@ export default defineComponent({
       void router.push({
         path: router.currentRoute.value.path,
         query: {
-          tab: tab.value
-        }
+          tab: tab.value,
+        },
       });
     });
 
@@ -94,8 +94,8 @@ export default defineComponent({
       tab,
       account,
       isAuthenticated,
-      blockProducers
+      blockProducers,
     };
-  }
+  },
 });
 </script>

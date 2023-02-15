@@ -29,14 +29,14 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
       producers = producers.filter((producer) => producer.is_active === 1);
       producers = producers.map((data) => {
         const bp = producerData.find(
-          (producer) => producer.owner === data.owner
+          (producer) => producer.owner === data.owner,
         );
         if (bp) {
           try {
             return {
               ...data,
               name: bp.org.candidate_name,
-              location: bp.org.location.name
+              location: bp.org.location.name,
             };
           } catch (error) {
             return data;
@@ -45,7 +45,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
           return {
             ...data,
             name: data.owner,
-            location: ''
+            location: '',
           };
         }
       });
@@ -73,7 +73,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
         code: 'eosio',
         scope: 'eosio',
         table: 'rammarket',
-        json: true
+        json: true,
       } as GetTableRowsParams;
       const rammarket = (
         (await api.getTableRows(paramsRammarket)) as {
@@ -92,5 +92,5 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
     } catch (err) {
       console.log('Error', err);
     }
-  }
+  },
 };

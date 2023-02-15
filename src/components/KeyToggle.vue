@@ -9,19 +9,19 @@ export default defineComponent({
   props: {
     pubkey: {
       type: PublicKey,
-      required: true
+      required: true,
     },
     weight: {
       type: Weight,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const key = ref(props.pubkey);
     const legacyKeyFormat = ref<boolean>(false);
     const $q = useQuasar();
     const keyDisplay = computed(() =>
-      legacyKeyFormat.value ? key.value.toLegacyString() : key.value.toString()
+      legacyKeyFormat.value ? key.value.toLegacyString() : key.value.toString(),
     );
     function copy(value: string) {
       copyToClipboard(value)
@@ -30,7 +30,7 @@ export default defineComponent({
             color: 'green-4',
             textColor: 'white',
             message: 'Copied to clipboard',
-            timeout: 1000
+            timeout: 1000,
           });
         })
         .catch(() => {
@@ -38,7 +38,7 @@ export default defineComponent({
             color: 'red-8',
             textColor: 'white',
             message: 'Could not copy',
-            timeout: 1000
+            timeout: 1000,
           });
         });
     }
@@ -48,9 +48,9 @@ export default defineComponent({
     return {
       keyDisplay,
       copy,
-      toggleKey
+      toggleKey,
     };
-  }
+  },
 });
 </script>
 

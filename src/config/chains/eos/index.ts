@@ -2,7 +2,7 @@ import BaseChain from '../../BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import {
   getCoingeckoPriceChartData,
-  getCoingeckoUsdPrice
+  getCoingeckoUsdPrice,
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
@@ -15,18 +15,18 @@ const TOKEN = {
   symbol: 'EOS',
   precision: 4,
   amount: 0,
-  contract: 'eosio.token'
+  contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://eos.hyperion.eosrio.io';
 const RPC_ENDPOINT = {
   protocol: 'https',
   host: 'eos.hyperion.eosrio.io',
-  port: 443
+  port: 443,
 };
 const FUEL_RPC_ENDPOINT = {
   protocol: 'https',
   host: 'eos.greymass.com',
-  port: 443
+  port: 443,
 };
 const API_ENDPOINT = 'https://example.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';

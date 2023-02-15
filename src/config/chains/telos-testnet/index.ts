@@ -30,14 +30,14 @@ const TOKEN = {
   symbol: 'TLOS',
   precision: 4,
   amount: 0,
-  contract: 'eosio.token'
+  contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://testnet.telos.net';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = {
   protocol: 'https',
   host: 'testnet.telos.net',
-  port: 443
+  port: 443,
 };
 const API_ENDPOINT = 'https://api-dev.telos.net/v1';
 const DISPLAY_MAP = false;
@@ -59,7 +59,7 @@ const THEME = {
   'color-progress-gradient':
     'linear-gradient(90deg, #571AFF 0%, #A088F9 48.44%, #CBCAF5 100%)',
   'color-producer-card-background': '#f5f4fe',
-  'color-select-box-background': '#e0dffb'
+  'color-select-box-background': '#e0dffb',
 };
 
 export default class TelosTestnet extends BaseChain {

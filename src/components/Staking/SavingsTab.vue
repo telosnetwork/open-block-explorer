@@ -7,13 +7,13 @@ import { API } from '@greymass/eosio';
 export default defineComponent({
   name: 'SavingsTab',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
     const openTransaction = ref<boolean>(false);
     const stakingAccount = computed(
-      (): string => store.state.account.accountName
+      (): string => store.state.account.accountName,
     );
     const toSavingAmount = ref<string>('');
     const fromSavingAmount = ref<string>('');
@@ -35,7 +35,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision
+            minimumFractionDigits: store.state.chain.token.precision,
           })
           .replace(/[^0-9.]/g, '');
       }
@@ -44,7 +44,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: store.state.chain.token.precision,
-            minimumFractionDigits: store.state.chain.token.precision
+            minimumFractionDigits: store.state.chain.token.precision,
           })
           .replace(/[^0-9.]/g, '');
       }
@@ -60,7 +60,7 @@ export default defineComponent({
         return;
       }
       await store.dispatch('account/moveToSavings', {
-        amount: toSavingAmount.value
+        amount: toSavingAmount.value,
       });
       openTransaction.value = true;
     }
@@ -75,7 +75,7 @@ export default defineComponent({
         return;
       }
       await store.dispatch('account/moveFromSavings', {
-        amount: fromSavingAmount.value
+        amount: fromSavingAmount.value,
       });
       openTransaction.value = true;
     }
@@ -116,9 +116,9 @@ export default defineComponent({
       moveFromSavings,
       assetToAmount,
       setMaxSavingsValue,
-      setMaxWithdrawValue
+      setMaxWithdrawValue,
     };
-  }
+  },
 });
 </script>
 

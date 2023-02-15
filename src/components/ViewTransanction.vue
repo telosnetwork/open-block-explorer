@@ -8,8 +8,8 @@ export default defineComponent({
   props: {
     message: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const store = useStore();
@@ -25,7 +25,7 @@ export default defineComponent({
     const navToTransaction = async () => {
       await router.push({
         name: 'transaction',
-        params: { transaction: Id.value }
+        params: { transaction: Id.value },
       });
       router.go(0);
       void store.dispatch('account/resetTransaction');
@@ -36,9 +36,9 @@ export default defineComponent({
       Id,
       transactionE,
       reset,
-      navToTransaction
+      navToTransaction,
     };
-  }
+  },
 });
 </script>
 

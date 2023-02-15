@@ -9,7 +9,7 @@ import {
   UInt64,
   UInt32Type,
   API,
-  PublicKey
+  PublicKey,
 } from '@greymass/eosio';
 import { Transaction } from './Transaction';
 import {
@@ -20,7 +20,7 @@ import {
   TableByScope,
   Block,
   ActionData,
-  Get_actions
+  Get_actions,
 } from './Actions';
 
 export type TableIndexType =

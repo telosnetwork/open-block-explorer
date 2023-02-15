@@ -10,7 +10,7 @@ export default defineComponent({
   name: 'Header',
   components: {
     LoginHandler,
-    HeaderSearch
+    HeaderSearch,
   },
   setup() {
     const $q = useQuasar();
@@ -22,9 +22,9 @@ export default defineComponent({
     return {
       account,
       isLarge: isLarge,
-      chain
+      chain,
     };
-  }
+  },
 });
 </script>
 

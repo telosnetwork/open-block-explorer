@@ -4,7 +4,7 @@
 import {
   SignTransactionConfig,
   SignTransactionResponse,
-  User
+  User,
 } from 'universal-authenticator-library';
 import {
   AnyTransaction,
@@ -16,7 +16,7 @@ import {
   Serializer,
   Signature,
   SignedTransaction,
-  Transaction
+  Transaction,
 } from '@greymass/eosio';
 import { getChain } from 'src/config/ConfigManager';
 import { Dialog } from 'quasar';
@@ -29,7 +29,7 @@ const expireSeconds = 3600;
 
 const chain = getChain();
 const client = new APIClient({
-  url: chain.getHyperionEndpoint()
+  url: chain.getHyperionEndpoint(),
 });
 
 const fuelrpc = chain.getFuelRPCEndpoint();
@@ -66,7 +66,7 @@ export class FuelUserWrapper extends User {
 
   async signTransaction(
     originalTransaction: AnyTransaction,
-    originalconfig?: SignTransactionConfig
+    originalconfig?: SignTransactionConfig,
   ): Promise<SignTransactionResponse> {
     try {
       // if fuel is not supported, just let the normal implementation perform
@@ -80,43 +80,43 @@ export class FuelUserWrapper extends User {
 
       // collect all contract abis
       const abi_promises = originalTransaction.actions.map((a) =>
-        client.v1.chain.get_abi(a.account)
+        client.v1.chain.get_abi(a.account),
       );
       const responses = await Promise.all(abi_promises);
       const abis = responses.map((x) => x.abi);
       const abis_and_names = originalTransaction.actions.map((x, i) => ({
         contract: x.account,
-        abi: abis[i]
+        abi: abis[i],
       }));
 
       // create complete well formed transaction
       const transaction = Transaction.from(
         {
           ...header,
-          actions: originalTransaction.actions
+          actions: originalTransaction.actions,
         },
-        abis_and_names
+        abis_and_names,
       );
 
       // Pack the transaction for transport
       const packedTransaction = PackedTransaction.from({
         signatures: [],
         packed_context_free_data: '',
-        packed_trx: Serializer.encode({ object: transaction })
+        packed_trx: Serializer.encode({ object: transaction }),
       });
 
       const signer = PermissionLevel.from({
         actor: (await this.user.getAccountName()) as NameType,
-        permission: this.requestPermission
+        permission: this.requestPermission,
       });
 
       // Submit the transaction to the resource provider endpoint
       const cosigned = await fetch(resourceProviderEndpoint, {
         body: JSON.stringify({
           signer,
-          packedTransaction
+          packedTransaction,
         }),
-        method: 'POST'
+        method: 'POST',
       });
 
       // Interpret the resulting JSON
@@ -144,7 +144,7 @@ export class FuelUserWrapper extends User {
             signer,
             modifiedTransaction,
             transaction,
-            data.costs
+            data.costs,
           );
 
           // validate with the user whether to use the service at all
@@ -160,25 +160,25 @@ export class FuelUserWrapper extends User {
           const locallySigned: SignedTransactionResponse =
             (await this.user.signTransaction(
               modifiedTransaction,
-              Object.assign({ broadcast: false }, originalconfig)
+              Object.assign({ broadcast: false }, originalconfig),
             )) as SignedTransactionResponse;
 
           // When using CleosAuthenticator the transaction returns empty
           if (!locallySigned.transaction.signatures) {
             return Promise.reject(
-              'The transaction was not broadcasted because no signatures were obtained'
+              'The transaction was not broadcasted because no signatures were obtained',
             );
           }
 
           // Merge signatures from the user and the cosigned responsetab
           modifiedTransaction.signatures = [
             ...locallySigned.transaction.signatures,
-            ...data.signatures
+            ...data.signatures,
           ];
 
           // Broadcast the signed transaction to the blockchain
           const pushResponse = await client.v1.chain.push_transaction(
-            modifiedTransaction
+            modifiedTransaction,
           );
 
           // we compose the final response
@@ -186,7 +186,7 @@ export class FuelUserWrapper extends User {
             wasBroadcast: true,
             transactionId: pushResponse.transaction_id,
             status: pushResponse.processed.receipt.status,
-            transaction: modifiedTransaction
+            transaction: modifiedTransaction,
           };
 
           return Promise.resolve(finalResponse);
@@ -223,7 +223,7 @@ export class FuelUserWrapper extends User {
   signArbitrary = async (
     publicKey: string,
     data: string,
-    helpText: string
+    helpText: string,
   ): Promise<string> => this.user.signArbitrary(publicKey, data, helpText);
   verifyKeyOwnership = async (challenge: string): Promise<boolean> =>
     this.user.verifyKeyOwnership(challenge);
@@ -243,7 +243,7 @@ export default class GreymassFuelService {
   static save() {
     localStorage.setItem(
       'fuel_preferences',
-      JSON.stringify(GreymassFuelService.preferences)
+      JSON.stringify(GreymassFuelService.preferences),
     );
   }
   static drop() {
@@ -264,7 +264,7 @@ export default class GreymassFuelService {
   static setPreferences(account: string, p: Preference) {
     GreymassFuelService.preferences[account] = {
       ...GreymassFuelService.preferences[account],
-      ...p
+      ...p,
     };
     if (GreymassFuelService.preferences[account].remember) {
       GreymassFuelService.save();
@@ -335,14 +335,14 @@ async function confirmWithUser(user: User, fees: string | null) {
         model: mymodel,
         isValid: (model: string | string[]) => {
           GreymassFuelService.setPreferences(username, {
-            remember: model.length == 1
+            remember: model.length == 1,
           });
           return true;
         },
         items: [
-          { label: 'Remember my decision', value: 'remember', color: 'primary' }
-        ]
-      }
+          { label: 'Remember my decision', value: 'remember', color: 'primary' },
+        ],
+      },
     })
       // all answers should save the preferences
       .onOk(() => handler(true))
@@ -357,7 +357,7 @@ function validateTransaction(
   signer: PermissionLevel,
   modifiedTransaction: Transaction,
   transaction: Transaction,
-  costs: CostsType | null = null
+  costs: CostsType | null = null,
 ): string | null {
   // Ensure the first action is the `greymassnoop:noop`
   validateNoop(modifiedTransaction);
@@ -371,7 +371,7 @@ function validateActions(
   signer: PermissionLevel,
   modifiedTransaction: Transaction,
   transaction: Transaction,
-  costs: CostsType | null
+  costs: CostsType | null,
 ): string | null {
   // Determine how many actions we expect to have been added to the transaction based on the costs
   const expectedNewActions = determineExpectedActionsLength(costs);
@@ -384,7 +384,7 @@ function validateActions(
     signer,
     expectedNewActions,
     modifiedTransaction,
-    transaction
+    transaction,
   );
 }
 
@@ -410,13 +410,13 @@ function validateActionsContent(
   signer: PermissionLevel,
   expectedNewActions: number,
   modifiedTransaction: Transaction,
-  transaction: Transaction
+  transaction: Transaction,
 ): string | null {
   // Make sure the originally requested actions are still intact and unmodified
   validateActionsOriginalContent(
     expectedNewActions,
     modifiedTransaction,
-    transaction
+    transaction,
   );
 
   // If a fee has been added, ensure the fee is set properly
@@ -444,7 +444,7 @@ function descerialize(data: unknown): AuxTransactionData {
 // Ensure the transaction fee transfer is valid
 function validateActionsFeeContent(
   signer: PermissionLevel,
-  modifiedTransaction: Transaction
+  modifiedTransaction: Transaction,
 ): number {
   const feeAction = modifiedTransaction.actions[1];
   const data = descerialize(feeAction.data);
@@ -465,7 +465,7 @@ function validateActionsFeeContent(
 // Ensure the RAM purchasing action is valid
 function validateActionsRamContent(
   signer: PermissionLevel,
-  modifiedTransaction: Transaction
+  modifiedTransaction: Transaction,
 ): number {
   const ramAction = modifiedTransaction.actions[2];
   const data = descerialize(ramAction.data);
@@ -486,7 +486,7 @@ function validateActionsRamContent(
 function validateActionsOriginalContent(
   expectedNewActions: number,
   modifiedTransaction: Transaction,
-  transaction: Transaction
+  transaction: Transaction,
 ) {
   for (const [i] of modifiedTransaction.actions.entries()) {
     // Skip the expected new actions
@@ -517,7 +517,7 @@ function validateActionsOriginalContent(
     ) {
       const { account, name } = original;
       throw new Error(
-        `Transaction returned by API has non-matching action at index ${i} (${account.toString()}:${name.toString()})`
+        `Transaction returned by API has non-matching action at index ${i} (${account.toString()}:${name.toString()})`,
       );
     }
   }
@@ -527,7 +527,7 @@ function validateActionsOriginalContent(
 function validateActionsLength(
   expectedNewActions: number,
   modifiedTransaction: Transaction,
-  transaction: Transaction
+  transaction: Transaction,
 ) {
   if (
     modifiedTransaction.actions.length !==
@@ -557,7 +557,7 @@ function validateNoop(modifiedTransaction: Transaction) {
       JSON.stringify(firstAction.data) !== '{}')
   ) {
     throw new Error(
-      `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`
+      `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`,
     );
   }
 }

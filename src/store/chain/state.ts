@@ -16,7 +16,7 @@ export function state(): ChainStateInterface {
       symbol: '',
       precision: 0,
       amount: 0,
-      contract: ''
+      contract: '',
     },
     bpList: [],
     producers: [],
@@ -24,6 +24,6 @@ export function state(): ChainStateInterface {
     last_irreversible_block_num: 0,
     head_block_producer: '',
     producerSchedule: [],
-    ram_price: '0'
+    ram_price: '0',
   };
 }

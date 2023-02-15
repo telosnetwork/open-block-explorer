@@ -8,7 +8,7 @@ import { API } from '@greymass/eosio';
 export default defineComponent({
   name: 'SellRam',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
@@ -17,10 +17,10 @@ export default defineComponent({
     const sellAmount = ref('');
     const symbol = ref<string>(chain.getSystemToken().symbol);
     const transactionId = computed(
-      (): string => store.state.account.TransactionId
+      (): string => store.state.account.TransactionId,
     );
     const transactionError = computed(
-      () => store.state.account.TransactionError
+      () => store.state.account.TransactionError,
     );
     const ramPrice = computed((): string => {
       return store.state?.chain.ram_price;
@@ -28,13 +28,13 @@ export default defineComponent({
     const sellPreview = computed(
       () =>
         ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
-          4
-        ) + ` ${symbol.value}`
+          4,
+        ) + ` ${symbol.value}`,
     );
     const ramAvailable = computed(
       () =>
         Number(store.state.account.data.ram_quota.value) -
-        Number(store.state.account.data.ram_usage.value)
+        Number(store.state.account.data.ram_usage.value),
     );
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
@@ -55,7 +55,7 @@ export default defineComponent({
         return;
       }
       await store.dispatch('account/sellRam', {
-        amount: sellAmount.value
+        amount: sellAmount.value,
       });
 
       if (localStorage.getItem('autoLogin') !== 'cleos') {
@@ -85,9 +85,9 @@ export default defineComponent({
       sellPreview,
       formatDec,
       sell,
-      assetToAmount
+      assetToAmount,
     };
-  }
+  },
 });
 </script>
 

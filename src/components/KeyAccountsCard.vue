@@ -10,12 +10,12 @@ export default defineComponent({
   props: {
     pubKey: {
       type: PublicKey,
-      required: true
+      required: true,
     },
     accounts: {
       type: Array as PropType<Name[]>,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const chain = getChain();
@@ -37,7 +37,7 @@ export default defineComponent({
             color: 'green-4',
             textColor: 'white',
             message: 'Copied to clipboard',
-            timeout: 1000
+            timeout: 1000,
           });
         })
         .catch(() => {
@@ -45,7 +45,7 @@ export default defineComponent({
             color: 'red-8',
             textColor: 'white',
             message: 'Could not copy',
-            timeout: 1000
+            timeout: 1000,
           });
         });
     }
@@ -58,9 +58,9 @@ export default defineComponent({
       keyDisplay,
       copy,
       toggleKey,
-      tokenLogo
+      tokenLogo,
     };
-  }
+  },
 });
 </script>
 

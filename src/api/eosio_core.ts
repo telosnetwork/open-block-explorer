@@ -8,7 +8,7 @@ import {
   APIClient,
   Serializer,
   PublicKey,
-  Name
+  Name,
 } from '@greymass/eosio';
 import { GetTableRowsParams } from 'src/types';
 import { Chain } from 'src/types/Chain';
@@ -17,36 +17,36 @@ import { getChain } from 'src/config/ConfigManager';
 const chain: Chain = getChain();
 
 const eosioCore = new APIClient({
-  url: chain.getHyperionEndpoint()
+  url: chain.getHyperionEndpoint(),
 });
 
 export const getAccount = async function (
-  address: string
+  address: string,
 ): Promise<API.v1.AccountObject> {
   return await eosioCore.v1.chain.get_account(address);
 };
 
 export const getKeyAccounts = async function (
-  key: PublicKey
+  key: PublicKey,
 ): Promise<{ account_names: Name[] }> {
   const response = await eosioCore.v1.history.get_key_accounts(key);
   return response;
 };
 
 export const getTokenBalances = async function (
-  address: string
+  address: string,
 ): Promise<unknown> {
   return await eosioCore.v1.chain.get_currency_balance('eosio.token', address);
 };
 
 export const getTableRows = async function (
-  tableInput: GetTableRowsParams
+  tableInput: GetTableRowsParams,
 ): Promise<unknown> {
   return await eosioCore.v1.chain.get_table_rows(tableInput);
 };
 
 export const deserializeActionData = async function (
-  data: ActionType
+  data: ActionType,
 ): Promise<ABISerializable> {
   const { abi } = await eosioCore.v1.chain.get_abi(data.account);
   if (!abi) {
@@ -59,7 +59,7 @@ export const deserializeActionData = async function (
 
 export const deserializeActionDataFromAbi = function (
   data: ActionType,
-  abi: ABIDef
+  abi: ABIDef,
 ): ABISerializable {
   if (!abi) {
     throw new Error(`No ABI for ${String(data.account)}`);
@@ -72,7 +72,7 @@ export const deserializeActionDataFromAbi = function (
 export const serializeActionData = async function (
   account: string,
   name: string,
-  data: unknown
+  data: unknown,
 ): Promise<unknown> {
   const { abi } = await eosioCore.v1.chain.get_abi(account);
   if (!abi) {

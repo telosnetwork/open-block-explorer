@@ -6,20 +6,20 @@ export default defineComponent({
   props: {
     account: {
       type: String,
-      default: () => ''
+      default: () => '',
     },
     type: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const accAccount = computed(() => props.account);
     return {
       accType: props.type,
-      accAccount
+      accAccount,
     };
-  }
+  },
 });
 </script>
 

@@ -87,7 +87,7 @@ import {
   watch,
   computed,
   PropType,
-  onMounted
+  onMounted,
 } from 'vue';
 import ProposalAuthorization from 'components/ProposalAuthorization.vue';
 import { api } from 'src/api';
@@ -115,12 +115,12 @@ interface Action {
 export default defineComponent({
   name: 'ProposalAction',
   components: {
-    ProposalAuthorization
+    ProposalAuthorization,
   },
   props: {
     modelValue: {
-      type: Object as PropType<Action>
-    }
+      type: Object as PropType<Action>,
+    },
   },
   emits: ['update:modelValue', 'remove'],
   setup(props, context) {
@@ -135,7 +135,7 @@ export default defineComponent({
       },
       set: (value) => {
         context.emit('update:modelValue', value);
-      }
+      },
     });
 
     watch(
@@ -160,7 +160,7 @@ export default defineComponent({
         waitToSearch.value = setTimeout(() => {
           waitToSearch.value = null;
         }, 1000);
-      }
+      },
     );
 
     watch(waitToSearch, async (currentValue) => {
@@ -187,7 +187,7 @@ export default defineComponent({
       try {
         const { abi } = await api.getABI(queryValue);
         const actionNameIndex = abi.structs.findIndex(
-          (item) => props.modelValue.name === item.name
+          (item) => props.modelValue.name === item.name,
         );
         action.value.name = abi.structs[actionNameIndex ?? 0].name;
         structs.value = abi.structs;
@@ -207,7 +207,7 @@ export default defineComponent({
       if (structs.value.length === 0) return [];
 
       const { fields } = structs.value.find(
-        (item) => item.name === action.value.name
+        (item) => item.name === action.value.name,
       );
 
       return fields;
@@ -231,8 +231,8 @@ export default defineComponent({
       isAccountLoading,
       isAccountError,
       actionOptions,
-      fields
+      fields,
     };
-  }
+  },
 });
 </script>

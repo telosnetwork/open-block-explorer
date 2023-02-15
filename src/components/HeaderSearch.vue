@@ -28,7 +28,7 @@ export default defineComponent({
       await Promise.all([
         searchAccounts(queryValue),
         searchProposals(queryValue),
-        searchTransactions(queryValue)
+        searchTransactions(queryValue),
       ]).then((results) => {
         options.value = ([] as OptionsObj[]).concat.apply([], results);
       });
@@ -44,7 +44,7 @@ export default defineComponent({
           limit: 5,
           lower_bound: cleanSearchInput(value),
           table: 'userres',
-          upper_bound: value.padEnd(12, 'z')
+          upper_bound: value.padEnd(12, 'z'),
         };
         const accounts = await api.getTableByScope(request);
 
@@ -52,7 +52,7 @@ export default defineComponent({
           results.push({
             label: 'Accounts',
             to: '',
-            isHeader: true
+            isHeader: true,
           });
 
           // because the get table by scope for userres does not include eosio account
@@ -60,7 +60,7 @@ export default defineComponent({
             results.push({
               label: 'eosio',
               to: '/account/eosio',
-              isHeader: false
+              isHeader: false,
             });
           }
 
@@ -69,7 +69,7 @@ export default defineComponent({
               results.push({
                 label: user.payer,
                 to: `/account/${user.payer}`,
-                isHeader: false
+                isHeader: false,
               });
             }
           });
@@ -84,20 +84,20 @@ export default defineComponent({
       try {
         const results = [] as OptionsObj[];
         const { proposals } = await api.getProposals({
-          proposal: value
+          proposal: value,
         });
         if (proposals.length > 0) {
           results.push({
             label: 'Proposals',
             to: '',
-            isHeader: true
+            isHeader: true,
           });
 
           proposals.forEach((item) => {
             results.push({
               label: item.proposal_name,
               to: `/proposal/${item.proposal_name}`,
-              isHeader: false
+              isHeader: false,
             });
           });
         }
@@ -126,13 +126,13 @@ export default defineComponent({
           results.push({
             label: 'Transactions',
             to: '',
-            isHeader: true
+            isHeader: true,
           });
 
           results.push({
             label: value,
             to: `/transaction/${value}`,
-            isHeader: false
+            isHeader: false,
           });
         }
         return results;
@@ -156,7 +156,7 @@ export default defineComponent({
       if (isValidHex(inputValue.value) && inputValue.value.length == 64) {
         await router.push({
           name: 'transaction',
-          params: { transaction: inputValue.value }
+          params: { transaction: inputValue.value },
         });
         router.go(0);
 
@@ -167,7 +167,7 @@ export default defineComponent({
       ) {
         await router.push({
           name: 'key',
-          params: { key: inputValue.value }
+          params: { key: inputValue.value },
         });
         router.go(0);
 
@@ -178,8 +178,8 @@ export default defineComponent({
           await router.push({
             name: 'account',
             params: {
-              account: inputValue.value.toLowerCase()
-            }
+              account: inputValue.value.toLowerCase(),
+            },
           });
           router.go(0);
           return;
@@ -193,9 +193,9 @@ export default defineComponent({
       inputValue,
       options,
       isLoading,
-      handleGoTo
+      handleGoTo,
     };
-  }
+  },
 });
 </script>
 

@@ -54,7 +54,7 @@ export default {
         // TODO: maybe we can reload vue store and boot files instead of full reload?
         localStorage.setItem(
           ConfigManager.CHAIN_LOCAL_STORAGE,
-          chain.getName()
+          chain.getName(),
         );
         location.reload();
       },
@@ -63,9 +63,9 @@ export default {
           localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) ===
           chain.getName()
         );
-      }
+      },
     };
-  }
+  },
 };
 </script>
 

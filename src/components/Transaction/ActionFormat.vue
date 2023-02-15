@@ -5,7 +5,7 @@ import {
   ref,
   PropType,
   toRef,
-  onMounted
+  onMounted,
 } from 'vue';
 import { useStore } from 'src/store';
 import { Action, TransferData } from 'src/types';
@@ -17,8 +17,8 @@ export default defineComponent({
   props: {
     action: {
       type: Object as PropType<Action>,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const store = useStore();
@@ -44,9 +44,9 @@ export default defineComponent({
     return {
       divClass,
       divContent,
-      tx
+      tx,
     };
-  }
+  },
 });
 </script>
 

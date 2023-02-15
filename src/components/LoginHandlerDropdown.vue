@@ -16,7 +16,7 @@ export default defineComponent({
     const getAuthenticator = (): Authenticator => {
       const wallet = localStorage.getItem('autoLogin');
       const authenticator = authenticators.find(
-        (auth) => auth.getName() === wallet
+        (auth) => auth.getName() === wallet,
       );
       return authenticator;
     };
@@ -39,9 +39,9 @@ export default defineComponent({
       account,
       showModal,
       disconnectLabel: 'Disconnect',
-      onLogout
+      onLogout,
     };
-  }
+  },
 });
 </script>
 <template lang="pug">

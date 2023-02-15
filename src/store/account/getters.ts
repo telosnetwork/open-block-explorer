@@ -19,5 +19,5 @@ export const getters: GetterTree<AccountStateInterface, StateInterface> = {
   },
   getUser(state): User {
     return state.user;
-  }
+  },
 };

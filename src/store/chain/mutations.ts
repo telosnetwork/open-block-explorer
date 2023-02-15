@@ -32,5 +32,5 @@ export const mutations: MutationTree<ChainStateInterface> = {
   },
   setRamPrice(state: ChainStateInterface, price: string) {
     state.ram_price = price;
-  }
+  },
 };

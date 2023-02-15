@@ -33,7 +33,7 @@ const localStorageMock = (function () {
 
     getAll() {
       return store;
-    }
+    },
   };
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
@@ -45,29 +45,29 @@ jest.mock('quasar', () => ({
   Dialog: {
     create: (options: QDialogOptions) => {
       return createDialog(options);
-    }
-  }
+    },
+  },
 }));
 
 // mocking @greymass/eosio
 jest.mock('@greymass/eosio', () => ({
   // mocking static functions from
   Transaction: {
-    from: (a: { actions: unknown[] }) => ({ actions: a.actions })
+    from: (a: { actions: unknown[] }) => ({ actions: a.actions }),
   },
   PackedTransaction: {
-    from: () => ({})
+    from: () => ({}),
   },
   PermissionLevel: {
     from: (a: { actor: string }) => ({
-      actor: { toString: () => a.actor }
-    })
+      actor: { toString: () => a.actor },
+    }),
   },
   Name: {
-    from: (s: string) => ({ toString: () => s })
+    from: (s: string) => ({ toString: () => s }),
   },
   Serializer: {
-    encode: () => ''
+    encode: () => '',
   },
   // mocking the constructor of APIClient
   APIClient: jest.fn().mockImplementation(() => {
@@ -75,17 +75,17 @@ jest.mock('@greymass/eosio', () => ({
       v1: {
         chain: {
           get_info: () => ({
-            getTransactionHeader: () => transactionHeaders
+            getTransactionHeader: () => transactionHeaders,
           }),
           get_abi: () => Promise.resolve({ abi: 'abi' }),
           push_transaction: () => ({
             transaction_id: 'transaction_id',
-            processed: { receipt: { status: 'status' } }
-          })
-        }
-      }
+            processed: { receipt: { status: 'status' } },
+          }),
+        },
+      },
     };
-  })
+  }),
 }));
 
 let rpResponseCode = Number(0);
@@ -96,19 +96,19 @@ global.fetch = jest.fn(() =>
       Promise.resolve({
         data: {
           signatures: [
-            'SIG_K1_KdocT11N4hFoCozoY3mHf1baa5iK3gL5YksdNraGK3CdP6YjGA5CiMC4z7DNP5orh7tyv4QbU3nLNkkMg2oqPBMyJwaLnr'
+            'SIG_K1_KdocT11N4hFoCozoY3mHf1baa5iK3gL5YksdNraGK3CdP6YjGA5CiMC4z7DNP5orh7tyv4QbU3nLNkkMg2oqPBMyJwaLnr',
           ],
           request: [
             '',
             {
               signatures: [] as string[],
-              actions: [noopAction, originalAction]
-            }
-          ]
+              actions: [noopAction, originalAction],
+            },
+          ],
         },
-        code: rpResponseCode
-      })
-  } as Response)
+        code: rpResponseCode,
+      }),
+  } as Response),
 );
 
 // mocking internal implementatios
@@ -116,8 +116,8 @@ jest.mock('src/config/ConfigManager', () => ({
   getChain: () => ({
     getSymbol: () => 'TLOS',
     getHyperionEndpoint: () => '',
-    getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 })
-  })
+    getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
+  }),
 }));
 
 // UserStub simulates a AnchorUser or CleosUser
@@ -127,10 +127,10 @@ class UserStub extends User {
   }
 
   async signTransaction(
-    trx: AnyTransaction
+    trx: AnyTransaction,
   ): Promise<SignTransactionResponse> {
     return Promise.resolve({
-      transaction: { ...trx, signatures: ['local-signature'] }
+      transaction: { ...trx, signatures: ['local-signature'] },
     } as SignTransactionResponse);
   }
 
@@ -146,7 +146,7 @@ class UserStub extends User {
 // The authority used to sign the test transaction
 const signer = {
   actor: 'actor.stub',
-  permission: 'active'
+  permission: 'active',
 };
 
 const transactionHeaders = {
@@ -157,7 +157,7 @@ const transactionHeaders = {
   max_net_usage_words: 0,
   ref_block_num: 0,
   ref_block_prefix: 0,
-  transaction_extensions: [] as never[]
+  transaction_extensions: [] as never[],
 };
 
 const originalAction = {
@@ -166,15 +166,15 @@ const originalAction = {
   authorization: [
     {
       actor: signer.actor,
-      permission: signer.permission
-    }
+      permission: signer.permission,
+    },
   ],
   data: {
     from: signer.actor,
     to: 'caleosblocks',
     quantity: '0.0001 TLOS',
-    memo: ''
-  } as unknown
+    memo: '',
+  } as unknown,
 };
 
 const noopAction = {
@@ -183,15 +183,15 @@ const noopAction = {
   authorization: [
     {
       actor: 'greymassfuel',
-      permission: 'cosign'
-    }
+      permission: 'cosign',
+    },
   ],
-  data: {} as unknown
+  data: {} as unknown,
 };
 
 const configData = {
   blocksBehind: 5,
-  expireSeconds: 3600
+  expireSeconds: 3600,
 };
 
 const getWrapper = () => {
@@ -200,7 +200,7 @@ const getWrapper = () => {
 
 const getOriginalTransaction = () => ({
   ...transactionHeaders,
-  actions: [originalAction]
+  actions: [originalAction],
 });
 
 describe('FuelUserWrapper (Greymass Fuel)', () => {
@@ -219,7 +219,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
         const trx = getOriginalTransaction();
         const response = await wrapper.signTransaction(trx, configData);
         const response_actions_json = JSON.stringify(
-          response.transaction.actions
+          response.transaction.actions,
         );
         const trx_actions_json = JSON.stringify(trx.actions);
         expect(response_actions_json).toEqual(trx_actions_json);
@@ -236,17 +236,17 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
               onOk: jest.fn((resolve: (payload?: unknown) => void) => {
                 resolve(); // the user approves
                 return { onCancel: jest.fn() };
-              })
+              }),
             };
           });
 
           const response = await wrapper.signTransaction(trx, configData);
           const response_actions_json = JSON.stringify(
-            response.transaction.actions
+            response.transaction.actions,
           );
           const expected_actions = [
             noopAction,
-            ...trx.actions.map((x) => ({ ...x }))
+            ...trx.actions.map((x) => ({ ...x })),
           ];
           const expected_actions_json = JSON.stringify(expected_actions);
           expect(response_actions_json).toEqual(expected_actions_json);
@@ -262,13 +262,13 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
             onOk: jest.fn(() => ({
               onCancel: jest.fn((reject: (payload?: unknown) => void) => {
                 reject(); // the user rejects to use the service
-              })
-            }))
+              }),
+            })),
           }));
 
           const response = await wrapper.signTransaction(trx, configData);
           const response_actions_json = JSON.stringify(
-            response.transaction.actions
+            response.transaction.actions,
           );
           const trx_actions_json = JSON.stringify(trx.actions);
           expect(response_actions_json).toEqual(trx_actions_json);
@@ -285,8 +285,8 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
           const json = rp_response_file.json;
           global.fetch = jest.fn(() =>
             Promise.resolve({
-              json: () => Promise.resolve(json)
-            } as Response)
+              json: () => Promise.resolve(json),
+            } as Response),
           );
 
           // check if the fee is being displayed correctly
@@ -301,14 +301,14 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
               onOk: jest.fn((resolve: (payload?: unknown) => void) => {
                 resolve(); // the user approves
                 return { onCancel: jest.fn() };
-              })
+              }),
             };
           });
 
           const response = await wrapper.signTransaction(trx, configData);
 
           const response_actions_json = JSON.stringify(
-            response.transaction.actions
+            response.transaction.actions,
           );
           const rp_response_trx = rp_response_file.json.data.request[1];
           if (typeof rp_response_trx === 'string') {
@@ -318,7 +318,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
             rp_response_trx.actions[0],
             rp_response_trx.actions[1],
             rp_response_trx.actions[2],
-            ...trx.actions.map((x) => ({ ...x }))
+            ...trx.actions.map((x) => ({ ...x })),
           ];
           const expected_actions_json = JSON.stringify(expected_actions);
 
@@ -334,13 +334,13 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
             onOk: jest.fn(() => ({
               onCancel: jest.fn((reject: (payload?: unknown) => void) => {
                 reject(); // the user rejects to use the service
-              })
-            }))
+              }),
+            })),
           }));
 
           const response = await wrapper.signTransaction(trx, configData);
           const response_actions_json = JSON.stringify(
-            response.transaction.actions
+            response.transaction.actions,
           );
           const trx_actions_json = JSON.stringify(trx.actions);
           expect(response_actions_json).toEqual(trx_actions_json);

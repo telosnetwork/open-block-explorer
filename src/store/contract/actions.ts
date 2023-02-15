@@ -12,5 +12,5 @@ export const actions: ActionTree<ContractStateInterface, StateInterface> = {
     console.log(contractAddress); //unused var otherwise
     const response: { creator: string } = { creator: 'bob' }; //mock
     commit('setCreator', response.creator);
-  }
+  },
 };

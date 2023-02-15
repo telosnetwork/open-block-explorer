@@ -21,7 +21,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setAccountData(
     state: AccountStateInterface,
-    AccountData: API.v1.AccountObject
+    AccountData: API.v1.AccountObject,
   ) {
     state.data = AccountData;
     state.vote =
@@ -44,7 +44,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
       maturingRex: number;
       savingsRex: number;
       maturedRex: number;
-    }
+    },
   ) {
     state.rexbal = params.rexbal;
     state.coreRexBalance = `${params.coreBalance.toFixed(4)} ${symbol}`;
@@ -69,5 +69,5 @@ export const mutations: MutationTree<AccountStateInterface> = {
   },
   setRexFund(state: AccountStateInterface, fund: number) {
     state.rexfund = fund;
-  }
+  },
 };

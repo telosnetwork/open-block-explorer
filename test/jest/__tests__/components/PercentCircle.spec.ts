@@ -13,7 +13,7 @@ let wrapper: VueWrapper<any>;
 const push = jest.fn();
 
 const $router = {
-  push
+  push,
 };
 
 describe('PercentCircle', () => {
@@ -23,8 +23,8 @@ describe('PercentCircle', () => {
         fraction: 50,
         total: 100,
         label: 'test2',
-        radius: 10
-      }
+        radius: 10,
+      },
     });
     wrapper.vm.$router = $router as any;
   });
@@ -48,7 +48,7 @@ describe('PercentCircle', () => {
       it('sets color to "red" if usage >= 90', async () => {
         await wrapper.setProps({
           fraction: 90,
-          total: 100
+          total: 100,
         });
         expect(wrapper.vm.strokeColor).toBe('red');
       });
@@ -72,7 +72,7 @@ describe('PercentCircle', () => {
         await wrapper.setProps({
           fraction: 3,
           total: 10,
-          unit: 'kb'
+          unit: 'kb',
         });
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const expectedVal = `${wrapper.vm.fraction}${wrapper.vm.unit}/${wrapper.vm.total}${wrapper.vm.unit}`;

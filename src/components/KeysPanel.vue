@@ -9,14 +9,14 @@ import { API } from '@greymass/eosio';
 export default defineComponent({
   name: 'KeysPanel',
   components: {
-    PermissionCard
+    PermissionCard,
   },
   props: {
     account: {
       type: String,
       required: false,
-      default: null
-    }
+      default: null,
+    },
   },
   setup(props) {
     const account = computed(() => props.account);
@@ -40,7 +40,7 @@ export default defineComponent({
       }
       for (let p of permissions) {
         p['permission_links'] = links.filter(
-          (l) => l.permission == p.perm_name.toString()
+          (l) => l.permission == p.perm_name.toString(),
         );
       }
 
@@ -54,7 +54,7 @@ export default defineComponent({
       const getChildren = (parent: Permission, perms: Permission[]) => {
         // Get children
         let children = perms.filter(
-          (p) => p.parent.toString() === parent.perm_name.toString()
+          (p) => p.parent.toString() === parent.perm_name.toString(),
         );
         // Set children's children
         for (let child of children) {
@@ -70,9 +70,9 @@ export default defineComponent({
       void loadAccountData();
     });
     return {
-      permission
+      permission,
     };
-  }
+  },
 });
 </script>
 <template lang="pug">

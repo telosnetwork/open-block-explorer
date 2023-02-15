@@ -15,13 +15,13 @@ export default defineComponent({
     UnstakingTab,
     RefundTab,
     BuyRam,
-    SellRam
+    SellRam,
   },
   setup() {
     return {
-      tab: ref('stake')
+      tab: ref('stake'),
     };
-  }
+  },
 });
 </script>
 

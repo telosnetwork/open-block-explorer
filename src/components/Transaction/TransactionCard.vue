@@ -19,7 +19,7 @@ export default defineComponent({
       cpuUsage: computed(() => store.state.transaction.cpuUsage),
       netUsage: computed(() => store.state.transaction.netUsage),
       actionsTraces: ref<string>(''),
-      actionNum: computed(() => store.state.transaction.actionCount)
+      actionNum: computed(() => store.state.transaction.actionCount),
     };
   },
   methods: {
@@ -30,7 +30,7 @@ export default defineComponent({
             color: 'green-4',
             textColor: 'white',
             message: 'Copied to clipboard',
-            timeout: 1000
+            timeout: 1000,
           });
         })
         .catch(() => {
@@ -38,7 +38,7 @@ export default defineComponent({
             color: 'red-8',
             textColor: 'white',
             message: 'Could not copy',
-            timeout: 1000
+            timeout: 1000,
           });
         });
     },
@@ -53,10 +53,10 @@ export default defineComponent({
         day: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
-        second: 'numeric'
+        second: 'numeric',
       });
-    }
-  }
+    },
+  },
 });
 </script>
 

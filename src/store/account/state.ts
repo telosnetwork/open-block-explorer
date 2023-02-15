@@ -51,7 +51,7 @@ export function state(): AccountStateInterface {
       // /** Account created as unix timestamp. */
       // created: TimePoint;
       /** Account core token balance */
-      core_liquid_balance: UInt64.from(0)
+      core_liquid_balance: UInt64.from(0),
       // ram_quota: Int64;
       // net_weight: Int64;
       // cpu_weight: Int64;
@@ -79,6 +79,6 @@ export function state(): AccountStateInterface {
     maturedRex: `0.0000 ${chain.getSystemToken().symbol}`,
     savingsRex: `0.0000 ${chain.getSystemToken().symbol}`,
     tlosRexRatio: 1,
-    rexfund: 0
+    rexfund: 0,
   };
 }

@@ -7,12 +7,12 @@ export default defineComponent({
   props: {
     timestamp: {
       type: String,
-      default: ''
+      default: '',
     },
     showAge: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   setup(props) {
     const friendlyDate = computed(() => {
@@ -31,9 +31,9 @@ export default defineComponent({
     });
     return {
       friendlyDate,
-      tooltipDate
+      tooltipDate,
     };
-  }
+  },
 });
 </script>
 

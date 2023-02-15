@@ -3,7 +3,7 @@ import {
   Authenticator,
   RpcEndpoint,
   UAL,
-  User
+  User,
 } from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
 import { Chain } from 'src/types/Chain';
@@ -22,7 +22,7 @@ declare module '@vue/runtime-core' {
 
 const mainChain = {
   chainId: chain.getChainId(),
-  rpcEndpoints: [chain.getRPCEndpoint()]
+  rpcEndpoints: [chain.getRPCEndpoint()],
 };
 
 async function loginHandler() {
@@ -38,10 +38,10 @@ async function loginHandler() {
         message: 'Account name',
         prompt: {
           model: '',
-          type: 'text'
+          type: 'text',
         },
         cancel: true,
-        persistent: true
+        persistent: true,
       })
         .onOk((data: string) => {
           accountName = data != '' ? data : 'eosio';
@@ -63,11 +63,11 @@ async function loginHandler() {
           model: [],
           items: [
             { label: 'Active', value: 'active' },
-            { label: 'Owner', value: 'owner' }
-          ]
+            { label: 'Owner', value: 'owner' },
+          ],
         },
         cancel: true,
-        persistent: true
+        persistent: true,
       })
         .onOk((data: string) => {
           permission = data;
@@ -82,7 +82,7 @@ async function loginHandler() {
   }
   return {
     accountName,
-    permission
+    permission,
   };
 }
 
@@ -91,12 +91,12 @@ async function signHandler(rpc: RpcEndpoint, trx: string) {
     Object.assign(
       {
         delay_sec: 0,
-        max_cpu_usage_ms: 0
+        max_cpu_usage_ms: 0,
       },
-      trx
+      trx,
     ),
     null,
-    4
+    4,
   );
   await new Promise((resolve) => {
     Dialog.create({
@@ -106,19 +106,19 @@ async function signHandler(rpc: RpcEndpoint, trx: string) {
       cancel: true,
       fullWidth: true,
       ok: {
-        label: 'Copy'
-      }
+        label: 'Copy',
+      },
     })
       .onOk(() => {
         copyToClipboard(
-          `cleos -u ${rpc.protocol}://${rpc.host}:${rpc.port} push transaction '${trxJSON}'`
+          `cleos -u ${rpc.protocol}://${rpc.host}:${rpc.port} push transaction '${trxJSON}'`,
         )
           .then((): void => {
             Notify.create({
               color: 'green-4',
               textColor: 'white',
               message: 'Copied to clipboard',
-              timeout: 1000
+              timeout: 1000,
             });
           })
           .catch(() => {
@@ -126,7 +126,7 @@ async function signHandler(rpc: RpcEndpoint, trx: string) {
               color: 'red-8',
               textColor: 'white',
               message: 'Could not copy',
-              timeout: 1000
+              timeout: 1000,
             });
           });
       })
@@ -148,8 +148,8 @@ export const authenticators: Authenticator[] = [
   new CleosAuthenticator([mainChain], {
     appName: process.env.APP_NAME,
     loginHandler,
-    signHandler: signHandlerForMainChain
-  })
+    signHandler: signHandlerForMainChain,
+  }),
 ];
 
 export default boot(({ app }) => {

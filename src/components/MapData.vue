@@ -7,17 +7,17 @@ export default defineComponent({
   props: {
     mobile: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const store = useStore();
     const HeadBlockProducer = computed(
-      (): string => store.state.chain.head_block_producer
+      (): string => store.state.chain.head_block_producer,
     );
     const HeadBlock = computed((): number => store.state.chain.head_block_num);
     const lastIrreversibleBlock = computed(
-      (): number => store.state.chain.last_irreversible_block_num
+      (): number => store.state.chain.last_irreversible_block_num,
     );
     const isMobile = computed((): boolean => {
       return props.mobile;
@@ -27,9 +27,9 @@ export default defineComponent({
       isMobile,
       HeadBlock,
       HeadBlockProducer,
-      lastIrreversibleBlock
+      lastIrreversibleBlock,
     };
-  }
+  },
 });
 </script>
 

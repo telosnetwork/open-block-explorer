@@ -27,9 +27,9 @@ export default defineComponent({
               ...act.act,
               name: act.name,
               data: act.data,
-              account: act.account
+              account: act.account,
             },
-            '@timestamp': block.value.timestamp
+            '@timestamp': block.value.timestamp,
           };
         });
         actions.value = actions.value.concat(act);
@@ -40,8 +40,8 @@ export default defineComponent({
       void router.push({
         path: router.currentRoute.value.path,
         query: {
-          tab: tab.value
-        }
+          tab: tab.value,
+        },
       });
     });
     return {
@@ -49,13 +49,13 @@ export default defineComponent({
       transaction: route.params.transaction,
       found,
       Actions: actions,
-      block
+      block,
     };
   },
   components: {
     TransactionTable,
-    BlockCard
-  }
+    BlockCard,
+  },
 });
 </script>
 

@@ -3,17 +3,17 @@ import { PriceStats, PriceHistory } from 'src/types';
 import { PriceChartData } from 'src/types/PriceChartData';
 
 export const getCoingeckoUsdPrice = async (
-  tokenId: string
+  tokenId: string,
 ): Promise<number> => {
   const stats: PriceStats = await axios.get(
-    getCoingeckoExchangeStatsUrl(tokenId)
+    getCoingeckoExchangeStatsUrl(tokenId),
   );
 
   return stats.data[tokenId].usd;
 };
 
 export const getCoingeckoPriceChartData = async (
-  tokenId: string
+  tokenId: string,
 ): Promise<PriceChartData> => {
   const exchangeStatsUrl = getCoingeckoExchangeStatsUrl(tokenId);
   const priceHistoryUrl = `https://api.coingecko.com/api/v3/coins/${tokenId}/market_chart?vs_currency=USD&days=1&interval=hourly`;
@@ -21,7 +21,7 @@ export const getCoingeckoPriceChartData = async (
   const [priceStats, priceHistory]: [PriceStats, PriceHistory] =
     await Promise.all([
       axios.get(exchangeStatsUrl),
-      axios.get(priceHistoryUrl)
+      axios.get(priceHistoryUrl),
     ]);
 
   return {
@@ -30,7 +30,7 @@ export const getCoingeckoPriceChartData = async (
     dayChange: priceStats.data[tokenId].usd_24h_change,
     dayVolume: priceStats.data[tokenId].usd_24h_vol,
     marketCap: priceStats.data[tokenId].usd_market_cap,
-    prices: priceHistory.data.prices
+    prices: priceHistory.data.prices,
   };
 };
 
@@ -42,7 +42,7 @@ export const getEmptyPriceChartData = async (): Promise<PriceChartData> => {
     dayChange: 0,
     dayVolume: 0,
     marketCap: 0,
-    prices: []
+    prices: [],
   };
 };
 

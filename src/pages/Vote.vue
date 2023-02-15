@@ -21,7 +21,7 @@ export default defineComponent({
         void store.dispatch('chain/updateBlockData');
       }, 2000);
     });
-  }
+  },
 });
 </script>
 <template lang="pug">

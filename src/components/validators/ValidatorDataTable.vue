@@ -11,7 +11,7 @@ const MAX_VOTE_PRODUCERS = 30;
 export default defineComponent({
   name: 'ValidatorDataTable',
   props: {
-    top21pay24h: { type: Number, required: true }
+    top21pay24h: { type: Number, required: true },
   },
   setup(props) {
     const store = useStore();
@@ -20,12 +20,12 @@ export default defineComponent({
     const previousVote = computed(() =>
       store.state.account.data.voter_info
         ? store.state.account.data.voter_info.producers.map((vote) =>
-            vote.toString()
+            vote.toString(),
           )
-        : []
+        : [],
     );
     const producers = computed(() =>
-      [...store.state.chain.producers].map((val) => val.owner)
+      [...store.state.chain.producers].map((val) => val.owner),
     );
     const currentVote = computed(() => {
       let votes = store.state.account.vote;
@@ -38,20 +38,20 @@ export default defineComponent({
     });
     const selection = ref<string[]>([]);
     const HeadProducer = computed(
-      (): string => store.state.chain.head_block_producer
+      (): string => store.state.chain.head_block_producer,
     );
     const producerRows = computed(
-      (): Producer[] => store.state.chain.producers || []
+      (): Producer[] => store.state.chain.producers || [],
     );
     const producerPay = computed(() => props.top21pay24h);
     const bpTop21 = computed(() => store.state.chain.producerSchedule);
 
     const maxSelected = computed(
-      () => currentVote.value.length === MAX_VOTE_PRODUCERS
+      () => currentVote.value.length === MAX_VOTE_PRODUCERS,
     );
 
     const pagination = ref({
-      rowsPerPage: 21
+      rowsPerPage: 21,
     });
     function removeVote(index: string) {
       currentVote.value.splice(Number(index), 1);
@@ -95,9 +95,9 @@ export default defineComponent({
       removeVote,
       isTop21,
       getLink,
-      getFlag
+      getFlag,
     };
-  }
+  },
 });
 </script>
 

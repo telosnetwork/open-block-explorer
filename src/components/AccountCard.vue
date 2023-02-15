@@ -23,13 +23,13 @@ export default defineComponent({
     SendDialog,
     ResourcesDialog,
     DateField,
-    StakingDialog
+    StakingDialog,
   },
   props: {
     account: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const $q = useQuasar();
@@ -72,7 +72,7 @@ export default defineComponent({
       accountData.value && accountData.value.refund_request
         ? accountData.value.refund_request?.cpu_amount.value +
           accountData.value.refund_request?.net_amount.value
-        : 0
+        : 0,
     );
 
     const token = computed((): Token => store.state.chain.token);
@@ -94,7 +94,7 @@ export default defineComponent({
       let result = '';
       if (totalValue.value && usdPrice.value) {
         result = `$${totalValue.value.toFixed(2)} (@ $${usdPrice.value.toFixed(
-          4
+          4,
         )}/${chain.getSystemToken().symbol})`;
       }
       return result;
@@ -105,7 +105,7 @@ export default defineComponent({
     });
 
     const createTimeFormat = computed((): string =>
-      date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A')
+      date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A'),
     );
 
     const setToken = (value: Token) => {
@@ -136,24 +136,24 @@ export default defineComponent({
 
     const loadResources = () => {
       ram_used.value = fixDec(
-        Number(accountData.value.ram_usage) / KILO_UNIT.value
+        Number(accountData.value.ram_usage) / KILO_UNIT.value,
       );
 
       if (props.account !== system_account.value) {
         ram_max.value = fixDec(
-          Number(accountData.value.ram_quota) / KILO_UNIT.value
+          Number(accountData.value.ram_quota) / KILO_UNIT.value,
         );
         cpu_used.value = fixDec(
-          Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value
+          Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value,
         );
         cpu_max.value = fixDec(
-          Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value
+          Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value,
         );
         net_used.value = fixDec(
-          Number(accountData.value.net_limit.used) / KILO_UNIT.value
+          Number(accountData.value.net_limit.used) / KILO_UNIT.value,
         );
         net_max.value = fixDec(
-          Number(accountData.value.net_limit.max) / KILO_UNIT.value
+          Number(accountData.value.net_limit.max) / KILO_UNIT.value,
         );
 
         stakedResources.value =
@@ -163,11 +163,11 @@ export default defineComponent({
         delegatedResources.value = Math.abs(
           stakedResources.value -
             Number(
-              accountData.value.self_delegated_bandwidth?.net_weight.value || 0
+              accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
             ) -
             Number(
-              accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0
-            )
+              accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
+            ),
         );
       }
     };
@@ -210,7 +210,7 @@ export default defineComponent({
         scope: 'eosio',
         table: 'rexfund',
         reverse: false,
-        upper_bound: props.account as unknown as TableIndexType
+        upper_bound: props.account as unknown as TableIndexType,
       } as GetTableRowsParams;
       const rexfund = (
         (await api.getTableRows(paramsrexfund)) as {
@@ -235,7 +235,7 @@ export default defineComponent({
         scope: 'eosio',
         table: 'rexbal',
         reverse: false,
-        upper_bound: props.account as unknown as TableIndexType
+        upper_bound: props.account as unknown as TableIndexType,
       } as GetTableRowsParams;
 
       const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
@@ -250,7 +250,7 @@ export default defineComponent({
         scope: 'eosio',
         table: 'rexpool',
         json: true,
-        reverse: false
+        reverse: false,
       } as GetTableRowsParams;
 
       const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
@@ -276,8 +276,8 @@ export default defineComponent({
       await router.push({
         name: 'account',
         params: {
-          account: creatingAccount.value
-        }
+          account: creatingAccount.value,
+        },
       });
       router.go(0);
     };
@@ -286,8 +286,8 @@ export default defineComponent({
       await router.push({
         name: 'transaction',
         params: {
-          transaction: createTransaction.value
-        }
+          transaction: createTransaction.value,
+        },
       });
       router.go(0);
     };
@@ -299,7 +299,7 @@ export default defineComponent({
             color: 'green-4',
             textColor: 'white',
             message: 'Copied to clipboard',
-            timeout: 1000
+            timeout: 1000,
           });
         })
         .catch(() => {
@@ -307,7 +307,7 @@ export default defineComponent({
             color: 'red-8',
             textColor: 'white',
             message: 'Could not copy',
-            timeout: 1000
+            timeout: 1000,
           });
         });
     };
@@ -327,7 +327,7 @@ export default defineComponent({
       usdPrice.value = await chain.getUsdPrice();
       await loadAccountData();
       await store.dispatch('account/updateRexData', {
-        account: props.account
+        account: props.account,
       });
       loadSystemToken();
       void store.dispatch('chain/updateRamPrice');
@@ -339,9 +339,9 @@ export default defineComponent({
         resetBalances();
         await loadAccountData();
         await store.dispatch('account/updateRexData', {
-          account: props.account
+          account: props.account,
         });
-      }
+      },
     );
 
     return {
@@ -385,9 +385,9 @@ export default defineComponent({
       loadCreatorTransaction,
       copy,
       formatAsset,
-      updateTokenBalances
+      updateTokenBalances,
     };
-  }
+  },
 });
 </script>
 

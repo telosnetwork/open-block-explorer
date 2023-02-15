@@ -15,13 +15,13 @@ export default defineComponent({
     const transactionId = ref<string>(store.state.account.TransactionId);
     const transactionError = ref<unknown>(store.state.account.TransactionError);
     const actions = computed(() =>
-      store.state.account.abi.abi.actions.map((a) => a.name)
+      store.state.account.abi.abi.actions.map((a) => a.name),
     );
     const action = ref<string>(actions.value[0]);
     const fields = computed(
       () =>
         store.state.account.abi.abi.structs.find((s) => s.name === action.value)
-          .fields
+          .fields,
     );
 
     async function signAction() {
@@ -29,7 +29,7 @@ export default defineComponent({
         action: action.value,
         actor: actor.value,
         permission: permission.value,
-        data: memo.value
+        data: memo.value,
       });
       openTransaction.value = true;
     }
@@ -67,9 +67,9 @@ export default defineComponent({
       openTransaction,
       transactionId,
       transactionError,
-      formatMemo
+      formatMemo,
     };
-  }
+  },
 });
 </script>
 

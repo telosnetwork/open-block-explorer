@@ -38,7 +38,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       localStorage.setItem('account', accountName);
       localStorage.setItem(
         'autoLogin',
-        (authenticator as Authenticator).getName()
+        (authenticator as Authenticator).getName(),
       );
     }
   },
@@ -66,7 +66,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       scope: 'eosio',
       table: 'rexbal',
       reverse: false,
-      upper_bound: account as TableIndexType
+      upper_bound: account as TableIndexType,
     } as GetTableRowsParams;
     const rexbalRows = (await api.getTableRows(paramsrexbal)) as RexbalRows;
     const paramsrexpool = {
@@ -74,7 +74,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       scope: 'eosio',
       table: 'rexpool',
       json: true,
-      reverse: false
+      reverse: false,
     } as GetTableRowsParams;
     const rexpool = ((await api.getTableRows(paramsrexpool)) as RexPoolRows)
       .rows[0];
@@ -85,7 +85,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
       scope: 'eosio',
       table: 'rexfund',
       reverse: false,
-      upper_bound: account as TableIndexType
+      upper_bound: account as TableIndexType,
     } as GetTableRowsParams;
     const rexfund = (
       (await api.getTableRows(paramsrexfund)) as {
@@ -137,7 +137,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         coreBalance,
         maturingRex,
         savingsRex,
-        maturedRex
+        maturedRex,
       });
     }
     const filter =
@@ -154,21 +154,21 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
-        data: data as unknown
-      }
+        data: data as unknown,
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -186,13 +186,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           owner: state.accountName,
-          amount: quantityStr
-        }
+          amount: quantityStr,
+        },
       },
       {
         account: 'eosio',
@@ -200,24 +200,24 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           from: state.accountName,
-          amount: quantityStr
-        }
-      }
+          amount: quantityStr,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -243,13 +243,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           from: state.accountName,
-          rex: `${rexToUnstake} REX`
-        }
+          rex: `${rexToUnstake} REX`,
+        },
       },
       {
         account: 'eosio',
@@ -257,24 +257,24 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           owner: state.accountName,
-          amount: quantityStr
-        }
-      }
+          amount: quantityStr,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -292,24 +292,24 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           owner: state.accountName,
-          amount: quantityStr
-        }
-      }
+          amount: quantityStr,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -327,26 +327,26 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           owner: state.accountName,
           receiver: state.accountName,
           from_net: quantityStrNET,
-          from_cpu: quantityStrCPU
-        }
-      }
+          from_cpu: quantityStrCPU,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -364,26 +364,26 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           owner: state.accountName,
           receiver: state.accountName,
           from_net: quantityStrNET,
-          from_cpu: quantityStrCPU
-        }
-      }
+          from_cpu: quantityStrCPU,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -400,7 +400,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
   },
   async pushTransaction(
     { commit, state },
-    { action, actor, permission, data }
+    { action, actor, permission, data },
   ) {
     let transaction = null;
     const actions = [
@@ -410,22 +410,22 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: actor as string,
-            permission: permission as string
-          }
+            permission: permission as string,
+          },
         ],
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        data
-      }
+        data,
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -441,25 +441,25 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           voter: state.accountName,
           proxy: '',
-          producers: state.vote
-        }
-      }
+          producers: state.vote,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -475,25 +475,25 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           payer: state.accountName,
           receiver: receivingAccount as string,
-          quant: amount as string
-        }
-      }
+          quant: amount as string,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -509,25 +509,25 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           payer: state.accountName,
           receiver: receivingAccount as string,
-          bytes: amount as string
-        }
-      }
+          bytes: amount as string,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -543,24 +543,24 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           account: state.accountName,
-          bytes: amount as string
-        }
-      }
+          bytes: amount as string,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -578,24 +578,24 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           owner: state.accountName,
-          rex: rexToUnstake
-        }
-      }
+          rex: rexToUnstake,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
@@ -613,28 +613,28 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         authorization: [
           {
             actor: state.accountName,
-            permission: state.accountPermission
-          }
+            permission: state.accountPermission,
+          },
         ],
         data: {
           owner: state.accountName,
-          rex: rexToUnstake
-        }
-      }
+          rex: rexToUnstake,
+        },
+      },
     ];
     try {
       transaction = await state.user.signTransaction(
         {
-          actions
+          actions,
         },
         {
           blocksBehind: 3,
-          expireSeconds: 180
-        }
+          expireSeconds: 180,
+        },
       );
       commit('setTransaction', transaction.transactionId);
     } catch (e) {
       commit('setTransactionError', e);
     }
-  }
+  },
 };

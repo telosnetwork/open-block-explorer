@@ -46,5 +46,5 @@ export const mutations: MutationTree<TransactionStateInterface> = {
   },
   setTransactionFounde(state: TransactionStateInterface, found: boolean) {
     state.transactionFound = found;
-  }
+  },
 };

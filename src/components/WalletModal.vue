@@ -19,7 +19,7 @@ export default defineComponent({
       try {
         await store.dispatch('account/login', {
           account: account.value,
-          authenticator
+          authenticator,
         });
       } catch (e) {
         error.value = e as string;
@@ -32,9 +32,9 @@ export default defineComponent({
       loading,
       account,
       walletDialog,
-      onLogin
+      onLogin,
     };
-  }
+  },
 });
 </script>
 <template lang="pug">

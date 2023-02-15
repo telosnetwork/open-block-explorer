@@ -33,7 +33,7 @@ telosApi.interceptors.response.use(
   function (error) {
     PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
     return Promise.reject(error);
-  }
+  },
 );
 
 export const getApy = async function (): Promise<string> {

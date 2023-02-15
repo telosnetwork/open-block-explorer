@@ -9,31 +9,31 @@ export default defineComponent({
   props: {
     permission: {
       type: Object as PropType<Permission>,
-      required: true
+      required: true,
     },
     depth: {
       type: Number,
-      default: 0
+      default: 0,
     },
     isLast: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup(props) {
     const { depth, isLast } = toRefs(props);
     const branchTopClass = computed(() =>
-      isLast.value ? 'branch-corner' : 'branch-side-top'
+      isLast.value ? 'branch-corner' : 'branch-side-top',
     );
     const branchBottomClass = computed(() =>
-      isLast.value ? '' : 'branch-side'
+      isLast.value ? '' : 'branch-side',
     );
     const permissionCardClass = computed(() =>
-      depth.value == 0 ? 'owner-permission' : ''
+      depth.value == 0 ? 'owner-permission' : '',
     );
     const formatAccount = (
       name: string,
-      type: 'account' | 'transaction' | 'block'
+      type: 'account' | 'transaction' | 'block',
     ): string => {
       return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
     };
@@ -42,9 +42,9 @@ export default defineComponent({
       branchTopClass,
       branchBottomClass,
       permissionCardClass,
-      formatAccount
+      formatAccount,
     };
-  }
+  },
 });
 </script>
 

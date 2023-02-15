@@ -30,14 +30,14 @@ const TOKEN = {
   symbol: 'EOS',
   precision: 4,
   amount: 0,
-  contract: 'eosio.token'
+  contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://jungle.eosusa.news';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = {
   protocol: 'https',
   host: 'jungle.eosusa.news',
-  port: 443
+  port: 443,
 };
 const API_ENDPOINT = 'https://example.com';
 const DISPLAY_MAP = true;

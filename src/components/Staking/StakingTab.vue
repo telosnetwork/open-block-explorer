@@ -10,7 +10,7 @@ const chain = getChain();
 export default defineComponent({
   name: 'StakingTab',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
@@ -18,10 +18,10 @@ export default defineComponent({
     const stakeTokens = ref<string>('');
     const symbol = ref<string>(chain.getSystemToken().symbol);
     const transactionId = computed(
-      (): string => store.state.account.TransactionId
+      (): string => store.state.account.TransactionId,
     );
     const transactionError = computed(
-      () => store.state.account.TransactionError
+      () => store.state.account.TransactionError,
     );
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
@@ -36,7 +36,7 @@ export default defineComponent({
       return store.state.account.maturedRex;
     });
     const liquidBalance = computed(
-      () => accountData.value?.core_liquid_balance.value
+      () => accountData.value?.core_liquid_balance.value,
     );
 
     function formatDec() {
@@ -46,7 +46,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: precision,
-            minimumFractionDigits: precision
+            minimumFractionDigits: precision,
           })
           .replace(/[^0-9.]/g, '');
       }
@@ -62,7 +62,7 @@ export default defineComponent({
         return;
       }
       await store.dispatch('account/stakeRex', {
-        amount: stakeTokens.value
+        amount: stakeTokens.value,
       });
       openTransaction.value = true;
     }
@@ -99,9 +99,9 @@ export default defineComponent({
       formatDec,
       stake,
       assetToAmount,
-      setMaxValue
+      setMaxValue,
     };
-  }
+  },
 });
 </script>
 

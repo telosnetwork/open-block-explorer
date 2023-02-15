@@ -8,8 +8,8 @@ export default defineComponent({
     account: {
       type: String,
       required: false,
-      default: null
-    }
+      default: null,
+    },
   },
   setup(props) {
     const tokens = ref<Token[]>([]);
@@ -35,11 +35,11 @@ export default defineComponent({
       let filtered = tokenList
         .filter(
           (token: Token) =>
-            codes.length === 0 || codes.some((c) => c == token.contract)
+            codes.length === 0 || codes.some((c) => c == token.contract),
         )
         .filter(
           (token: Token) =>
-            symbols.length === 0 || symbols.some((c) => c == token.symbol)
+            symbols.length === 0 || symbols.some((c) => c == token.symbol),
         );
 
       tokens.value = filtered.map(
@@ -48,18 +48,18 @@ export default defineComponent({
             symbol: token.symbol,
             precision: token.precision,
             amount: token.amount,
-            contract: formatAccount(token.contract, 'account')
-          } as Token)
+            contract: formatAccount(token.contract, 'account'),
+          } as Token),
       );
 
       tokens.value = tokens.value.filter(
-        (token) => (token as Token).amount !== null
+        (token) => (token as Token).amount !== null,
       );
     };
     // TODO Refactor duplicate function in TransactionsTable
     const formatAccount = (
       name: string,
-      type: 'account' | 'transaction' | 'block'
+      type: 'account' | 'transaction' | 'block',
     ): string => {
       return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
     };
@@ -71,9 +71,9 @@ export default defineComponent({
     return {
       tokens,
       formatAccount,
-      loadTokens
+      loadTokens,
     };
-  }
+  },
 });
 </script>
 <template lang="pug">

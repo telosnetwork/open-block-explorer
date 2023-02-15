@@ -24,7 +24,7 @@ import {
   GetProposalsProps,
   GetProposals,
   GetProducers,
-  ABI
+  ABI,
 } from 'src/types';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
@@ -63,28 +63,28 @@ hyperion.interceptors.response.use(
   function (error) {
     PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
     return Promise.reject(error);
-  }
+  },
 );
 
 export const getHyperionAccountData = async function (
-  address: string
+  address: string,
 ): Promise<AccountDetails> {
   const response = await hyperion.get('v2/state/get_account', {
-    params: { account: address }
+    params: { account: address },
   });
   return response.data;
 };
 
 export const getCreator = async function (address: string): Promise<any> {
   const response = await hyperion.get('v2/history/get_creator', {
-    params: { account: address }
+    params: { account: address },
   });
   return response.data;
 };
 
 export const getTokens = async function (address: string): Promise<Token[]> {
   const response = await hyperion.get('v2/state/get_tokens', {
-    params: { account: address }
+    params: { account: address },
   });
   return response.data.tokens;
 };
@@ -92,69 +92,69 @@ export const getTokens = async function (address: string): Promise<Token[]> {
 export const getTransactions = async function (
   page: number,
   limit: number,
-  address?: string
+  address?: string,
 ): Promise<Action[]> {
   const skip = Math.max(0, page - 1) * limit;
   const response = await hyperion.get<ActionData>('v2/history/get_actions', {
-    params: { limit, skip, account: address, 'act.name': '!onblock' }
+    params: { limit, skip, account: address, 'act.name': '!onblock' },
   });
   return response.data.actions;
 };
 
 export const getTransaction = async function (
-  address?: string
+  address?: string,
 ): Promise<ActionData> {
   const response = await hyperion.get<ActionData>(
     'v2/history/get_transaction',
     {
-      params: { id: address }
-    }
+      params: { id: address },
+    },
   );
   return response.data;
 };
 
 export const getTransactionV1 = async function (
-  id?: string
+  id?: string,
 ): Promise<Transaction> {
   const response = await hyperion.post<Transaction>(
     'v1/history/get_transaction',
     {
-      id: id
-    }
+      id: id,
+    },
   );
   return response.data;
 };
 
 export const getChildren = async function (
-  address?: string
+  address?: string,
 ): Promise<Action[]> {
   const response = await hyperion.get<ActionData>('v2/history/get_actions', {
     params: {
       limit: 100,
       account: address,
       filter: 'eosio:newaccount',
-      skip: 0
-    }
+      skip: 0,
+    },
   });
   return response.data.actions;
 };
 
 export const getPermissionLinks = async function (
-  address?: string
+  address?: string,
 ): Promise<PermissionLinks[]> {
   const response = await hyperion.get<PermissionLinksData>(
     'v2/state/get_links',
     {
       params: {
-        account: address
-      }
-    }
+        account: address,
+      },
+    },
   );
   return response.data.links;
 };
 
 export const getTableByScope = async function (
-  data: unknown
+  data: unknown,
 ): Promise<TableByScope[]> {
   const response = await hyperion.post('v1/chain/get_table_by_scope', data);
   return response.data.rows;
@@ -164,7 +164,7 @@ export const getBlock = async function (block: string): Promise<Block> {
   controller.abort();
   const response = await hyperion.post('v1/chain/get_block', {
     block_num_or_id: block,
-    signal: controller.signal
+    signal: controller.signal,
   });
   return response.data;
 };
@@ -173,7 +173,7 @@ export const getActions = async function (
   account: string,
   filter: string,
   limit?: number,
-  skip?: number
+  skip?: number,
 ): Promise<Get_actions> {
   controller.abort();
   const response = await hyperion.get('v2/history/get_actions', {
@@ -181,8 +181,8 @@ export const getActions = async function (
       account,
       filter,
       limit,
-      skip
-    }
+      skip,
+    },
   });
   return response.data;
 };
@@ -206,7 +206,7 @@ export const getProposals = async function ({
   provided,
   executed,
   limit,
-  skip
+  skip,
 }: GetProposalsProps): Promise<GetProposals> {
   const response = await hyperion.get('v2/state/get_proposals', {
     params: {
@@ -216,8 +216,8 @@ export const getProposals = async function ({
       provided,
       executed,
       limit,
-      skip
-    }
+      skip,
+    },
   });
   return response.data;
 };
@@ -225,24 +225,24 @@ export const getProposals = async function ({
 export const getProducers = async function (): Promise<GetProducers> {
   const response = await hyperion.post('v1/chain/get_producers', {
     json: true,
-    limit: 10000
+    limit: 10000,
   });
   return response.data;
 };
 
 export const getABI = async function (account: string): Promise<ABI> {
   const response = await hyperion.post('v1/chain/get_abi', {
-    account_name: account
+    account_name: account,
   });
 
   return response.data;
 };
 
 export const getHyperionKeyAccounts = async function (
-  key: string
+  key: string,
 ): Promise<{ account_names: string[] }> {
   const response = await hyperion.get('v2/state/get_key_accounts', {
-    params: { public_key: key }
+    params: { public_key: key },
   });
 
   return response.data;

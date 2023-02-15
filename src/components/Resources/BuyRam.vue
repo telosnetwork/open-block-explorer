@@ -11,7 +11,7 @@ const chain = getChain();
 export default defineComponent({
   name: 'BuyRam',
   components: {
-    ViewTransaction
+    ViewTransaction,
   },
   setup() {
     const store = useStore();
@@ -22,13 +22,13 @@ export default defineComponent({
     const buyOption = ref<string>(buyOptions[0]);
     const receivingAccount = ref<string>(store.state.account.accountName);
     const transactionId = computed(
-      (): string => store.state.account.TransactionId
+      (): string => store.state.account.TransactionId,
     );
     const buyPreview = computed(() => {
       if (buyOption.value === buyOptions[0]) {
         return (
           ((Number(buyAmount.value) * 1000) / Number(ramPrice.value)).toFixed(
-            0
+            0,
           ) +
           ' ' +
           buyOptions[1]
@@ -36,7 +36,7 @@ export default defineComponent({
       } else {
         return (
           ((Number(buyAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
-            4
+            4,
           ) +
           ' ' +
           buyOptions[0]
@@ -44,7 +44,7 @@ export default defineComponent({
       }
     });
     const transactionError = computed(
-      () => store.state.account.TransactionError
+      () => store.state.account.TransactionError,
     );
     const ramPrice = computed((): string => {
       return store.state?.chain.ram_price;
@@ -52,8 +52,8 @@ export default defineComponent({
     const ramAvailable = computed(() =>
       UInt64.sub(
         store.state.account.data.ram_quota,
-        store.state.account.data.ram_usage
-      )
+        store.state.account.data.ram_usage,
+      ),
     );
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
@@ -66,7 +66,7 @@ export default defineComponent({
           .toLocaleString('en-US', {
             style: 'decimal',
             maximumFractionDigits: precision,
-            minimumFractionDigits: precision
+            minimumFractionDigits: precision,
           })
           .replace(/[^0-9.]/g, '');
       } else if (buyAmount.value != '') {
@@ -89,7 +89,7 @@ export default defineComponent({
         }
         await store.dispatch('account/buyRam', {
           amount: buyAmount.value + ' ' + symbol.value,
-          receivingAccount: receivingAccount.value
+          receivingAccount: receivingAccount.value,
         });
       } else {
         if (
@@ -103,7 +103,7 @@ export default defineComponent({
         }
         await store.dispatch('account/buyRamBytes', {
           amount: buyAmount.value,
-          receivingAccount: receivingAccount.value
+          receivingAccount: receivingAccount.value,
         });
       }
 
@@ -145,9 +145,9 @@ export default defineComponent({
       formatDec,
       buy,
       buyLimit,
-      isValidAccount
+      isValidAccount,
     };
-  }
+  },
 });
 </script>
 

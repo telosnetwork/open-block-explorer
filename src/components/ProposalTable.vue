@@ -68,14 +68,14 @@ import {
   onMounted,
   watch,
   PropType,
-  computed
+  computed,
 } from 'vue';
 import { useQuasar } from 'quasar';
 import {
   GetProposals,
   ProposalTableRow,
   PaginationSettings,
-  Error
+  Error,
 } from 'src/types';
 import { api } from 'src/api';
 
@@ -84,7 +84,7 @@ const initialStatePagination = {
   descending: false,
   page: 1,
   rowsPerPage: 20,
-  rowsNumber: 20
+  rowsNumber: 20,
 };
 
 export default defineComponent({
@@ -92,21 +92,21 @@ export default defineComponent({
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     account: {
       type: String,
-      required: true
+      required: true,
     },
     type: {
       type: String as PropType<
         'needsYourSignature' | 'proposalsCreated' | 'allProposals'
       >,
-      required: true
+      required: true,
     },
     blockProducers: {
-      type: Array as PropType<string[]>
-    }
+      type: Array as PropType<string[]>,
+    },
   },
   setup(setupProps) {
     const $q = useQuasar();
@@ -119,7 +119,7 @@ export default defineComponent({
     const filterDropdown = ref(false);
 
     const hasSomeFilterActive = computed(
-      () => isSigned.value || isExecuted.value || blockProducer.value
+      () => isSigned.value || isExecuted.value || blockProducer.value,
     );
 
     const columns = [
@@ -127,20 +127,20 @@ export default defineComponent({
         name: 'proposalName',
         align: 'left',
         label: 'PROPOSAL NAME',
-        field: 'proposalNameSliced'
+        field: 'proposalNameSliced',
       },
       {
         name: 'approvalStatus',
         align: 'left',
         label: 'APPROVAL STATUS',
-        field: 'approvalStatus'
+        field: 'approvalStatus',
       },
       {
         name: 'proposer',
         align: 'left',
         label: 'PROPOSER',
-        field: 'proposer'
-      }
+        field: 'proposer',
+      },
     ];
 
     async function onRequest(props: { pagination: PaginationSettings }) {
@@ -169,7 +169,7 @@ export default defineComponent({
           provided,
           executed: isExecuted.value,
           limit: rowsPerPage,
-          skip: (page - 1) * rowsPerPage
+          skip: (page - 1) * rowsPerPage,
         });
 
         pagination.value = {
@@ -177,7 +177,7 @@ export default defineComponent({
           page: page,
           rowsPerPage: rowsPerPage,
           sortBy: sortBy,
-          descending: descending
+          descending: descending,
         };
 
         rows.value = data.proposals.map((proposal) => {
@@ -190,7 +190,7 @@ export default defineComponent({
             primaryKey: proposal.primary_key,
             proposalName: proposal.proposal_name,
             approvalStatus,
-            proposer: proposal.proposer
+            proposer: proposal.proposer,
           };
         });
       } catch (e) {
@@ -201,16 +201,16 @@ export default defineComponent({
           actions: [
             {
               label: 'Dismiss',
-              color: 'white'
-            }
-          ]
+              color: 'white',
+            },
+          ],
         });
       }
     }
 
     onMounted(async () => {
       await onRequest({
-        pagination: pagination.value
+        pagination: pagination.value,
       });
     });
 
@@ -218,14 +218,14 @@ export default defineComponent({
       filterDropdown.value = false;
       pagination.value = initialStatePagination;
       await onRequest({
-        pagination: pagination.value
+        pagination: pagination.value,
       });
     });
 
     const optionsBlockProducers = ref<string[]>(setupProps.blockProducers);
     function onFilterBlockProducer(
       inputValue: string,
-      update: (callback: () => void) => void
+      update: (callback: () => void) => void,
     ) {
       if (inputValue === '') {
         update(() => {
@@ -237,7 +237,7 @@ export default defineComponent({
       update(() => {
         const formattedValue = inputValue.toLowerCase();
         optionsBlockProducers.value = setupProps.blockProducers.filter(
-          (item) => item.toLowerCase().indexOf(formattedValue) > -1
+          (item) => item.toLowerCase().indexOf(formattedValue) > -1,
         );
       });
     }
@@ -253,8 +253,8 @@ export default defineComponent({
       optionsBlockProducers,
       filterDropdown,
       onRequest,
-      onFilterBlockProducer
+      onFilterBlockProducer,
     };
-  }
+  },
 });
 </script>

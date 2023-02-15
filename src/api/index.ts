@@ -21,7 +21,7 @@ import {
   getProposals,
   getProducers,
   getABI,
-  getProducerSchedule
+  getProducerSchedule,
 } from './hyperion'; //  e.g. './new-service' method name stays the same
 
 import {
@@ -30,7 +30,7 @@ import {
   getTableRows,
   getTokenBalances,
   deserializeActionData,
-  serializeActionData
+  serializeActionData,
 } from './eosio_core';
 
 import { getApy } from './telosApi';
@@ -59,5 +59,5 @@ export const api = {
   deserializeActionData,
   serializeActionData,
   getProducerSchedule,
-  getApy
+  getApy,
 };

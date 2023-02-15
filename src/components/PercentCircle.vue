@@ -8,24 +8,24 @@ export default defineComponent({
   props: {
     fraction: {
       type: Number,
-      required: true
+      required: true,
     },
     total: {
       type: Number,
-      required: true
+      required: true,
     },
     label: {
       type: String,
-      default: ''
+      default: '',
     },
     radius: {
       type: Number,
-      required: true
+      required: true,
     },
     unit: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   setup(props) {
     const offset = ref(5);
@@ -36,13 +36,13 @@ export default defineComponent({
     const formatResourcePercent = computed(() =>
       fraction.value && total.value
         ? ((fraction.value / total.value) * 100.0).toFixed(2)
-        : '0.00'
+        : '0.00',
     );
     const strokeColor = computed(() =>
-      parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white'
+      parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white',
     );
     const fractionUnits = computed(
-      () => `${fraction.value}${unit.value}/${total.value}${unit.value}`
+      () => `${fraction.value}${unit.value}/${total.value}${unit.value}`,
     );
     const available = computed(() => (total.value - fraction.value).toFixed(3));
     const dashArray = computed(() => {
@@ -63,9 +63,9 @@ export default defineComponent({
       strokeColor,
       fractionUnits,
       available,
-      dashArray
+      dashArray,
     };
-  }
+  },
 });
 </script>
 

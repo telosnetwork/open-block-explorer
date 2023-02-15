@@ -230,7 +230,7 @@ export default defineComponent({
     ProposalSuccess,
     ProposalAuthorization,
     ProposalAction,
-    ProposalUploadCSV
+    ProposalUploadCSV,
   },
   setup() {
     const router = useRouter();
@@ -246,7 +246,7 @@ export default defineComponent({
     const success = reactive({
       proposalName: '',
       transactionId: '',
-      showModal: false
+      showModal: false,
     });
 
     const formData: ProposalForm = reactive({
@@ -255,8 +255,8 @@ export default defineComponent({
       requested: [
         {
           actor: '',
-          permission: ''
-        }
+          permission: '',
+        },
       ],
       trx: {
         expiration: moment()
@@ -269,8 +269,8 @@ export default defineComponent({
         delay_sec: 0,
         context_free_actions: '',
         transaction_extensions: '',
-        actions: []
-      }
+        actions: [],
+      },
     });
 
     onMounted(() => {
@@ -293,7 +293,7 @@ export default defineComponent({
         if (item.is_active === 1) {
           producersAccount.push({
             actor: item.owner,
-            permission: 'active'
+            permission: 'active',
           });
         }
       }
@@ -308,9 +308,9 @@ export default defineComponent({
         actions: [
           {
             label: 'Dismiss',
-            color: 'white'
-          }
-        ]
+            color: 'white',
+          },
+        ],
       });
     }
 
@@ -319,7 +319,7 @@ export default defineComponent({
 
       if (areBlockProducersApproving.value) {
         data.requested = data.requested.concat(
-          JSON.parse(JSON.stringify(blockProducers.value))
+          JSON.parse(JSON.stringify(blockProducers.value)),
         );
       }
 
@@ -352,7 +352,7 @@ export default defineComponent({
           const hexData = await api.serializeActionData(
             item.account,
             item.name,
-            item.data
+            item.data,
           );
 
           data.trx.actions[i].data = hexData;
@@ -367,17 +367,17 @@ export default defineComponent({
                 authorization: [
                   {
                     actor: account.value,
-                    permission: 'active'
-                  }
+                    permission: 'active',
+                  },
                 ],
-                data
-              }
-            ]
+                data,
+              },
+            ],
           },
           {
             blocksBehind: 3,
-            expireSeconds: 30
-          }
+            expireSeconds: 30,
+          },
         );
         if (store.state.account.autoLogin != 'cleos') {
           success.showModal = true;
@@ -388,7 +388,7 @@ export default defineComponent({
       } catch (e) {
         const error = JSON.parse(JSON.stringify(e)) as Error;
         handleError(
-          error?.cause?.json?.error?.what || 'Unable to create a proposal'
+          error?.cause?.json?.error?.what || 'Unable to create a proposal',
         );
       }
     }
@@ -400,10 +400,10 @@ export default defineComponent({
         authorization: [
           {
             actor: '',
-            permission: ''
-          }
+            permission: '',
+          },
         ],
-        data: {}
+        data: {},
       });
     }
 
@@ -451,8 +451,8 @@ export default defineComponent({
       areBlockProducersApproving,
       blockProducers,
       actionsTab,
-      success
+      success,
     };
-  }
+  },
 });
 </script>
