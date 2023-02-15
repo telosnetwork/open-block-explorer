@@ -16,7 +16,7 @@ export default defineComponent({
         const getAuthenticator = (): Authenticator => {
             const wallet = localStorage.getItem('autoLogin');
             const authenticator = authenticators.find(
-                (auth) => auth.getName() === wallet,
+                auth => auth.getName() === wallet,
             );
             return authenticator;
         };

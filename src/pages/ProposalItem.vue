@@ -186,10 +186,10 @@ export default defineComponent({
 
         const producersApprovalStatus = computed(() => {
             const allProducers = requestedApprovalsRows.value.filter(
-                (item) => item.isBp,
+                item => item.isBp,
             );
             const producersHaveAlreadyApproved = allProducers.filter(
-                (item) => item.status,
+                item => item.status,
             );
             return `${producersHaveAlreadyApproved.length}/${allProducers.length}`;
         });
@@ -212,7 +212,7 @@ export default defineComponent({
             const activeProducers = await api.getProducerSchedule();
 
             const activeProducersAccount = activeProducers.active.producers.map(
-                (producer) => producer.producer_name,
+                producer => producer.producer_name,
             );
 
             let requestedApprovals: RequestedApprovals[] = [];
@@ -236,7 +236,7 @@ export default defineComponent({
             });
 
             requestedApprovals = requestedApprovals
-                .map((item) => ({
+                .map(item => ({
                     ...item,
                     isBp: activeProducersAccount.includes(item.actor),
                 }))
@@ -370,10 +370,10 @@ export default defineComponent({
             }`;
             isExecuted.value = proposal.executed;
             hasUserAlreadyApproved.value = proposal.provided_approvals.some(
-                (item) => item.actor === account.value,
+                item => item.actor === account.value,
             );
             isUserApprovalList.value = proposal.requested_approvals.some(
-                (item) => item.actor === account.value,
+                item => item.actor === account.value,
             );
 
             const [requestedApprovalsRowsValue, multsigTransactionDataValue] =
@@ -388,7 +388,7 @@ export default defineComponent({
             const transactions = await handleTransactionHistory(proposal.block_num);
 
             isCanceled.value = transactions.some(
-                (item) =>
+                item =>
                     item[0].act.account === 'eosio.msig' && item[0].act.name === 'cancel',
             );
 

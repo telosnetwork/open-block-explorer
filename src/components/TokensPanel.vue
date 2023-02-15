@@ -35,15 +35,15 @@ export default defineComponent({
             let filtered = tokenList
                 .filter(
                     (token: Token) =>
-                        codes.length === 0 || codes.some((c) => c === token.contract),
+                        codes.length === 0 || codes.some(c => c === token.contract),
                 )
                 .filter(
                     (token: Token) =>
-                        symbols.length === 0 || symbols.some((c) => c === token.symbol),
+                        symbols.length === 0 || symbols.some(c => c === token.symbol),
                 );
 
             tokens.value = filtered.map(
-                (token) =>
+                token =>
                     ({
                         symbol: token.symbol,
                         precision: token.precision,
@@ -53,7 +53,7 @@ export default defineComponent({
             );
 
             tokens.value = tokens.value.filter(
-                (token) => (token as Token).amount !== null,
+                token => (token as Token).amount !== null,
             );
         };
         // TODO Refactor duplicate function in TransactionsTable

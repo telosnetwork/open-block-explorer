@@ -187,7 +187,7 @@ export default defineComponent({
             try {
                 const { abi } = await api.getABI(queryValue);
                 const actionNameIndex = abi.structs.findIndex(
-                    (item) => props.modelValue.name === item.name,
+                    item => props.modelValue.name === item.name,
                 );
                 action.value.name = abi.structs[actionNameIndex ?? 0].name;
                 structs.value = abi.structs;
@@ -200,14 +200,14 @@ export default defineComponent({
 
         const actionOptions = computed(() => {
             if (structs.value.length === 0) return [];
-            return structs.value.map((item) => item.name);
+            return structs.value.map(item => item.name);
         });
 
         const fields = computed(() => {
             if (structs.value.length === 0) return [];
 
             const { fields } = structs.value.find(
-                (item) => item.name === action.value.name,
+                item => item.name === action.value.name,
             );
 
             return fields;

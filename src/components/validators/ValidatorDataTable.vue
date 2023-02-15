@@ -19,13 +19,13 @@ export default defineComponent({
         const account = computed(() => store.state.account.accountName);
         const previousVote = computed(() =>
             store.state.account.data.voter_info
-                ? store.state.account.data.voter_info.producers.map((vote) =>
+                ? store.state.account.data.voter_info.producers.map(vote =>
                     vote.toString(),
                 )
                 : [],
         );
         const producers = computed(() =>
-            [...store.state.chain.producers].map((val) => val.owner),
+            [...store.state.chain.producers].map(val => val.owner),
         );
         const currentVote = computed(() => {
             let votes = store.state.account.vote;

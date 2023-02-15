@@ -237,7 +237,7 @@ export default defineComponent({
             update(() => {
                 const formattedValue = inputValue.toLowerCase();
                 optionsBlockProducers.value = setupProps.blockProducers.filter(
-                    (item) => item.toLowerCase().indexOf(formattedValue) > -1,
+                    item => item.toLowerCase().indexOf(formattedValue) > -1,
                 );
             });
         }

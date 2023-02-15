@@ -246,7 +246,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
                     );
                     const expected_actions = [
                         noopAction,
-                        ...trx.actions.map((x) => ({ ...x })),
+                        ...trx.actions.map(x => ({ ...x })),
                     ];
                     const expected_actions_json = JSON.stringify(expected_actions);
                     expect(response_actions_json).toEqual(expected_actions_json);
@@ -318,7 +318,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
                         rp_response_trx.actions[0],
                         rp_response_trx.actions[1],
                         rp_response_trx.actions[2],
-                        ...trx.actions.map((x) => ({ ...x })),
+                        ...trx.actions.map(x => ({ ...x })),
                     ];
                     const expected_actions_json = JSON.stringify(expected_actions);
 

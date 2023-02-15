@@ -40,7 +40,7 @@ export default defineComponent({
             }
             for (let p of permissions) {
                 p['permission_links'] = links.filter(
-                    (l) => l.permission === p.perm_name.toString(),
+                    l => l.permission === p.perm_name.toString(),
                 );
             }
 
@@ -48,13 +48,13 @@ export default defineComponent({
         };
         const sortPermissions = (perm: Permission[]) => {
             let result: Permission;
-            result = perm.find((p) => p.perm_name.toString() === 'owner');
-            perm = perm.filter((p) => p.perm_name.toString() !== 'owner');
+            result = perm.find(p => p.perm_name.toString() === 'owner');
+            perm = perm.filter(p => p.perm_name.toString() !== 'owner');
 
             const getChildren = (parent: Permission, perms: Permission[]) => {
                 // Get children
                 let children = perms.filter(
-                    (p) => p.parent.toString() === parent.perm_name.toString(),
+                    p => p.parent.toString() === parent.perm_name.toString(),
                 );
                 // Set children's children
                 for (let child of children) {

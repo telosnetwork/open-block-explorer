@@ -143,7 +143,7 @@ export default defineComponent({
               );
             }
             if (tableData) {
-                rows.value = tableData.map((item) => ({
+                rows.value = tableData.map(item => ({
                     name: item.trx_id,
                     transaction: { id: item.trx_id, type: 'transaction' },
                     timestamp: item['@timestamp'] || item.timestamp,
@@ -231,10 +231,10 @@ export default defineComponent({
         };
 
         const filterRows = () => {
-            filteredRows.value = rows.value.filter((row) =>
+            filteredRows.value = rows.value.filter(row =>
                 row.action.act.name.includes(actionsFilter.value),
             );
-            filteredRows.value = filteredRows.value.filter((row) =>
+            filteredRows.value = filteredRows.value.filter(row =>
                 JSON.stringify(row.data).includes(tokenFilter.value.toUpperCase()),
             );
             if (!!fromDateFilter.value && !!toDateFilter.value) {

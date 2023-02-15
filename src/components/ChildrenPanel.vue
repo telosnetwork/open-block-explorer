@@ -25,7 +25,7 @@ export default defineComponent({
                 $q.notify(`Keys for account ${props.account} not found!`);
                 return;
             }
-            children.value = data.map((el) =>
+            children.value = data.map(el =>
                 formatAccount((el.act.data as NewAccountData).newact, 'account'),
             );
         };

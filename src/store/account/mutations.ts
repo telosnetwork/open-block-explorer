@@ -25,7 +25,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
     ) {
         state.data = AccountData;
         state.vote =
-      AccountData?.voter_info?.producers.map((vote) => vote.toString()) || [];
+      AccountData?.voter_info?.producers.map(vote => vote.toString()) || [];
     },
     setTransaction(state: AccountStateInterface, TransactionId: string) {
         state.TransactionId = TransactionId;

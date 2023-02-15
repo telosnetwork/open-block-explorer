@@ -192,7 +192,7 @@ export default defineComponent({
                                 return {
                                     permissionName: permission.perm_name,
                                     threshold: permission.required_auth.threshold,
-                                    accounts: permission.required_auth.accounts.map((item) => ({
+                                    accounts: permission.required_auth.accounts.map(item => ({
                                         weight: `+ ${item.weight.toString()}`,
                                         actor: item.permission.actor,
                                         permission: item.permission.permission,
@@ -202,7 +202,7 @@ export default defineComponent({
                         );
 
                         permissionsOptions.value = account.permissions.map(
-                            (permission) => permission.perm_name,
+                            permission => permission.perm_name,
                         );
                         context.emit('update:permission', permissionsOptions.value[0]);
                     }
@@ -218,7 +218,7 @@ export default defineComponent({
         const requiredAccounts = computed(() => {
             if (!permissionValue.value) return [];
             return allRequiredAccounts.value.find(
-                (item) => item.permissionName.toString() === permissionValue.value,
+                item => item.permissionName.toString() === permissionValue.value,
             );
         });
 

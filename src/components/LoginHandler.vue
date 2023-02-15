@@ -22,7 +22,7 @@ export default defineComponent({
                 void store.commit('account/setAccountName', storedAccount);
                 const ualName = localStorage.getItem('autoLogin');
                 const ual: Authenticator = authenticators.find(
-                    (a) => a.getName() === ualName,
+                    a => a.getName() === ualName,
                 );
                 void store.dispatch('account/login', {
                     account: storedAccount,

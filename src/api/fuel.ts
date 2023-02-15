@@ -79,11 +79,11 @@ export class FuelUserWrapper extends User {
             const header = info.getTransactionHeader(expireSeconds);
 
             // collect all contract abis
-            const abi_promises = originalTransaction.actions.map((a) =>
+            const abi_promises = originalTransaction.actions.map(a =>
                 client.v1.chain.get_abi(a.account),
             );
             const responses = await Promise.all(abi_promises);
-            const abis = responses.map((x) => x.abi);
+            const abis = responses.map(x => x.abi);
             const abis_and_names = originalTransaction.actions.map((x, i) => ({
                 contract: x.account,
                 abi: abis[i],

@@ -13,7 +13,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
     async updateBpList({ commit }) {
         try {
             const producerSchedule = (await api.getSchedule()).active.producers;
-            const schedule = producerSchedule.map((el) => el.producer_name);
+            const schedule = producerSchedule.map(el => el.producer_name);
             commit('setProducerSchedule', schedule);
             const objectList = await axios.get(chain.getS3ProducerBucket());
             const parser = new DOMParser();
@@ -26,10 +26,10 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
         await axios.get(`${chain.getS3ProducerBucket()}/${lastKey}`)
       ).data as BP[];
             let producers = (await api.getProducers()).rows;
-            producers = producers.filter((producer) => producer.is_active === 1);
+            producers = producers.filter(producer => producer.is_active === 1);
             producers = producers.map((data) => {
                 const bp = producerData.find(
-                    (producer) => producer.owner === data.owner,
+                    producer => producer.owner === data.owner,
                 );
                 if (bp) {
                     try {
