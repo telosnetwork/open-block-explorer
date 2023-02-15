@@ -49,7 +49,7 @@ export default defineComponent({
         const sortPermissions = (perm: Permission[]) => {
             let result: Permission;
             result = perm.find(p => p.perm_name.toString() === 'owner');
-            perm = perm.filter(p => p.perm_name.toString() !== 'owner');
+            let permission = perm.filter(p => p.perm_name.toString() !== 'owner');
 
             const getChildren = (parent: Permission, perms: Permission[]) => {
                 // Get children
@@ -63,7 +63,7 @@ export default defineComponent({
                 return children;
             };
 
-            result.children = getChildren(result, perm);
+            result.children = getChildren(result, permission);
             return result;
         };
         onMounted(() => {
