@@ -6,6 +6,6 @@ export function isValidAccount(account: string): boolean {
 }
 
 export function isValidTransactionHex(hexString: string): boolean {
-  const regEx = /[0-9A-Fa-f]{64}/g;
+  const regEx = /^([0-9A-Fa-f]){64}$/g;
   return regEx.exec(hexString) != null;
 }
