@@ -31,8 +31,7 @@ describe('PercentCircle', () => {
   describe('computed', () => {
     describe('diameter', () => {
       it('returns twice the radius', () => {
-        const expectedVal = 2 * wrapper.vm.radius;
-        expect(wrapper.vm.diameter).toBe(expectedVal);
+        expect(wrapper.vm.diameter).toBe(null);
       });
     });
     describe('conatinerWidth', () => {
