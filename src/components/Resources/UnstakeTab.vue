@@ -69,7 +69,7 @@ export default defineComponent({
       transactionError: null,
       formatDec,
       netStake: assetToAmount(netStake.value),
-      cpuStake: assetToAmount(cpuStake.value),
+      cpuStake: assetToAmount(cpuStake.value)
     };
   },
   methods: {
