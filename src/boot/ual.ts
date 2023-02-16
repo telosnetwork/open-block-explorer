@@ -44,6 +44,7 @@ async function loginHandler() {
         persistent: true
       })
         .onOk((data: string) => {
+          data = data.toLowerCase();
           accountName = data != '' ? data : 'eosio';
         })
         .onCancel(() => {
