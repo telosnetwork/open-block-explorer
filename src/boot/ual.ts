@@ -5,6 +5,7 @@ import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 import { Dialog, Notify, copyToClipboard } from 'quasar';
+import { isValidAccount } from 'src/utils/stringValidator';
 
 const chain: Chain = getChain();
 
@@ -33,13 +34,14 @@ async function loginHandler() {
         message: 'Account name',
         prompt: {
           model: '',
-          type: 'text'
+          type: 'text',
+          isValid: (val) => isValidAccount(val)
         },
         cancel: true,
         persistent: true
       })
         .onOk((data: string) => {
-          data = data.toLowerCase();
+          data = data;
           accountName = data != '' ? data : 'eosio';
         })
         .onCancel(() => {
