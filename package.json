@@ -10,8 +10,7 @@
     "build": "quasar clean && quasar build",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "jest --coverage",
-    "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788",
-    "postinstall": "husky install"
+    "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
   },
   "dependencies": {
     "@greymass/eosio": "^0.6.8",
@@ -47,7 +46,6 @@
     "eslint": "^7.14.0",
     "eslint-plugin-jest": "^25.2.2",
     "eslint-plugin-vue": "^9.0.0",
-    "husky": "^8.0.2",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "pug": "^3.0.2",
     "pug-plain-loader": "^1.1.0",
