@@ -22,7 +22,7 @@ jobs:
           --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/json' \
           --data '{
-            "context": "tests",
+            "context": "jest-tests",
             "state": "success",
             "description": "passed ✅",
             "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -36,7 +36,7 @@ jobs:
           --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/json' \
           --data '{
-            "context": "tests",
+            "context": "jest-tests",
             "state": "failure",
             "description": "failed 🚨",
             "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
