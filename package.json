@@ -10,7 +10,7 @@
     "build": "quasar clean && quasar build",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "jest --coverage",
-    "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788",
+    "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
   },
   "dependencies": {
     "@greymass/eosio": "^0.6.8",
