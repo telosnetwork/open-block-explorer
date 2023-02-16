@@ -1,9 +1,9 @@
-name: Tests CI
+name: 'CI'
 
 on: [push, pull_request]
 
 jobs:
-  test:
+  jest-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -14,7 +14,7 @@ jobs:
       - run: yarn install
       - run: yarn test
 
-      - name: Tests ✅
+      - name: Passed ✅
         if: ${{ success() }}
         run: |
           curl --request POST \
@@ -24,11 +24,11 @@ jobs:
           --data '{
             "context": "tests",
             "state": "success",
-            "description": "Tests passed",
+            "description": "passed ✅",
             "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           }'
 
-      - name: Tests 🚨
+      - name: Failed 🚨
         if: ${{ failure() }}
         run: |
           curl --request POST \
@@ -38,6 +38,6 @@ jobs:
           --data '{
             "context": "tests",
             "state": "failure",
-            "description": "Tests failed",
+            "description": "failed 🚨",
             "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           }'
