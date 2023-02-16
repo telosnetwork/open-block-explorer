@@ -153,7 +153,7 @@ export default defineComponent({
       }
 
       // transaction validation
-      if (isValidHex(inputValue.value) && inputValue.value.length == 64) {
+      if (isValidTransactionHex(inputValue.value)) {
         await router.push({
           name: 'transaction',
           params: { transaction: inputValue.value }
