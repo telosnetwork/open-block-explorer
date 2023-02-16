@@ -4,7 +4,6 @@ import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { isValidAccount } from 'src/utils/stringValidator';
 import { API } from '@greymass/eosio';
 
 const chain = getChain();
@@ -71,7 +70,6 @@ export default defineComponent({
       formatDec,
       netStake: assetToAmount(netStake.value),
       cpuStake: assetToAmount(cpuStake.value),
-      isValidAccount
     };
   },
   methods: {
