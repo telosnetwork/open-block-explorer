@@ -36,7 +36,7 @@ async function loginHandler() {
       Dialog.create({
         color: 'primary',
         title: 'Connect to cleos',
-        message: 'Account name',
+        message: 'Account name (a-z,1-5,.)',
         prompt: {
           model: '',
           type: 'text',
