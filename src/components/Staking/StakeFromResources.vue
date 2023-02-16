@@ -125,12 +125,20 @@ export default defineComponent({
         .row
           .row.q-pb-sm.full-width
             .col-9 TRANSFER CPU TO STAKING
-            .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxCpuValue' v-ripple) {{cpuWeight}}
+            .col-3
+              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxCpuValue')
+                .text-weight-bold.text-right.balance-amount {{cpuWeight}}
+                q-icon.q-ml-xs( name="info" )
+                q-tooltip Click to fill full amount
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= cpuWeight.value  || 'Invalid amount.' ]" type="text" dense dark)
           .row
           .row.q-pb-sm.full-width
             .col-9 TRANSFER NET TO STAKING
-            .col-3.text-weight-bold.text-right.cursor-pointer.q-hoverable(@click='setMaxNetValue' v-ripple) {{netWeight}}
+            .col-3
+              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxNetValue')
+                .text-weight-bold.text-right.balance-amount(@click='setMaxNetValue') {{netWeight}}
+                q-icon.q-ml-xs( name="info" )
+                q-tooltip Click to fill full amount
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= netWeight.value || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(:label=" 'Stake ' + symbol" flat @click="stake" )
@@ -143,4 +151,6 @@ export default defineComponent({
   background: rgba(108, 35, 255, 1)
   border-radius: 4px
   color: $grey-4
+.balance-amount:hover
+  color: $primary
 </style>

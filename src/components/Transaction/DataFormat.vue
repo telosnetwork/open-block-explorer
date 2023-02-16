@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, toRef, onMounted } from 'vue';
+import { defineComponent, ref, toRef, computed } from 'vue';
 import { TransferData } from 'src/types';
 import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 /* eslint-disable */
@@ -19,16 +19,12 @@ export default defineComponent({
   setup(props) {
     const actionName = toRef(props, 'actionName');
     const actionData = toRef(props, 'actionData');
-    const transferData = ref<TransferData>({} as TransferData);
     const dataBox = ref(null);
-    const isOverflowing = ref(false);
     const showOverflow = ref(false);
     const maxHeight = ref(200);
-
-    if (actionName.value === 'transfer') {
-      transferData.value = actionData.value as TransferData;
-    }
-
+    const isOverflowing = computed(() => dataBox.value?.clientHeight > maxHeight.value);
+    const transferData = computed(() => actionData.value as TransferData);
+    
     function formatGeneralData(data: any): any[] {
       var dict: any[] = [];
       for (let key in data) {
@@ -78,10 +74,6 @@ export default defineComponent({
       showOverflow.value = !showOverflow.value;
     }
 
-    onMounted(() => {
-      isOverflowing.value = dataBox.value.clientHeight > maxHeight.value;
-    });
-
     return {
       data: actionData,
       transferData,
@@ -110,7 +102,8 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
     .col-12
     .memo-card
       .memo-card-title MEMO
-      .memo-card-memo {{transferData.memo}}
+      .memo-card-memo(v-if="transferData.memo") {{transferData.memo}}
+      .memo-card-memo.placeholder(v-else) no memo
   .row(v-else ref="dataBox")
     .col-12( v-for="val in formatGeneralData(data)" :key="val.key")
       .text-weight-bold {{val.key}} :
@@ -122,12 +115,23 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
 </template>
 
 <style lang="sass" scoped>
-.action
-  // margin: 0.5rem 0
-  padding: 0 0.5rem
-  &.action-transfer
-    background: rgba(196, 196, 196, 0.3)
+
+.memo-card
+  background: var(--q-color-tertiary-gradient)
+  border-radius: 3px
+  flex-grow: 1
+  display: flex
+  .memo-card-title
+    padding: 0.5rem
+    background: var(--q-color-tertiary-gradient)
     font-weight: bold
-  &.action-general
-    border: 0.1rem solid rgba(196, 196, 196, 0.3)
+    flex-shrink: 0
+    display: flex
+    justify-content: center
+    align-items: center
+  .memo-card-memo
+    padding: 0.5rem
+    &.placeholder
+      opacity: 0.5
+      font-style: italic
 </style>
