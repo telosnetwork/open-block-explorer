@@ -3,7 +3,7 @@ name: 'CI'
 on: [pull_request]
 
 jobs:
-  jest-tests:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,6 +13,7 @@ jobs:
           node-version: '14'
       - run: yarn install
       - run: yarn test
+      - run: yarn lint
 
       - name: Passed ✅
         if: ${{ success() }}
@@ -22,7 +23,7 @@ jobs:
           --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/json' \
           --data '{
-            "context": "jest-tests",
+            "context": "tests",
             "state": "success",
             "description": "passed ✅",
             "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -36,7 +37,7 @@ jobs:
           --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
           --header 'content-type: application/json' \
           --data '{
-            "context": "jest-tests",
+            "context": "tests",
             "state": "failure",
             "description": "failed 🚨",
             "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
