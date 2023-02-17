@@ -117,10 +117,9 @@ div(
         AccountFormat(:account="transferData.to" type="account") &nbsp;
       span.text-bold {{ ' ' + transferData.quantity}}
     .col-12
-    .memo-card
-      .memo-card-title MEMO
-      .memo-card-memo(v-if="transferData.memo") {{transferData.memo}}
-      .memo-card-memo.placeholder(v-else) no memo
+      .text-weight-bold memo:&nbsp;
+        span.text-weight-regular(v-if="transferData.memo") {{transferData.memo}}
+        span.text-weight-regular(v-else) n/a
   .row(v-else ref="dataBox")
     .col-12( v-for="val in formatGeneralData(data)" :key="val.key")
       .text-weight-bold {{val.key}} :
@@ -145,22 +144,4 @@ div(
   position: absolute
   bottom: 0
 
-.memo-card
-  background: var(--q-color-tertiary-gradient)
-  border-radius: 3px
-  flex-grow: 1
-  display: flex
-  .memo-card-title
-    padding: 0.5rem
-    background: var(--q-color-tertiary-gradient)
-    font-weight: bold
-    flex-shrink: 0
-    display: flex
-    justify-content: center
-    align-items: center
-  .memo-card-memo
-    padding: 0.5rem
-    &.placeholder
-      opacity: 0.5
-      font-style: italic
 </style>
