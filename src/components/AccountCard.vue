@@ -489,7 +489,7 @@ export default defineComponent({
             td.text-left LIQUID (Telos native)
             td.text-right {{ formatAsset(liquidNative) }}
           tr
-            td.text-left REX staked
+            td.text-left REX staked (includes savings)
             td.text-right {{ formatAsset(rexStaked) }}
           tr
             td.text-left REX profits
@@ -507,7 +507,7 @@ export default defineComponent({
             td.text-left REFUNDING from staking
             td.text-right {{ formatAsset(stakedRefund) }}
           tr
-            td.text-left DELEGATED BY OTHERS
+            td.text-left DELEGATED by others
             td.text-right {{ formatAsset(delegatedResources) }}
 
 
