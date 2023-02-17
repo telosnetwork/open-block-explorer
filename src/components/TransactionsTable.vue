@@ -662,7 +662,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 v-for="size in pageSizeOptions"
                 :key="size"
               )
-                q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }} 
+                q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }}
       div.col-auto.q-ml-lg
         div.row.items-baseline
           div.col-auto.q-mr-xs
@@ -679,7 +679,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
               @click="$refs.main_table.nextPage()") NEXT
 
 
-          
+
 </template>
 
 <style lang="sass">
@@ -714,42 +714,14 @@ $medium:920px
     th:nth-child(4)
       width: 41%
 
-@media screen and (max-width: $medium)
-  .trx-table--topright-col
-    justify-content: end
-  .trx-table--topleft-col, .trx-table--topright-col
-    display: flex
-    padding-left: 16px
-    padding-right: 16px
-    min-width: 100% !important
-  .trx-table--main-container
-    width: 100%
-  .trx-table--fixed-layout
-    min-width: 620px
-    .q-table
-      table-layout: auto
-      tbody td:first-child
-        word-break: break-all
-      th:nth-child(1)
-        width: 12%
-      th:nth-child(2)
-        width: 17%
-      th:nth-child(3)
-        width: 17%
-      th:nth-child(4)
-        width: 54%
-
-@media screen and (max-width: 665px)
-  .trx-table--topleft-col, .trx-table--topright-col
-    display: block
-
-
 .q-table--no-wrap td
   word-break: break-all
   white-space: unset
 
+.q-table__middle
+  overflow-x: hidden
+
 .q-table td div
-  // max-height: 22px
   overflow-y: clip
   transition: max-height 0.5s cubic-bezier(0, 1, 0, 1)
 
@@ -781,4 +753,33 @@ body
 
 .q-btn.q-btn--no-text-transform
   text-transform: none
+
+@media screen and (max-width: $medium)
+  .trx-table--topright-col
+    justify-content: end
+  .trx-table--topleft-col, .trx-table--topright-col
+    display: flex
+    padding-left: 16px
+    padding-right: 16px
+    min-width: 100% !important
+  .trx-table--main-container
+    width: 100%
+  .trx-table--fixed-layout
+    min-width: 620px
+    .q-table
+      table-layout: auto
+      tbody td:first-child
+        word-break: break-all
+      th:nth-child(1)
+        width: 12%
+      th:nth-child(2)
+        width: 17%
+      th:nth-child(3)
+        width: 17%
+      th:nth-child(4)
+        width: 54%
+
+@media screen and (max-width: 665px)
+  .trx-table--topleft-col, .trx-table--topright-col
+    display: block
 </style>
