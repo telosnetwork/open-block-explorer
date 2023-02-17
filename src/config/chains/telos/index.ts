@@ -130,4 +130,10 @@ export default class Telos extends BaseChain {
   getTheme(): Theme {
     return THEME;
   }
+
+  getFiltersSupported(prop: string): boolean {
+    console.log('getFiltersSupported', prop);
+    if (prop === 'notified') return true;
+    return true;
+  }
 }

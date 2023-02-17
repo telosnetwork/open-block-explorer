@@ -35,4 +35,5 @@ export default abstract class BaseChain implements Chain {
   abstract getUsdPrice(): Promise<number>;
   abstract getMapDisplay(): boolean;
   abstract getTheme(): Theme;
+  abstract getFiltersSupported(prop: string): boolean;
 }

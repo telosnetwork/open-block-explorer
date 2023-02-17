@@ -89,4 +89,9 @@ export default class EOS extends BaseChain {
   getTheme(): Theme {
     return THEME;
   }
+
+  getFiltersSupported(prop: string): boolean {
+    if (prop === 'notified') return false;
+    return true;
+  }
 }

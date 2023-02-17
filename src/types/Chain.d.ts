@@ -19,4 +19,5 @@ export interface Chain {
   getUsdPrice(): Promise<number>;
   getMapDisplay(): boolean;
   getTheme(): Theme;
+  getFiltersSupported(prop: string): boolean;
 }

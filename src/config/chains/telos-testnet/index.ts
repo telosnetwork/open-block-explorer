@@ -123,4 +123,9 @@ export default class TelosTestnet extends BaseChain {
   getTheme(): Theme {
     return THEME;
   }
+
+  getFiltersSupported(prop: string): boolean {
+    if (prop === 'notified') return false;
+    return true;
+  }
 }

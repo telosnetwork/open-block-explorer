@@ -28,6 +28,9 @@ import TokenSearch from 'src/components/TokenSearch.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { QBtnDropdown } from 'quasar';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
+const chain: Chain = getChain();
 
 const FIVE_SECONDS = 5000;
 
@@ -139,6 +142,7 @@ export default defineComponent({
     });
 
     // accounts filter
+    const showAccountFilter = ref<boolean>(chain.getFiltersSupported('notified'));
     const accountsModel = ref('');
     const accountsDisplay = computed(() => {
       if (accountsModel.value) {
@@ -149,12 +153,18 @@ export default defineComponent({
     });
 
     // token filter
+    const showTokenFilter = ref(false);
     const tokenModel = ref(null as Token | null);
     const tokenDisplay = computed(() => {
       if (tokenModel.value) {
         return tokenModel.value?.symbol ?? '';
       }
       return '';
+    });
+    void api.getTokens().then((tokens) => {
+      if (tokens.length > 0) {
+        showTokenFilter.value = true;
+      }
     });
 
     // date filter
@@ -435,8 +445,10 @@ export default defineComponent({
       auxModel,
       accountsDisplay,
       accountsModel,
+      showAccountFilter,
       tokenDisplay,
       tokenModel,
+      showTokenFilter,
       interval,
       showAge,
       tableTitle,
@@ -501,6 +513,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
               span.q-pr-sm clear filters
 
             q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+              v-if="showAccountFilter"
               no-caps
               ref="accounts_dropdown"
               :color="accountsDisplay === '' ? 'primary': 'secondary'"
@@ -568,6 +581,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                             .row.items-center.justify-end
                               q-btn(v-close-popup='' label='Close' color='primary' flat)
             q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+              v-if="showTokenFilter"
               ref="token_dropdown"
               :color="!tokenDisplay ? 'primary': 'secondary'"
               :label="!tokenDisplay ? 'Token' : tokenDisplay"
