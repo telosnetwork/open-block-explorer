@@ -32,7 +32,7 @@ import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 const chain: Chain = getChain();
 
-const FIVE_SECONDS = 5000;
+const TWO_SECONDS = 2000;
 
 export default defineComponent({
   name: 'TransactionsTable',
@@ -379,7 +379,7 @@ export default defineComponent({
       interval.value = window.setInterval(() => {
         if (userWantLiveTransactions.value && enableLiveTransactions.value)
           void loadTableData();
-      }, FIVE_SECONDS);
+      }, TWO_SECONDS);
     });
     onBeforeUnmount(() => {
       clearInterval(interval.value);
@@ -702,7 +702,8 @@ $medium:920px
   .q-table
     table-layout: fixed
     tbody td
-      vertical-align: text-top
+      height: 3.25rem
+      vertical-align: items-center
     tbody td:first-child
       word-break: break-all
     th:nth-child(1)
