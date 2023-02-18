@@ -30,7 +30,7 @@ export default defineComponent({
 
 <template lang="pug">
 .header-background
-  .row.text-center.q-pt-sm.justify-between.q-pt-md
+  .row.text-center.q-pt-sm.justify-between.q-pt-md.header-container
     .logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2
       .q-px-xs-xs.q-px-sm-xs.q-px-md-md.q-px-lg-md
         a( href="/").float-left.q-ml-sm
@@ -64,6 +64,9 @@ export default defineComponent({
   width: 40px
   height: 40px
 
+.header-container
+  max-width: 1280px
+  margin: auto
 .header-items
   list-style-type: none
 
