@@ -476,7 +476,7 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-div.row.col-12.q-mt-xs.justify-center.text-left
+div.row.col-12.q-mt-xs.justify-center.text-left.trx-table
   div.row.trx-table--main-container
     div.row.col-12.q-mt-lg
       // Left column
@@ -685,8 +685,14 @@ div.row.col-12.q-mt-xs.justify-center.text-left
 <style lang="sass">
 $medium:920px
 
-.table-container
-  overflow-x: auto
+.trx-table
+  max-width: 100%
+  margin-top: 1rem
+  padding-bottom: .5rem
+  background-color:#ffffff
+  background: #FFFFFF
+  box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
+  border-radius: 10px
 
 .trx-table--title
   font-size: 22.75px
@@ -696,6 +702,7 @@ $medium:920px
 
 .trx-table--main-container
   width: 90%
+
 .trx-table--filter-buttons
   gap: 10px 0px
 .trx-table--fixed-layout
