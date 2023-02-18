@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import Index from './Index.vue';
 import PriceChart from 'components/PriceChart.vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
@@ -19,15 +19,21 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const displayMap = ConfigManager.get().getCurrentChain().getMapDisplay();
+    const mapDisplay = ConfigManager.get().getCurrentChain().getMapDisplay();
+    const showMap = ref(false);
+    const toggleMap = () => {
+      showMap.value = !showMap.value;
+    };
     onMounted(() => {
       window.setInterval(() => {
-        if (displayMap) void store.dispatch('chain/updateBlockData');
+        if (mapDisplay) void store.dispatch('chain/updateBlockData');
       }, 2000);
     });
 
     return {
-      displayMap
+      mapDisplay,
+      showMap,
+      toggleMap
     };
   }
 });
@@ -35,22 +41,39 @@ export default defineComponent({
 
 <template lang="pug">
 div.row
-  .col-12(v-if="displayMap")
-    .row.gradient-box.justify-center
+  .col-12
+    .row.gradient-box.justify-center(v-if="mapDisplay && showMap")
+      .row.full-width.hide(@click="toggleMap")
+        .items-center.arrow-button(v-if="showMap")
+          q-icon.fas.fa-chevron-up.q-pr-lg.chevron(size="17px")
+        .full-width.text-center.justify-center.actor-font HIDE MAP
       .col-12
         Map
-      
-  .col-12.map-data-position(v-if="displayMap" :class="{'overlap-map' : displayMap}")
-    MapData(:mobile="true")
-  PriceChart.price-box-position(:class="{'overlap-map' : displayMap}")
+  .row.full-width(@click="toggleMap")
+    .full-width.text-center.justify-center.actor-font SHOW MAP
+    .items-center.arrow-button(v-if='!showMap')
+      q-icon.fas.fa-chevron-down.q-pr-lg.chevron(size="17px")
+  .col-12.map-data-position(v-if="mapDisplay" :class="{'overlap-map' : mapDisplay && showMap}")
+    MapData(:mapVisible='showMap')
+  PriceChart.price-box-position(:class="{'overlap-map' : mapDisplay && showMap}")
   TransactionsTable
 
 </template>
 
 <style lang="sass">
-.overlap-map
-  &.map-data-position
+.arrow-button
+  margin: auto
+  .chevron
+    padding-left: 25px
+.hide
+  color: white
+.map-data-position
+  margin-top: 1rem
+  color: black
+  &.overlap-map
     margin-top: -200px
-  &.price-box-position
+.price-box-position
+  margin-top: 2rem
+  &.overlap-map
     margin-top: -100px
 </style>

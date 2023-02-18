@@ -1,16 +1,16 @@
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref } from 'vue';
 import { useStore } from 'src/store';
 
 export default defineComponent({
   name: 'MapData',
   props: {
-    mobile: {
+    mapVisible: {
       type: Boolean,
       required: true
     }
   },
-  setup(props) {
+  setup() {
     const store = useStore();
     const HeadBlockProducer = computed(
       (): string => store.state.chain.head_block_producer
@@ -19,12 +19,8 @@ export default defineComponent({
     const lastIrreversibleBlock = computed(
       (): number => store.state.chain.last_irreversible_block_num
     );
-    const isMobile = computed((): boolean => {
-      return props.mobile;
-    });
 
     return {
-      isMobile,
       HeadBlock,
       HeadBlockProducer,
       lastIrreversibleBlock
@@ -34,36 +30,23 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-.row.full-width.q-pl-xl.container.actor-font(v-if="!isMobile")
-  .col
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Head Block
-      .col-12.text-h6.text-grey-3.text-bold {{HeadBlock}}
-    hr
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Producing
-      .col-12.text-h6.text-grey-3.text-bold {{HeadBlockProducer}}
-    hr
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Irreversible Block
-      .col-12.text-h6.text-grey-3.text-bold {{lastIrreversibleBlock}}
-.row.full-width.text-center.justify-center.actor-font(v-else)
+.row.full-width.text-center.justify-center.actor-font(:class="{'text-grey-3' : mapVisible}")
   .col-3
     .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Head Block
-      .col-12.text-subtitle1.text-grey-3.text-bold {{HeadBlock}}
+      .col-12.text-subtitle1.text-weight-thin.text-uppercase Head Block
+      .col-12.text-subtitle1.text-bold {{HeadBlock}}
   .col-1
     .hr-vertical
   .col-3
     .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Producing
-      .col-12.text-subtitle1.text-grey-3.text-bold {{HeadBlockProducer}}
+      .col-12.text-subtitle1.text-weight-thin.text-uppercase Producing
+      .col-12.text-subtitle1.text-bold {{HeadBlockProducer}}
   .col-1
     .hr-vertical
   .col-3
     .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Irreversible
-      .col-12.text-subtitle1.text-grey-3.text-bold  {{lastIrreversibleBlock}}
+      .col-12.text-subtitle1.text-weight-thin.text-uppercase Irreversible
+      .col-12.text-subtitle1.text-bold  {{lastIrreversibleBlock}}
 </template>
 
 <style scoped lang="sass">
