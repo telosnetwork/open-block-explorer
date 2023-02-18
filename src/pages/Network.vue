@@ -49,7 +49,7 @@ div.row
         .full-width.text-center.justify-center.actor-font HIDE MAP
       .col-12
         Map
-  .row.full-width.chevron-toggle(@click="toggleMap")
+  .row.full-width.chevron-toggle(v-if='mapDisplay' @click="toggleMap")
     .full-width.text-center.justify-center.actor-font SHOW MAP
     .items-center.arrow-button(v-if='!showMap')
       q-icon.fas.fa-chevron-down.q-pr-lg.chevron(size="17px")
