@@ -43,13 +43,13 @@ export default defineComponent({
 div.row
   .col-12
     .row.gradient-box.justify-center(v-if="mapDisplay && showMap")
-      .row.full-width.hide(@click="toggleMap")
+      .row.full-width.chevron-toggle.hide(@click="toggleMap")
         .items-center.arrow-button(v-if="showMap")
           q-icon.fas.fa-chevron-up.q-pr-lg.chevron(size="17px")
         .full-width.text-center.justify-center.actor-font HIDE MAP
       .col-12
         Map
-  .row.full-width(@click="toggleMap")
+  .row.full-width.chevron-toggle(@click="toggleMap")
     .full-width.text-center.justify-center.actor-font SHOW MAP
     .items-center.arrow-button(v-if='!showMap')
       q-icon.fas.fa-chevron-down.q-pr-lg.chevron(size="17px")
@@ -67,6 +67,8 @@ div.row
     padding-left: 25px
 .hide
   color: white
+.chevron-toggle
+  cursor: pointer
 .map-data-position
   margin-top: 1rem
   color: black
