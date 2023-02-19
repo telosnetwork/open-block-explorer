@@ -19,7 +19,9 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const openTransaction = ref<boolean>(false);
-    const stakingAccount = ref<string>(store.state.account.accountName || '');
+    const stakingAccount = ref<string>(
+      store.state.account.accountName.toLowerCase() || ''
+    );
     const cpuTokens = ref<string>('0');
     const netTokens = ref<string>('0');
     const netStake = computed((): string =>
@@ -83,8 +85,8 @@ export default defineComponent({
         return;
       }
       const data = {
-        from: this.$store.state.account.accountName.toLowerCase(),
-        receiver: this.stakingAccount.toLowerCase(),
+        from: this.stakingAccount,
+        receiver: this.stakingAccount,
         transfer: false,
         unstake_cpu_quantity:
           parseFloat(this.cpuTokens) > 0
