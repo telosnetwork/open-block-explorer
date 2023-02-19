@@ -25,6 +25,7 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   '73e4385a2708e6d7048834fbc1079f2fabb17b3c125b146af438971e90716c4d';
+const NAME = 'jungle';
 const DISPLAY = 'Jungle 4';
 const TOKEN = {
   symbol: 'EOS',
@@ -44,6 +45,10 @@ const DISPLAY_MAP = true;
 const THEME = {};
 
 export default class TelosTestnet extends BaseChain {
+  getName(): string {
+    return NAME;
+  }
+
   getChainId(): string {
     return CHAIN_ID;
   }
@@ -58,6 +63,10 @@ export default class TelosTestnet extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getFuelRPCEndpoint(): RpcEndpoint | null {
+    return null;
   }
 
   getApiEndpoint(): string {
@@ -94,5 +103,10 @@ export default class TelosTestnet extends BaseChain {
 
   getTheme(): Theme {
     return THEME;
+  }
+
+  getFiltersSupported(prop: string): boolean {
+    if (prop === 'notified') return false;
+    return true;
   }
 }

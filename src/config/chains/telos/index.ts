@@ -25,6 +25,7 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11';
+const NAME = 'telos';
 const DISPLAY = 'Telos';
 const TOKEN = {
   symbol: 'TLOS',
@@ -38,6 +39,11 @@ const HYPERION_ENDPOINT = 'https://mainnet.telos.net';
 const RPC_ENDPOINT = {
   protocol: 'https',
   host: 'mainnet.telos.net',
+  port: 443
+};
+const FUEL_RPC_ENDPOINT = {
+  protocol: 'https',
+  host: 'telos.greymass.com',
   port: 443
 };
 const API_ENDPOINT = 'https://api.telos.net/v1';
@@ -65,6 +71,10 @@ const THEME = {
 };
 
 export default class Telos extends BaseChain {
+  getName(): string {
+    return NAME;
+  }
+
   getChainId(): string {
     return CHAIN_ID;
   }
@@ -79,6 +89,10 @@ export default class Telos extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getFuelRPCEndpoint(): RpcEndpoint | null {
+    return FUEL_RPC_ENDPOINT;
   }
 
   getApiEndpoint(): string {
@@ -115,5 +129,11 @@ export default class Telos extends BaseChain {
 
   getTheme(): Theme {
     return THEME;
+  }
+
+  getFiltersSupported(prop: string): boolean {
+    console.log('getFiltersSupported', prop);
+    if (prop === 'notified') return true;
+    return true;
   }
 }

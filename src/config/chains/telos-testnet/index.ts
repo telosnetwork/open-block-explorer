@@ -25,6 +25,7 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   '1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f';
+const NAME = 'telos-testnet';
 const DISPLAY = 'Telos';
 const TOKEN = {
   symbol: 'TLOS',
@@ -63,6 +64,10 @@ const THEME = {
 };
 
 export default class TelosTestnet extends BaseChain {
+  getName(): string {
+    return NAME;
+  }
+
   getChainId(): string {
     return CHAIN_ID;
   }
@@ -77,6 +82,10 @@ export default class TelosTestnet extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getFuelRPCEndpoint(): RpcEndpoint | null {
+    return null;
   }
 
   getApiEndpoint(): string {
@@ -113,5 +122,10 @@ export default class TelosTestnet extends BaseChain {
 
   getTheme(): Theme {
     return THEME;
+  }
+
+  getFiltersSupported(prop: string): boolean {
+    if (prop === 'notified') return false;
+    return true;
   }
 }
