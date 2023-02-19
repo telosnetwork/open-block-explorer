@@ -137,7 +137,7 @@ export default defineComponent({
               .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxSavingsValue')
                 .text-weight-bold.text-right.balance-amount {{ eligibleStaked }}
                 q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
+                q-tooltip If there is currently any amount maturing, those funds will be staked to savings first. Click to stake full amount.
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="toSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Move To Savings" flat @click="moveToSavings" )
@@ -149,7 +149,7 @@ export default defineComponent({
               .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxWithdrawValue')
                 .text-weight-bold.text-right.balance-amount {{rexSavings}}
                 q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
+                q-tooltip Click to stake full amount
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="fromSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Withdraw from Savings" flat @click="moveFromSavings" )
