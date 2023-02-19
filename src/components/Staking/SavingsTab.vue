@@ -22,8 +22,11 @@ export default defineComponent({
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
-    const maturedRex = computed(() => {
-      return store.state?.account.maturedRex;
+    const eligibleStaked = computed(() => {
+      return (
+        assetToAmount(store.state?.account.maturedRex) +
+        assetToAmount(store.state?.account.maturingRex)
+      );
     });
     const rexSavings = computed(() => {
       return store.state?.account.savingsRex;
@@ -55,7 +58,7 @@ export default defineComponent({
       if (
         toSavingAmount.value === '0.0000' ||
         toSavingAmount.value === '' ||
-        Number(toSavingAmount.value) >= assetToAmount(maturedRex.value)
+        Number(toSavingAmount.value) >= eligibleStaked.value
       ) {
         return;
       }
@@ -92,7 +95,7 @@ export default defineComponent({
     }
 
     function setMaxSavingsValue() {
-      toSavingAmount.value = assetToAmount(maturedRex.value).toString();
+      toSavingAmount.value = eligibleStaked.value.toString();
       void formatDec();
     }
 
@@ -107,7 +110,7 @@ export default defineComponent({
       accountData,
       toSavingAmount,
       fromSavingAmount,
-      maturedRex,
+      eligibleStaked,
       rexSavings,
       transactionId,
       transactionError,
@@ -132,7 +135,7 @@ export default defineComponent({
             .col-9 STAKE TO SAVINGS
             .col-3
               .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxSavingsValue')
-                .text-weight-bold.text-right.balance-amount {{maturedRex}}
+                .text-weight-bold.text-right.balance-amount {{ eligibleStaked }}
                 q-icon.q-ml-xs( name="info" )
                 q-tooltip Click to fill full amount
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="toSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
