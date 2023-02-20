@@ -2,7 +2,6 @@
 import { computed, defineComponent, PropType, ref } from 'vue';
 import { Token } from 'src/types';
 import { mapActions, mapGetters } from 'vuex';
-import { isValidAccount } from 'src/utils/stringValidator';
 import StakingInfo from './StakingInfo.vue';
 import StakeFromResources from './StakeFromResources.vue';
 import ProcessingTab from './ProcessingTab.vue';
@@ -79,7 +78,6 @@ export default defineComponent({
     }
   },
   methods: {
-    isValidAccount,
     async sendTransaction(): Promise<void> {
       const actionAccount = this.sendToken.contract;
       const data = {

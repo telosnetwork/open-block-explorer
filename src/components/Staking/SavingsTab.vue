@@ -22,8 +22,11 @@ export default defineComponent({
     const accountData = computed((): API.v1.AccountObject => {
       return store.state?.account.data;
     });
-    const maturedRex = computed(() => {
-      return store.state?.account.maturedRex;
+    const eligibleStaked = computed(() => {
+      return (
+        assetToAmount(store.state?.account.maturedRex) +
+        assetToAmount(store.state?.account.maturingRex)
+      );
     });
     const rexSavings = computed(() => {
       return store.state?.account.savingsRex;
@@ -55,14 +58,17 @@ export default defineComponent({
       if (
         toSavingAmount.value === '0.0000' ||
         toSavingAmount.value === '' ||
-        Number(toSavingAmount.value) >= assetToAmount(maturedRex.value)
+        Number(toSavingAmount.value) >= eligibleStaked.value
       ) {
         return;
       }
       await store.dispatch('account/moveToSavings', {
         amount: toSavingAmount.value
       });
-      openTransaction.value = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        openTransaction.value = true;
+      }
     }
 
     async function moveFromSavings() {
@@ -77,7 +83,10 @@ export default defineComponent({
       await store.dispatch('account/moveFromSavings', {
         amount: fromSavingAmount.value
       });
-      openTransaction.value = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        openTransaction.value = true;
+      }
     }
 
     function assetToAmount(asset: string, decimals = -1): number {
@@ -92,7 +101,7 @@ export default defineComponent({
     }
 
     function setMaxSavingsValue() {
-      toSavingAmount.value = assetToAmount(maturedRex.value).toString();
+      toSavingAmount.value = eligibleStaked.value.toString();
       void formatDec();
     }
 
@@ -107,7 +116,7 @@ export default defineComponent({
       accountData,
       toSavingAmount,
       fromSavingAmount,
-      maturedRex,
+      eligibleStaked,
       rexSavings,
       transactionId,
       transactionError,
@@ -132,10 +141,10 @@ export default defineComponent({
             .col-9 STAKE TO SAVINGS
             .col-3
               .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxSavingsValue')
-                .text-weight-bold.text-right.balance-amount {{maturedRex}}
+                .text-weight-bold.text-right.balance-amount {{ eligibleStaked }}
                 q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="toSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
+                q-tooltip Any balance currently maturing will be moved first, click to stake full amount
+          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="toSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= eligibleStaked  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Move To Savings" flat @click="moveToSavings" )
       .col-12.q-pt-xl
@@ -146,7 +155,7 @@ export default defineComponent({
               .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxWithdrawValue')
                 .text-weight-bold.text-right.balance-amount {{rexSavings}}
                 q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
+                q-tooltip Click to stake full amount
           q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="fromSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]" type="text" dense dark)
         .row
           q-btn.full-width.button-accent(label="Withdraw from Savings" flat @click="moveFromSavings" )

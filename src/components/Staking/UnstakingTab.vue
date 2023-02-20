@@ -62,7 +62,10 @@ export default defineComponent({
       await store.dispatch('account/unstakeRex', {
         amount: unstakeTokens.value
       });
-      openTransaction.value = true;
+
+      if (localStorage.getItem('autoLogin') !== 'cleos') {
+        openTransaction.value = true;
+      }
     }
 
     function assetToAmount(asset: string, decimals = -1): number {
