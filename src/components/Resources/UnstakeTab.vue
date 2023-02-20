@@ -5,6 +5,7 @@ import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
+import { StakeResourcesTransactionData } from 'src/types/StakeResourcesTransactionData';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -17,7 +18,9 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const openTransaction = ref<boolean>(false);
-    const stakingAccount = ref<string>(store.state.account.accountName || '');
+    const stakingAccount = ref<string>(
+      store.state.account.accountName.toLowerCase() || ''
+    );
     const cpuTokens = ref<string>('0');
     const netTokens = ref<string>('0');
     const netStake = computed((): string =>
@@ -97,19 +100,18 @@ export default defineComponent({
         return;
       }
       const data = {
-        from: this.stakingAccount.toLowerCase(),
-        receiver: this.stakingAccount.toLowerCase(),
-        unstake_stake_cpu_quantity:
+        from: this.stakingAccount,
+        receiver: this.stakingAccount,
+        transfer: false,
+        unstake_cpu_quantity:
           parseFloat(this.cpuTokens) > 0
             ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
             : `0.0000 ${symbol}`,
-        unstake_stake_net_quantity:
+        unstake_net_quantity:
           parseFloat(this.netTokens) > 0
             ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-            : `0.0000 ${symbol}`,
-        transfer: false
-      };
-
+            : `0.0000 ${symbol}`
+      } as StakeResourcesTransactionData;
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.transactionId = (
