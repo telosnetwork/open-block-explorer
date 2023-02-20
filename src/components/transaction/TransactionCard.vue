@@ -2,7 +2,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
-import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
+import AccountFormat from 'src/components/transaction/AccountFormat.vue';
 
 export default defineComponent({
     name: 'TransactionCard',

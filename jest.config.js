@@ -33,10 +33,10 @@ module.exports = {
     //TODO increase thresholds as coverage increases as testing will be enforced
     coverageThreshold: {
         global: {
-            statements: 5,
-            branches: 2,
-            functions: 2.5,
-            lines: 5,
+            statements: 13,
+            branches: 4,
+            functions: 4.5,
+            lines: 14,
         },
         './src/components/': {
             statements: 0,
@@ -75,7 +75,6 @@ module.exports = {
         '^quasar$': 'quasar/dist/quasar.esm.prod.js',
         '^~/(.*)$': '<rootDir>/$1',
         '^src/(.*)$': '<rootDir>/src/$1',
-        '^test/(.*)$': '<rootDir>/test/$1',
         '^app/(.*)$': '<rootDir>/$1',
         '^components/(.*)$': '<rootDir>/src/components/$1',
         '^layouts/(.*)$': '<rootDir>/src/layouts/$1',

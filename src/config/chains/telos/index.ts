@@ -25,6 +25,7 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11';
+const NAME = 'telos';
 const DISPLAY = 'Telos';
 const TOKEN = {
     symbol: 'TLOS',
@@ -70,6 +71,10 @@ const THEME = {
 };
 
 export default class Telos extends BaseChain {
+    getName(): string {
+        return NAME;
+    }
+
     getChainId(): string {
         return CHAIN_ID;
     }
@@ -124,5 +129,13 @@ export default class Telos extends BaseChain {
 
     getTheme(): Theme {
         return THEME;
+    }
+
+    getFiltersSupported(prop: string): boolean {
+        console.log('getFiltersSupported', prop);
+        if (prop === 'notified') {
+            return true;
+        }
+        return true;
     }
 }

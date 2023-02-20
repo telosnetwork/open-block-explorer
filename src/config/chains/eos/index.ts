@@ -10,6 +10,7 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
+const NAME = 'eos';
 const DISPLAY = 'EOS';
 const TOKEN = {
     symbol: 'EOS',
@@ -34,6 +35,10 @@ const DISPLAY_MAP = true;
 const THEME = {};
 
 export default class EOS extends BaseChain {
+    getName(): string {
+        return NAME;
+    }
+
     getChainId(): string {
         return CHAIN_ID;
     }
@@ -88,5 +93,12 @@ export default class EOS extends BaseChain {
 
     getTheme(): Theme {
         return THEME;
+    }
+
+    getFiltersSupported(prop: string): boolean {
+        if (prop === 'notified') {
+            return false;
+        }
+        return true;
     }
 }

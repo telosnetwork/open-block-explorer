@@ -31,6 +31,18 @@ export type TableIndexType =
   | Checksum256
   | Checksum160;
 
+export interface HyperionTransactionFilter {
+  page?: number; // the page variable sustitutes the skip
+  skip?: number;
+  limit?: number;
+  account?: string;
+  notified?: string;
+  sort?: 'desc' | 'asc';
+  after?: string;
+  before?: string;
+  extras?: { [key: string]: string };
+}
+
 export interface GetTableRowsParams {
   /** The name of the smart contract that controls the provided table. */
   code: NameType;
@@ -75,11 +87,7 @@ export type ApiClient = {
   getHyperionAccountData: (address: string) => Promise<AccountDetails>;
   getCreator: (address: string) => Promise<any>;
   getTokens: (address: string) => Promise<Token[]>;
-  getTransactions: (
-    page: number,
-    limit: number,
-    address?: string
-  ) => Promise<Action[]>;
+  getTransactions: (filter: HyperionTransactionFilter) => Promise<Action[]>;
   getTransaction: (address: string) => Promise<ActionData>;
   getTransactionV1: (id: string) => Promise<Transaction>;
   getChildren: (address: string) => Promise<Action[]>;

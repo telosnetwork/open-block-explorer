@@ -9,7 +9,7 @@ import {
 } from 'vue';
 import { useStore } from 'src/store';
 import { Action, TransferData } from 'src/types';
-import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
+import AccountFormat from 'src/components/transaction/AccountFormat.vue';
 
 export default defineComponent({
     name: 'ActionFormat',
@@ -54,7 +54,8 @@ export default defineComponent({
 div(:class="'action '+ divClass" v-if="tx.act.name === 'transfer'") {{divContent}}
 div(v-else class="action action-general")
   AccountFormat(:account="tx.act.account" type="account")
-  span.inline &nbsp; → &nbsp;{{tx.act.name}}
+  span.inline &nbsp; → &nbsp;
+  span.text-no-wrap {{tx.act.name}}
 </template>
 
 <style lang="sass" scoped>

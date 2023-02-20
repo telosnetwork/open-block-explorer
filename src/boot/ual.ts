@@ -10,6 +10,7 @@ import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 import { Dialog, Notify, copyToClipboard } from 'quasar';
+import { isValidAccount } from 'src/utils/stringValidator';
 
 const chain: Chain = getChain();
 
@@ -35,10 +36,11 @@ async function loginHandler() {
             Dialog.create({
                 color: 'primary',
                 title: 'Connect to cleos',
-                message: 'Account name',
+                message: 'Account name (.,a-z,1-5)',
                 prompt: {
                     model: '',
                     type: 'text',
+                    isValid: val => isValidAccount(val),
                 },
                 cancel: true,
                 persistent: true,

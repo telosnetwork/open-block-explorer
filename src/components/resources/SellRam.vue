@@ -86,6 +86,17 @@ export default defineComponent({
             assetToAmount,
         };
     },
+    computed: {
+        inputRules(): Array<(data: string) => boolean | string> {
+            return [
+                (val: string) => +val >= 0 || 'Value must not be negative',
+                (val: string) => +val <= this.ramAvailable || 'Not enough RAM',
+            ];
+        },
+        disableCta(): boolean {
+            return +this.sellAmount === 0 || +this.sellAmount > this.ramAvailable;
+        },
+    },
 });
 </script>
 
@@ -94,12 +105,17 @@ export default defineComponent({
   q-card-section.text-grey-3
     .row
       .row.q-pb-sm.full-width
-        .col-12 {{ `Amount of RAM to sell in Bytes` }}
-      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="sellAmount" :lazy-rules='true' :rules="[ val => val >= 0  && val <= ramAvailable && val != ''  || 'Invalid amount.' ]" type="text" dense dark)
+        .col-6 {{ `Amount of RAM to sell in Bytes` }}
+        .col-6
+          .color-grey-3.flex.justify-end.items-center( @click="sellAmount = ramAvailable.toString()" )
+            span.text-weight-bold.balance-amount {{ `${ramAvailable} AVAILABLE` }}
+            q-icon.q-ml-xs( name="info" )
+            q-tooltip Click to fill full amount
+      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="sellAmount" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
     .row.q-pb-sm
       .text-weight-normal.text-right.text-grey-3 ≈ {{sellPreview}}
     .row
-      q-btn.full-width.button-accent(label="Sell" flat @click="sell" )
+      q-btn.full-width.button-accent(label="Sell" flat :disable="disableCta" @click="sell" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
@@ -111,4 +127,8 @@ export default defineComponent({
   color: $grey-4
 .grey-3
   color: $grey-3
+
+.balance-amount:hover
+  color: $primary
+  cursor: pointer
 </style>

@@ -67,7 +67,10 @@ export default defineComponent({
                 cpuAmount: cpuTokens.value,
                 netAmount: netTokens.value,
             });
-            openTransaction.value = true;
+
+            if (localStorage.getItem('autoLogin') !== 'cleos') {
+                openTransaction.value = true;
+            }
         }
 
         async function unstake() {
@@ -79,7 +82,10 @@ export default defineComponent({
                 cpuAmount: cpuWithdraw.value,
                 netAmount: netWithdraw.value,
             });
-            openTransaction.value = true;
+
+            if (localStorage.getItem('autoLogin') !== 'cleos') {
+                openTransaction.value = true;
+            }
         }
 
         function setMaxNetValue() {

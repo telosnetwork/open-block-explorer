@@ -4,8 +4,8 @@ import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import { useStore } from 'src/store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
-import ResourcesDialog from 'src/components/Resources/ResourcesDialog.vue';
-import StakingDialog from 'src/components/Staking/StakingDialog.vue';
+import ResourcesDialog from 'src/components/resources/ResourcesDialog.vue';
+import StakingDialog from 'src/components/staking/StakingDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { date, useQuasar } from 'quasar';
 import { copyToClipboard } from 'quasar';
@@ -48,8 +48,15 @@ export default defineComponent({
         const KILO_UNIT = ref<number>(Math.pow(10, 3));
         const resources = ref<number>(0);
         const delegatedResources = ref<number>(0.0);
-        const rex = ref<number>(0);
+        const rexStaked = ref<number>(0);
+        const rexProfits = ref<number>(0);
+        const rexDeposits = ref<number>(0);
+        const rex = computed(
+            (): number => rexStaked.value + rexProfits.value + rexDeposits.value,
+        );
         const usdPrice = ref<number>();
+        const stakedCPU = ref<number>(0);
+        const stakedNET = ref<number>(0);
         const cpu_used = ref<number>(0);
         const cpu_max = ref<number>(0);
         const totalTokens = ref<number | string>('');
@@ -68,16 +75,18 @@ export default defineComponent({
         const accountData = ref<API.v1.AccountObject>();
         const availableTokens = ref<Token[]>([]);
 
-        const totalRefund = computed((): number =>
+        const stakedRefund = computed((): number =>
             accountData.value && accountData.value.refund_request
                 ? accountData.value.refund_request?.cpu_amount.value +
           accountData.value.refund_request?.net_amount.value
                 : 0,
         );
 
+        const staked = computed((): number => stakedRefund.value + stakedNET.value + stakedCPU.value);
+
         const token = computed((): Token => store.state.chain.token);
 
-        const liquid = computed((): number => accountData.value?.core_liquid_balance?.value
+        const liquidNative = computed((): number => accountData.value?.core_liquid_balance?.value
             ? accountData.value.core_liquid_balance.value
             : 0);
 
@@ -125,9 +134,10 @@ export default defineComponent({
         };
 
         const loadBalances = async () => {
-            const rexBalance = await getRexBalance();
-            const rexFund = await getRexFund();
-            rex.value = rexBalance + rexFund;
+            const { staked, profits } = await getRexBalance();
+            rexDeposits.value = await getRexFund();
+            rexStaked.value = staked;
+            rexProfits.value = profits;
         };
 
         const loadResources = () => {
@@ -156,24 +166,22 @@ export default defineComponent({
           Number(accountData.value.total_resources.cpu_weight.value) +
           Number(accountData.value.total_resources.net_weight.value);
 
+                stakedCPU.value = Number(
+                    accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
+                );
+
+                stakedNET.value = Number(
+                    accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
+                );
+
                 delegatedResources.value = Math.abs(
-                    stakedResources.value -
-            Number(
-                accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
-            ) -
-            Number(
-                accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
-            ),
+                    stakedResources.value - stakedNET.value - stakedCPU.value,
                 );
             }
         };
 
         const setTotalBalance = () => {
-            totalTokens.value =
-        liquid.value +
-        rex.value +
-        totalRefund.value +
-        (stakedResources.value - delegatedResources.value);
+            totalTokens.value = liquidNative.value + rex.value + staked.value;
             isLoading.value = false;
         };
 
@@ -216,6 +224,7 @@ export default defineComponent({
           }[];
         }
             ).rows[0];
+
             const rexFundBalance =
         rexfund && rexfund.balance
             ? Number(rexfund.balance.split(' ')[0])
@@ -236,9 +245,13 @@ export default defineComponent({
 
             const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
                 .rows[0];
-            const rexBalance =
+            const totalRexBalance =
         rexBal && rexBal.rex_balance
             ? Number(rexBal.rex_balance.split(' ')[0])
+            : 0;
+            const staked =
+        rexBal && rexBal.vote_stake
+            ? Number(rexBal.vote_stake.split(' ')[0])
             : 0;
 
             const paramsrexpool = {
@@ -255,7 +268,14 @@ export default defineComponent({
             const totalRex = Number(rexpool.total_rex.split(' ')[0]);
             const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
             const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
-            return totalRex > 0 ? tlosRexRatio * rexBalance : 0.0;
+
+            const total = totalRex > 0 ? tlosRexRatio * totalRexBalance : 0.0;
+            const profits = total - staked;
+            return {
+                total,
+                profits,
+                staked,
+            };
         };
 
         const fixDec = (val: number): number => parseFloat(val.toFixed(3));
@@ -306,13 +326,19 @@ export default defineComponent({
                 });
         };
 
-        const formatAsset = (val: number | string): string => typeof val === 'string'
-            ? val
-            : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
+        const formatAsset = (val: number | string): string => {
+            console.assert(typeof val === 'number' || typeof val === 'string', val);
+            return typeof val === 'string'
+                ? val
+                : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
+        };
 
         const resetBalances = () => {
             totalTokens.value = '--';
-            rex.value = stakedResources.value = delegatedResources.value = 0;
+            stakedResources.value = delegatedResources.value = 0;
+            rexStaked.value = 0;
+            rexProfits.value = 0;
+            rexDeposits.value = 0;
         };
 
         onMounted(async () => {
@@ -339,6 +365,8 @@ export default defineComponent({
         return {
             MICRO_UNIT,
             KILO_UNIT,
+            stakedCPU,
+            stakedNET,
             cpu_used,
             cpu_max,
             net_used,
@@ -348,12 +376,15 @@ export default defineComponent({
             creatingAccount,
             isLoading,
             tokensLoading,
-            liquid,
-            totalRefund,
+            liquidNative,
+            stakedRefund,
             totalTokens,
             totalValue,
             totalValueString,
             rex,
+            rexStaked,
+            rexProfits,
+            rexDeposits,
             none,
             system_account,
             radius,
@@ -447,17 +478,33 @@ export default defineComponent({
             td.text-right.total-value(v-show='!isLoading') {{ totalValueString }}
           tr
           tr
-            td.text-left LIQUID
-            td.text-right {{ formatAsset(liquid) }}
+            td.text-left LIQUID (Telos native)
+            td.text-right {{ formatAsset(liquidNative) }}
           tr
-            td.text-left STAKED
-            td.text-right {{ formatAsset(rex) }}
+            td.text-left REX staked (includes savings)
+            td.text-right {{ formatAsset(rexStaked) }}
           tr
-            td.text-left REFUNDING
-            td.text-right {{ formatAsset(totalRefund) }}
+            td.text-left REX profits
+            td.text-right {{ formatAsset(rexProfits) }}
           tr
-            td.text-left DELEGATED BY OTHERS
+            td.text-left REX liquid deposits
+            td.text-right {{ formatAsset(rexDeposits) }}
+          tr
+            td.text-left STAKED for CPU
+            td.text-right {{ formatAsset(stakedCPU) }}
+          tr
+            td.text-left STAKED for NET
+            td.text-right {{ formatAsset(stakedNET) }}
+          tr
+            td.text-left REFUNDING from staking
+            td.text-right {{ formatAsset(stakedRefund) }}
+          tr
+            td.text-left DELEGATED by others
             td.text-right {{ formatAsset(delegatedResources) }}
+
+
+
+
     div(v-if='isAccount')
       SendDialog(v-model="openSendDialog" @update-token-balances='updateTokenBalances' :availableTokens="availableTokens")
       ResourcesDialog(v-model="openResourcesDialog")

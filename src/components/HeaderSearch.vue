@@ -3,7 +3,7 @@ import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
-import { isValidHex } from 'src/utils/stringValidator';
+import { isValidTransactionHex } from 'src/utils/stringValidator';
 import { useQuasar } from 'quasar';
 
 export default defineComponent({
@@ -153,7 +153,7 @@ export default defineComponent({
             }
 
             // transaction validation
-            if (isValidHex(inputValue.value) && inputValue.value.length === 64) {
+            if (isValidTransactionHex(inputValue.value)) {
                 await router.push({
                     name: 'transaction',
                     params: { transaction: inputValue.value },

@@ -119,6 +119,14 @@ export default defineComponent({
             }
         }
 
+        function prettyBuyLimit() {
+            if (buyOption.value === buyOptions[0]) {
+                return buyLimit();
+            } else {
+                return buyLimit().toFixed(0);
+            }
+        }
+
         watch(buyOption, (newVal) => {
             if (newVal === buyOptions[0]) {
                 buyAmount.value = '0.0000';
@@ -141,8 +149,20 @@ export default defineComponent({
             formatDec,
             buy,
             buyLimit,
+            prettyBuyLimit,
             isValidAccount,
         };
+    },
+    computed: {
+        inputRules(): Array<(data: string) => boolean | string> {
+            return [
+                (val: string) => +val >= 0 || 'Value must not be negative',
+                (val: string) => +val < this.buyLimit() || 'Not enough funds',
+            ];
+        },
+        disableCta(): boolean {
+            return +this.buyAmount === 0 || +this.buyAmount > this.buyLimit();
+        },
     },
 });
 </script>
@@ -161,14 +181,19 @@ export default defineComponent({
           q-space
           .text-grey-3 Defaults to connected account
         q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="receivingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
-    .row
+    .row.q-mb-md
       .row.q-pb-sm.full-width
-        .col-12 {{ `Amount of RAM to buy in ` + buyOption}}
-      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="buyAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= buyLimit() && val != '' || 'Invalid amount.' ]" type="text" dense dark)
+        .col-6 {{ `Amount of RAM to buy in ` + buyOption}}
+        .col-6
+          .color-grey-3.flex.justify-end.items-center( @click="buyAmount = (buyLimit() - 0.1).toString()" )
+            span.text-weight-bold.balance-amount {{ `${prettyBuyLimit()} AVAILABLE` }}
+            q-icon.q-ml-xs( name="info" )
+            q-tooltip Click to fill full amount
+      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="buyAmount" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
     .row.q-pb-sm
       .text-weight-normal.text-right.text-grey-3 ≈ {{buyPreview}}
     .row
-      q-btn.full-width.button-accent(label="Buy" flat @click="buy" )
+      q-btn.full-width.button-accent(label="Buy" flat :disable="disableCta" @click="buy" )
     ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
@@ -180,4 +205,8 @@ export default defineComponent({
   color: $grey-4
 .grey-3
   color: $grey-3
+
+.balance-amount:hover
+  color: $primary
+  cursor: pointer
 </style>

@@ -4,27 +4,31 @@ import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { isValidAccount } from 'src/utils/stringValidator';
 import { API } from '@greymass/eosio';
-import { StakeResourcesTransactionData } from 'src/types';
+import { StakeResourcesTransactionData } from 'src/types/StakeResourcesTransactionData';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
 
 export default defineComponent({
-    name: 'StakeTab',
+    name: 'UnstakeTab',
     components: {
         ViewTransaction,
     },
     setup() {
         const store = useStore();
         const openTransaction = ref<boolean>(false);
-        const stakingAccount = ref<string>(store.state.account.accountName || '');
-        const accountTotal = computed((): string =>
-            store.state.account.data.core_liquid_balance.toString(),
+        const stakingAccount = ref<string>(
+            store.state.account.accountName.toLowerCase() || '',
         );
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
+        const netStake = computed((): string =>
+            store.state.account.data.total_resources.net_weight.toString(),
+        );
+        const cpuStake = computed((): string =>
+            store.state.account.data.total_resources.cpu_weight.toString(),
+        );
 
         function formatDec() {
             if (cpuTokens.value !== '0') {
@@ -69,26 +73,43 @@ export default defineComponent({
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
-            accountTotal: assetToAmount(accountTotal.value),
-            isValidAccount,
+            netStake: assetToAmount(netStake.value),
+            cpuStake: assetToAmount(cpuStake.value),
         };
+    },
+    computed: {
+        cpuInputRules(): Array<(data: string) => boolean | string> {
+            return [
+                (val: string) => +val >= 0 || 'Value must not be negative',
+                (val: string) => +val < this.cpuStake || 'Not enough staked',
+            ];
+        },
+        netInputRules(): Array<(data: string) => boolean | string> {
+            return [
+                (val: string) => +val >= 0 || 'Value must not be negative',
+                (val: string) => +val < this.netStake || 'Not enough staked',
+            ];
+        },
+        ctaDisabled(): boolean {
+            return this.cpuStake + this.netStake === 0;
+        },
     },
     methods: {
         async sendTransaction(): Promise<void> {
             this.transactionError = '';
             if (parseFloat(this.cpuTokens) <= 0 && parseFloat(this.netTokens) <= 0) {
-                this.$q.notify('Enter valid value for CPU or NET to stake');
+                this.$q.notify('Enter valid value for CPU or NET to unstake');
                 return;
             }
             const data = {
-                from: this.$store.state.account.accountName.toLowerCase(),
-                receiver: this.stakingAccount.toLowerCase(),
+                from: this.stakingAccount,
+                receiver: this.stakingAccount,
                 transfer: false,
-                stake_cpu_quantity:
+                unstake_cpu_quantity:
           parseFloat(this.cpuTokens) > 0
               ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
               : `0.0000 ${symbol}`,
-                stake_net_quantity:
+                unstake_net_quantity:
           parseFloat(this.netTokens) > 0
               ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
               : `0.0000 ${symbol}`,
@@ -98,7 +119,7 @@ export default defineComponent({
                 this.transactionId = (
           await this.signTransaction({
               account: 'eosio',
-              name: 'delegatebw',
+              name: 'undelegatebw',
               data,
           })
         ).transactionId as string;
@@ -129,24 +150,30 @@ export default defineComponent({
 <template lang="pug">
 .staking-form
   q-card-section.text-grey-3.text-weight-light
-    .row
-      .col-12
-        .row.justify-between.q-pb-sm CPU/NET Receiver
-          q-space
-          .text-grey-3 Defaults to connected account
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense  dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
-    .row.q-py-md
+    .row.q-pb-md
       .col-6
-        .row.justify-between.q-pb-sm ADD CPU
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 || 'Invalid amount.' ]" type="text" dense dark)
+        .row.q-pb-sm
+            .col-6 REMOVE CPU
+            .col-6
+              .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = cpuStake.toString()" )
+                span.text-weight-bold.balance-amount {{ cpuStake ? `${cpuStake } AVAILABLE` : '--' }}
+                q-icon.q-ml-xs( name="info" )
+                q-tooltip Click to fill full amount
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="cpuTokens" :lazy-rules="true"  :rules="cpuInputRules" type="text" dense dark)
 
       .col-6.q-pl-md
-        .row.justify-between.q-pb-sm ADD NET
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val => val <= accountTotal && val >= 0 ||'Invalid amount.' ]" type="text" dense dark)
+        .row.q-pb-sm
+            .col-6 REMOVE NET
+            .col-6
+              .color-grey-3.flex.justify-end.items-center( @click="netTokens = netStake.toString()" )
+                span.text-weight-bold.balance-amount {{ netStake ? `${netStake } AVAILABLE` : '--' }}
+                q-icon.q-ml-xs( name="info" )
+                q-tooltip Click to fill full amount
+        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0'  v-model="netTokens" :lazy-rules="true" :rules="netInputRules" type="text" dense dark)
     .row
       .col-12.q-pt-md
-        q-btn.full-width.button-accent(label="Confirm" flat @click="sendTransaction" )
-  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+        q-btn.full-width.button-accent(label="Confirm" flat :disable="ctaDisabled" @click="sendTransaction" )
+    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
 
 </template>
 
