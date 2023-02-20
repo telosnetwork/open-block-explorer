@@ -122,13 +122,7 @@ export default defineComponent({
       rowsNumber: 10000
     });
 
-    const userWantLiveTransactions = ref<boolean>(true);
-    const enableLiveTransactions = computed(() => {
-      return (
-        filter.value === '' &&
-        paginationSettings.value.page === 1
-      );
-    });
+    const enableLiveTransactions = ref<boolean>(true);
 
     // actions filter
     const auxModel = ref('');
@@ -364,8 +358,6 @@ export default defineComponent({
       if (size) {
         paginationSettings.value.rowsPerPage = Number(size);
       }
-      // try to restore live transactions
-      userWantLiveTransactions.value = enableLiveTransactions.value;
       await onRequest({
         pagination: paginationSettings.value
       });
@@ -376,37 +368,47 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      setLiveTransactionInterval()
+    });
+
+    const setLiveTransactionInterval = () => {
       interval.value = window.setInterval(() => {
-        if (userWantLiveTransactions.value && enableLiveTransactions.value)
           void loadTableData();
       }, TWO_SECONDS);
-    });
+    }
+
     onBeforeUnmount(() => {
       clearInterval(interval.value);
     });
+
     watch([account, actions], () => {
       void loadTableData();
     });
+
     watch(filter, async () => {
       if (paginationSettings.value.page !== 1) {
         await changePagination(1,paginationSettings.value.rowsPerPage);
       } else {
         await loadTableData();
       }
-
-      userWantLiveTransactions.value =
-        filter.value === '' &&
-        paginationSettings.value.page === 1;
-
     });
+
     watch(showAge, (val) => {
       localStorage.setItem('showAge', val ? 'true' : 'false');
     });
-    watch(enableLiveTransactions, (val) => {
-      if (!val) {
-        userWantLiveTransactions.value = false;
+
+    watch(enableLiveTransactions, async (val) => {
+      if (val) {
+        // on toggle live transactions return to first page
+        if (paginationSettings.value.page !== 1){
+          await changePagination(1,paginationSettings.value.rowsPerPage);
+        }
+        setLiveTransactionInterval();
+      }else {
+        clearInterval(interval.value);
       }
     });
+
     // create a watch for pagination and make sure it is called inmediately
     watch(
       () => pagination.value,
@@ -424,7 +426,10 @@ export default defineComponent({
           page = Number(p);
           size = Number(s);
         }
-
+        // automatically disable live transactions on navigation from front page
+        if (page !== 1) {
+          enableLiveTransactions.value = false;
+        }
         await applyPagination(page, size);
       },
       { immediate: true }
@@ -468,8 +473,7 @@ export default defineComponent({
       onPaginationChange,
       toggleDropdown,
       clearFilters,
-      enableLiveTransactions,
-      userWantLiveTransactions
+      enableLiveTransactions
     };
   }
 });
@@ -491,10 +495,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
         div.row
           div.col
             q-toggle.text-no-wrap(
-              v-model="userWantLiveTransactions"
+              v-model="enableLiveTransactions"
               left-label
               label="Live transactions"
-              :disable="!enableLiveTransactions"
             )
       // Right column
       div.col.trx-table--topright-col
