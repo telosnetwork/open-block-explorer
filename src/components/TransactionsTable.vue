@@ -400,7 +400,7 @@ export default defineComponent({
 
     watch(enableLiveTransactions, async (val) => {
       if (val) {
-        // on toggle live transactions return to first page
+        clearFilters();
         if (paginationSettings.value.page !== 1){
           await changePagination(1,paginationSettings.value.rowsPerPage);
         }
