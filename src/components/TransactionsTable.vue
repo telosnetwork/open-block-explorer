@@ -389,6 +389,7 @@ export default defineComponent({
       if (paginationSettings.value.page !== 1) {
         await changePagination(1,paginationSettings.value.rowsPerPage);
       } else {
+        enableLiveTransactions.value = false;
         await loadTableData();
       }
     });
