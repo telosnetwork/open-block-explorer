@@ -244,10 +244,10 @@ export default defineComponent({
         let after = '';
         let before = '';
         if (toDateModel.value !== now) {
-          before = toDateModel.value;
+          before = new Date(toDateModel.value).toISOString();
         }
         if (fromDateModel.value !== '') {
-          after = fromDateModel.value;
+          after = new Date(fromDateModel.value).toISOString();
         }
         const sort = paginationSettings.value.descending ? 'desc' : 'asc';
 
@@ -261,7 +261,6 @@ export default defineComponent({
         if (tokenModel.value) {
           limit = 100;
         }
-
         tableData = await api.getTransactions({
           page,
           limit,
@@ -273,6 +272,7 @@ export default defineComponent({
           extras
         });
       }
+
       if (tableData) {
         if (tokenModel.value) {
           tableData = tableData.filter((item) => {
