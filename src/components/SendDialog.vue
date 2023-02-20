@@ -69,7 +69,10 @@ export default defineComponent({
       void store.dispatch('account/resetTransaction');
       if (availableTokens.value.length > 0) {
         sendToken.value = availableTokens.value.find((token) => {
-          return token.symbol === sendToken.value.symbol;
+          return (
+            token.symbol === sendToken.value.symbol &&
+            token.contract === sendToken.value.contract
+          );
         });
       }
     };
@@ -164,7 +167,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
               .col-4
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
                 .row.items-center.no-wrap.selector-container.q-py-sm(@click="openCoinDialog = true" )
-                  .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken.symbol}}
+                  .col-8.text-subtitle-1.q-mx-sm.subtitle {{ sendToken?.symbol}}
                   .col-4
                     .row.justify-end.items-center.arrowButton
                       q-icon.fas.fa-chevron-down.q-pr-lg(size="17px")
@@ -173,8 +176,11 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                 .row.justify-between.q-pb-sm.q-gutter-x-sm
                   div AMOUNT
                   q-space
-                  .color-grey-3.text-weight-bold.cursor-pointer.q-hoverable(@click='setMaxValue' v-ripple) {{sendToken.amount}} AVAILABLE
-                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken.amount || "invalid amount" ]' type="text" dense dark)
+                  .row.flex-center.q-hoverable.cursor-pointer(@click='setMaxValue')
+                    .color-grey-3.text-weight-bold.balance-amount {{ sendToken?.amount ? `${sendToken.amount } AVAILABLE` : '--' }}
+                    q-icon.q-ml-xs( name="info" )
+                    q-tooltip Click to fill full amount
+                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken?.amount || "invalid amount" ]' type="text" dense dark)
             .row
               .col-12
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
@@ -188,7 +194,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
           q-card-section(v-if='transactionId')
             .row
               .col-12
-                .row You successfully sent {{ sendAmount }} {{ sendToken.symbol }} to {{ recievingAccount }}.
+                .row You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ recievingAccount }}.
                 .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}
           q-card-section(v-else)
             .row
@@ -237,4 +243,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
     color: $grey-4
 .send-img
   height: 35px !important
+
+.balance-amount:hover
+  color: $primary
 </style>

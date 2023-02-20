@@ -10,6 +10,7 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4';
+const NAME = 'wax';
 const DISPLAY = 'WAX';
 const TOKEN = {
   symbol: 'WAX',
@@ -29,6 +30,10 @@ const DISPLAY_MAP = true;
 const THEME = {};
 
 export default class EOS extends BaseChain {
+  getName(): string {
+    return NAME;
+  }
+
   getChainId(): string {
     return CHAIN_ID;
   }
@@ -43,6 +48,10 @@ export default class EOS extends BaseChain {
 
   getRPCEndpoint(): RpcEndpoint {
     return RPC_ENDPOINT;
+  }
+
+  getFuelRPCEndpoint(): RpcEndpoint | null {
+    return null;
   }
 
   getApiEndpoint(): string {
@@ -79,5 +88,10 @@ export default class EOS extends BaseChain {
 
   getTheme(): Theme {
     return THEME;
+  }
+
+  getFiltersSupported(prop: string): boolean {
+    if (prop === 'notified') return false;
+    return true;
   }
 }

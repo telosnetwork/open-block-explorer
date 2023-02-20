@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, toRef, onMounted } from 'vue';
+import { defineComponent, ref, watch, toRefs, computed, onUpdated } from 'vue';
 import { TransferData } from 'src/types';
 import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 /* eslint-disable */
@@ -17,17 +17,14 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const actionName = toRef(props, 'actionName');
-    const actionData = toRef(props, 'actionData');
-    const transferData = ref<TransferData>({} as TransferData);
+    const { actionName, actionData } = toRefs(props);
     const dataBox = ref(null);
-    const isOverflowing = ref(false);
     const showOverflow = ref(false);
-    const maxHeight = ref(200);
-
-    if (actionName.value === 'transfer') {
-      transferData.value = actionData.value as TransferData;
-    }
+    const maxHeight = ref(57);
+    const switchHeight = ref(20);
+    const isOverflowing = ref(false);
+    const transferData = computed(() => actionData.value as TransferData);
+    const clientHeight = computed(() => dataBox.value?.clientHeight ?? 0);
 
     function formatGeneralData(data: any): any[] {
       var dict: any[] = [];
@@ -42,9 +39,9 @@ export default defineComponent({
                 );
               }
             }
-            if(keyValArray.length == 0) {
+            if (keyValArray.length == 0) {
               dict.push({ key, value: JSON.stringify(data[key]) });
-            } else{
+            } else {
               dict = dict.concat(keyValArray);
             }
           } else {
@@ -62,6 +59,18 @@ export default defineComponent({
       return dict;
     }
 
+    function updateOverflowing() {
+      isOverflowing.value = (dataBox.value?.clientHeight ?? 0) > maxHeight.value;
+    }
+
+    watch([actionData,clientHeight], () => {
+      updateOverflowing();
+    });
+
+    onUpdated(() => {
+      updateOverflowing();
+    });
+
     function isAccount(data: string): boolean {
       const accountRegEx = [
         'account',
@@ -78,10 +87,6 @@ export default defineComponent({
       showOverflow.value = !showOverflow.value;
     }
 
-    onMounted(() => {
-      isOverflowing.value = dataBox.value.clientHeight > maxHeight.value;
-    });
-
     return {
       data: actionData,
       transferData,
@@ -92,14 +97,18 @@ export default defineComponent({
       isOverflowing,
       showOverflow,
       toggleOverflow,
-      maxHeight
+      maxHeight,
+      switchHeight
     };
   }
 });
 </script>
 
 <template lang="pug">
-div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : `max-height: ${maxHeight}px`")
+div(
+  :class="showOverflow ? '' : 'overflow-hidden'"
+  :style=" (showOverflow || !isOverflowing) ? '' : `max-height: calc(${maxHeight}px - ${switchHeight}px)`"
+)
   .row(v-if="actionName === 'transfer'" ref="dataBox")
     .col-12
       span.text-bold
@@ -108,9 +117,9 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
         AccountFormat(:account="transferData.to" type="account") &nbsp;
       span.text-bold {{ ' ' + transferData.quantity}}
     .col-12
-    .memo-card
-      .memo-card-title MEMO
-      .memo-card-memo {{transferData.memo}}
+      .text-weight-bold memo:&nbsp;
+        span.text-weight-regular(v-if="transferData.memo") {{transferData.memo}}
+        span.text-weight-regular(v-else) n/a
   .row(v-else ref="dataBox")
     .col-12( v-for="val in formatGeneralData(data)" :key="val.key")
       .text-weight-bold {{val.key}} :
@@ -118,16 +127,21 @@ div(:class="showOverflow ? '' : 'overflow-hidden'" :style=" showOverflow ? '' : 
           AccountFormat(:account="val.value" type="account") &nbsp;
         span.text-weight-regular(v-else) {{val.value}} &nbsp;
 .row(v-if="isOverflowing")
-  q-btn.full-width( flat size="xs" :icon="showOverflow ? 'expand_less' : 'expand_more'" @click="toggleOverflow")
+  q-btn.full-width(
+    flat size="xs"
+    :icon="showOverflow ? 'expand_less' : 'expand_more'"
+    :class="showOverflow ? '' : 'q-btn--floating'"
+    @click="toggleOverflow")
 </template>
 
 <style lang="sass" scoped>
-.action
-  // margin: 0.5rem 0
-  padding: 0 0.5rem
-  &.action-transfer
-    background: rgba(196, 196, 196, 0.3)
-    font-weight: bold
-  &.action-general
-    border: 0.1rem solid rgba(196, 196, 196, 0.3)
+
+.q-btn--floating
+  // gradient background from bottom 100% opaque to top 0% opaque
+  background: rgb(255,255,255)
+  background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,0.7) 80%, rgba(255,255,255,0.3) 100%)
+  // make the button to float on top of the content
+  position: absolute
+  bottom: 0
+
 </style>
