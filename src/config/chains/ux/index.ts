@@ -1,4 +1,4 @@
-import BaseChain from '../../BaseChain';
+import BaseChain from 'src/config/BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { getEmptyPriceChartData } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
@@ -10,16 +10,16 @@ const CHAIN_ID =
 const NAME = 'ux';
 const DISPLAY = 'UX';
 const TOKEN = {
-  symbol: 'UTX',
-  precision: 4,
-  amount: 0,
-  contract: 'eosio.token'
+    symbol: 'UTX',
+    precision: 4,
+    amount: 0,
+    contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://ux.eosusa.io';
 const RPC_ENDPOINT = {
-  protocol: 'https',
-  host: 'ux.eosusa.io',
-  port: 443
+    protocol: 'https',
+    host: 'ux.eosusa.io',
+    port: 443,
 };
 const API_ENDPOINT = 'https://example.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
@@ -27,68 +27,70 @@ const DISPLAY_MAP = true;
 const THEME = {};
 
 export default class UX extends BaseChain {
-  getName(): string {
-    return NAME;
-  }
+    getName(): string {
+        return NAME;
+    }
 
-  getChainId(): string {
-    return CHAIN_ID;
-  }
+    getChainId(): string {
+        return CHAIN_ID;
+    }
 
-  getDisplay(): string {
-    return DISPLAY;
-  }
+    getDisplay(): string {
+        return DISPLAY;
+    }
 
-  getHyperionEndpoint(): string {
-    return HYPERION_ENDPOINT;
-  }
+    getHyperionEndpoint(): string {
+        return HYPERION_ENDPOINT;
+    }
 
-  getRPCEndpoint(): RpcEndpoint {
-    return RPC_ENDPOINT;
-  }
+    getRPCEndpoint(): RpcEndpoint {
+        return RPC_ENDPOINT;
+    }
 
-  getFuelRPCEndpoint(): RpcEndpoint | null {
-    return null;
-  }
+    getFuelRPCEndpoint(): RpcEndpoint | null {
+        return null;
+    }
 
-  getApiEndpoint(): string {
-    return API_ENDPOINT;
-  }
+    getApiEndpoint(): string {
+        return API_ENDPOINT;
+    }
 
-  getS3ProducerBucket(): string {
-    return S3_PRODUCER_BUCKET;
-  }
+    getS3ProducerBucket(): string {
+        return S3_PRODUCER_BUCKET;
+    }
 
-  getPriceData(): Promise<PriceChartData> {
-    return getEmptyPriceChartData();
-  }
+    getPriceData(): Promise<PriceChartData> {
+        return getEmptyPriceChartData();
+    }
 
-  getSystemToken(): Token {
-    return TOKEN;
-  }
+    getSystemToken(): Token {
+        return TOKEN;
+    }
 
-  getUsdPrice(): Promise<number> {
-    return Promise.resolve(0);
-  }
+    getUsdPrice(): Promise<number> {
+        return Promise.resolve(0);
+    }
 
-  getLargeLogoPath(): string {
-    return 'chains/ux/logo_sm.jpeg';
-  }
+    getLargeLogoPath(): string {
+        return 'chains/ux/logo_sm.jpeg';
+    }
 
-  getSmallLogoPath(): string {
-    return 'chains/ux/logo_sm.jpeg';
-  }
+    getSmallLogoPath(): string {
+        return 'chains/ux/logo_sm.jpeg';
+    }
 
-  getMapDisplay(): boolean {
-    return DISPLAY_MAP;
-  }
+    getMapDisplay(): boolean {
+        return DISPLAY_MAP;
+    }
 
-  getTheme(): Theme {
-    return THEME;
-  }
+    getTheme(): Theme {
+        return THEME;
+    }
 
-  getFiltersSupported(prop: string): boolean {
-    if (prop === 'notified') return false;
-    return true;
-  }
+    getFiltersSupported(prop: string): boolean {
+        if (prop === 'notified') {
+            return false;
+        }
+        return true;
+    }
 }

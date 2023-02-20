@@ -3,29 +3,29 @@ import { defineComponent, computed } from 'vue';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'MapData',
-  props: {
-    mapVisible: {
-      type: Boolean,
-      required: true
-    }
-  },
-  setup() {
-    const store = useStore();
-    const HeadBlockProducer = computed(
-      (): string => store.state.chain.head_block_producer
-    );
-    const HeadBlock = computed((): number => store.state.chain.head_block_num);
-    const lastIrreversibleBlock = computed(
-      (): number => store.state.chain.last_irreversible_block_num
-    );
+    name: 'MapData',
+    props: {
+        mapVisible: {
+            type: Boolean,
+            required: true,
+        },
+    },
+    setup() {
+        const store = useStore();
+        const HeadBlockProducer = computed(
+            (): string => store.state.chain.head_block_producer,
+        );
+        const HeadBlock = computed((): number => store.state.chain.head_block_num);
+        const lastIrreversibleBlock = computed(
+            (): number => store.state.chain.last_irreversible_block_num,
+        );
 
-    return {
-      HeadBlock,
-      HeadBlockProducer,
-      lastIrreversibleBlock
-    };
-  }
+        return {
+            HeadBlock,
+            HeadBlockProducer,
+            lastIrreversibleBlock,
+        };
+    },
 });
 </script>
 

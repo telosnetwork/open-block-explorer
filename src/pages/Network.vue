@@ -1,41 +1,43 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
-import Index from './Index.vue';
+import Index from 'src/pages/Index.vue';
 import PriceChart from 'components/PriceChart.vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
-import Map from 'components/Map.vue';
+import WorldMap from 'components/WorldMap.vue';
 import MapData from 'components/MapData.vue';
 import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
 
 export default defineComponent({
-  name: 'PageIndex',
-  components: {
-    Index,
-    PriceChart,
-    TransactionsTable,
-    Map,
-    MapData
-  },
-  setup() {
-    const store = useStore();
-    const mapDisplay = ConfigManager.get().getCurrentChain().getMapDisplay();
-    const showMap = ref(false);
-    const toggleMap = () => {
-      showMap.value = !showMap.value;
-    };
-    onMounted(() => {
-      window.setInterval(() => {
-        if (mapDisplay) void store.dispatch('chain/updateBlockData');
-      }, 2000);
-    });
+    name: 'PageIndex',
+    components: {
+        Index,
+        PriceChart,
+        TransactionsTable,
+        WorldMap,
+        MapData,
+    },
+    setup() {
+        const store = useStore();
+        const mapDisplay = ConfigManager.get().getCurrentChain().getMapDisplay();
+        const showMap = ref(false);
+        const toggleMap = () => {
+            showMap.value = !showMap.value;
+        };
+        onMounted(() => {
+            window.setInterval(() => {
+                if (mapDisplay) {
+                    void store.dispatch('chain/updateBlockData');
+                }
+            }, 2000);
+        });
 
-    return {
-      mapDisplay,
-      showMap,
-      toggleMap
-    };
-  }
+        return {
+            mapDisplay,
+            showMap,
+            toggleMap,
+        };
+    },
 });
 </script>
 
@@ -48,7 +50,7 @@ div.row
           q-icon.fas.fa-chevron-up.q-pr-lg.chevron(size="17px")
         .full-width.text-center.justify-center.actor-font HIDE MAP
       .col-12
-        Map
+        WorldMap
   .row.full-width.chevron-toggle(v-if='mapDisplay' @click="toggleMap")
     .full-width.text-center.justify-center.actor-font SHOW MAP
     .items-center.arrow-button(v-if='!showMap')

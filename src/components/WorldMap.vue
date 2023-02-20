@@ -91,7 +91,7 @@ const vector = new VectorLayer({
 });
 
 export default defineComponent({
-  name: 'Map',
+  name: 'WorldMap',
   components: {
     Map,
     View

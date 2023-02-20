@@ -2,24 +2,24 @@
 import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'AccountFormat',
-  props: {
-    account: {
-      type: String,
-      default: () => ''
+    name: 'AccountFormat',
+    props: {
+        account: {
+            type: String,
+            default: () => '',
+        },
+        type: {
+            type: String,
+            required: true,
+        },
     },
-    type: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
-    const accAccount = computed(() => props.account);
-    return {
-      accType: props.type,
-      accAccount
-    };
-  }
+    setup(props) {
+        const accAccount = computed(() => props.account);
+        return {
+            accType: props.type,
+            accAccount,
+        };
+    },
 });
 </script>
 

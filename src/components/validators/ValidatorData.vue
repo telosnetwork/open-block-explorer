@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
-import ValidatorDataTable from './ValidatorDataTable.vue';
+import ValidatorDataTable from 'src/components/validators/ValidatorDataTable.vue';
 import { api } from 'src/api';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
@@ -12,185 +12,186 @@ import { Name } from '@greymass/eosio';
 const chain = getChain();
 
 export default defineComponent({
-  name: 'ValidatorData',
-  components: {
-    ValidatorDataTable,
-    ViewTransaction,
-    WalletModal
-  },
-  setup() {
-    const store = useStore();
-    const symbol = chain.getSystemToken().symbol;
-    const account = computed(() => store.state.account.accountName);
-    const balance = computed(
-      () => (Number(lastWeight.value).toFixed(2) || '0') + ` ${symbol}`
-    );
-    const activecount = computed(() => {
-      if (store.state.chain.producers.length > 42) return 42;
-      else return store.state.chain.producers.length;
-    });
-    const lastUpdated = ref<string>('');
-    const producerVotes = ref<Name[]>([]);
-    const currentVote = computed(() => {
-      return store.state.account.vote;
-    });
-    const showCpu = ref<boolean>(false);
-    const voteChanged = ref<boolean>(false);
-    const resetFlag = ref<boolean>(false);
-    const lastWeight = ref<number>(0);
-    const lastStaked = ref<number>(0);
-    const stakedAmount = ref<number>(0);
-    const accountValid = computed(() => account.value && account.value !== '');
-    const transactionId = ref<string>(store.state.account.TransactionId);
-    const transactionError = ref<unknown>(store.state.account.TransactionError);
-    const openTransaction = ref<boolean>(false);
-    const showWalletModal = ref<boolean>(false);
-    const payrate = ref(0);
-    const top21pay24h = ref(0);
-    const supply = ref(0);
-    const voters = ref(0);
-    const amount_voted = ref(0);
-    const votesProgress = computed(() => {
-      return amount_voted.value / supply.value || 0;
-    });
+    name: 'ValidatorData',
+    components: {
+        ValidatorDataTable,
+        ViewTransaction,
+        WalletModal,
+    },
+    setup() {
+        const store = useStore();
+        const symbol = chain.getSystemToken().symbol;
+        const account = computed(() => store.state.account.accountName);
+        const balance = computed(
+            () => (Number(lastWeight.value).toFixed(2) || '0') + ` ${symbol}`,
+        );
+        const activecount = computed(() => {
+            if (store.state.chain.producers.length > 42) {
+                return 42;
+            } else {
+                return store.state.chain.producers.length;
+            }
+        });
+        const lastUpdated = ref<string>('');
+        const producerVotes = ref<Name[]>([]);
+        const currentVote = computed(() => store.state.account.vote);
+        const showCpu = ref<boolean>(false);
+        const voteChanged = ref<boolean>(false);
+        const resetFlag = ref<boolean>(false);
+        const lastWeight = ref<number>(0);
+        const lastStaked = ref<number>(0);
+        const stakedAmount = ref<number>(0);
+        const accountValid = computed(() => account.value && account.value !== '');
+        const transactionId = ref<string>(store.state.account.TransactionId);
+        const transactionError = ref<unknown>(store.state.account.TransactionError);
+        const openTransaction = ref<boolean>(false);
+        const showWalletModal = ref<boolean>(false);
+        const payrate = ref(0);
+        const top21pay24h = ref(0);
+        const supply = ref(0);
+        const voters = ref(0);
+        const amount_voted = ref(0);
+        const votesProgress = computed(() => amount_voted.value / supply.value || 0);
 
-    function assetToAmount(asset: string, decimals = -1): number {
-      try {
-        let qty: string = asset.split(' ')[0];
-        let val: number = parseFloat(qty);
-        if (decimals > -1) qty = val.toFixed(decimals);
-        return val;
-      } catch (error) {
-        return 0;
-      }
-    }
-    async function getVotingStatistics() {
-      await getVoteWeight();
-      await updateVoteAmount();
-      await updateSupply();
-      await updatePayRate();
-    }
+        function assetToAmount(asset: string, decimals = -1): number {
+            try {
+                let qty: string = asset.split(' ')[0];
+                let val: number = parseFloat(qty);
+                if (decimals > -1) {
+                    qty = val.toFixed(decimals);
+                }
+                return val;
+            } catch (error) {
+                return 0;
+            }
+        }
+        async function getVotingStatistics() {
+            await getVoteWeight();
+            await updateVoteAmount();
+            await updateSupply();
+            await updatePayRate();
+        }
 
-    async function getVoteWeight() {
-      const paramsVoteWeight = {
-        code: 'eosio',
-        scope: 'eosio',
-        table: 'voters',
-        lower_bound: Name.from(account.value),
-        limit: 1
-      } as GetTableRowsParams;
-      lastWeight.value = (
+        async function getVoteWeight() {
+            const paramsVoteWeight = {
+                code: 'eosio',
+                scope: 'eosio',
+                table: 'voters',
+                lower_bound: Name.from(account.value),
+                limit: 1,
+            } as GetTableRowsParams;
+            lastWeight.value = (
         (await api.getTableRows(paramsVoteWeight)) as {
           rows: { last_vote_weight: number }[];
         }
-      ).rows[0].last_vote_weight;
-    }
+            ).rows[0].last_vote_weight;
+        }
 
-    async function updatePayRate() {
-      const sharecount =
+        async function updatePayRate() {
+            const sharecount =
         activecount.value <= 21
-          ? activecount.value * 2
-          : 42 + (activecount.value - 21);
-      const paramsPayrate = {
-        code: 'eosio',
-        scope: 'eosio',
-        table: 'payrate'
-      } as GetTableRowsParams;
-      payrate.value = (
+            ? activecount.value * 2
+            : 42 + (activecount.value - 21);
+            const paramsPayrate = {
+                code: 'eosio',
+                scope: 'eosio',
+                table: 'payrate',
+            } as GetTableRowsParams;
+            payrate.value = (
         (await api.getTableRows(paramsPayrate)) as {
           rows: { bpay_rate: number }[];
         }
-      ).rows[0].bpay_rate;
-      // 2 shares per top 21 bp
-      // 1 share for standby up untill 42 bps
-      top21pay24h.value =
+            ).rows[0].bpay_rate;
+            // 2 shares per top 21 bp
+            // 1 share for standby up untill 42 bps
+            top21pay24h.value =
         (((payrate.value / 100000) * supply.value) / 365 / sharecount) * 2;
-    }
+        }
 
-    async function updateSupply() {
-      const paramsSupply = {
-        code: 'eosio.token',
-        scope: chain.getSystemToken().symbol,
-        table: 'stat'
-      } as GetTableRowsParams;
-      supply.value = assetToAmount(
-        (
+        async function updateSupply() {
+            const paramsSupply = {
+                code: 'eosio.token',
+                scope: chain.getSystemToken().symbol,
+                table: 'stat',
+            } as GetTableRowsParams;
+            supply.value = assetToAmount(
+                (
           (await api.getTableRows(paramsSupply)) as {
             rows: { supply: string }[];
           }
-        ).rows[0].supply
-      );
-    }
+                ).rows[0].supply,
+            );
+        }
 
-    async function updateVoteAmount() {
-      const request = {
-        code: 'eosio',
-        lower_bound: 'eosio',
-        table: 'voters'
-      };
-      voters.value = (await api.getTableByScope(request))[0].count;
-      const totalStakeParams = {
-        code: 'eosio',
-        scope: 'eosio',
-        table: 'global'
-      } as GetTableRowsParams;
-      amount_voted.value =
+        async function updateVoteAmount() {
+            const request = {
+                code: 'eosio',
+                lower_bound: 'eosio',
+                table: 'voters',
+            };
+            voters.value = (await api.getTableByScope(request))[0].count;
+            const totalStakeParams = {
+                code: 'eosio',
+                scope: 'eosio',
+                table: 'global',
+            } as GetTableRowsParams;
+            amount_voted.value =
         (
           (await api.getTableRows(totalStakeParams)) as {
             rows: { total_activated_stake: number }[];
           }
         ).rows[0].total_activated_stake / 10000;
-    }
+        }
 
-    function toggleView() {
-      showCpu.value = !showCpu.value;
-    }
-    async function sendVoteTransaction() {
-      if (accountValid.value) {
-        await store.dispatch('account/sendVoteTransaction');
-        openTransaction.value = true;
-        await getVoteWeight();
-      } else {
-        showWalletModal.value = true;
-      }
-    }
+        function toggleView() {
+            showCpu.value = !showCpu.value;
+        }
+        async function sendVoteTransaction() {
+            if (accountValid.value) {
+                await store.dispatch('account/sendVoteTransaction');
+                openTransaction.value = true;
+                await getVoteWeight();
+            } else {
+                showWalletModal.value = true;
+            }
+        }
 
-    watch(activecount, () => {
-      void getVotingStatistics();
-    });
+        watch(activecount, () => {
+            void getVotingStatistics();
+        });
 
-    onMounted(async () => {
-      await getVotingStatistics();
-    });
+        onMounted(async () => {
+            await getVotingStatistics();
+        });
 
-    return {
-      account,
-      lastUpdated,
-      producerVotes,
-      showCpu,
-      voteChanged,
-      resetFlag,
-      lastWeight,
-      lastStaked,
-      stakedAmount,
-      currentVote,
-      accountValid,
-      openTransaction,
-      transactionId,
-      transactionError,
-      payrate,
-      top21pay24h,
-      supply,
-      voters,
-      amount_voted,
-      votesProgress,
-      balance,
-      showWalletModal,
-      symbol,
-      toggleView,
-      sendVoteTransaction
-    };
-  }
+        return {
+            account,
+            lastUpdated,
+            producerVotes,
+            showCpu,
+            voteChanged,
+            resetFlag,
+            lastWeight,
+            lastStaked,
+            stakedAmount,
+            currentVote,
+            accountValid,
+            openTransaction,
+            transactionId,
+            transactionError,
+            payrate,
+            top21pay24h,
+            supply,
+            voters,
+            amount_voted,
+            votesProgress,
+            balance,
+            showWalletModal,
+            symbol,
+            toggleView,
+            sendVoteTransaction,
+        };
+    },
 });
 </script>
 

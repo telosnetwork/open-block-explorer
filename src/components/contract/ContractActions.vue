@@ -4,72 +4,74 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 
 export default defineComponent({
-  name: 'ContractActions',
-  components: { ViewTransaction },
-  setup() {
-    const memo = ref<Record<string, unknown>>({});
-    const permission = ref<string>('');
-    const store = useStore();
-    const actor = ref('');
-    const openTransaction = ref<boolean>(false);
-    const transactionId = ref<string>(store.state.account.TransactionId);
-    const transactionError = ref<unknown>(store.state.account.TransactionError);
-    const actions = computed(() =>
-      store.state.account.abi.abi.actions.map((a) => a.name)
-    );
-    const action = ref<string>(actions.value[0]);
-    const fields = computed(
-      () =>
-        store.state.account.abi.abi.structs.find((s) => s.name === action.value)
-          .fields
-    );
+    name: 'ContractActions',
+    components: { ViewTransaction },
+    setup() {
+        const memo = ref<Record<string, unknown>>({});
+        const permission = ref<string>('');
+        const store = useStore();
+        const actor = ref('');
+        const openTransaction = ref<boolean>(false);
+        const transactionId = ref<string>(store.state.account.TransactionId);
+        const transactionError = ref<unknown>(store.state.account.TransactionError);
+        const actions = computed(() =>
+            store.state.account.abi.abi.actions.map(a => a.name),
+        );
+        const action = ref<string>(actions.value[0]);
+        const fields = computed(
+            () =>
+                store.state.account.abi.abi.structs.find(s => s.name === action.value)
+                    .fields,
+        );
 
-    async function signAction() {
-      await store.dispatch('account/pushTransaction', {
-        action: action.value,
-        actor: actor.value,
-        permission: permission.value,
-        data: memo.value
-      });
-      openTransaction.value = true;
-    }
-
-    function formatMemo() {
-      for (var key in memo.value) {
-        const field = fields.value.find((val) => val.name == key);
-        if (field.type === 'bool') {
-          if (
-            memo.value[key] === 'true' ||
-            memo.value[key] === '1' ||
-            memo.value[key] === 'True' ||
-            memo.value[key] === 'T' ||
-            memo.value[key] === 't'
-          )
-            memo.value[key] = true;
-          else memo.value[key] = false;
+        async function signAction() {
+            await store.dispatch('account/pushTransaction', {
+                action: action.value,
+                actor: actor.value,
+                permission: permission.value,
+                data: memo.value,
+            });
+            openTransaction.value = true;
         }
-      }
-    }
 
-    onMounted(async () => {
-      actor.value = await store.state.account.user.getAccountName();
-      permission.value = store.state.account.accountPermission;
-    });
+        function formatMemo() {
+            for (let key in memo.value) {
+                const field = fields.value.find(val => val.name === key);
+                if (field.type === 'bool') {
+                    if (
+                        memo.value[key] === 'true' ||
+                        memo.value[key] === '1' ||
+                        memo.value[key] === 'True' ||
+                        memo.value[key] === 'T' ||
+                        memo.value[key] === 't'
+                    ) {
+                        memo.value[key] = true;
+                    } else {
+                        memo.value[key] = false;
+                    }
+                }
+            }
+        }
 
-    return {
-      action,
-      actions,
-      fields,
-      memo,
-      signAction,
-      actor,
-      permission,
-      openTransaction,
-      transactionId,
-      transactionError,
-      formatMemo
-    };
-  }
+        onMounted(async () => {
+            actor.value = await store.state.account.user.getAccountName();
+            permission.value = store.state.account.accountPermission;
+        });
+
+        return {
+            action,
+            actions,
+            fields,
+            memo,
+            signAction,
+            actor,
+            permission,
+            openTransaction,
+            transactionId,
+            transactionError,
+            formatMemo,
+        };
+    },
 });
 </script>
 
