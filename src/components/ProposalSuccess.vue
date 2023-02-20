@@ -1,3 +1,36 @@
+<script lang="ts">
+import { defineComponent, computed } from 'vue';
+
+export default defineComponent({
+    name: 'ProposalSuccess',
+    props: {
+        modelValue: {
+            type: Boolean,
+            default: false,
+        },
+        transactionId: {
+            type: String,
+        },
+        proposalName: {
+            type: String,
+        },
+    },
+    emits: ['update:modelValue'],
+    setup(props, context) {
+        const value = computed({
+            get: () => props.modelValue,
+            set: (value) => {
+                context.emit('update:modelValue', value);
+            },
+        });
+
+        return {
+            value,
+        };
+    },
+});
+</script>
+
 <template lang="pug">
 q-dialog(v-model="value" maximized)
   q-card.gradient-box
@@ -25,38 +58,3 @@ q-dialog(v-model="value" maximized)
           :to="'/proposal/' + proposalName"
         )
 </template>
-
-<script lang="ts">
-import { defineComponent, computed } from 'vue';
-
-export default defineComponent({
-  name: 'ProposalSuccess',
-  props: {
-    modelValue: {
-      type: Boolean,
-      default: false
-    },
-    transactionId: {
-      type: String
-    },
-    proposalName: {
-      type: String
-    }
-  },
-  emits: ['update:modelValue'],
-  setup(props, context) {
-    const value = computed({
-      get: () => {
-        return props.modelValue;
-      },
-      set: (value) => {
-        context.emit('update:modelValue', value);
-      }
-    });
-
-    return {
-      value
-    };
-  }
-});
-</script>

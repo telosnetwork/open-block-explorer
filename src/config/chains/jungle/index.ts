@@ -16,7 +16,7 @@ PRODUCER_BUCKET_URL=
 
  */
 
-import BaseChain from '../../BaseChain';
+import BaseChain from 'src/config/BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { getEmptyPriceChartData } from 'src/api/price';
@@ -28,85 +28,87 @@ const CHAIN_ID =
 const NAME = 'jungle';
 const DISPLAY = 'Jungle 4';
 const TOKEN = {
-  symbol: 'EOS',
-  precision: 4,
-  amount: 0,
-  contract: 'eosio.token'
+    symbol: 'EOS',
+    precision: 4,
+    amount: 0,
+    contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://jungle.eosusa.news';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = {
-  protocol: 'https',
-  host: 'jungle.eosusa.news',
-  port: 443
+    protocol: 'https',
+    host: 'jungle.eosusa.news',
+    port: 443,
 };
 const API_ENDPOINT = 'https://example.com';
 const DISPLAY_MAP = true;
 const THEME = {};
 
 export default class TelosTestnet extends BaseChain {
-  getName(): string {
-    return NAME;
-  }
+    getName(): string {
+        return NAME;
+    }
 
-  getChainId(): string {
-    return CHAIN_ID;
-  }
+    getChainId(): string {
+        return CHAIN_ID;
+    }
 
-  getDisplay(): string {
-    return DISPLAY;
-  }
+    getDisplay(): string {
+        return DISPLAY;
+    }
 
-  getHyperionEndpoint(): string {
-    return HYPERION_ENDPOINT;
-  }
+    getHyperionEndpoint(): string {
+        return HYPERION_ENDPOINT;
+    }
 
-  getRPCEndpoint(): RpcEndpoint {
-    return RPC_ENDPOINT;
-  }
+    getRPCEndpoint(): RpcEndpoint {
+        return RPC_ENDPOINT;
+    }
 
-  getFuelRPCEndpoint(): RpcEndpoint | null {
-    return null;
-  }
+    getFuelRPCEndpoint(): RpcEndpoint | null {
+        return null;
+    }
 
-  getApiEndpoint(): string {
-    return API_ENDPOINT;
-  }
+    getApiEndpoint(): string {
+        return API_ENDPOINT;
+    }
 
-  getS3ProducerBucket(): string {
-    return S3_PRODUCER_BUCKET;
-  }
+    getS3ProducerBucket(): string {
+        return S3_PRODUCER_BUCKET;
+    }
 
-  getPriceData(): Promise<PriceChartData> {
-    return getEmptyPriceChartData();
-  }
+    getPriceData(): Promise<PriceChartData> {
+        return getEmptyPriceChartData();
+    }
 
-  getSystemToken(): Token {
-    return TOKEN;
-  }
+    getSystemToken(): Token {
+        return TOKEN;
+    }
 
-  getUsdPrice(): Promise<number> {
-    return Promise.resolve(0);
-  }
+    getUsdPrice(): Promise<number> {
+        return Promise.resolve(0);
+    }
 
-  getLargeLogoPath(): string {
-    return 'chains/eos/eos_large.png';
-  }
+    getLargeLogoPath(): string {
+        return 'chains/eos/eos_large.png';
+    }
 
-  getSmallLogoPath(): string {
-    return 'chains/eos/eos.png';
-  }
+    getSmallLogoPath(): string {
+        return 'chains/eos/eos.png';
+    }
 
-  getMapDisplay(): boolean {
-    return DISPLAY_MAP;
-  }
+    getMapDisplay(): boolean {
+        return DISPLAY_MAP;
+    }
 
-  getTheme(): Theme {
-    return THEME;
-  }
+    getTheme(): Theme {
+        return THEME;
+    }
 
-  getFiltersSupported(prop: string): boolean {
-    if (prop === 'notified') return false;
-    return true;
-  }
+    getFiltersSupported(prop: string): boolean {
+        if (prop === 'notified') {
+            return false;
+        }
+        return true;
+    }
 }

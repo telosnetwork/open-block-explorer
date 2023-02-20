@@ -5,129 +5,129 @@ import { api } from 'src/api';
 import { useQuasar } from 'quasar';
 
 export default defineComponent({
-  name: 'AccountSearch',
-  props: {
-    modelValue: {
-      type: String
-    }
-  },
-  emits: ['update:modelValue', 'remove'],
-  setup(props, context) {
-    const $q = useQuasar();
+    name: 'AccountSearch',
+    props: {
+        modelValue: {
+            type: String,
+        },
+    },
+    emits: ['update:modelValue', 'remove'],
+    setup(props, context) {
+        const $q = useQuasar();
 
-    const inputValue = ref('');
-    const options = ref<OptionsObj[]>([]);
-    const isLoading = ref(false);
+        const inputValue = ref('');
+        const options = ref<OptionsObj[]>([]);
+        const isLoading = ref(false);
 
-    watch(inputValue, async () => {
-      if (inputValue.value === '') {
-        options.value = [];
-        return;
-      }
-
-      isLoading.value = true;
-      const queryValue = inputValue.value.toLowerCase();
-
-      await Promise.all([searchAccountsDelay(queryValue)]).then((results) => {
-        options.value = ([] as OptionsObj[]).concat.apply([], results);
-      });
-
-      isLoading.value = false;
-    });
-
-    const timer = setTimeout(() => 0, 0);
-
-    function searchAccountsDelay(value: string): Promise<OptionsObj[]> {
-      clearTimeout(timer);
-      return new Promise<OptionsObj[]>((resolve) => {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        setTimeout(async () => {
-          const result = await searchAccounts(value);
-          if (inputValue.value === value) {
-            resolve(result);
-          }
-        }, 500);
-      });
-    }
-
-    async function searchAccounts(value: string): Promise<OptionsObj[]> {
-      try {
-        const results = [] as OptionsObj[];
-        const request = {
-          code: 'eosio',
-          limit: 5,
-          lower_bound: cleanSearchInput(value),
-          table: 'userres',
-          upper_bound: value.padEnd(12, 'z')
-        };
-        const accounts = await api.getTableByScope(request);
-
-        if (accounts.length > 0) {
-          results.push({
-            label: 'Accounts',
-            to: '',
-            isHeader: true
-          });
-
-          // because the get table by scope for userres does not include eosio account
-          if ('eosio'.includes(value)) {
-            results.push({
-              label: 'eosio',
-              to: 'eosio',
-              isHeader: false
-            });
-          }
-
-          accounts.forEach((user) => {
-            if (user.payer.includes(value)) {
-              results.push({
-                label: user.payer,
-                to: `${user.payer}`,
-                isHeader: false
-              });
+        watch(inputValue, async () => {
+            if (inputValue.value === '') {
+                options.value = [];
+                return;
             }
-          });
+
+            isLoading.value = true;
+            const queryValue = inputValue.value.toLowerCase();
+
+            await Promise.all([searchAccountsDelay(queryValue)]).then((results) => {
+                options.value = ([] as OptionsObj[]).concat.apply([], results);
+            });
+
+            isLoading.value = false;
+        });
+
+        const timer = setTimeout(() => 0, 0);
+
+        function searchAccountsDelay(value: string): Promise<OptionsObj[]> {
+            clearTimeout(timer);
+            return new Promise<OptionsObj[]>((resolve) => {
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                setTimeout(async () => {
+                    const result = await searchAccounts(value);
+                    if (inputValue.value === value) {
+                        resolve(result);
+                    }
+                }, 500);
+            });
         }
-        return results;
-      } catch (error) {
-        return;
-      }
-    }
 
-    function cleanSearchInput(value: string): string {
-      // remove leading and trailing spaces and periods from search input for query
-      return value.replace(/^[\s.]+|[\s.]+$/g, '');
-    }
+        async function searchAccounts(value: string): Promise<OptionsObj[]> {
+            try {
+                const results = [] as OptionsObj[];
+                const request = {
+                    code: 'eosio',
+                    limit: 5,
+                    lower_bound: cleanSearchInput(value),
+                    table: 'userres',
+                    upper_bound: value.padEnd(12, 'z'),
+                };
+                const accounts = await api.getTableByScope(request);
 
-    async function handleSelected(account_name?: string) {
-      if (!inputValue.value) {
-        return;
-      }
+                if (accounts.length > 0) {
+                    results.push({
+                        label: 'Accounts',
+                        to: '',
+                        isHeader: true,
+                    });
 
-      // if clicked/selected from dropdown search results
-      if (typeof account_name === 'string') {
-        inputValue.value = account_name;
-        context.emit('update:modelValue', inputValue.value);
-        return;
-      }
+                    // because the get table by scope for userres does not include eosio account
+                    if ('eosio'.includes(value)) {
+                        results.push({
+                            label: 'eosio',
+                            to: 'eosio',
+                            isHeader: false,
+                        });
+                    }
 
-      try {
-        // we check if the account exists
-        await api.getAccount(inputValue.value.toLowerCase());
-        context.emit('update:modelValue', inputValue.value);
-        return;
-      } catch (error) {
-        $q.notify(`account ${inputValue.value} not found!`);
-      }
-    }
+                    accounts.forEach((user) => {
+                        if (user.payer.includes(value)) {
+                            results.push({
+                                label: user.payer,
+                                to: `${user.payer}`,
+                                isHeader: false,
+                            });
+                        }
+                    });
+                }
+                return results;
+            } catch (error) {
+                return;
+            }
+        }
 
-    return {
-      inputValue,
-      options,
-      isLoading,
-      handleSelected
-    };
-  }
+        function cleanSearchInput(value: string): string {
+            // remove leading and trailing spaces and periods from search input for query
+            return value.replace(/^[\s.]+|[\s.]+$/g, '');
+        }
+
+        async function handleSelected(account_name?: string) {
+            if (!inputValue.value) {
+                return;
+            }
+
+            // if clicked/selected from dropdown search results
+            if (typeof account_name === 'string') {
+                inputValue.value = account_name;
+                context.emit('update:modelValue', inputValue.value);
+                return;
+            }
+
+            try {
+                // we check if the account exists
+                await api.getAccount(inputValue.value.toLowerCase());
+                context.emit('update:modelValue', inputValue.value);
+                return;
+            } catch (error) {
+                $q.notify(`account ${inputValue.value} not found!`);
+            }
+        }
+
+        return {
+            inputValue,
+            options,
+            isLoading,
+            handleSelected,
+        };
+    },
 });
 </script>
 

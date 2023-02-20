@@ -4,8 +4,8 @@ export interface ContractStateInterface {
 }
 
 export function state(): ContractStateInterface {
-  return {
-    address: '',
-    creator: ''
-  };
+    return {
+        address: '',
+        creator: '',
+    };
 }

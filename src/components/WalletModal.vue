@@ -5,36 +5,36 @@ import { authenticators } from 'src/boot/ual';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'WalletModal',
-  setup() {
-    const store = useStore();
-    const error = ref<string>(null);
-    const account = computed(() => store.state.account.accountName);
-    const loading = {};
-    const walletDialog = ref<DialogChainObject>(null);
+    name: 'WalletModal',
+    setup() {
+        const store = useStore();
+        const error = ref<string>(null);
+        const account = computed(() => store.state.account.accountName);
+        const loading = {};
+        const walletDialog = ref<DialogChainObject>(null);
 
-    const onLogin = async (idx: number) => {
-      const authenticator = authenticators[idx];
-      error.value = null;
-      try {
-        await store.dispatch('account/login', {
-          account: account.value,
-          authenticator
-        });
-      } catch (e) {
-        error.value = e as string;
-      }
-      walletDialog.value.hide();
-    };
+        const onLogin = async (idx: number) => {
+            const authenticator = authenticators[idx];
+            error.value = null;
+            try {
+                await store.dispatch('account/login', {
+                    account: account.value,
+                    authenticator,
+                });
+            } catch (e) {
+                error.value = e as string;
+            }
+            walletDialog.value.hide();
+        };
 
-    return {
-      error,
-      loading,
-      account,
-      walletDialog,
-      onLogin
-    };
-  }
+        return {
+            error,
+            loading,
+            account,
+            walletDialog,
+            onLogin,
+        };
+    },
 });
 </script>
 <template lang="pug">

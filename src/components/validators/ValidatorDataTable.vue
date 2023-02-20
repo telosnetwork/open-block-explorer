@@ -9,95 +9,95 @@ const chain = getChain();
 const MAX_VOTE_PRODUCERS = 30;
 
 export default defineComponent({
-  name: 'ValidatorDataTable',
-  props: {
-    top21pay24h: { type: Number, required: true }
-  },
-  setup(props) {
-    const store = useStore();
-    const symbol = chain.getSystemToken().symbol;
-    const account = computed(() => store.state.account.accountName);
-    const previousVote = computed(() =>
-      store.state.account.data.voter_info
-        ? store.state.account.data.voter_info.producers.map((vote) =>
-            vote.toString()
-          )
-        : []
-    );
-    const producers = computed(() =>
-      [...store.state.chain.producers].map((val) => val.owner)
-    );
-    const currentVote = computed(() => {
-      let votes = store.state.account.vote;
-      votes.forEach((vote, index) => {
-        if (!producers.value.includes(vote)) {
-          votes.splice(index, 1);
+    name: 'ValidatorDataTable',
+    props: {
+        top21pay24h: { type: Number, required: true },
+    },
+    setup(props) {
+        const store = useStore();
+        const symbol = chain.getSystemToken().symbol;
+        const account = computed(() => store.state.account.accountName);
+        const previousVote = computed(() =>
+            store.state.account.data.voter_info
+                ? store.state.account.data.voter_info.producers.map(vote =>
+                    vote.toString(),
+                )
+                : [],
+        );
+        const producers = computed(() =>
+            [...store.state.chain.producers].map(val => val.owner),
+        );
+        const currentVote = computed(() => {
+            let votes = store.state.account.vote;
+            votes.forEach((vote, index) => {
+                if (!producers.value.includes(vote)) {
+                    votes.splice(index, 1);
+                }
+            });
+            return votes;
+        });
+        const selection = ref<string[]>([]);
+        const HeadProducer = computed(
+            (): string => store.state.chain.head_block_producer,
+        );
+        const producerRows = computed(
+            (): Producer[] => store.state.chain.producers || [],
+        );
+        const producerPay = computed(() => props.top21pay24h);
+        const bpTop21 = computed(() => store.state.chain.producerSchedule);
+
+        const maxSelected = computed(
+            () => currentVote.value.length === MAX_VOTE_PRODUCERS,
+        );
+
+        const pagination = ref({
+            rowsPerPage: 21,
+        });
+        function removeVote(index: string) {
+            currentVote.value.splice(Number(index), 1);
         }
-      });
-      return votes;
-    });
-    const selection = ref<string[]>([]);
-    const HeadProducer = computed(
-      (): string => store.state.chain.head_block_producer
-    );
-    const producerRows = computed(
-      (): Producer[] => store.state.chain.producers || []
-    );
-    const producerPay = computed(() => props.top21pay24h);
-    const bpTop21 = computed(() => store.state.chain.producerSchedule);
-
-    const maxSelected = computed(
-      () => currentVote.value.length === MAX_VOTE_PRODUCERS
-    );
-
-    const pagination = ref({
-      rowsPerPage: 21
-    });
-    function removeVote(index: string) {
-      currentVote.value.splice(Number(index), 1);
-    }
-    function getLink(domain: string, username: string) {
-      return `https://${domain}/${username}`;
-    }
-
-    function getFlag(alpha2: number) {
-      if (alpha2) {
-        return `flag-icon-${alpha2}`;
-      }
-      return '';
-    }
-
-    function updateVote(val: string[]) {
-      val.forEach((vote, index) => {
-        if (!producers.value.includes(vote)) {
-          val.splice(index, 1);
+        function getLink(domain: string, username: string) {
+            return `https://${domain}/${username}`;
         }
-      });
-      store.commit('account/setVote', val);
-    }
 
-    function isTop21(val: string): boolean {
-      return bpTop21.value.includes(val);
-    }
+        function getFlag(alpha2: number) {
+            if (alpha2) {
+                return `flag-icon-${alpha2}`;
+            }
+            return '';
+        }
 
-    return {
-      producerRows,
-      account,
-      previousVote,
-      HeadProducer,
-      selection,
-      maxSelected,
-      currentVote,
-      pagination,
-      producerPay,
-      symbol,
-      updateVote,
-      removeVote,
-      isTop21,
-      getLink,
-      getFlag
-    };
-  }
+        function updateVote(val: string[]) {
+            val.forEach((vote, index) => {
+                if (!producers.value.includes(vote)) {
+                    val.splice(index, 1);
+                }
+            });
+            store.commit('account/setVote', val);
+        }
+
+        function isTop21(val: string): boolean {
+            return bpTop21.value.includes(val);
+        }
+
+        return {
+            producerRows,
+            account,
+            previousVote,
+            HeadProducer,
+            selection,
+            maxSelected,
+            currentVote,
+            pagination,
+            producerPay,
+            symbol,
+            updateVote,
+            removeVote,
+            isTop21,
+            getLink,
+            getFlag,
+        };
+    },
 });
 </script>
 

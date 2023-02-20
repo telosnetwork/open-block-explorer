@@ -1,7 +1,7 @@
 <script lang="ts">
 import { setCssVar } from 'quasar';
 import ConfigManager from 'src/config/ConfigManager';
-import { themeProps } from './types/Theme';
+import { themeProps } from 'src/types/Theme';
 
 const chain = ConfigManager.get().getCurrentChain();
 const chainName = chain.getName();
@@ -11,27 +11,29 @@ setTheme();
 setMetaData();
 
 function setTheme(): void {
-  for (var themeVar of themeProps) {
-    if (theme[themeVar]) setCssVar(themeVar, theme[themeVar]);
-  }
+    for (let themeVar of themeProps) {
+        if (theme[themeVar]) {
+            setCssVar(themeVar, theme[themeVar]);
+        }
+    }
 }
 
 function setMetaData(): void {
-  setFavIcon();
-  setTitle();
+    setFavIcon();
+    setTitle();
 }
 
 function setFavIcon(): void {
-  let link = document.querySelector("link[rel~='icon']");
-  (link as HTMLLinkElement).href = `chains/${chainName}/favicon.png`;
+    let link = document.querySelector('link[rel~="icon"]');
+    (link as HTMLLinkElement).href = `chains/${chainName}/favicon.png`;
 }
 
 function setTitle(): void {
-  document.title = chainName;
+    document.title = chainName;
 }
 
 export default {
-  name: 'App'
+    name: 'App',
 };
 </script>
 
