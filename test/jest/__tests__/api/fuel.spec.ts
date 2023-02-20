@@ -5,7 +5,8 @@ import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-j
 import { FuelUserWrapper } from 'src/api/fuel';
 import { SignTransactionResponse, User } from 'universal-authenticator-library';
 import { QDialogOptions } from 'quasar';
-import rp_response_file from 'test/jest/__tests__/api/rp_response.json';
+// eslint-disable-next-line no-restricted-imports
+import rp_response_file from './rp_response.json';
 
 installQuasarPlugin();
 
