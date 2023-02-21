@@ -3,15 +3,24 @@ import { computed, defineComponent, ref } from 'vue';
 import { DialogChainObject } from 'quasar';
 import { authenticators } from 'src/boot/ual';
 import { useStore } from 'src/store';
+import { useQuasar } from 'quasar';
+
 
 export default defineComponent({
     name: 'WalletModal',
     setup() {
+        const $q = useQuasar();
         const store = useStore();
         const error = ref<string>(null);
         const account = computed(() => store.state.account.accountName);
         const loading = {};
         const walletDialog = ref<DialogChainObject>(null);
+        const iconSize = computed(() => {
+            if ($q.screen.width > 420) {
+                return '3em';
+            }
+            return '1.5em';
+        });
 
         const onLogin = async (idx: number) => {
             const authenticator = authenticators[idx];
@@ -33,6 +42,7 @@ export default defineComponent({
             account,
             walletDialog,
             onLogin,
+            iconSize,
         };
     },
 });
@@ -41,7 +51,7 @@ export default defineComponent({
 q-dialog.modal-container(ref='walletDialog')
 
   .modal-header-container
-    q-icon( name='add_circle_outline' size='2.5rem' color="white")
+    q-icon( name='add_circle_outline' color="white" :size="iconSize")
     h3.modal-header Attach an account
   q-separator
   q-list
@@ -84,6 +94,7 @@ q-dialog.modal-container(ref='walletDialog')
 .modal-container
   background: radial-gradient(50% 67.35% at 50% 67.35%, #8A65D4 0%,  rgb(9, 26, 98, 100))
 .modal-header
+  margin-left: 0.6rem
   color: white
   font-size: 2.25rem
   width: 100%
@@ -91,4 +102,14 @@ q-dialog.modal-container(ref='walletDialog')
   display: flex
   align-items: center
   box-shadow: unset !important
+
+// on resolutions smaller than 420px h3.modal-header will have smamller text
+  // and a smaller .modal-header-container q-icon
+@media screen and (max-width: 420px)
+  h3.modal-header
+    font-size: 1.5rem
+  .modal-header-container
+    padding: 0 1rem
+  .modal-container .q-dialog__inner
+    padding: 0 1rem
 </style>
