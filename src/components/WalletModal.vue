@@ -103,7 +103,7 @@ q-dialog.modal-container(ref='walletDialog')
   align-items: center
   box-shadow: unset !important
 
-// on resolutions smaller than 420px h3.modal-header will have smamller text
+// on resolutions smaller than 420px h3.modal-header will have smaller text
   // and a smaller .modal-header-container q-icon
 @media screen and (max-width: 420px)
   h3.modal-header
