@@ -1,12 +1,13 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import { DialogChainObject } from 'quasar';
-import { authenticators } from 'src/boot/ual';
+import { getAuthenticators } from 'src/boot/ual';
 import { useStore } from 'src/store';
 
 export default defineComponent({
     name: 'WalletModal',
     setup() {
+        const authenticators = getAuthenticators();
         const store = useStore();
         const error = ref<string>(null);
         const account = computed(() => store.state.account.accountName);
