@@ -29,7 +29,7 @@ export default defineComponent({
         const availableTokens = toRef(props, 'availableTokens');
         const sendDialog = ref<boolean>(false);
         const openCoinDialog = ref<boolean>(false);
-        const recievingAccount = ref<string>('');
+        const receivingAccount = ref<string>('');
         const sendAmount = ref<string>('');
         const memo = ref<string>('');
 
@@ -45,7 +45,7 @@ export default defineComponent({
         );
         const validated = computed(
             () =>
-                parseFloat(sendAmount.value) > 0 && recievingAccount.value.length > 0,
+                parseFloat(sendAmount.value) > 0 && receivingAccount.value.length > 0,
         );
 
         const sendTransaction = async (): Promise<void> => {
@@ -53,7 +53,7 @@ export default defineComponent({
             const actionAccount = sendToken.value.contract;
             const data = {
                 from: account.value,
-                to: recievingAccount.value,
+                to: receivingAccount.value,
                 quantity: `${sendAmount.value} ${sendToken.value.symbol}`,
                 memo: memo.value,
             };
@@ -122,7 +122,7 @@ export default defineComponent({
             transactionError,
             sendDialog,
             openCoinDialog,
-            recievingAccount,
+            receivingAccount,
             sendAmount,
             memo,
             transactionForm,
@@ -159,8 +159,8 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
           q-card-section(v-if='transactionForm')
             .row
               .col-12
-                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECIEVING ACCOUNT
-                q-input.full-width(standout dense dark v-model="recievingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
+                .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm RECEIVING ACCOUNT
+                q-input.full-width(standout dense dark v-model="receivingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
             .row.q-py-md
               .col-4
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm TOKEN
@@ -192,7 +192,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
           q-card-section(v-if='transactionId')
             .row
               .col-12
-                .row You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ recievingAccount }}.
+                .row You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ receivingAccount }}.
                 .row.ellipsis-overflow(@click='navToTransaction') Click to view transaction: {{ transactionId }}
           q-card-section(v-else)
             .row
