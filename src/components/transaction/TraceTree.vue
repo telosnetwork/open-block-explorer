@@ -2,8 +2,8 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { Action, TreeNode } from 'src/types';
-import ActionFormat from 'src/components/transaction/ActionFormat.vue';
-import DataFormat from 'src/components/transaction/DataFormat.vue';
+import ActionFormat from 'src/components/Transaction/ActionFormat.vue';
+import DataFormat from 'src/components/Transaction/DataFormat.vue';
 
 export default defineComponent({
     name: 'TraceTree',

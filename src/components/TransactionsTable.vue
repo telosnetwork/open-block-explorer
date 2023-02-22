@@ -19,9 +19,9 @@ import {
     watch,
 } from 'vue';
 import DateField from 'src/components/DateField.vue';
-import AccountFormat from 'src/components/transaction/AccountFormat.vue';
-import ActionFormat from 'src/components/transaction/ActionFormat.vue';
-import DataFormat from 'src/components/transaction/DataFormat.vue';
+import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
+import ActionFormat from 'src/components/Transaction/ActionFormat.vue';
+import DataFormat from 'src/components/Transaction/DataFormat.vue';
 import HeaderSearch from 'src/components/HeaderSearch.vue';
 import AccountSearch from 'src/components/AccountSearch.vue';
 import TokenSearch from 'src/components/TokenSearch.vue';

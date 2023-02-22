@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, toRefs, computed, onUpdated } from 'vue';
 import { TransferData } from 'src/types';
-import AccountFormat from 'src/components/transaction/AccountFormat.vue';
+import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
 /* eslint-disable */
 export default defineComponent({
   name: 'DataFormat',
