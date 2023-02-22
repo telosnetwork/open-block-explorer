@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed, watch } from 'vue';
 import TransactionsTable from 'src/components/TransactionsTable.vue';
-import TransactionCard from 'components/Transaction/TransactionCard.vue';
-import TraceTree from 'components/Transaction/TraceTree.vue';
+import TransactionCard from 'components/transaction/TransactionCard.vue';
+import TraceTree from 'components/transaction/TraceTree.vue';
 import JsonViewer from 'vue-json-viewer';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';

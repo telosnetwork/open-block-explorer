@@ -178,7 +178,7 @@ export default defineComponent({
     .row
       .col-12.q-pt-md
         q-btn.full-width.button-accent(label="Confirm" flat :disable="disableCta" @click="sendTransaction" )
-  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
 
 </template>
 

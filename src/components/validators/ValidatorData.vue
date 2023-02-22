@@ -244,7 +244,7 @@ div
     ref="ValidatorDataTable"
     :top21pay24h = 'top21pay24h'
   )
-  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
   WalletModal( v-model='showWalletModal')
 </template>
 
