@@ -1,8 +1,8 @@
-import BaseChain from '../../BaseChain';
+import BaseChain from 'src/config/BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import {
-  getCoingeckoPriceChartData,
-  getCoingeckoUsdPrice
+    getCoingeckoPriceChartData,
+    getCoingeckoUsdPrice,
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
@@ -10,18 +10,19 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4';
+const NAME = 'wax';
 const DISPLAY = 'WAX';
 const TOKEN = {
-  symbol: 'WAX',
-  precision: 4,
-  amount: 0,
-  contract: 'eosio.token'
+    symbol: 'WAX',
+    precision: 4,
+    amount: 0,
+    contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://wax.eosusa.io';
 const RPC_ENDPOINT = {
-  protocol: 'https',
-  host: 'wax.eosusa.io',
-  port: 443
+    protocol: 'https',
+    host: 'wax.eosusa.io',
+    port: 443,
 };
 const API_ENDPOINT = 'https://example.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
@@ -29,55 +30,70 @@ const DISPLAY_MAP = true;
 const THEME = {};
 
 export default class EOS extends BaseChain {
-  getChainId(): string {
-    return CHAIN_ID;
-  }
+    getName(): string {
+        return NAME;
+    }
 
-  getDisplay(): string {
-    return DISPLAY;
-  }
+    getChainId(): string {
+        return CHAIN_ID;
+    }
 
-  getHyperionEndpoint(): string {
-    return HYPERION_ENDPOINT;
-  }
+    getDisplay(): string {
+        return DISPLAY;
+    }
 
-  getRPCEndpoint(): RpcEndpoint {
-    return RPC_ENDPOINT;
-  }
+    getHyperionEndpoint(): string {
+        return HYPERION_ENDPOINT;
+    }
 
-  getApiEndpoint(): string {
-    return API_ENDPOINT;
-  }
+    getRPCEndpoint(): RpcEndpoint {
+        return RPC_ENDPOINT;
+    }
 
-  getS3ProducerBucket(): string {
-    return S3_PRODUCER_BUCKET;
-  }
+    getFuelRPCEndpoint(): RpcEndpoint | null {
+        return null;
+    }
 
-  getPriceData(): Promise<PriceChartData> {
-    return getCoingeckoPriceChartData('wax');
-  }
+    getApiEndpoint(): string {
+        return API_ENDPOINT;
+    }
 
-  getSystemToken(): Token {
-    return TOKEN;
-  }
+    getS3ProducerBucket(): string {
+        return S3_PRODUCER_BUCKET;
+    }
 
-  getUsdPrice(): Promise<number> {
-    return getCoingeckoUsdPrice('wax');
-  }
+    getPriceData(): Promise<PriceChartData> {
+        return getCoingeckoPriceChartData('wax');
+    }
 
-  getLargeLogoPath(): string {
-    return 'chains/wax/logo_lg.png';
-  }
+    getSystemToken(): Token {
+        return TOKEN;
+    }
 
-  getSmallLogoPath(): string {
-    return 'chains/wax/logo_lg.png';
-  }
+    getUsdPrice(): Promise<number> {
+        return getCoingeckoUsdPrice('wax');
+    }
 
-  getMapDisplay(): boolean {
-    return DISPLAY_MAP;
-  }
+    getLargeLogoPath(): string {
+        return 'chains/wax/logo_lg.png';
+    }
 
-  getTheme(): Theme {
-    return THEME;
-  }
+    getSmallLogoPath(): string {
+        return 'chains/wax/logo_lg.png';
+    }
+
+    getMapDisplay(): boolean {
+        return DISPLAY_MAP;
+    }
+
+    getTheme(): Theme {
+        return THEME;
+    }
+
+    getFiltersSupported(prop: string): boolean {
+        if (prop === 'notified') {
+            return false;
+        }
+        return true;
+    }
 }

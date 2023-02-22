@@ -4,41 +4,41 @@ import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'ViewTransaction',
-  props: {
-    message: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
-    const store = useStore();
-    const router = useRouter();
-    const msg = computed((): string => props.message);
-    const Id = computed(() => store.state.account.TransactionId);
-    const transactionE = computed(() => store.state.account.TransactionError);
+    name: 'ViewTransaction',
+    props: {
+        message: {
+            type: String,
+            required: true,
+        },
+    },
+    setup(props) {
+        const store = useStore();
+        const router = useRouter();
+        const msg = computed((): string => props.message);
+        const Id = computed(() => store.state.account.TransactionId);
+        const transactionE = computed(() => store.state.account.TransactionError);
 
-    const reset = () => {
-      void store.dispatch('account/resetTransaction');
-    };
+        const reset = () => {
+            void store.dispatch('account/resetTransaction');
+        };
 
-    const navToTransaction = async () => {
-      await router.push({
-        name: 'transaction',
-        params: { transaction: Id.value }
-      });
-      router.go(0);
-      void store.dispatch('account/resetTransaction');
-    };
+        const navToTransaction = async () => {
+            await router.push({
+                name: 'transaction',
+                params: { transaction: Id.value },
+            });
+            router.go(0);
+            void store.dispatch('account/resetTransaction');
+        };
 
-    return {
-      msg,
-      Id,
-      transactionE,
-      reset,
-      navToTransaction
-    };
-  }
+        return {
+            msg,
+            Id,
+            transactionE,
+            reset,
+            navToTransaction,
+        };
+    },
 });
 </script>
 

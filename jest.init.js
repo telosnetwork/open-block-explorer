@@ -2,7 +2,7 @@
 import { config } from '@vue/test-utils';
 
 config.global.mocks = {
-  $api: {
-    getTransactions: jest.fn()
-  }
+    $api: {
+        getTransactions: jest.fn(),
+    },
 };

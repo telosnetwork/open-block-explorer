@@ -1,3 +1,166 @@
+<script lang="ts">
+import {
+    defineComponent,
+    ref,
+    watch,
+    computed,
+    PropType,
+    onMounted,
+} from 'vue';
+import ProposalAuthorization from 'components/ProposalAuthorization.vue';
+import { api } from 'src/api';
+
+interface Struct {
+    name: string;
+    fields: {
+        name: string;
+        type: string;
+    }[];
+}
+
+interface Action {
+    account: string;
+    name: string;
+    authorization: {
+        actor: string;
+        permission: string;
+    }[];
+    data: {
+        [key: string]: unknown;
+    };
+}
+
+export default defineComponent({
+    name: 'ProposalAction',
+    components: {
+        ProposalAuthorization,
+    },
+    props: {
+        modelValue: {
+            type: Object as PropType<Action>,
+        },
+    },
+    emits: ['update:modelValue', 'remove'],
+    setup(props, context) {
+        const structs = ref<Struct[]>([]);
+        const isAccountLoading = ref(false);
+        const isAccountError = ref(false);
+        const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
+
+        const action = computed({
+            get: () => props.modelValue,
+            set: (value) => {
+                context.emit('update:modelValue', value);
+            },
+        });
+
+        watch(
+            () => action.value.account,
+            (currentValue) => {
+                isAccountLoading.value = true;
+                isAccountError.value = false;
+
+                if (structs.value.length > 0) {
+                    structs.value = [];
+                }
+
+                if (waitToSearch.value) {
+                    clearTimeout(waitToSearch.value);
+                }
+
+                if (currentValue === '') {
+                    isAccountLoading.value = false;
+                    return;
+                }
+
+                waitToSearch.value = setTimeout(() => {
+                    waitToSearch.value = null;
+                }, 1000);
+            },
+        );
+
+        watch(waitToSearch, async (currentValue) => {
+            if (currentValue) {
+                return;
+            }
+
+            const queryValue = action.value.account.toLowerCase();
+
+            try {
+                const { abi } = await api.getABI(queryValue);
+                action.value.name = abi.structs[0].name;
+                structs.value = abi.structs;
+            } catch (error) {
+                isAccountError.value = true;
+            }
+
+            isAccountLoading.value = false;
+        });
+
+        onMounted(async () => {
+            if (!props.modelValue.account || !props.modelValue.name) {
+                return;
+            }
+
+            const queryValue = props.modelValue.account.toLowerCase();
+
+            try {
+                const { abi } = await api.getABI(queryValue);
+                const actionNameIndex = abi.structs.findIndex(
+                    item => props.modelValue.name === item.name,
+                );
+                action.value.name = abi.structs[actionNameIndex ?? 0].name;
+                structs.value = abi.structs;
+            } catch (error) {
+                isAccountError.value = true;
+            }
+
+            isAccountLoading.value = false;
+        });
+
+        const actionOptions = computed(() => {
+            if (structs.value.length === 0) {
+                return [];
+            }
+            return structs.value.map(item => item.name);
+        });
+
+        const fields = computed(() => {
+            if (structs.value.length === 0) {
+                return [];
+            }
+
+            const { fields } = structs.value.find(
+                item => item.name === action.value.name,
+            );
+
+            return fields;
+        });
+
+        /* eslint-disable */
+        watch(fields, (currentValue) => {
+            const actionFields = {} as any;
+
+            for (let index = 0; index < currentValue.length; index++) {
+                const element = currentValue[index];
+                actionFields[element.name] = props.modelValue.data[element.name] ?? '';
+            }
+
+            action.value.data = actionFields
+        });
+        /* eslint-enable */
+
+        return {
+            action,
+            isAccountLoading,
+            isAccountError,
+            actionOptions,
+            fields,
+        };
+    },
+});
+</script>
+
 <template lang="pug">
 q-card.q-mt-md
   q-expansion-item(
@@ -79,160 +242,3 @@ q-card.q-mt-md
           @click.stop="action.authorization.push({ actor: '', permission: '' })"
         )
 </template>
-
-<script lang="ts">
-import {
-  defineComponent,
-  ref,
-  watch,
-  computed,
-  PropType,
-  onMounted
-} from 'vue';
-import ProposalAuthorization from 'components/ProposalAuthorization.vue';
-import { api } from 'src/api';
-
-interface Struct {
-  name: string;
-  fields: {
-    name: string;
-    type: string;
-  }[];
-}
-
-interface Action {
-  account: string;
-  name: string;
-  authorization: {
-    actor: string;
-    permission: string;
-  }[];
-  data: {
-    [key: string]: unknown;
-  };
-}
-
-export default defineComponent({
-  name: 'ProposalAction',
-  components: {
-    ProposalAuthorization
-  },
-  props: {
-    modelValue: {
-      type: Object as PropType<Action>
-    }
-  },
-  emits: ['update:modelValue', 'remove'],
-  setup(props, context) {
-    const structs = ref<Struct[]>([]);
-    const isAccountLoading = ref(false);
-    const isAccountError = ref(false);
-    const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
-
-    const action = computed({
-      get: () => {
-        return props.modelValue;
-      },
-      set: (value) => {
-        context.emit('update:modelValue', value);
-      }
-    });
-
-    watch(
-      () => action.value.account,
-      (currentValue) => {
-        isAccountLoading.value = true;
-        isAccountError.value = false;
-
-        if (structs.value.length > 0) {
-          structs.value = [];
-        }
-
-        if (waitToSearch.value) {
-          clearTimeout(waitToSearch.value);
-        }
-
-        if (currentValue === '') {
-          isAccountLoading.value = false;
-          return;
-        }
-
-        waitToSearch.value = setTimeout(() => {
-          waitToSearch.value = null;
-        }, 1000);
-      }
-    );
-
-    watch(waitToSearch, async (currentValue) => {
-      if (currentValue) return;
-
-      const queryValue = action.value.account.toLowerCase();
-
-      try {
-        const { abi } = await api.getABI(queryValue);
-        action.value.name = abi.structs[0].name;
-        structs.value = abi.structs;
-      } catch (error) {
-        isAccountError.value = true;
-      }
-
-      isAccountLoading.value = false;
-    });
-
-    onMounted(async () => {
-      if (!props.modelValue.account || !props.modelValue.name) return;
-
-      const queryValue = props.modelValue.account.toLowerCase();
-
-      try {
-        const { abi } = await api.getABI(queryValue);
-        const actionNameIndex = abi.structs.findIndex(
-          (item) => props.modelValue.name === item.name
-        );
-        action.value.name = abi.structs[actionNameIndex ?? 0].name;
-        structs.value = abi.structs;
-      } catch (error) {
-        isAccountError.value = true;
-      }
-
-      isAccountLoading.value = false;
-    });
-
-    const actionOptions = computed(() => {
-      if (structs.value.length === 0) return [];
-      return structs.value.map((item) => item.name);
-    });
-
-    const fields = computed(() => {
-      if (structs.value.length === 0) return [];
-
-      const { fields } = structs.value.find(
-        (item) => item.name === action.value.name
-      );
-
-      return fields;
-    });
-
-    /* eslint-disable */
-    watch(fields, (currentValue) => {
-      const actionFields = {} as any;
-
-      for (let index = 0; index < currentValue.length; index++) {
-        const element = currentValue[index];
-        actionFields[element.name] = props.modelValue.data[element.name] ?? '';
-      }
-
-      action.value.data = actionFields
-    });
-    /* eslint-enable */
-
-    return {
-      action,
-      isAccountLoading,
-      isAccountError,
-      actionOptions,
-      fields
-    };
-  }
-});
-</script>

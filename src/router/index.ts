@@ -1,7 +1,7 @@
 import { route } from 'quasar/wrappers';
 import { createRouter, createWebHistory } from 'vue-router';
-import { StateInterface } from '../store';
-import routes from './routes';
+import { StateInterface } from 'src/store';
+import routes from 'src/router/routes';
 
 /*
  * If not building with SSR mode, you can
@@ -13,15 +13,15 @@ import routes from './routes';
  */
 
 export default route<StateInterface>(function (/* { store, ssrContext } */) {
-  const createHistory = createWebHistory;
-  const Router = createRouter({
-    routes,
+    const createHistory = createWebHistory;
+    const Router = createRouter({
+        routes,
 
-    // Leave this as is and make changes in quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
-    history: createHistory(process.env.VUE_ROUTER_BASE)
-  });
+        // Leave this as is and make changes in quasar.conf.js instead!
+        // quasar.conf.js -> build -> vueRouterMode
+        // quasar.conf.js -> build -> publicPath
+        history: createHistory(process.env.VUE_ROUTER_BASE),
+    });
 
-  return Router;
+    return Router;
 });

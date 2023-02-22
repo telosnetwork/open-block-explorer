@@ -1,27 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Checksum160,
-  Checksum256,
-  Float64,
-  Name,
-  NameType,
-  UInt128,
-  UInt64,
-  UInt32Type,
-  API,
-  PublicKey
+    Checksum160,
+    Checksum256,
+    Float64,
+    Name,
+    NameType,
+    UInt128,
+    UInt64,
+    UInt32Type,
+    API,
+    PublicKey,
 } from '@greymass/eosio';
-import { Transaction } from './Transaction';
+import { Transaction } from 'src/types/Transaction';
 import {
-  AccountDetails,
-  Action,
-  Token,
-  PermissionLinks,
-  TableByScope,
-  Block,
-  ActionData,
-  Get_actions
-} from './Actions';
+    AccountDetails,
+    Action,
+    Token,
+    PermissionLinks,
+    TableByScope,
+    Block,
+    ActionData,
+    Get_actions,
+} from 'src/types/Actions';
 
 export type TableIndexType =
   | Name
@@ -30,6 +30,18 @@ export type TableIndexType =
   | Float64
   | Checksum256
   | Checksum160;
+
+export interface HyperionTransactionFilter {
+  page?: number; // the page variable sustitutes the skip
+  skip?: number;
+  limit?: number;
+  account?: string;
+  notified?: string;
+  sort?: 'desc' | 'asc';
+  after?: string;
+  before?: string;
+  extras?: { [key: string]: string };
+}
 
 export interface GetTableRowsParams {
   /** The name of the smart contract that controls the provided table. */
@@ -75,11 +87,7 @@ export type ApiClient = {
   getHyperionAccountData: (address: string) => Promise<AccountDetails>;
   getCreator: (address: string) => Promise<any>;
   getTokens: (address: string) => Promise<Token[]>;
-  getTransactions: (
-    page: number,
-    limit: number,
-    address?: string
-  ) => Promise<Action[]>;
+  getTransactions: (filter: HyperionTransactionFilter) => Promise<Action[]>;
   getTransaction: (address: string) => Promise<ActionData>;
   getTransactionV1: (id: string) => Promise<Transaction>;
   getChildren: (address: string) => Promise<Action[]>;

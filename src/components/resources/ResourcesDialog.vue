@@ -1,27 +1,27 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import StakingInfo from 'src/components/Resources/ResourcesInfo.vue';
-import StakingTab from 'src/components/Resources/StakeTab.vue';
-import UnstakingTab from 'src/components/Resources/UnstakeTab.vue';
-import RefundTab from 'src/components/Resources/RefundTab.vue';
-import BuyRam from 'src/components/Resources/BuyRam.vue';
-import SellRam from 'src/components/Resources/SellRam.vue';
+import StakingInfo from 'src/components/resources/ResourcesInfo.vue';
+import StakingTab from 'src/components/resources/StakeTab.vue';
+import UnstakingTab from 'src/components/resources/UnstakeTab.vue';
+import RefundTab from 'src/components/resources/RefundTab.vue';
+import BuyRam from 'src/components/resources/BuyRam.vue';
+import SellRam from 'src/components/resources/SellRam.vue';
 
 export default defineComponent({
-  name: 'ResourcesDialog',
-  components: {
-    StakingInfo,
-    StakingTab,
-    UnstakingTab,
-    RefundTab,
-    BuyRam,
-    SellRam
-  },
-  setup() {
-    return {
-      tab: ref('stake')
-    };
-  }
+    name: 'ResourcesDialog',
+    components: {
+        StakingInfo,
+        StakingTab,
+        UnstakingTab,
+        RefundTab,
+        BuyRam,
+        SellRam,
+    },
+    setup() {
+        return {
+            tab: ref('stake'),
+        };
+    },
 });
 </script>
 
