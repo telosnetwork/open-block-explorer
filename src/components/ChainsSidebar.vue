@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
 
@@ -8,33 +8,46 @@ const configMgr = ConfigManager.get();
 export default {
     name: 'ChainsSidebar',
     setup() {
+        const mainnets = computed(() => sortChainsUsingName(configMgr.getMainnets()));
+        const testnets = computed(() => sortChainsUsingName(configMgr.getTestnets()));
+
         function sortChainsUsingName(chains: Chain[]): Chain[] {
             return chains.sort(
                 (chain1, chain2) => chain1.getName().localeCompare(chain2.getName()),
             );
         }
 
-        const mainnets = computed(() => sortChainsUsingName(configMgr.getMainnets()));
-        const testnets = computed(() => sortChainsUsingName(configMgr.getTestnets()));
+        function isSelected(chain: Chain): boolean {
+            return localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
+        }
+
+        function chainSelected(chain: Chain) {
+            if (isSelected(chain)) {
+                return;
+            }
+            // TODO: maybe we can reload vue store and boot files instead of full reload?
+            localStorage.setItem(
+                ConfigManager.CHAIN_LOCAL_STORAGE,
+                chain.getName(),
+            );
+            location.reload();
+        }
+
+        onMounted(() => {
+            const currentChain = localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
+            if (currentChain === null) {
+                const chains = configMgr.getMainnets();
+                const telos = chains.filter(chain => chain.getName() === 'telos')[0];
+                chainSelected(telos);
+            }
+        });
 
         return {
             miniState: ref(true),
             mainnets,
             testnets,
-            chainSelected(chain: Chain) {
-                if (this.isSelected(chain)) {
-                    return;
-                }
-                // TODO: maybe we can reload vue store and boot files instead of full reload?
-                localStorage.setItem(
-                    ConfigManager.CHAIN_LOCAL_STORAGE,
-                    chain.getName(),
-                );
-                location.reload();
-            },
-            isSelected(chain: Chain): boolean {
-                return localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
-            },
+            chainSelected,
+            isSelected,
         };
     },
 };
