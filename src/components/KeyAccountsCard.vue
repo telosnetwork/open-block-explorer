@@ -6,61 +6,59 @@ import { getChain } from 'src/config/ConfigManager';
 import { Name, PublicKey } from '@greymass/eosio';
 
 export default defineComponent({
-  name: 'KeyAccountsCard',
-  props: {
-    pubKey: {
-      type: PublicKey,
-      required: true
+    name: 'KeyAccountsCard',
+    props: {
+        pubKey: {
+            type: PublicKey,
+            required: true,
+        },
+        accounts: {
+            type: Array as PropType<Name[]>,
+            required: true,
+        },
     },
-    accounts: {
-      type: Array as PropType<Name[]>,
-      required: true
-    }
-  },
-  setup(props) {
-    const chain = getChain();
-    const key = ref(props.pubKey);
-    const legacyKeyFormat = ref<boolean>(false);
-    const Accounts = computed(() => props.accounts);
-    const $q = useQuasar();
-    const keyDisplay = computed(() => {
-      return legacyKeyFormat.value
-        ? key.value.toLegacyString()
-        : key.value.toString();
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const tokenLogo = computed(() => chain.getSmallLogoPath());
-    function copy(value: string) {
-      copyToClipboard(value)
-        .then((): void => {
-          $q.notify({
-            color: 'green-4',
-            textColor: 'white',
-            message: 'Copied to clipboard',
-            timeout: 1000
-          });
-        })
-        .catch(() => {
-          $q.notify({
-            color: 'red-8',
-            textColor: 'white',
-            message: 'Could not copy',
-            timeout: 1000
-          });
-        });
-    }
-    function toggleKey() {
-      legacyKeyFormat.value = !legacyKeyFormat.value;
-    }
-    return {
-      key,
-      Accounts,
-      keyDisplay,
-      copy,
-      toggleKey,
-      tokenLogo
-    };
-  }
+    setup(props) {
+        const chain = getChain();
+        const key = ref(props.pubKey);
+        const legacyKeyFormat = ref<boolean>(false);
+        const Accounts = computed(() => props.accounts);
+        const $q = useQuasar();
+        const keyDisplay = computed(() => legacyKeyFormat.value
+            ? key.value.toLegacyString()
+            : key.value.toString());
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        const tokenLogo = computed(() => chain.getSmallLogoPath());
+        function copy(value: string) {
+            copyToClipboard(value)
+                .then((): void => {
+                    $q.notify({
+                        color: 'green-4',
+                        textColor: 'white',
+                        message: 'Copied to clipboard',
+                        timeout: 1000,
+                    });
+                })
+                .catch(() => {
+                    $q.notify({
+                        color: 'red-8',
+                        textColor: 'white',
+                        message: 'Could not copy',
+                        timeout: 1000,
+                    });
+                });
+        }
+        function toggleKey() {
+            legacyKeyFormat.value = !legacyKeyFormat.value;
+        }
+        return {
+            key,
+            Accounts,
+            keyDisplay,
+            copy,
+            toggleKey,
+            tokenLogo,
+        };
+    },
 });
 </script>
 

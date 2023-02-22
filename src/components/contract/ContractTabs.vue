@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue';
-import ContractTables from './ContractTables.vue';
-import ContractActions from './ContractActions.vue';
+import ContractTables from 'src/components/contract/ContractTables.vue';
+import ContractActions from 'src/components/contract/ContractActions.vue';
 import JsonViewer from 'vue-json-viewer';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';

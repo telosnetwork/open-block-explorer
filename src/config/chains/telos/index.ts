@@ -13,11 +13,11 @@
 
  */
 
-import BaseChain from '../../BaseChain';
+import BaseChain from 'src/config/BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import {
-  getCoingeckoPriceChartData,
-  getCoingeckoUsdPrice
+    getCoingeckoPriceChartData,
+    getCoingeckoUsdPrice,
 } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
@@ -28,112 +28,113 @@ const CHAIN_ID =
 const NAME = 'telos';
 const DISPLAY = 'Telos';
 const TOKEN = {
-  symbol: 'TLOS',
-  precision: 4,
-  amount: 0,
-  contract: 'eosio.token'
+    symbol: 'TLOS',
+    precision: 4,
+    amount: 0,
+    contract: 'eosio.token',
 } as Token;
 
 const HYPERION_ENDPOINT = 'https://mainnet.telos.net';
 
 const RPC_ENDPOINT = {
-  protocol: 'https',
-  host: 'mainnet.telos.net',
-  port: 443
+    protocol: 'https',
+    host: 'mainnet.telos.net',
+    port: 443,
 };
 const FUEL_RPC_ENDPOINT = {
-  protocol: 'https',
-  host: 'telos.greymass.com',
-  port: 443
+    protocol: 'https',
+    host: 'telos.greymass.com',
+    port: 443,
 };
 const API_ENDPOINT = 'https://api.telos.net/v1';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
 const THEME = {
-  primary: '#571aff',
-  secondary: '#071A5F',
-  accent: '#9C27B0',
-  dark: '#1d1d1d',
-  positive: '#21BA45',
-  negative: '#ff0000',
-  info: '#31CCEC',
-  warning: '#F2C037',
-  'color-map': '#4325c2',
-  'color-primary-gradient': 'linear-gradient(90deg, #071A5F 0%, #571AFF 100%)',
-  'color-secondary-gradient':
+    primary: '#571aff',
+    secondary: '#071A5F',
+    accent: '#9C27B0',
+    dark: '#1d1d1d',
+    positive: '#21BA45',
+    negative: '#ff0000',
+    info: '#31CCEC',
+    warning: '#F2C037',
+    'color-map': '#4325c2',
+    'color-primary-gradient': 'linear-gradient(90deg, #071A5F 0%, #571AFF 100%)',
+    'color-secondary-gradient':
     'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
-  'color-tertiary-gradient':
+    'color-tertiary-gradient':
     'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
-  'color-progress-gradient':
+    'color-progress-gradient':
     'linear-gradient(90deg, #571AFF 0%, #A088F9 48.44%, #CBCAF5 100%)',
-  'color-producer-card-background': '#f5f4fe',
-  'color-select-box-background': '#e0dffb'
+    'color-producer-card-background': '#f5f4fe',
+    'color-select-box-background': '#e0dffb',
 };
 
 export default class Telos extends BaseChain {
-  getName(): string {
-    return NAME;
-  }
+    getName(): string {
+        return NAME;
+    }
 
-  getChainId(): string {
-    return CHAIN_ID;
-  }
+    getChainId(): string {
+        return CHAIN_ID;
+    }
 
-  getDisplay(): string {
-    return DISPLAY;
-  }
+    getDisplay(): string {
+        return DISPLAY;
+    }
 
-  getHyperionEndpoint(): string {
-    return HYPERION_ENDPOINT;
-  }
+    getHyperionEndpoint(): string {
+        return HYPERION_ENDPOINT;
+    }
 
-  getRPCEndpoint(): RpcEndpoint {
-    return RPC_ENDPOINT;
-  }
+    getRPCEndpoint(): RpcEndpoint {
+        return RPC_ENDPOINT;
+    }
 
-  getFuelRPCEndpoint(): RpcEndpoint | null {
-    return FUEL_RPC_ENDPOINT;
-  }
+    getFuelRPCEndpoint(): RpcEndpoint | null {
+        return FUEL_RPC_ENDPOINT;
+    }
 
-  getApiEndpoint(): string {
-    return API_ENDPOINT;
-  }
+    getApiEndpoint(): string {
+        return API_ENDPOINT;
+    }
 
-  getS3ProducerBucket(): string {
-    return S3_PRODUCER_BUCKET;
-  }
+    getS3ProducerBucket(): string {
+        return S3_PRODUCER_BUCKET;
+    }
 
-  getPriceData(): Promise<PriceChartData> {
-    return getCoingeckoPriceChartData('telos');
-  }
+    getPriceData(): Promise<PriceChartData> {
+        return getCoingeckoPriceChartData('telos');
+    }
 
-  getSystemToken(): Token {
-    return TOKEN;
-  }
+    getSystemToken(): Token {
+        return TOKEN;
+    }
 
-  getUsdPrice(): Promise<number> {
-    return getCoingeckoUsdPrice('telos');
-  }
+    getUsdPrice(): Promise<number> {
+        return getCoingeckoUsdPrice('telos');
+    }
 
-  getLargeLogoPath(): string {
-    return 'chains/telos/telos_logo.svg';
-  }
+    getLargeLogoPath(): string {
+        return 'chains/telos/telos_logo.svg';
+    }
 
-  getSmallLogoPath(): string {
-    return 'chains/telos/tlos.png';
-  }
+    getSmallLogoPath(): string {
+        return 'chains/telos/tlos.png';
+    }
 
-  getMapDisplay(): boolean {
-    return DISPLAY_MAP;
-  }
+    getMapDisplay(): boolean {
+        return DISPLAY_MAP;
+    }
 
-  getTheme(): Theme {
-    return THEME;
-  }
+    getTheme(): Theme {
+        return THEME;
+    }
 
-  getFiltersSupported(prop: string): boolean {
-    console.log('getFiltersSupported', prop);
-    if (prop === 'notified') return true;
-    return true;
-  }
+    getFiltersSupported(prop: string): boolean {
+        if (prop === 'notified') {
+            return true;
+        }
+        return true;
+    }
 }

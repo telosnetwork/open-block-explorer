@@ -4,47 +4,45 @@ import { Permission } from 'src/types';
 import KeyToggle from 'src/components/KeyToggle.vue';
 
 export default defineComponent({
-  name: 'PermissionCard',
-  components: { KeyToggle },
-  props: {
-    permission: {
-      type: Object as PropType<Permission>,
-      required: true
+    name: 'PermissionCard',
+    components: { KeyToggle },
+    props: {
+        permission: {
+            type: Object as PropType<Permission>,
+            required: true,
+        },
+        depth: {
+            type: Number,
+            default: 0,
+        },
+        isLast: {
+            type: Boolean,
+            default: false,
+        },
     },
-    depth: {
-      type: Number,
-      default: 0
-    },
-    isLast: {
-      type: Boolean,
-      default: false
-    }
-  },
-  setup(props) {
-    const { depth, isLast } = toRefs(props);
-    const branchTopClass = computed(() =>
-      isLast.value ? 'branch-corner' : 'branch-side-top'
-    );
-    const branchBottomClass = computed(() =>
-      isLast.value ? '' : 'branch-side'
-    );
-    const permissionCardClass = computed(() =>
-      depth.value == 0 ? 'owner-permission' : ''
-    );
-    const formatAccount = (
-      name: string,
-      type: 'account' | 'transaction' | 'block'
-    ): string => {
-      return `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
-    };
+    setup(props) {
+        const { depth, isLast } = toRefs(props);
+        const branchTopClass = computed(() =>
+            isLast.value ? 'branch-corner' : 'branch-side-top',
+        );
+        const branchBottomClass = computed(() =>
+            isLast.value ? '' : 'branch-side',
+        );
+        const permissionCardClass = computed(() =>
+            depth.value === 0 ? 'owner-permission' : '',
+        );
+        const formatAccount = (
+            name: string,
+            type: 'account' | 'transaction' | 'block',
+        ): string => `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
 
-    return {
-      branchTopClass,
-      branchBottomClass,
-      permissionCardClass,
-      formatAccount
-    };
-  }
+        return {
+            branchTopClass,
+            branchBottomClass,
+            permissionCardClass,
+            formatAccount,
+        };
+    },
 });
 </script>
 

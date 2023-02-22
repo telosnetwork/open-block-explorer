@@ -2,61 +2,63 @@
 import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
-import AccountFormat from 'src/components/Transaction/AccountFormat.vue';
+import AccountFormat from 'src/components/transaction/AccountFormat.vue';
 
 export default defineComponent({
-  name: 'TransactionCard',
-  components: { AccountFormat },
-  setup() {
-    const store = useStore();
-    return {
-      transaction: computed(() => store.state.transaction.transactionId),
-      transactionData: computed(() => store.state.transaction.transaction),
-      blockNum: computed(() => store.state.transaction.blockNum),
-      timestamp: computed(() => store.state.transaction.timestamp),
-      executed: computed(() => store.state.transaction.executed),
-      irreversable: computed(() => store.state.transaction.irreversable),
-      cpuUsage: computed(() => store.state.transaction.cpuUsage),
-      netUsage: computed(() => store.state.transaction.netUsage),
-      actionsTraces: ref<string>(''),
-      actionNum: computed(() => store.state.transaction.actionCount)
-    };
-  },
-  methods: {
-    copy(value: string) {
-      copyToClipboard(value)
-        .then((): void => {
-          this.$q.notify({
-            color: 'green-4',
-            textColor: 'white',
-            message: 'Copied to clipboard',
-            timeout: 1000
-          });
-        })
-        .catch(() => {
-          this.$q.notify({
-            color: 'red-8',
-            textColor: 'white',
-            message: 'Could not copy',
-            timeout: 1000
-          });
-        });
+    name: 'TransactionCard',
+    components: { AccountFormat },
+    setup() {
+        const store = useStore();
+        return {
+            transaction: computed(() => store.state.transaction.transactionId),
+            transactionData: computed(() => store.state.transaction.transaction),
+            blockNum: computed(() => store.state.transaction.blockNum),
+            timestamp: computed(() => store.state.transaction.timestamp),
+            executed: computed(() => store.state.transaction.executed),
+            irreversable: computed(() => store.state.transaction.irreversable),
+            cpuUsage: computed(() => store.state.transaction.cpuUsage),
+            netUsage: computed(() => store.state.transaction.netUsage),
+            actionsTraces: ref<string>(''),
+            actionNum: computed(() => store.state.transaction.actionCount),
+        };
     },
-    numberWithCommas(x: number) {
-      if (!x) return 0;
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    methods: {
+        copy(value: string) {
+            copyToClipboard(value)
+                .then((): void => {
+                    this.$q.notify({
+                        color: 'green-4',
+                        textColor: 'white',
+                        message: 'Copied to clipboard',
+                        timeout: 1000,
+                    });
+                })
+                .catch(() => {
+                    this.$q.notify({
+                        color: 'red-8',
+                        textColor: 'white',
+                        message: 'Could not copy',
+                        timeout: 1000,
+                    });
+                });
+        },
+        numberWithCommas(x: number) {
+            if (!x) {
+                return 0;
+            }
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        },
+        formatDate(date: string): string {
+            return new Date(date).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+            });
+        },
     },
-    formatDate(date: string): string {
-      return new Date(date).toLocaleDateString('en-US', {
-        month: 'long',
-        year: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-      });
-    }
-  }
 });
 </script>
 

@@ -1,3 +1,64 @@
+<script lang="ts">
+import { defineComponent, ref, onMounted, watch, computed } from 'vue';
+import ProposalTable from 'src/components/ProposalTable.vue';
+import { api } from 'src/api';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'src/store';
+
+export default defineComponent({
+    name: 'ProposalPage',
+    components: {
+        ProposalTable,
+    },
+    setup() {
+        const route = useRoute();
+        const router = useRouter();
+        const store = useStore();
+        const blockProducers = ref<string[]>([]);
+        const account = computed(() => store.state.account.accountName);
+        const isAuthenticated = computed(() => store.state.account.isAuthenticated);
+
+        const tab = ref<string>((route.query['tab'] as string) || 'myProposal');
+
+        onMounted(() => {
+            if (!isAuthenticated.value) {
+                tab.value = 'allProposal';
+            }
+        });
+
+        onMounted(async () => {
+            const producers = await api.getProducers();
+            const producersAccount = [] as string[];
+
+            for (let index = 0; index < producers.rows.length; index++) {
+                const item = producers.rows[index];
+                if (item.is_active === 1) {
+                    producersAccount.push(item.owner);
+                }
+            }
+
+            blockProducers.value = producersAccount;
+        });
+
+        watch([tab], () => {
+            void router.push({
+                path: router.currentRoute.value.path,
+                query: {
+                    tab: tab.value,
+                },
+            });
+        });
+
+        return {
+            tab,
+            account,
+            isAuthenticated,
+            blockProducers,
+        };
+    },
+});
+</script>
+
 <template lang="pug">
 q-page(padding)
   div.row.justify-between.items-center.q-pt-lg.q-pb-sm
@@ -38,64 +99,3 @@ q-page(padding)
           :blockProducers="blockProducers"
         )
 </template>
-
-<script lang="ts">
-import { defineComponent, ref, onMounted, watch, computed } from 'vue';
-import ProposalTable from 'src/components/ProposalTable.vue';
-import { api } from 'src/api';
-import { useRoute, useRouter } from 'vue-router';
-import { useStore } from 'src/store';
-
-export default defineComponent({
-  name: 'Proposal',
-  components: {
-    ProposalTable
-  },
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const store = useStore();
-    const blockProducers = ref<string[]>([]);
-    const account = computed(() => store.state.account.accountName);
-    const isAuthenticated = computed(() => store.state.account.isAuthenticated);
-
-    const tab = ref<string>((route.query['tab'] as string) || 'myProposal');
-
-    onMounted(() => {
-      if (!isAuthenticated.value) {
-        tab.value = 'allProposal';
-      }
-    });
-
-    onMounted(async () => {
-      const producers = await api.getProducers();
-      const producersAccount = [] as string[];
-
-      for (let index = 0; index < producers.rows.length; index++) {
-        const item = producers.rows[index];
-        if (item.is_active === 1) {
-          producersAccount.push(item.owner);
-        }
-      }
-
-      blockProducers.value = producersAccount;
-    });
-
-    watch([tab], () => {
-      void router.push({
-        path: router.currentRoute.value.path,
-        query: {
-          tab: tab.value
-        }
-      });
-    });
-
-    return {
-      tab,
-      account,
-      isAuthenticated,
-      blockProducers
-    };
-  }
-});
-</script>

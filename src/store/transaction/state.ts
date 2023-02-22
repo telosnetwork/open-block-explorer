@@ -15,17 +15,17 @@ export interface TransactionStateInterface {
 }
 
 export function state(): TransactionStateInterface {
-  return {
-    transaction: {} as ActionData,
-    transactionId: '',
-    blockNum: 0,
-    timestamp: '',
-    executed: false,
-    cpuUsage: 0,
-    netUsage: 0,
-    actionCount: 0,
-    irreversable: false,
-    actions: [] as Action[],
-    transactionFound: true
-  };
+    return {
+        transaction: {} as ActionData,
+        transactionId: '',
+        blockNum: 0,
+        timestamp: '',
+        executed: false,
+        cpuUsage: 0,
+        netUsage: 0,
+        actionCount: 0,
+        irreversable: false,
+        actions: [] as Action[],
+        transactionFound: true,
+    };
 }

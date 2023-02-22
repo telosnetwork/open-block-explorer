@@ -1,4 +1,4 @@
-import { Chain } from '../types/Chain';
+import { Chain } from 'src/types/Chain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
@@ -8,19 +8,19 @@ export default abstract class BaseChain implements Chain {
   protected name: string;
 
   constructor(name: string) {
-    this.name = name;
+      this.name = name;
   }
 
   getName(): string {
-    return this.name;
+      return this.name;
   }
 
   getLargeLogoPath(): string {
-    return `~/assets/${this.name}/logo_lg.svg`;
+      return `~/assets/${this.name}/logo_lg.svg`;
   }
 
   getSmallLogoPath(): string {
-    return `~/assets/${this.name}/logo_sm.svg`;
+      return `~/assets/${this.name}/logo_sm.svg`;
   }
 
   abstract getSystemToken(): Token;
