@@ -1,6 +1,3 @@
-<!-- eslint-disable vue/return-in-computed-property -->
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-<!-- eslint-disable prettier/prettier -->
 <script lang="ts">
 import {
     Action,
@@ -626,7 +623,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                   .q-pt-xs
                     ActionFormat(:action="action.action")
             q-td
-              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1')
+              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1' :use-color="false")
 
           q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
             q-td(auto-width)
@@ -638,7 +635,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
               .row.justify-left.text-weight-light
                 ActionFormat(:action="action.action")
             q-td
-              DataFormat(:actionData="action.data.data" :actionName="action.data.name ")
+              DataFormat(:actionData="action.data.data" :actionName="action.data.name " :use-color="false")
     div.row.col-12.items-center.justify-end.q-mt-md.q-mb-sm
       // records per page selector
       q-space
