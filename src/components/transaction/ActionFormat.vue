@@ -19,6 +19,11 @@ export default defineComponent({
             type: Object as PropType<Action>,
             required: true,
         },
+        showTransferLabel: {
+            // show/hide send/receive label for transfers
+            type: Boolean,
+            default: false,
+        },
     },
     setup(props) {
         const store = useStore();
@@ -26,18 +31,14 @@ export default defineComponent({
         const divClass = ref<string>('');
         const divContent = ref<string>('');
         const tx = toRef(props, 'action');
+        const showLabel = toRef(props, 'showTransferLabel');
 
         onMounted(() => {
             const data = tx.value.act.data as TransferData;
-            if (data.from === account.value) {
+            if (showLabel.value && data.from === account.value) {
                 divContent.value = 'SEND';
-                divClass.value = 'action-transfer';
-            } else if (data.to === account.value) {
+            } else if (showLabel.value && data.to === account.value) {
                 divContent.value = 'RECEIVE';
-                divClass.value = 'action-transfer';
-            } else {
-                divContent.value = 'TRANSFER';
-                divClass.value = 'action-transfer';
             }
         });
 
@@ -51,16 +52,22 @@ export default defineComponent({
 </script>
 
 <template lang="pug">
-div(:class="'action '+ divClass" v-if="tx.act.name === 'transfer'") {{divContent}}
-div(v-else class="action action-general")
-  AccountFormat(:account="tx.act.account" type="account")
-  span.inline &nbsp; → &nbsp;
-  span.text-no-wrap {{tx.act.name}}
+.action-container
+    div(class="action action-general")
+      AccountFormat(:account="tx.act.account" type="account")
+      span.inline &nbsp; → &nbsp;
+      span.text-no-wrap {{tx.act.name}}
+    div.action.action-transfer(v-if="divContent") {{ divContent }}
 </template>
 
 <style lang="sass" scoped>
+.action-container
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    gap: 8px
+
 .action
-  // margin: 0.5rem 0
   padding: 0 0.5rem
   &.action-transfer
     background: rgba(196, 196, 196, 0.3)
