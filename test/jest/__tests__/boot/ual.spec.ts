@@ -1,10 +1,36 @@
-/* eslint-disable */
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
+import { BootFileParams } from '@quasar/app-webpack';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import boot, { resetUalState } from 'src/boot/ual';
 
+// auxiliar types
+interface ChainType {
+    chainId: string;
+    rpcEndpoint: {
+        protocol: string;
+        host: string;
+        port: number;
+    };
+    rpcEndpoints?: {
+        protocol: string;
+        host: string;
+        port: number;
+    }[];
+    hyperionEndpoint: string;
+    fuelRPCEndpoint: {
+        protocol: string;
+        host: string;
+        port: number;
+    };
+    symbol: string;
+}
+
+interface UalType {
+    chains: ChainType[]
+}
+
 // We need to define this object befor including boot/ual.ts because it accesses it through the getChain object
-let mockChain = {
+const mockChain: ChainType = {
     chainId: 'chainId',
     rpcEndpoint: { protocol: 'https', host: 'rpcEndpoint', port: 443 },
     hyperionEndpoint: 'HyperionEndpoint',
@@ -17,7 +43,7 @@ installQuasarPlugin();
 // mocking ual-anchor
 jest.mock('ual-anchor', () => ({
     // mocking the constructor of Anchor
-    Anchor: jest.fn().mockImplementation(() => ({})),
+    Anchor:jest.fn().mockImplementation(() => ({})),
 }));
 
 // mocking @telosnetwork/ual-cleos
@@ -40,7 +66,7 @@ const TestnetChain = {
     hyperionEndpoint: 'https://testnet.hyperion.endpoint',
     fuelRPCEndpoint: { protocol: 'https', host: 'testnet.fuel.host', port: 443 },
     symbol: 'TLOS',
-}
+};
 
 // mocking internal implementations
 jest.mock('src/config/ConfigManager', () => ({
@@ -54,11 +80,11 @@ jest.mock('src/config/ConfigManager', () => ({
 }));
 
 const wrapper = {
-    app: { config: { globalProperties: { $ual: null as any } } },
+    app: { config: { globalProperties: { $ual: null as UalType } } },
 };
 
-const updateWrapper = () => boot(wrapper as any);
-const setChain = (chain: any) => {
+const updateWrapper = () => boot(wrapper as unknown as BootFileParams<ChainType>);
+const setChain = (chain: ChainType) => {
     mockChain.chainId = chain.chainId;
     mockChain.rpcEndpoint = chain.rpcEndpoint;
     mockChain.hyperionEndpoint = chain.hyperionEndpoint;
@@ -76,14 +102,14 @@ describe('When booting ual', () => {
     describe('using Telos chain', () => {
         it('should set the $ual properties pointing to Telos network', () => {
             setChain(TelosChain);
-            updateWrapper();
+            void updateWrapper();
             expect(wrapper.app.config.globalProperties.$ual).toBeDefined();
 
             // assert that wrapper.app.config.globalProperties.$ual.chains is an array of length 1
             expect(wrapper.app.config.globalProperties.$ual.chains).toHaveLength(1);
 
             // assert the chain is TelosChain
-            const chain = wrapper.app.config.globalProperties.$ual.chains[0];
+            const chain:ChainType = wrapper.app.config.globalProperties.$ual.chains[0];
             expect(chain.chainId).toEqual(TelosChain.chainId);
 
             expect(chain.rpcEndpoints).toHaveLength(1);
@@ -97,7 +123,7 @@ describe('When booting ual', () => {
     describe('using Testnet chain', () => {
         it('should set the $ual properties pointing to Testnet network', () => {
             setChain(TestnetChain);
-            updateWrapper();
+            void updateWrapper();
             expect(wrapper.app.config.globalProperties.$ual).toBeDefined();
 
             // assert that wrapper.app.config.globalProperties.$ual.chains is an array of length 1
