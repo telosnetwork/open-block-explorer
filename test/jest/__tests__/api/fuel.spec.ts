@@ -215,7 +215,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
                 const trx = getOriginalTransaction();
                 const response = await wrapper.signTransaction(trx, configData);
                 const response_actions_json = JSON.stringify(
-                    response.transaction.actions,
+                    (response.transaction as {actions:[]}).actions,
                 );
                 const trx_actions_json = JSON.stringify(trx.actions);
                 expect(response_actions_json).toEqual(trx_actions_json);
@@ -236,7 +236,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
 
                     const response = await wrapper.signTransaction(trx, configData);
                     const response_actions_json = JSON.stringify(
-                        response.transaction.actions,
+                        (response.transaction as {actions:[]}).actions,
                     );
                     const expected_actions = [
                         noopAction,
@@ -262,7 +262,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
 
                     const response = await wrapper.signTransaction(trx, configData);
                     const response_actions_json = JSON.stringify(
-                        response.transaction.actions,
+                        (response.transaction as {actions:[]}).actions,
                     );
                     const trx_actions_json = JSON.stringify(trx.actions);
                     expect(response_actions_json).toEqual(trx_actions_json);
@@ -302,7 +302,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
                     const response = await wrapper.signTransaction(trx, configData);
 
                     const response_actions_json = JSON.stringify(
-                        response.transaction.actions,
+                        (response.transaction as {actions:[]}).actions,
                     );
                     const rp_response_trx = rp_response_file.json.data.request[1];
                     if (typeof rp_response_trx === 'string') {
@@ -334,7 +334,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
 
                     const response = await wrapper.signTransaction(trx, configData);
                     const response_actions_json = JSON.stringify(
-                        response.transaction.actions,
+                        (response.transaction as {actions:[]}).actions,
                     );
                     const trx_actions_json = JSON.stringify(trx.actions);
                     expect(response_actions_json).toEqual(trx_actions_json);
