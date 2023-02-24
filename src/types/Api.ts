@@ -23,6 +23,12 @@ import {
     Get_actions,
 } from 'src/types/Actions';
 
+export type AccountCreatorInfo = {
+  creator: string;
+  timestamp: string;
+  trx_id: string;
+}
+
 export type TableIndexType =
   | Name
   | UInt64
