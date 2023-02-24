@@ -274,6 +274,7 @@ export default defineComponent({
                 if (tokenModel.value) {
                     limit = 100;
                 }
+                console.log('getTransactions() page: ', page, 'extras: ', extras);
                 tableData = await api.getTransactions({
                     page,
                     limit,
