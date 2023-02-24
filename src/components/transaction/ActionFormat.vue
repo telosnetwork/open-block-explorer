@@ -1,13 +1,11 @@
 <script lang="ts">
 import {
     defineComponent,
-    computed,
     ref,
     PropType,
     toRef,
     onMounted,
 } from 'vue';
-import { useStore } from 'src/store';
 import { Action, TransferData } from 'src/types';
 import AccountFormat from 'src/components/transaction/AccountFormat.vue';
 
@@ -24,21 +22,29 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
+        account: {
+            type: String || null,
+            required: false,
+            default: null,
+        },
     },
     setup(props) {
-        const store = useStore();
-        const account = computed((): string => store.state.account.accountName);
         const divClass = ref<string>('');
         const divContent = ref<string>('');
         const tx = toRef(props, 'action');
         const showLabel = toRef(props, 'showTransferLabel');
+        const account = toRef(props, 'account');
 
         onMounted(() => {
             const data = tx.value.act.data as TransferData;
-            if (showLabel.value && data.from === account.value) {
-                divContent.value = 'SEND';
-            } else if (showLabel.value && data.to === account.value) {
-                divContent.value = 'RECEIVE';
+            const isTransfer = tx.value.act.name === 'transfer';
+
+            if (showLabel.value && account.value && isTransfer) {
+                if (data.from === account.value) {
+                    divContent.value = 'SEND';
+                } else if (data.to === account.value) {
+                    divContent.value = 'RECEIVE';
+                }
             }
         });
 
