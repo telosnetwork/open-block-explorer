@@ -112,7 +112,7 @@ export default defineComponent({
         };
 
         const setMaxValue = () => {
-            sendAmount.value = (sendToken.value.amount - 0.1).toString();
+            sendAmount.value = sendToken.value.amount.toString();
             void formatDec();
         };
 
@@ -178,7 +178,7 @@ q-dialog( @show='setDefaults' :persistent='true' @hide='resetForm' maximized)
                     .color-grey-3.text-weight-bold.balance-amount {{ sendToken?.amount ? `${sendToken.amount } AVAILABLE` : '--' }}
                     q-icon.q-ml-xs( name="info" )
                     q-tooltip Click to fill full amount
-                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val < sendToken?.amount || "invalid amount" ]' type="text" dense dark)
+                q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="sendAmount" :debounce='1000' :rules='[val => val > 0 && val <= sendToken?.amount || "invalid amount" ]' type="text" dense dark)
             .row
               .col-12
                 .row.justify-between.q-px-sm.q-pb-sm.q-gutter-x-sm OPTIONAL MEMO
