@@ -2,13 +2,14 @@
 import { defineComponent, ref, computed } from 'vue';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useStore } from 'src/store';
-import { authenticators } from 'src/boot/ual';
+import { getAuthenticators } from 'src/boot/ual';
 import { Authenticator } from 'universal-authenticator-library';
 
 export default defineComponent({
     name: 'LoginHandlerDropdown',
     components: { WalletModal },
     setup() {
+        const authenticators = getAuthenticators();
         const store = useStore();
         const account = computed(() => store.state.account.accountName);
         const showModal = ref(false);
