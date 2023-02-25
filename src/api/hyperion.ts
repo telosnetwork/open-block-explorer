@@ -44,7 +44,9 @@ const tokenListPromise = fetch(url)
     .then((fileContent: string) => JSON.parse(fileContent) as { account: string }[])
     .then(originals => originals.map(token => token as unknown as Token))
     .catch((error) => {
+        console.error('---------------------------------');
         console.error(error);
+        console.error('---------------------------------');
         return [];
     });
 
