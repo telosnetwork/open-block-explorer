@@ -635,7 +635,6 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                 :dense="$q.screen.width < 1024"
                 @request='onPaginationChange'
             )
-<<<<<<< HEAD
                 template(v-slot:header="props")
                     q-tr(:props="props")
                         q-th(
@@ -655,7 +654,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                                     .q-pt-xs
                                         ActionFormat(:action="action.action")
                         q-td
-                            DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1')
+                            DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1' :use-color="false")
 
                     q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
                         q-td(auto-width)
@@ -667,7 +666,7 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                             .row.justify-left.text-weight-light
                                 ActionFormat(:action="action.action")
                         q-td
-                            DataFormat(:actionData="action.data.data" :actionName="action.data.name ")
+                            DataFormat(:actionData="action.data.data" :actionName="action.data.name " :use-color="false")
         div.row.col-12.items-center.justify-end.q-mt-md.q-mb-sm
             // records per page selector
             q-space
@@ -704,99 +703,6 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                             size="sm"
                             :disable="paginationSettings.page === lastPage"
                             @click="$refs.main_table.nextPage()") NEXT
-=======
-              .q-pa-md.dropdown-filter
-                .row
-                  TokenSearch(v-model='tokenModel' @update:model-value="toggleDropdown($refs.token_dropdown)")
-
-    q-separator.row.col-12.q-mt-md.separator
-    div.row.col-12.table-container
-      q-table.q-mt-lg.row.trx-table--fixed-layout(
-        flat
-        hide-pagination
-        table-header-class="table-header"
-        ref="main_table"
-        v-model:pagination="paginationSettings"
-        :rows="filteredRows"
-        :columns="columns"
-        :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
-        :bordered="false"
-        :square="true"
-        :loading="loading"
-        :hide-pagination="noData"
-        :rows-per-page-options='pageSizeOptions'
-        :dense="$q.screen.width < 1024"
-        @request='onPaginationChange'
-      )
-        template(v-slot:header="props")
-          q-tr(:props="props")
-            q-th(
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props"
-            ) {{ col.label }}
-        template( v-slot:body="props")
-          q-tr(:props='props')
-            q-td
-              AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
-            q-td
-              DateField( :timestamp="props.row.timestamp", :showAge='showAge' )
-            q-td
-              .row.justify-left.text-weight-light(v-for='action in props.row.actions')
-                .col-auto
-                  .q-pt-xs
-                    ActionFormat(:action="action.action")
-            q-td
-              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1' :use-color="false")
-
-          q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
-            q-td(auto-width)
-            q-td
-              AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
-            q-td
-              DateField( :timestamp="action.timestamp", :showAge='showAge' )
-            q-td
-              .row.justify-left.text-weight-light
-                ActionFormat(:action="action.action")
-            q-td
-              DataFormat(:actionData="action.data.data" :actionName="action.data.name " :use-color="false")
-    div.row.col-12.items-center.justify-end.q-mt-md.q-mb-sm
-      // records per page selector
-      q-space
-      div.col-auto
-        small Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}
-        // dropdown button to select number of rows per page
-        q-icon(
-          :name="showPagesSizes ? 'expand_more' : 'expand_less'"
-          size="sm"
-          @click="switchPageSelector"
-        )
-          q-popup-proxy(
-            transition-show="scale"
-            transition-hide="scale"
-            ref="page_size_selector"
-          )
-            q-list
-              q-item.cursor-pointer(
-                v-for="size in pageSizeOptions"
-                :key="size"
-              )
-                q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }}
-      div.col-auto.q-ml-lg
-        div.row.items-baseline
-          div.col-auto.q-mr-xs
-            small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
-          div.col-auto.q-mr-xs
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              size="sm"
-              :disable="paginationSettings.page === 1"
-              @click="$refs.main_table.prevPage()") PREV
-          div.col-auto.q-mr-xs
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              size="sm"
-              :disable="paginationSettings.page === lastPage"
-              @click="$refs.main_table.nextPage()") NEXT
->>>>>>> 563956e5e3594b33d1f80dce694cc5ba934d926d
 
 
 
