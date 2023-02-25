@@ -100,7 +100,7 @@ q-card(
         .text-bold.q-pb-sm permission
         q-input(outlined v-model="permission" dense style="background: #ffffff")
 
-ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
 
 </template>
 

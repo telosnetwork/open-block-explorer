@@ -194,7 +194,7 @@ export default defineComponent({
       .text-weight-normal.text-right.text-grey-3 ≈ {{buyPreview}}
     .row
       q-btn.full-width.button-accent(label="Buy" flat :disable="disableCta" @click="buy" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
 
 </template>
 
