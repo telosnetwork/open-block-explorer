@@ -12,7 +12,7 @@ import { copyToClipboard } from 'quasar';
 import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
 import { useRouter } from 'vue-router';
-import { AccountCreatorInfo, TableIndexType } from 'src/types/Api';
+import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
@@ -193,7 +193,7 @@ export default defineComponent({
 
         const loadAccountCreatorInfo = async () => {
             try {
-                const creatorData = (await api.getCreator(props.account)) as AccountCreatorInfo;
+                const creatorData = await api.getCreator(props.account);
                 creatingAccount.value = creatorData.creator;
                 createTime.value = creatorData.timestamp;
                 createTransaction.value = creatorData.trx_id;
