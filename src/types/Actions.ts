@@ -115,6 +115,7 @@ export interface Token {
   precision: number;
   amount: number;
   contract: string;
+  logo?: string;
 }
 interface Key {
   key: string;
