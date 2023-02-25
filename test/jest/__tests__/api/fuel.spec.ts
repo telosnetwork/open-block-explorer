@@ -111,6 +111,7 @@ global.fetch = jest.fn(() =>
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
         getChainId: () => 'chainId',
+        getName: () => 'telos',
         getSymbol: () => 'TLOS',
         getRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
         getHyperionEndpoint: () => '',
