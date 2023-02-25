@@ -111,6 +111,7 @@ global.fetch = jest.fn(() =>
 // mocking internal implementatios
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
+        getName: () => 'telos',
         getSymbol: () => 'TLOS',
         getHyperionEndpoint: () => '',
         getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),

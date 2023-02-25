@@ -30,7 +30,7 @@ import { AccountCreatorInfo, HyperionTransactionFilter } from 'src/types/Api';
 const chain: Chain = getChain();
 const hyperion = axios.create({ baseURL: chain.getHyperionEndpoint() });
 const controller = new AbortController();
-
+export const DEFAULT_ICON = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjciIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAyNyAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTgiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=';
 
 const name = chain.getName();
 
@@ -51,7 +51,9 @@ const tokenListPromise = fetch(url)
     )
     .then(list => list)
     .catch((error) => {
+        console.error('---------------------------------');
         console.error(error);
+        console.error('---------------------------------');
         return [];
     });
 
@@ -116,7 +118,7 @@ export const getTokens = async function (address?: string): Promise<Token[]> {
             if (tk && tk.logo) {
                 token.logo = tk.logo;
             } else {
-                token.logo = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjciIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAyNyAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTgiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=';
+                token.logo = DEFAULT_ICON;
             }
             return token;
         });
