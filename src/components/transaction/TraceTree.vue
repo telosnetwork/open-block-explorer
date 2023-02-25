@@ -91,7 +91,7 @@ export default defineComponent({
               .text-weight-light @{{ authorization.permission }}
           .col-xs-12.col-md-3
             .row.justify-left.text-weight-light
-              DataFormat(:actionData="prop.node.data" :actionName="prop.node.name ")
+              DataFormat(:actionData="prop.node.data" :actionName="prop.node.name " :use-color="true")
 
       template(v-slot:header-notification="prop")
         .row.items-center.full-width.bordered.q-col-gutter-sm
@@ -107,7 +107,7 @@ export default defineComponent({
               .text-weight-bold {{ authorization.actor }}
               .text-weight-light @{{ authorization.permission }}
           .col-xs-12.col-md-3
-            DataFormat(:actionData="prop.node.data" :actionName="prop.node.name ")
+            DataFormat(:actionData="prop.node.data" :actionName="prop.node.name " :use-color="true")
 
 
 </template>

@@ -57,7 +57,7 @@ q-dialog
           .row Transaction Failed: {{ transactionE }}
     q-card-actions(align="right" class="text-primary")
       q-btn(flat label="Close" @click="reset" v-close-popup text-color="grey-3")
-      q-btn(flat label="View Transaction" @click="navToTransaction" text-color="grey-3" v-if="Id")
+      q-btn(flat label="View transaction" @click="navToTransaction" text-color="grey-3" v-if="Id")
 
 </template>
 
