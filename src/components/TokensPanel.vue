@@ -45,9 +45,7 @@ export default defineComponent({
             tokens.value = filtered.map(
                 token =>
                     ({
-                        symbol: token.symbol,
-                        precision: token.precision,
-                        amount: token.amount,
+                        ...token,
                         contract: formatAccount(token.contract, 'account'),
                     } as Token),
             );
@@ -89,7 +87,7 @@ div.row.col-12.q-my-xs.justify-center.text-left
               q-item-section(avatar).items-center
                 q-avatar(color="white" size="2.8rem").shadow-3
                   q-avatar(size="1.2em")
-                    img(src="~src/assets/token_placeholder.svg")
+                    img(:src="token.logo")
               q-item-section
                 div(v-html="token.contract")
                 div.text-bold {{`${token.amount} ${token.symbol}`}}

@@ -113,5 +113,5 @@ q-select(
         q-avatar(size="24px")
           img(:src="scope.opt.logo ?? '~src/assets/token_placeholder.svg'")
       q-item-section
-        q-item-label {{ scope.opt.symbol }} ({{scope.opt.account}})
+        q-item-label {{ scope.opt.symbol }} ({{scope.opt.contract}})
 </template>
