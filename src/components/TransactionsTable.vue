@@ -120,6 +120,7 @@ export default defineComponent({
         });
 
         const enableLiveTransactions = ref<boolean>(true);
+        const currentFirstAction = ref<number>(0);
 
         // actions filter
         const auxModel = ref('');
@@ -210,9 +211,9 @@ export default defineComponent({
         };
         const filter = computed(() => (
             accountsDisplay.value +
-        actionsDisplay.value +
-        dateDisplay.value +
-        tokenDisplay.value
+            actionsDisplay.value +
+            dateDisplay.value +
+            tokenDisplay.value
         ));
 
         const filterRows = () => {
@@ -242,7 +243,25 @@ export default defineComponent({
 
                 let extras: {[key:string]:string} | null = tokenModel.value ? { 'act.account': tokenModel.value.contract } : null;
                 if (actionsModel.value) {
-                    extras = extras ? { ...extras, 'act.name': actionsModel.value } : { 'act.name': actionsModel.value };
+                    extras = extras ? {
+                        ...extras,
+                        'act.name': actionsModel.value,
+                    } : {
+                        'act.name': actionsModel.value,
+                    };
+                }
+
+                if (page > 1 && currentFirstAction.value === 0) {
+                    currentFirstAction.value = rows.value[0]?.action.global_sequence;
+                }
+
+                if (currentFirstAction.value > 0) {
+                    extras = extras ? {
+                        ...extras,
+                        'global_sequence': '0-' + currentFirstAction.value.toString(),
+                    } : {
+                        'global_sequence': '0-' + currentFirstAction.value.toString(),
+                    };
                 }
 
                 // if token is selected, we need to get all transactions and filter them
@@ -264,7 +283,9 @@ export default defineComponent({
 
             if (tableData) {
                 if (tokenModel.value) {
-                    tableData = tableData.filter(item => (item.act.data as {quantity?:string}).quantity?.includes(tokenModel.value.symbol));
+                    tableData = tableData.filter(
+                        item => (item.act.data as {quantity?:string}).quantity?.includes(tokenModel.value.symbol),
+                    );
 
                     // take only the first aginationSettings.value.rowsPerPage items
                     tableData = tableData.slice(0, paginationSettings.value.rowsPerPage);
@@ -298,13 +319,13 @@ export default defineComponent({
         };
 
         const onRequest = async (props: {
-      pagination: {
-        page: number;
-        rowsPerPage: number;
-        sortBy: string;
-        descending: boolean;
-      };
-    }) => {
+            pagination: {
+                page: number;
+                rowsPerPage: number;
+                sortBy: string;
+                descending: boolean;
+            };
+        }) => {
             loading.value = true;
             const { page, rowsPerPage, sortBy, descending } = props.pagination;
             paginationSettings.value.page = page;
@@ -320,13 +341,13 @@ export default defineComponent({
             dropdown.toggle();
         };
         const onPaginationChange = async (props: {
-      pagination: {
-        page: number;
-        rowsPerPage: number;
-        sortBy: string;
-        descending: boolean;
-      };
-    }) => {
+          pagination: {
+            page: number;
+            rowsPerPage: number;
+            sortBy: string;
+            descending: boolean;
+          };
+        }) => {
             const { page, rowsPerPage } = props.pagination;
 
             // we need to change the URL to keep the pagination state by changing the route.query.page
@@ -358,18 +379,20 @@ export default defineComponent({
 
         const checkIsMultiLine = (data: string): boolean => data.length > 0 && data.split('\n').length > 1;
 
-        onMounted(() => {
-            setLiveTransactionInterval();
-        });
-
         const setLiveTransactionInterval = () => {
+            currentFirstAction.value = 0;
+            clearInterval(interval.value);
             interval.value = window.setInterval(() => {
                 void loadTableData();
             }, TWO_SECONDS);
         };
 
-        onBeforeUnmount(() => {
+        const clearLiveTransactionInterval = () => {
             clearInterval(interval.value);
+        };
+
+        onBeforeUnmount(() => {
+            clearLiveTransactionInterval();
         });
 
         watch([account, actions], () => {
@@ -389,16 +412,24 @@ export default defineComponent({
             localStorage.setItem('showAge', val ? 'true' : 'false');
         });
 
-        watch(enableLiveTransactions, async (val) => {
-            if (val) {
+        const updateLiveTransactionState = async () => {
+            if (enableLiveTransactions.value) {
                 clearFilters();
                 if (paginationSettings.value.page !== 1){
                     await changePagination(1, paginationSettings.value.rowsPerPage);
                 }
                 setLiveTransactionInterval();
             }else {
-                clearInterval(interval.value);
+                clearLiveTransactionInterval();
             }
+        };
+
+        watch(enableLiveTransactions, () => {
+            void updateLiveTransactionState();
+        });
+
+        onMounted(() => {
+            void updateLiveTransactionState();
         });
 
         // create a watch for pagination and make sure it is called inmediately
@@ -473,205 +504,205 @@ export default defineComponent({
 
 <template lang="pug">
 div.row.col-12.q-mt-xs.justify-center.text-left
-  div.row.trx-table--main-container
-    div.row.col-12.q-mt-lg
-      // Left column
-      div.col-auto.q-mr-xl.justify-start.trx-table--topleft-col
-        div.row.flex-grow-1
-          div.col
-            // -- Title --
-            p.text-no-wrap.trx-table--title {{ tableTitle }}
-        div.row
-          div.col
-            q-toggle.text-no-wrap(v-model="showAge" left-label label="Show timestamp as relative")
-        div.row
-          div.col
-            q-toggle.text-no-wrap(
-              v-model="enableLiveTransactions"
-              left-label
-              label="Live transactions"
-            )
-      // Right column
-      div.col.trx-table--topright-col
-        div.row.justify-end
-          // -- Filters  --
-          div.col-auto.row.flex.trx-table--filter-buttons
-            q-btn(
-              v-if="filter !== ''"
-              dense
-              flat
-              round
-              icon="close"
-              color="primary"
-              @click="clearFilters"
-            )
-              span.q-pr-sm clear filters
+    div.row.trx-table--main-container
+        div.row.col-12.q-mt-lg
+            // Left column
+            div.col-auto.q-mr-xl.justify-start.trx-table--topleft-col
+                div.row.flex-grow-1
+                    div.col
+                        // -- Title --
+                        p.text-no-wrap.trx-table--title {{ tableTitle }}
+                div.row
+                    div.col
+                        q-toggle.text-no-wrap(v-model="showAge" left-label label="Show timestamp as relative")
+                div.row
+                    div.col
+                        q-toggle.text-no-wrap(
+                            v-model="enableLiveTransactions"
+                            left-label
+                            label="Live transactions"
+                        )
+            // Right column
+            div.col.trx-table--topright-col
+                div.row.justify-end
+                    // -- Filters    --
+                    div.col-auto.row.flex.trx-table--filter-buttons
+                        q-btn(
+                            v-if="filter !== ''"
+                            dense
+                            flat
+                            round
+                            icon="close"
+                            color="primary"
+                            @click="clearFilters"
+                        )
+                            span.q-pr-sm clear filters
 
-            q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-              v-if="showAccountFilter"
-              no-caps
-              ref="accounts_dropdown"
-              :color="accountsDisplay === '' ? 'primary': 'secondary'"
-              :label="accountsDisplay === '' ? 'Accounts' : accountsDisplay"
-              @click="accountsModel = ''"
-            )
-              .q-pa-md.dropdown-filter
-                .row
-                  AccountSearch(v-model="accountsModel" @update:model-value="$refs.accounts_dropdown.toggle()")
-            q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-              ref="actions_dropdown"
-              :color="actionsDisplay === '' ? 'primary': 'secondary'"
-              :label="actionsDisplay === '' ? 'Actions' : actionsDisplay"
-            )
-              .q-pa-md.dropdown-filter
-                .row
-                  q-input(
-                    filled dense v-model='auxModel'
-                    label="actions"
-                    placeholder="transfer, sellrex, etc."
-                    @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                    @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                  )
-                    template(v-slot:prepend)
-                      q-icon.cursor-pointer(name='search')
-                    template(v-slot:append)
-                      q-btn(
-                        size="sm"
-                        color='primary'
-                        @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                      ) OK
-            q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-              :color="dateDisplay === '' ? 'primary': 'secondary'"
-              :label="dateDisplay === '' ? 'Date' : dateDisplay"
-            )
-              .q-pa-md.dropdown-filter
-                .row
-                  q-input(filled dense v-model='fromDateModel' label="From")
-                    template(v-slot:prepend)
-                      q-icon.cursor-pointer(name='event')
-                        q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
-                          q-date(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm')
-                            .row.items-center.justify-end
-                              q-btn(v-close-popup='' label='Close' color='primary' flat)
-                    template(v-slot:append)
-                      q-icon.cursor-pointer(name='access_time')
-                        q-popup-proxy(cover transition-show='scale' transition-hide='scale')
-                          q-time(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm' format24h)
-                            .row.items-center.justify-end
-                              q-btn(v-close-popup='' label='Close' color='primary' flat)
-                .row.justify-center.full-width.q-py-xs
-                  q-icon(name="arrow_downward")
-                .row
-                  q-input(filled dense v-model='toDateModel' label="To")
-                    template(v-slot:prepend)
-                      q-icon.cursor-pointer(name='event')
-                        q-popup-proxy(cover transition-show='scale' transition-hide='scale')
-                          q-date(v-model='toDateModel' mask='YYYY-MM-DD HH:mm')
-                            .row.items-center.justify-end
-                              q-btn(v-close-popup='' label='Close' color='primary' flat)
-                    template(v-slot:append)
-                      q-icon.cursor-pointer(name='access_time')
-                        q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
-                          q-time(v-model='toDateModel' mask='YYYY-MM-DD HH:mm' format24h)
-                            .row.items-center.justify-end
-                              q-btn(v-close-popup='' label='Close' color='primary' flat)
-            q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-              v-if="showTokenFilter"
-              ref="token_dropdown"
-              :color="!tokenDisplay ? 'primary': 'secondary'"
-              :label="!tokenDisplay ? 'Token' : tokenDisplay"
-            )
-              .q-pa-md.dropdown-filter
-                .row
-                  TokenSearch(v-model='tokenModel' @update:model-value="toggleDropdown($refs.token_dropdown)")
+                        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+                            v-if="showAccountFilter"
+                            no-caps
+                            ref="accounts_dropdown"
+                            :color="accountsDisplay === '' ? 'primary': 'secondary'"
+                            :label="accountsDisplay === '' ? 'Accounts' : accountsDisplay"
+                            @click="accountsModel = ''"
+                        )
+                            .q-pa-md.dropdown-filter
+                                .row
+                                    AccountSearch(v-model="accountsModel" @update:model-value="$refs.accounts_dropdown.toggle()")
+                        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+                            ref="actions_dropdown"
+                            :color="actionsDisplay === '' ? 'primary': 'secondary'"
+                            :label="actionsDisplay === '' ? 'Actions' : actionsDisplay"
+                        )
+                            .q-pa-md.dropdown-filter
+                                .row
+                                    q-input(
+                                        filled dense v-model='auxModel'
+                                        label="actions"
+                                        placeholder="transfer, sellrex, etc."
+                                        @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                                        @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                                    )
+                                        template(v-slot:prepend)
+                                            q-icon.cursor-pointer(name='search')
+                                        template(v-slot:append)
+                                            q-btn(
+                                                size="sm"
+                                                color='primary'
+                                                @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                                            ) OK
+                        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+                            :color="dateDisplay === '' ? 'primary': 'secondary'"
+                            :label="dateDisplay === '' ? 'Date' : dateDisplay"
+                        )
+                            .q-pa-md.dropdown-filter
+                                .row
+                                    q-input(filled dense v-model='fromDateModel' label="From")
+                                        template(v-slot:prepend)
+                                            q-icon.cursor-pointer(name='event')
+                                                q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
+                                                    q-date(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm')
+                                                        .row.items-center.justify-end
+                                                            q-btn(v-close-popup='' label='Close' color='primary' flat)
+                                        template(v-slot:append)
+                                            q-icon.cursor-pointer(name='access_time')
+                                                q-popup-proxy(cover transition-show='scale' transition-hide='scale')
+                                                    q-time(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm' format24h)
+                                                        .row.items-center.justify-end
+                                                            q-btn(v-close-popup='' label='Close' color='primary' flat)
+                                .row.justify-center.full-width.q-py-xs
+                                    q-icon(name="arrow_downward")
+                                .row
+                                    q-input(filled dense v-model='toDateModel' label="To")
+                                        template(v-slot:prepend)
+                                            q-icon.cursor-pointer(name='event')
+                                                q-popup-proxy(cover transition-show='scale' transition-hide='scale')
+                                                    q-date(v-model='toDateModel' mask='YYYY-MM-DD HH:mm')
+                                                        .row.items-center.justify-end
+                                                            q-btn(v-close-popup='' label='Close' color='primary' flat)
+                                        template(v-slot:append)
+                                            q-icon.cursor-pointer(name='access_time')
+                                                q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
+                                                    q-time(v-model='toDateModel' mask='YYYY-MM-DD HH:mm' format24h)
+                                                        .row.items-center.justify-end
+                                                            q-btn(v-close-popup='' label='Close' color='primary' flat)
+                        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+                            v-if="showTokenFilter"
+                            ref="token_dropdown"
+                            :color="!tokenDisplay ? 'primary': 'secondary'"
+                            :label="!tokenDisplay ? 'Token' : tokenDisplay"
+                        )
+                            .q-pa-md.dropdown-filter
+                                .row
+                                    TokenSearch(v-model='tokenModel' @update:model-value="toggleDropdown($refs.token_dropdown)")
 
-    q-separator.row.col-12.q-mt-md.separator
-    div.row.col-12.table-container
-      q-table.q-mt-lg.row.trx-table--fixed-layout(
-        flat
-        hide-pagination
-        table-header-class="table-header"
-        ref="main_table"
-        v-model:pagination="paginationSettings"
-        :rows="filteredRows"
-        :columns="columns"
-        :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
-        :bordered="false"
-        :square="true"
-        :loading="loading"
-        :hide-pagination="noData"
-        :rows-per-page-options='pageSizeOptions'
-        :dense="$q.screen.width < 1024"
-        @request='onPaginationChange'
-      )
-        template(v-slot:header="props")
-          q-tr(:props="props")
-            q-th(
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props"
-            ) {{ col.label }}
-        template( v-slot:body="props")
-          q-tr(:props='props')
-            q-td
-              AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
-            q-td
-              DateField( :timestamp="props.row.timestamp", :showAge='showAge' )
-            q-td
-              .row.justify-left.text-weight-light(v-for='action in props.row.actions')
-                .col-auto
-                  .q-pt-xs
-                    ActionFormat(:action="action.action")
-            q-td
-              DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1' :use-color="false")
+        q-separator.row.col-12.q-mt-md.separator
+        div.row.col-12.table-container
+            q-table.q-mt-lg.row.trx-table--fixed-layout(
+                flat
+                hide-pagination
+                table-header-class="table-header"
+                ref="main_table"
+                v-model:pagination="paginationSettings"
+                :rows="filteredRows"
+                :columns="columns"
+                :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
+                :bordered="false"
+                :square="true"
+                :loading="loading"
+                :hide-pagination="noData"
+                :rows-per-page-options='pageSizeOptions'
+                :dense="$q.screen.width < 1024"
+                @request='onPaginationChange'
+            )
+                template(v-slot:header="props")
+                    q-tr(:props="props")
+                        q-th(
+                            v-for="col in props.cols"
+                            :key="col.name"
+                            :props="props"
+                        ) {{ col.label }}
+                template( v-slot:body="props")
+                    q-tr(:props='props')
+                        q-td
+                            AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
+                        q-td
+                            DateField( :timestamp="props.row.timestamp", :showAge='showAge' )
+                        q-td
+                            .row.justify-left.text-weight-light(v-for='action in props.row.actions')
+                                .col-auto
+                                    .q-pt-xs
+                                        ActionFormat(:action="action.action")
+                        q-td
+                            DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1' :use-color="false")
 
-          q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
-            q-td(auto-width)
-            q-td
-              AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
-            q-td
-              DateField( :timestamp="action.timestamp", :showAge='showAge' )
-            q-td
-              .row.justify-left.text-weight-light
-                ActionFormat(:action="action.action")
-            q-td
-              DataFormat(:actionData="action.data.data" :actionName="action.data.name " :use-color="false")
-    div.row.col-12.items-center.justify-end.q-mt-md.q-mb-sm
-      // records per page selector
-      q-space
-      div.col-auto
-        small Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}
-        // dropdown button to select number of rows per page
-        q-icon(
-          :name="showPagesSizes ? 'expand_more' : 'expand_less'"
-          size="sm"
-          @click="switchPageSelector"
-        )
-          q-popup-proxy(
-            transition-show="scale"
-            transition-hide="scale"
-            ref="page_size_selector"
-          )
-            q-list
-              q-item.cursor-pointer(
-                v-for="size in pageSizeOptions"
-                :key="size"
-              )
-                q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }}
-      div.col-auto.q-ml-lg
-        div.row.items-baseline
-          div.col-auto.q-mr-xs
-            small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
-          div.col-auto.q-mr-xs
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              size="sm"
-              :disable="paginationSettings.page === 1"
-              @click="$refs.main_table.prevPage()") PREV
-          div.col-auto.q-mr-xs
-            q-btn.q-ml-xs.q-mr-xs.col.button-primary(
-              size="sm"
-              :disable="paginationSettings.page === lastPage"
-              @click="$refs.main_table.nextPage()") NEXT
+                    q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
+                        q-td(auto-width)
+                        q-td
+                            AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
+                        q-td
+                            DateField( :timestamp="action.timestamp", :showAge='showAge' )
+                        q-td
+                            .row.justify-left.text-weight-light
+                                ActionFormat(:action="action.action")
+                        q-td
+                            DataFormat(:actionData="action.data.data" :actionName="action.data.name " :use-color="false")
+        div.row.col-12.items-center.justify-end.q-mt-md.q-mb-sm
+            // records per page selector
+            q-space
+            div.col-auto
+                small Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}
+                // dropdown button to select number of rows per page
+                q-icon(
+                    :name="showPagesSizes ? 'expand_more' : 'expand_less'"
+                    size="sm"
+                    @click="switchPageSelector"
+                )
+                    q-popup-proxy(
+                        transition-show="scale"
+                        transition-hide="scale"
+                        ref="page_size_selector"
+                    )
+                        q-list
+                            q-item.cursor-pointer(
+                                v-for="size in pageSizeOptions"
+                                :key="size"
+                            )
+                                q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }}
+            div.col-auto.q-ml-lg
+                div.row.items-baseline
+                    div.col-auto.q-mr-xs
+                        small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
+                    div.col-auto.q-mr-xs
+                        q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                            size="sm"
+                            :disable="paginationSettings.page === 1"
+                            @click="$refs.main_table.prevPage()") PREV
+                    div.col-auto.q-mr-xs
+                        q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                            size="sm"
+                            :disable="paginationSettings.page === lastPage"
+                            @click="$refs.main_table.nextPage()") NEXT
 
 
 
