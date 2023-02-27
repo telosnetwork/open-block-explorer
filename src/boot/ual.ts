@@ -11,6 +11,9 @@ import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 import { Dialog, Notify, copyToClipboard } from 'quasar';
 import { isValidAccount } from 'src/utils/stringValidator';
 
+import { OreIdAuthenticator, AuthProvider } from 'ual-oreid';
+import { WebPopup } from 'oreid-webpopup';
+
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $ual: UAL;
@@ -156,6 +159,16 @@ export const getAuthenticators = () => {
             loginHandler,
             signHandler: signHandlerForMainChain,
         }));
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        authenticators.push(new OreIdAuthenticator(
+            [mainChain],
+            {
+                appId: 't_4683afc074ab444ebdf1bf08ed8d1757',
+                plugins: { popup: WebPopup() },
+            },
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            AuthProvider.Google,
+        ));
     }
     return authenticators;
 };
