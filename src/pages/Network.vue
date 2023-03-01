@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
-import Index from 'src/pages/Index.vue';
 import PriceChart from 'components/PriceChart.vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 import WorldMap from 'components/Map.vue';
@@ -9,9 +8,8 @@ import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
 
 export default defineComponent({
-    name: 'PageIndex',
+    name: 'PageNetwork',
     components: {
-        Index,
         PriceChart,
         TransactionsTable,
         WorldMap,
@@ -35,17 +33,22 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div.row
-  .col-12(v-if="displayMap")
-    .row.gradient-box.justify-center
-      .col-12
-        WorldMap
+<template>
 
-  .col-12.map-data-position(v-if="displayMap" :class="{'overlap-map' : displayMap}")
-    MapData(:mobile="true")
-  PriceChart.price-box-position(:class="{'overlap-map' : displayMap}")
-  TransactionsTable
+<div class="row">
+    <div v-if="displayMap" class="col-12">
+        <div class="row gradient-box justify-center">
+            <div class="col-12">
+                <WorldMap/>
+            </div>
+        </div>
+    </div>
+    <div v-if="displayMap" class="col-12 map-data-position" :class="{'overlap-map' : displayMap}">
+        <MapData :mobile="true"/>
+    </div>
+    <PriceChart class="price-box-position" :class="{'overlap-map' : displayMap}"/>
+    <TransactionsTable/>
+</div>
 
 </template>
 

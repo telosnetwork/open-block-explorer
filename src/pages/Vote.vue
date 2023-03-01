@@ -24,8 +24,8 @@ export default defineComponent({
     },
 });
 </script>
-<template lang="pug">
-ValidatorData
+<template>
+<ValidatorData/>
 </template>
 
 <style lang="sass" scoped></style>

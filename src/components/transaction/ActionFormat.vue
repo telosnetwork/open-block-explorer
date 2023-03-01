@@ -57,13 +57,14 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.action-container
-    div(class="action action-general")
-      AccountFormat(:account="tx.act.account" type="account")
-      span.inline &nbsp; → &nbsp;
-      span.text-no-wrap {{tx.act.name}}
-    div.action.action-transfer(v-if="divContent") {{ divContent }}
+<template>
+<div class="action-container">
+    <div class="action action-general">
+        <AccountFormat :account="tx.act.account" type="account"/><span class="inline">&nbsp; → &nbsp;</span><span class="text-no-wrap">{{tx.act.name}}</span>
+    </div>
+    <div v-if="divContent" class="action action-transfer">{{ divContent }}</div>
+</div>
+
 </template>
 
 <style lang="sass" scoped>

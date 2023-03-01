@@ -30,23 +30,36 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.q-pt-lg
-  .container-refund.q-pa-md
-    .row.full-width(v-for="action in rexActions")
-      .col-xs-12.col-sm-6
-        .row.q-pa-sm
-          .col-6 {{action.act.name}}
-          .col-6.text-weight-bold {{action.act.data.amount ? `${action.act.data.amount} ${symbol}` : action.act.data.rex}}
-      .col-xs-12.col-sm-6
-        .row.q-pa-sm
-          .col-6
-          .col-6.text-weight-bold {{formatDate(action.timestamp)}}
-      q-separator(color="grey-8" )
+<template>
 
-    .row.full-width(v-if="rexActions.length === 0")
-      .col-12
-        .row.q-pa-sm No REX transaction history
+<div class="q-pt-lg">
+    <div class="container-refund q-pa-md">
+        <div
+            v-for="action in rexActions"
+            :key="action.act.data.id"
+            class="row full-width"
+        >
+            <div class="col-xs-12 col-sm-6">
+                <div class="row q-pa-sm">
+                    <div class="col-6">{{action.act.name}}</div>
+                    <div class="col-6 text-weight-bold">{{action.act.data.amount ? `${action.act.data.amount} ${symbol}` : action.act.data.rex}}</div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="row q-pa-sm">
+                    <div class="col-6"></div>
+                    <div class="col-6 text-weight-bold">{{formatDate(action.timestamp)}}</div>
+                </div>
+            </div>
+            <q-separator color="grey-8"/>
+        </div>
+        <div v-if="rexActions.length === 0" class="row full-width">
+            <div class="col-12">
+                <div class="row q-pa-sm">No REX transaction history</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </template>
 

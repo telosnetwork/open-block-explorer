@@ -42,22 +42,44 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-q-dialog
-  .Card
-    q-card-section(v-if='Id')
-      .row
-        .col-12
-          .row
-            .text-h6 {{msg}}
-          .row.ellipsis-overflow.q-pt-lg.q-pl-md(@click='navToTransaction') {{ Id }}
-    q-card-section(v-else)
-      .row
-        .col-12
-          .row Transaction Failed: {{ transactionE }}
-    q-card-actions(align="right" class="text-primary")
-      q-btn(flat label="Close" @click="reset" v-close-popup text-color="grey-3")
-      q-btn(flat label="View transaction" @click="navToTransaction" text-color="grey-3" v-if="Id")
+<template>
+<q-dialog>
+    <div class="Card">
+        <q-card-section v-if="Id">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="text-h6">{{msg}}</div>
+                    </div>
+                    <div class="row ellipsis-overflow q-pt-lg q-pl-md" @click="navToTransaction">{{ Id }}</div>
+                </div>
+            </div>
+        </q-card-section>
+        <q-card-section v-else>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">Transaction Failed: {{ transactionE }}</div>
+                </div>
+            </div>
+        </q-card-section>
+        <q-card-actions class="text-primary" align="right">
+            <q-btn
+                v-close-popup
+                flat
+                label="Close"
+                text-color="grey-3"
+                @click="reset"
+            />
+            <q-btn
+                v-if="Id"
+                flat
+                label="View transaction"
+                text-color="grey-3"
+                @click="navToTransaction"
+            />
+        </q-card-actions>
+    </div>
+</q-dialog>
 
 </template>
 

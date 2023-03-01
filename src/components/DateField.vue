@@ -37,7 +37,8 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div {{ friendlyDate }}
-  q-tooltip(anchor="top middle" self="bottom middle" :offset="[10, 10]") {{ tooltipDate }}
+<template>
+<div>{{ friendlyDate }}
+    <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">{{ tooltipDate }}</q-tooltip>
+</div>
 </template>
