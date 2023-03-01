@@ -158,7 +158,7 @@ export default defineComponent({
                 </div>
                 <div class="q-pa-sm">
                     <StakingInfo/>
-                    <div v-if="rexfund &gt; 0" class="q-pt-lg q-pl-lg">
+                    <div v-if="rexfund > 0" class="q-pt-lg q-pl-lg">
                         <div class="row q-col-gutter-md items-center">
                             <div class="col-auto text-h6 text-white">REX fund: {{rexfund.toFixed(4)}} {{symbol}}</div>
                             <div class="col-auto">

@@ -194,7 +194,7 @@ export default defineComponent({
                         :rules="[value => !!value || 'Account is required']"
                     />
                 </div>
-                <div v-if="actionOptions.length &gt; 0" class="col-6">
+                <div v-if="actionOptions.length > 0" class="col-6">
                     <q-select
                         v-model="action.name"
                         outlined

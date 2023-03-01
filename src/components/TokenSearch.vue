@@ -96,7 +96,7 @@ export default defineComponent({
     :loading="isLoading"
     :model-value="inputValue"
     :options="options"
-    @input-value="(value) =&gt; inputValue = value"
+    @input-value="(value) => inputValue = value"
     @keyup.enter="handleSelected(inputValue)"
 >
     <template #prepend>
