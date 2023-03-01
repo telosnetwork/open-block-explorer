@@ -127,35 +127,87 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section
-    .row.q-col-gutter-md
-      .col-12
-        .row
-          .row.q-pb-sm.full-width
-            .col-9 STAKE TO SAVINGS
-            .col-3
-              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxSavingsValue')
-                .text-weight-bold.text-right.balance-amount {{ eligibleStaked }}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Any balance currently maturing will be moved first, click to stake full amount
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="toSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= eligibleStaked  || 'Invalid amount.' ]" type="text" dense dark)
-        .row
-          q-btn.full-width.button-accent(label="Move To Savings" flat @click="moveToSavings" )
-      .col-12.q-pt-xl
-        .row
-          .row.q-pb-sm.full-width
-            .col-9 UNSTAKE FROM SAVINGS
-            .col-3
-              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxWithdrawValue')
-                .text-weight-bold.text-right.balance-amount {{rexSavings}}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to stake full amount
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="fromSavingAmount" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]" type="text" dense dark)
-        .row
-          q-btn.full-width.button-accent(label="Withdraw from Savings" flat @click="moveFromSavings" )
-  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
+<template>
+
+<div class="staking-form">
+    <q-card-section>
+        <div class="row q-col-gutter-md">
+            <div class="col-12">
+                <div class="row">
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-9">STAKE TO SAVINGS</div>
+                        <div class="col-3">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxSavingsValue">
+                                <div class="text-weight-bold text-right balance-amount">{{ eligibleStaked }}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Any balance currently maturing will be moved first, click to stake full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        v-model="toSavingAmount"
+                        class="full-width"
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0.0000'
+                        :lazy-rules='true'
+                        :rules="[ val => val >= 0 && val <= eligibleStaked  || 'Invalid amount.' ]"
+                        type="text"
+                        dense
+                        dark
+                        @blur='formatDec'
+                    />
+                </div>
+                <div class="row">
+                    <q-btn
+                        class="full-width button-accent"
+                        label="Move To Savings"
+                        flat
+                        @click="moveToSavings"
+                    />
+                </div>
+            </div>
+            <div class="col-12 q-pt-xl">
+                <div class="row">
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-9">UNSTAKE FROM SAVINGS</div>
+                        <div class="col-3">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxWithdrawValue">
+                                <div class="text-weight-bold text-right balance-amount">{{rexSavings}}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Click to stake full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        v-model="fromSavingAmount"
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0.0000'
+                        :lazy-rules='true'
+                        :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]"
+                        type="text"
+                        dense
+                        dark
+                        @blur='formatDec'
+                    />
+                </div>
+                <div class="row">
+                    <q-btn
+                        class="full-width button-accent"
+                        label="Withdraw from Savings"
+                        flat
+                        @click="moveFromSavings"
+                    />
+                </div>
+            </div>
+        </div>
+    </q-card-section>
+    <ViewTransaction
+        v-model="openTransaction"
+        :transactionId="transactionId"
+        :transactionError="transactionError || ''"
+        message="transaction complete"
+    />
+</div>
 
 </template>
 

@@ -54,12 +54,29 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.row.q-pb-md
-	.col.wrap
-		a(:href=" '/key/' + keyDisplay" class="hover-dec") {{`+${weight} &nbsp &nbsp ${keyDisplay}`}}
-		q-btn.rotate-315( @click="toggleKey()" flat round color="black" icon="vpn_key" size='xs') &nbsp;
-		q-btn( @click="copy(keyDisplay)" flat round color="black" icon="content_copy" size='xs')
+<template>
+
+<div class="row q-pb-md">
+    <div class="col wrap"><a class="hover-dec" :href=" '/key/' + keyDisplay">{{`+${weight} &nbsp; &nbsp; ${keyDisplay}`}}</a>
+        <q-btn
+            class="rotate-315"
+            flat
+            round
+            color="black"
+            icon="vpn_key"
+            size="xs"
+            @click="toggleKey()"
+        >&nbsp;</q-btn>
+        <q-btn
+            flat
+            round
+            color="black"
+            icon="content_copy"
+            size="xs"
+            @click="copy(keyDisplay)"
+        />
+    </div>
+</div>
 
 </template>
 

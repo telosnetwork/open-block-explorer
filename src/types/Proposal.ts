@@ -41,6 +41,7 @@ export interface ProposalTableRow {
   isSigned?: boolean;
 }
 export interface ProposalForm {
+  [x: string]: unknown;
   proposer: string;
   proposal_name: string;
 
@@ -56,8 +57,8 @@ export interface ProposalForm {
     max_net_usage_words: number;
     max_cpu_usage_ms: number;
     delay_sec: number;
-    context_free_actions: string[] | string;
-    transaction_extensions: string[] | string;
+    context_free_actions: string[];
+    transaction_extensions: string[];
     actions: {
       account: string;
       name: string;
@@ -65,7 +66,9 @@ export interface ProposalForm {
         actor: string;
         permission: string;
       }[];
-      data: unknown;
+      data: {
+        [key: string]: string | number;
+      };
     }[];
   };
 }

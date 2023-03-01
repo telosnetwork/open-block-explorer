@@ -147,34 +147,77 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section.text-grey-3.text-weight-light
-    .row.q-pb-md
-      .col-6
-        .row.q-pb-sm
-            .col-6 REMOVE CPU
-            .col-6
-              .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = cpuStake.toString()" )
-                span.text-weight-bold.balance-amount {{ cpuStake ? `${cpuStake } AVAILABLE` : '--' }}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="cpuTokens" :lazy-rules="true"  :rules="cpuInputRules" type="text" dense dark)
+<template>
 
-      .col-6.q-pl-md
-        .row.q-pb-sm
-            .col-6 REMOVE NET
-            .col-6
-              .color-grey-3.flex.justify-end.items-center( @click="netTokens = netStake.toString()" )
-                span.text-weight-bold.balance-amount {{ netStake ? `${netStake } AVAILABLE` : '--' }}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0'  v-model="netTokens" :lazy-rules="true" :rules="netInputRules" type="text" dense dark)
-    .row
-      .col-12.q-pt-md
-        q-btn.full-width.button-accent(label="Confirm" flat :disable="ctaDisabled" @click="sendTransaction" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
-
+<div class="staking-form">
+    <q-card-section class="text-grey-3 text-weight-light">
+        <div class="row q-pb-md">
+            <div class="col-6">
+                <div class="row q-pb-sm">
+                    <div class="col-6">REMOVE CPU</div>
+                    <div class="col-6">
+                        <div class="color-grey-3 flex justify-end items-center" @click="cpuTokens = cpuStake.toString()"><span class="text-weight-bold balance-amount">{{ cpuStake ? `${cpuStake } AVAILABLE` : '--' }}</span>
+                            <q-icon class="q-ml-xs" name="info"/>
+                            <q-tooltip>Click to fill full amount</q-tooltip>
+                        </div>
+                    </div>
+                </div>
+                <q-input
+                    v-model="cpuTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0"
+                    :lazy-rules="true"
+                    :rules="cpuInputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+            <div class="col-6 q-pl-md">
+                <div class="row q-pb-sm">
+                    <div class="col-6">REMOVE NET</div>
+                    <div class="col-6">
+                        <div class="color-grey-3 flex justify-end items-center" @click="netTokens = netStake.toString()"><span class="text-weight-bold balance-amount">{{ netStake ? `${netStake } AVAILABLE` : '--' }}</span>
+                            <q-icon class="q-ml-xs" name="info"/>
+                            <q-tooltip>Click to fill full amount</q-tooltip>
+                        </div>
+                    </div>
+                </div>
+                <q-input
+                    v-model="netTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0"
+                    :lazy-rules="true"
+                    :rules="netInputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 q-pt-md">
+                <q-btn
+                    class="full-width button-accent"
+                    label="Confirm"
+                    flat
+                    :disable="ctaDisabled"
+                    @click="sendTransaction"
+                />
+            </div>
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
 </template>
 
 <style lang="sass">

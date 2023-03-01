@@ -31,37 +31,52 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.row.full-width.q-pl-xl.container.actor-font(v-if="!isMobile")
-  .col
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Head Block
-      .col-12.text-h6.text-grey-3.text-bold {{HeadBlock}}
-    hr
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Producing
-      .col-12.text-h6.text-grey-3.text-bold {{HeadBlockProducer}}
-    hr
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Irreversible Block
-      .col-12.text-h6.text-grey-3.text-bold {{lastIrreversibleBlock}}
-.row.full-width.text-center.justify-center.actor-font(v-else)
-  .col-3
-    .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Head Block
-      .col-12.text-subtitle1.text-grey-3.text-bold {{HeadBlock}}
-  .col-1
-    .hr-vertical
-  .col-3
-    .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Producing
-      .col-12.text-subtitle1.text-grey-3.text-bold {{HeadBlockProducer}}
-  .col-1
-    .hr-vertical
-  .col-3
-    .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Irreversible
-      .col-12.text-subtitle1.text-grey-3.text-bold  {{lastIrreversibleBlock}}
+<template>
+
+<div v-if="!isMobile" class="row full-width q-pl-xl container actor-font">
+    <div class="col">
+        <div class="row full-width q-pt-md q-px-lg">
+            <div class="col-12 text-subtitle1 text-weight-thin text-grey-3">Head Block</div>
+            <div class="col-12 text-h6 text-grey-3 text-bold">{{HeadBlock}}</div>
+        </div>
+        <hr>
+        <div class="row full-width q-pt-md q-px-lg">
+            <div class="col-12 text-subtitle1 text-weight-thin text-grey-3">Producing</div>
+            <div class="col-12 text-h6 text-grey-3 text-bold">{{HeadBlockProducer}}</div>
+        </div>
+        <hr>
+        <div class="row full-width q-pt-md q-px-lg">
+            <div class="col-12 text-subtitle1 text-weight-thin text-grey-3">Irreversible Block</div>
+            <div class="col-12 text-h6 text-grey-3 text-bold">{{lastIrreversibleBlock}}</div>
+        </div>
+    </div>
+</div>
+<div v-else class="row full-width text-center justify-center actor-font">
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-grey-3 text-uppercase">Head Block</div>
+            <div class="col-12 text-subtitle1 text-grey-3 text-bold">{{HeadBlock}}</div>
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="hr-vertical"></div>
+    </div>
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-grey-3 text-uppercase">Producing</div>
+            <div class="col-12 text-subtitle1 text-grey-3 text-bold">{{HeadBlockProducer}}</div>
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="hr-vertical"></div>
+    </div>
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-grey-3 text-uppercase">Irreversible</div>
+            <div class="col-12 text-subtitle1 text-grey-3 text-bold"> {{lastIrreversibleBlock}}</div>
+        </div>
+    </div>
+</div>
 </template>
 
 <style scoped lang="sass">
