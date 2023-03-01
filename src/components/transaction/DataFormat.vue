@@ -109,35 +109,26 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div(
-  class="relative-position"
-  :class="showOverflow ? '' : 'overflow-hidden'"
-  :style=" (showOverflow || !isOverflowing) ? '' : `max-height: calc(${maxHeight}px - ${switchHeight}px)`"
-)
-  .row(v-if="actionName === 'transfer'" ref="dataBox")
-    .col-12
-      span.text-bold
-        AccountFormat(:account="transferData.from" type="account")
-      span.text-bold &nbsp; → &nbsp;
-        AccountFormat(:account="transferData.to" type="account") &nbsp;
-      span.text-bold {{ ' ' + transferData.quantity}}
-    .col-12
-      .text-weight-bold memo:&nbsp;
-        span.text-weight-regular(v-if="transferData.memo") {{transferData.memo}}
-        span.text-weight-regular(v-else) n/a
-  .row(v-else ref="dataBox")
-    .col-12( v-for="val in formatGeneralData(data)" :key="val.key")
-      .text-weight-bold {{val.key}} :
-        span.text-weight-regular(v-if="isAccount(val.key)")
-          AccountFormat(:account="val.value" type="account") &nbsp;
-        span.text-weight-regular(v-else) {{val.value}} &nbsp;
-  q-btn(
-    v-if="isOverflowing"
-    flat size="xs"
-    :icon="showOverflow ? 'expand_less' : 'expand_more'"
-    :class="{'q-btn--use-color': useColor, 'full-width': showOverflow, 'q-btn--floating': !showOverflow }"
-    @click="toggleOverflow")
+<template>
+
+<div class="relative-position" :class="showOverflow ? '' : 'overflow-hidden'" :style=" (showOverflow || !isOverflowing) ? '' : `max-height: calc(${maxHeight}px - ${switchHeight}px)`">
+  <div class="row" v-if="actionName === 'transfer'" ref="dataBox">
+    <div class="col-12"><span class="text-bold">
+        <AccountFormat :account="transferData.from" type="account"></AccountFormat></span><span class="text-bold">&nbsp; → &nbsp;
+        <AccountFormat :account="transferData.to" type="account">&nbsp;</AccountFormat></span><span class="text-bold">{{ ' ' + transferData.quantity}}</span></div>
+    <div class="col-12">
+      <div class="text-weight-bold">memo:&nbsp;<span class="text-weight-regular" v-if="transferData.memo">{{transferData.memo}}</span><span class="text-weight-regular" v-else>n/a</span></div>
+    </div>
+  </div>
+  <div class="row" v-else ref="dataBox">
+    <div class="col-12" v-for="val in formatGeneralData(data)" :key="val.key">
+      <div class="text-weight-bold">{{val.key}} :<span class="text-weight-regular" v-if="isAccount(val.key)">
+          <AccountFormat :account="val.value" type="account">&nbsp;</AccountFormat></span><span class="text-weight-regular" v-else>{{val.value}} &nbsp;</span></div>
+    </div>
+  </div>
+  <q-btn v-if="isOverflowing" flat size="xs" :icon="showOverflow ? 'expand_less' : 'expand_more'" :class="{'q-btn--use-color': useColor, 'full-width': showOverflow, 'q-btn--floating': !showOverflow }" @click="toggleOverflow"></q-btn>
+</div>
+
 </template>
 
 <style lang="sass" scoped>

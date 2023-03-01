@@ -19,12 +19,13 @@ import DateField from 'src/components/DateField.vue';
 import AccountFormat from 'src/components/transaction/AccountFormat.vue';
 import ActionFormat from 'src/components/transaction/ActionFormat.vue';
 import DataFormat from 'src/components/transaction/DataFormat.vue';
-import HeaderSearch from 'src/components/HeaderSearch.vue';
 import AccountSearch from 'src/components/AccountSearch.vue';
 import TokenSearch from 'src/components/TokenSearch.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
-import { QBtnDropdown } from 'quasar';
+// QBtnDropdown, QPopupProxy, QTable are actually used on the html code
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 const chain: Chain = getChain();
@@ -38,7 +39,6 @@ export default defineComponent({
         AccountFormat,
         ActionFormat,
         DataFormat,
-        HeaderSearch,
         AccountSearch,
         TokenSearch,
     },
@@ -341,10 +341,6 @@ export default defineComponent({
             loading.value = false;
         };
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const toggleDropdown = (dropdown: QBtnDropdown) => {
-            dropdown.toggle();
-        };
         const onPaginationChange = async (props: {
           pagination: {
             page: number;
@@ -499,40 +495,56 @@ export default defineComponent({
             applyPagination,
             changePagination,
             onPaginationChange,
-            toggleDropdown,
             clearFilters,
             enableLiveTransactions,
+            QBtnDropdown,
+            QPopupProxy,
+            QTable,
         };
     },
 });
 </script>
 
-<template lang="pug">
-div.row.col-12.q-mt-xs.justify-center.text-left
-    div.row.trx-table--main-container
-        div.row.col-12.q-mt-lg
-            // Left column
-            div.col-auto.q-mr-xl.justify-start.trx-table--topleft-col
-                div.row.flex-grow-1
-                    div.col
-                        // -- Title --
-                        p.text-no-wrap.trx-table--title {{ tableTitle }}
-                div.row
-                    div.col
-                        q-toggle.text-no-wrap(v-model="showAge" left-label label="Show timestamp as relative")
-                div.row
-                    div.col
-                        q-toggle.text-no-wrap(
+<template>
+
+<div class="row col-12 q-mt-xs justify-center text-left">
+    <div class="row trx-table--main-container">
+        <div class="row col-12 q-mt-lg">
+            <!-- Left column-->
+            <div class="col-auto q-mr-xl justify-start trx-table--topleft-col">
+                <div class="row flex-grow-1">
+                    <div class="col">
+                        <!-- -- Title ---->
+                        <p class="text-no-wrap trx-table--title">{{ tableTitle }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <q-toggle
+                            v-model="showAge"
+                            class="text-no-wrap"
+                            left-label
+                            label="Show timestamp as relative"
+                        />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <q-toggle
                             v-model="enableLiveTransactions"
+                            class="text-no-wrap"
                             left-label
                             label="Live transactions"
-                        )
-            // Right column
-            div.col.trx-table--topright-col
-                div.row.justify-end
-                    // -- Filters    --
-                    div.col-auto.row.flex.trx-table--filter-buttons
-                        q-btn(
+                        />
+                    </div>
+                </div>
+            </div>
+            <!-- Right column-->
+            <div class="col trx-table--topright-col">
+                <div class="row justify-end">
+                    <!-- -- Filters    ---->
+                    <div class="col-auto row flex trx-table--filter-buttons">
+                        <q-btn
                             v-if="filter !== ''"
                             dense
                             flat
@@ -540,176 +552,274 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                             icon="close"
                             color="primary"
                             @click="clearFilters"
-                        )
-                            span.q-pr-sm clear filters
-
-                        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+                        ><span class="q-pr-sm">clear filters</span></q-btn>
+                        <q-btn-dropdown
                             v-if="showAccountFilter"
-                            no-caps
                             ref="accounts_dropdown"
+                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
+                            no-caps
                             :color="accountsDisplay === '' ? 'primary': 'secondary'"
                             :label="accountsDisplay === '' ? 'Accounts' : accountsDisplay"
                             @click="accountsModel = ''"
-                        )
-                            .q-pa-md.dropdown-filter
-                                .row
-                                    AccountSearch(v-model="accountsModel" @update:model-value="$refs.accounts_dropdown.toggle()")
-                        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+                        >
+                            <div class="q-pa-md dropdown-filter">
+                                <div class="row">
+                                    <AccountSearch v-model="accountsModel" @update:model-value="($refs.accounts_dropdown as QBtnDropdown).toggle()"/>
+                                </div>
+                            </div>
+                        </q-btn-dropdown>
+                        <q-btn-dropdown
                             ref="actions_dropdown"
+                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
                             :color="actionsDisplay === '' ? 'primary': 'secondary'"
                             :label="actionsDisplay === '' ? 'Actions' : actionsDisplay"
-                        )
-                            .q-pa-md.dropdown-filter
-                                .row
-                                    q-input(
-                                        filled dense v-model='auxModel'
+                        >
+                            <div class="q-pa-md dropdown-filter">
+                                <div class="row">
+                                    <q-input
+                                        v-model="auxModel"
+                                        filled
+                                        dense
                                         label="actions"
                                         placeholder="transfer, sellrex, etc."
-                                        @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                                        @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                                    )
-                                        template(v-slot:prepend)
-                                            q-icon.cursor-pointer(name='search')
-                                        template(v-slot:append)
-                                            q-btn(
-                                                size="sm"
-                                                color='primary'
-                                                @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                                            ) OK
-                        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
-                            :color="dateDisplay === '' ? 'primary': 'secondary'"
-                            :label="dateDisplay === '' ? 'Date' : dateDisplay"
-                        )
-                            .q-pa-md.dropdown-filter
-                                .row
-                                    q-input(filled dense v-model='fromDateModel' label="From")
-                                        template(v-slot:prepend)
-                                            q-icon.cursor-pointer(name='event')
-                                                q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
-                                                    q-date(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm')
-                                                        .row.items-center.justify-end
-                                                            q-btn(v-close-popup='' label='Close' color='primary' flat)
-                                        template(v-slot:append)
-                                            q-icon.cursor-pointer(name='access_time')
-                                                q-popup-proxy(cover transition-show='scale' transition-hide='scale')
-                                                    q-time(v-model='fromDateModel' mask='YYYY-MM-DD HH:mm' format24h)
-                                                        .row.items-center.justify-end
-                                                            q-btn(v-close-popup='' label='Close' color='primary' flat)
-                                .row.justify-center.full-width.q-py-xs
-                                    q-icon(name="arrow_downward")
-                                .row
-                                    q-input(filled dense v-model='toDateModel' label="To")
-                                        template(v-slot:prepend)
-                                            q-icon.cursor-pointer(name='event')
-                                                q-popup-proxy(cover transition-show='scale' transition-hide='scale')
-                                                    q-date(v-model='toDateModel' mask='YYYY-MM-DD HH:mm')
-                                                        .row.items-center.justify-end
-                                                            q-btn(v-close-popup='' label='Close' color='primary' flat)
-                                        template(v-slot:append)
-                                            q-icon.cursor-pointer(name='access_time')
-                                                q-popup-proxy(cover='' transition-show='scale' transition-hide='scale')
-                                                    q-time(v-model='toDateModel' mask='YYYY-MM-DD HH:mm' format24h)
-                                                        .row.items-center.justify-end
-                                                            q-btn(v-close-popup='' label='Close' color='primary' flat)
-                        q-btn-dropdown.q-ml-xs.q-mr-xs.button-primary.q-btn--no-text-transform(
+                                        @blur="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()"
+                                        @keyup.enter="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()"
+                                    >
+                                        <template v-slot:prepend>
+                                            <q-icon class="cursor-pointer" name="search"/>
+                                        </template>
+                                        <template v-slot:append>
+                                            <q-btn size="sm" color="primary" @click="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()">OK</q-btn>
+                                        </template>
+                                    </q-input>
+                                </div>
+                            </div>
+                        </q-btn-dropdown>
+                        <q-btn-dropdown class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform" :color="dateDisplay === '' ? 'primary': 'secondary'" :label="dateDisplay === '' ? 'Date' : dateDisplay">
+                            <div class="q-pa-md dropdown-filter">
+                                <div class="row">
+                                    <q-input
+                                        v-model="fromDateModel"
+                                        filled
+                                        dense
+                                        label="From"
+                                    >
+                                        <template v-slot:prepend>
+                                            <q-icon class="cursor-pointer" name="event">
+                                                <q-popup-proxy cover="" transition-show="scale" transition-hide="scale">
+                                                    <q-date v-model="fromDateModel" mask="YYYY-MM-DD HH:mm">
+                                                        <div class="row items-center justify-end">
+                                                            <q-btn
+                                                                v-close-popup
+                                                                label="Close"
+                                                                color="primary"
+                                                                flat
+                                                            />
+                                                        </div>
+                                                    </q-date>
+                                                </q-popup-proxy>
+                                            </q-icon>
+                                        </template>
+                                        <template v-slot:append>
+                                            <q-icon class="cursor-pointer" name="access_time">
+                                                <q-popup-proxy cover="cover" transition-show="scale" transition-hide="scale">
+                                                    <q-time v-model="fromDateModel" mask="YYYY-MM-DD HH:mm" format24h>
+                                                        <div class="row items-center justify-end">
+                                                            <q-btn
+                                                                v-close-popup
+                                                                label="Close"
+                                                                color="primary"
+                                                                flat
+                                                            />
+                                                        </div>
+                                                    </q-time>
+                                                </q-popup-proxy>
+                                            </q-icon>
+                                        </template>
+                                    </q-input>
+                                </div>
+                                <div class="row justify-center full-width q-py-xs">
+                                    <q-icon name="arrow_downward"/>
+                                </div>
+                                <div class="row">
+                                    <q-input
+                                        v-model="toDateModel"
+                                        filled
+                                        dense
+                                        label="To"
+                                    >
+                                        <template v-slot:prepend>
+                                            <q-icon class="cursor-pointer" name="event">
+                                                <q-popup-proxy cover="cover" transition-show="scale" transition-hide="scale">
+                                                    <q-date v-model="toDateModel" mask="YYYY-MM-DD HH:mm">
+                                                        <div class="row items-center justify-end">
+                                                            <q-btn
+                                                                v-close-popup
+                                                                label="Close"
+                                                                color="primary"
+                                                                flat
+                                                            />
+                                                        </div>
+                                                    </q-date>
+                                                </q-popup-proxy>
+                                            </q-icon>
+                                        </template>
+                                        <template v-slot:append>
+                                            <q-icon class="cursor-pointer" name="access_time">
+                                                <q-popup-proxy cover="" transition-show="scale" transition-hide="scale">
+                                                    <q-time v-model="toDateModel" mask="YYYY-MM-DD HH:mm" format24h>
+                                                        <div class="row items-center justify-end">
+                                                            <q-btn
+                                                                v-close-popup
+                                                                label="Close"
+                                                                color="primary"
+                                                                flat
+                                                            />
+                                                        </div>
+                                                    </q-time>
+                                                </q-popup-proxy>
+                                            </q-icon>
+                                        </template>
+                                    </q-input>
+                                </div>
+                            </div>
+                        </q-btn-dropdown>
+                        <q-btn-dropdown
                             v-if="showTokenFilter"
                             ref="token_dropdown"
+                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
                             :color="!tokenDisplay ? 'primary': 'secondary'"
                             :label="!tokenDisplay ? 'Token' : tokenDisplay"
-                        )
-                            .q-pa-md.dropdown-filter
-                                .row
-                                    TokenSearch(v-model='tokenModel' @update:model-value="toggleDropdown($refs.token_dropdown)")
-
-        q-separator.row.col-12.q-mt-md.separator
-        div.row.col-12.table-container
-            q-table.q-mt-lg.row.trx-table--fixed-layout(
+                        >
+                            <div class="q-pa-md dropdown-filter">
+                                <div class="row">
+                                    <TokenSearch v-model="tokenModel" @update:model-value="($refs.token_dropdown as QBtnDropdown).toggle()"/>
+                                </div>
+                            </div>
+                        </q-btn-dropdown>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <q-separator class="row col-12 q-mt-md separator"/>
+        <div class="row col-12 table-container">
+            <q-table
+                ref="main_table"
+                v-model:pagination="paginationSettings"
+                class="q-mt-lg row trx-table--fixed-layout"
                 flat
                 hide-pagination
                 table-header-class="table-header"
-                ref="main_table"
-                v-model:pagination="paginationSettings"
                 :rows="filteredRows"
                 :columns="columns"
                 :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
                 :bordered="false"
                 :square="true"
                 :loading="loading"
-                :hide-pagination="noData"
-                :rows-per-page-options='pageSizeOptions'
+                :rows-per-page-options="pageSizeOptions"
                 :dense="$q.screen.width < 1024"
-                @request='onPaginationChange'
-            )
-                template(v-slot:header="props")
-                    q-tr(:props="props")
-                        q-th(
-                            v-for="col in props.cols"
-                            :key="col.name"
-                            :props="props"
-                        ) {{ col.label }}
-                template( v-slot:body="props")
-                    q-tr(:props='props')
-                        q-td
-                            AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
-                        q-td
-                            DateField( :timestamp="props.row.timestamp", :showAge='showAge' )
-                        q-td
-                            .row.justify-left.text-weight-light(v-for='action in props.row.actions')
-                                .col-auto
-                                    .q-pt-xs
-                                        ActionFormat(:action="action.action" :showTransferLabel="showTransferLabel" :account="account")
-                        q-td
-                            DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length === 1' :use-color="false")
-
-                    q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
-                        q-td(auto-width)
-                        q-td
-                            AccountFormat(:account="props.row.transaction.id" :type="props.row.transaction.type")
-                        q-td
-                            DateField( :timestamp="action.timestamp", :showAge='showAge' )
-                        q-td
-                            .row.justify-left.text-weight-light
-                                ActionFormat(:action="action.action")
-                        q-td
-                            DataFormat(:actionData="action.data.data" :actionName="action.data.name " :use-color="false")
-        div.row.col-12.items-center.justify-end.q-mt-md.q-mb-sm
-            // records per page selector
-            q-space
-            div.col-auto
-                small Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}
-                // dropdown button to select number of rows per page
-                q-icon(
-                    :name="showPagesSizes ? 'expand_more' : 'expand_less'"
-                    size="sm"
-                    @click="switchPageSelector"
-                )
-                    q-popup-proxy(
-                        transition-show="scale"
-                        transition-hide="scale"
-                        ref="page_size_selector"
-                    )
-                        q-list
-                            q-item.cursor-pointer(
-                                v-for="size in pageSizeOptions"
-                                :key="size"
-                            )
-                                q-item-section(@click="changePageSize(size); $refs.page_size_selector.hide()") {{ size }}
-            div.col-auto.q-ml-lg
-                div.row.items-baseline
-                    div.col-auto.q-mr-xs
-                        small.q-mr-sm page <b>{{ paginationSettings.page }}</b>
-                    div.col-auto.q-mr-xs
-                        q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                @request="onPaginationChange"
+            >
+                <template v-slot:header="props">
+                    <q-tr :props="props">
+                        <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
+                    </q-tr>
+                </template>
+                <template v-slot:body="props">
+                    <q-tr :props="props">
+                        <q-td>
+                            <AccountFormat :account="props.row.transaction.id" :type="props.row.transaction.type"/>
+                        </q-td>
+                        <q-td>
+                            <DateField :timestamp="props.row.timestamp" :showAge="showAge"/>
+                        </q-td>
+                        <q-td>
+                            <div
+                                v-for="action in props.row.actions"
+                                :key="action.action.action_ordinal"
+                                class="row justify-left text-weight-light"
+                            >
+                                <div class="col-auto">
+                                    <div class="q-pt-xs">
+                                        <ActionFormat :action="action.action" :showTransferLabel="showTransferLabel" :account="account"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </q-td>
+                        <q-td>
+                            <DataFormat
+                                v-if="props.row.actions.length === 1"
+                                :actionData="props.row.data.data"
+                                :actionName="props.row.data.name "
+                                :use-color="false"
+                            />
+                        </q-td>
+                    </q-tr>
+                    <q-tr
+                        v-for="action in props.row.actions"
+                        v-show="props.expand"
+                        :key="action.action.action_ordinal"
+                        class="expanded-row"
+                        :props="props"
+                    >
+                        <q-td auto-width/>
+                        <q-td>
+                            <AccountFormat :account="props.row.transaction.id" :type="props.row.transaction.type"/>
+                        </q-td>
+                        <q-td>
+                            <DateField :timestamp="action.timestamp" :showAge="showAge"/>
+                        </q-td>
+                        <q-td>
+                            <div class="row justify-left text-weight-light">
+                                <ActionFormat :action="action.action"/>
+                            </div>
+                        </q-td>
+                        <q-td>
+                            <DataFormat :actionData="action.data.data" :actionName="action.data.name " :use-color="false"/>
+                        </q-td>
+                    </q-tr>
+                </template>
+            </q-table>
+        </div>
+        <div class="row col-12 items-center justify-end q-mt-md q-mb-sm">
+            <!-- records per page selector-->
+            <q-space/>
+            <div class="col-auto"><small>Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}</small>
+                <!-- dropdown button to select number of rows per page-->
+                <q-icon :name="showPagesSizes ? 'expand_more' : 'expand_less'" size="sm" @click="switchPageSelector">
+                    <q-popup-proxy ref="page_size_selector" transition-show="scale" transition-hide="scale">
+                        <q-list>
+                            <q-item v-for="size in pageSizeOptions" :key="size" class="cursor-pointer">
+                                <q-item-section @click="changePageSize(size); ($refs.page_size_selector as QPopupProxy).hide()">{{ size }}</q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-popup-proxy>
+                </q-icon>
+            </div>
+            <div class="col-auto q-ml-lg">
+                <div class="row items-baseline">
+                    <div class="col-auto q-mr-xs"><small class="q-mr-sm">page <b>{{ paginationSettings.page }}</b></small></div>
+                    <div class="col-auto q-mr-xs">
+                        <q-btn
+                            class="q-ml-xs q-mr-xs col button-primary"
                             size="sm"
                             :disable="paginationSettings.page === 1"
-                            @click="$refs.main_table.prevPage()") PREV
-                    div.col-auto.q-mr-xs
-                        q-btn.q-ml-xs.q-mr-xs.col.button-primary(
+                            @click="($refs.main_table as QTable).prevPage()"
+                        >PREV</q-btn>
+                    </div>
+                    <div class="col-auto q-mr-xs">
+                        <q-btn
+                            class="q-ml-xs q-mr-xs col button-primary"
                             size="sm"
                             :disable="paginationSettings.page === lastPage"
-                            @click="$refs.main_table.nextPage()") NEXT
-
-
+                            @click="($refs.main_table as QTable).nextPage()"
+                        >NEXT</q-btn>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </template>
 

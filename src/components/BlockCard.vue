@@ -126,36 +126,75 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.row.full-width.justify-center
-  .col-xs-12.col-md-8.col-lg-6
-    q-card(flat class="info-card")
-      .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
-        q-card-section.q-pl-md
-          .row.q-col-gutter-sm.justify-between
-            .col-auto(class="text-h4 text-bold") Block
-            .col-auto
-              .row.q-col-gutter-sm
-                .col-auto
-                  q-btn.button-primary( @click="previousBlock" flat dense size='md' icon='arrow_back' )
-                .col-auto
-                  q-btn.button-primary( @click="nextBlock" flat dense size='md' icon='arrow_forward' )
+<template>
 
-        q-card-section.q-pt-none
-          .row.items-center
-            .col-11.text-bold.ellipsis {{numberWithCommas(block_num)}}
-            .col-1
-              q-btn.float-right( @click="copy(block_num.toString())" flat round color="black" icon="content_copy" size='sm')
-
-        q-card-section
-          .text-grey-7 SUMMARY
-        div(v-for='item in blockInfo')
-          q-separator(inset).card-separator
-          q-card-section
-            .row
-              .col-xs-12.col-sm-6
-                .text-body1.text-weight-medium.text-uppercase {{item.key}}
-              .col-xs-12.col-sm-6.text-right.text-bold {{item.value}}
+<div class="row full-width justify-center">
+    <div class="col-xs-12 col-md-8 col-lg-6">
+        <q-card class="info-card" flat>
+            <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
+                <q-card-section class="q-pl-md">
+                    <div class="row q-col-gutter-sm justify-between">
+                        <div class="col-auto text-h4 text-bold">Block</div>
+                        <div class="col-auto">
+                            <div class="row q-col-gutter-sm">
+                                <div class="col-auto">
+                                    <q-btn
+                                        class="button-primary"
+                                        flat
+                                        dense
+                                        size="md"
+                                        icon="arrow_back"
+                                        @click="previousBlock"
+                                    />
+                                </div>
+                                <div class="col-auto">
+                                    <q-btn
+                                        class="button-primary"
+                                        flat
+                                        dense
+                                        size="md"
+                                        icon="arrow_forward"
+                                        @click="nextBlock"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </q-card-section>
+                <q-card-section class="q-pt-none">
+                    <div class="row items-center">
+                        <div class="col-11 text-bold ellipsis">{{numberWithCommas(block_num)}}</div>
+                        <div class="col-1">
+                            <q-btn
+                                class="float-right"
+                                flat
+                                round
+                                color="black"
+                                icon="content_copy"
+                                size="sm"
+                                @click="copy(block_num.toString())"
+                            />
+                        </div>
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <div class="text-grey-7">SUMMARY</div>
+                </q-card-section>
+                <div v-for="item in blockInfo" :key="item.key">
+                    <q-separator class="card-separator" inset="inset"/>
+                    <q-card-section>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="text-body1 text-weight-medium text-uppercase">{{item.key}}</div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 text-right text-bold">{{item.value}}</div>
+                        </div>
+                    </q-card-section>
+                </div>
+            </div>
+        </q-card>
+    </div>
+</div>
 
 </template>
 

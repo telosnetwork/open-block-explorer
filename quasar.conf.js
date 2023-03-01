@@ -74,13 +74,6 @@ module.exports = configure(function (ctx) {
       // https://quasar.dev/quasar-cli/handling-webpack
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
       chainWebpack: (config) => {
-        // Pug Loader
-        config.module
-          .rule('pug')
-          .test(/\.pug$/)
-          .use('pug-plain-loader')
-          .loader('pug-plain-loader')
-          .end();
         const nodePolyfillWebpackPlugin = require('node-polyfill-webpack-plugin')
         config.plugin('node-polyfill').use(nodePolyfillWebpackPlugin)
       }

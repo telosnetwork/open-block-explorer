@@ -130,28 +130,42 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div.row.col-12.justify-center.actor-font(align="center")
-    div.row.col-11.price-box.flex
-        div.col-xs-12.col-sx-12.col-md-8.col-lg-8.col-xs-8.q-pa-md
-            Highcharts.highcharts-description.col-12(:options="chartOptions" style="height:250px" :highcharts="hcInstance")
-        div.col-xs-12.col-sx-12.col-md-4.col-lg-4.col-xs-4.q-pa-md
-            div.col-12.flex.row.q-mt-md
-                div.col-6.chart-info
-                    p TOKEN PRICE
-                    p.sub-title {{ tokenPrice}}
-                    p.border-line
-                div.col-6.chart-info
-                    p MARKETCAP
-                    p.sub-title {{ marketCap }}
-                    p.border-line
-            div.col-12.flex.row
-                div.col-6.chart-info
-                    p 24H CHANGE
-                    p.sub-title {{ dayChange  }}
-                div.col-6.chart-info
-                    p 24H VOLUME
-                    p.sub-title {{ dayVolume }}
+<template>
+<div class="price-chart row col-12 justify-center actor-font" align="center">
+    <div class="row col-11 price-box flex">
+        <div class="col-xs-12 col-sx-12 col-md-8 col-lg-8 col-xs-8 q-pa-md">
+            <Highcharts
+                class="highcharts-description col-12"
+                :options="chartOptions"
+                :highcharts="hcInstance"
+            />
+        </div>
+        <div class="col-xs-12 col-sx-12 col-md-4 col-lg-4 col-xs-4 q-pa-md">
+            <div class="col-12 flex row q-mt-md">
+                <div class="col-6 chart-info">
+                    <p>TOKEN PRICE</p>
+                    <p class="sub-title">{{ tokenPrice}}</p>
+                    <p class="border-line"></p>
+                </div>
+                <div class="col-6 chart-info">
+                    <p>MARKETCAP</p>
+                    <p class="sub-title">{{ marketCap }}</p>
+                    <p class="border-line"></p>
+                </div>
+            </div>
+            <div class="col-12 flex row">
+                <div class="col-6 chart-info">
+                    <p>24H CHANGE</p>
+                    <p class="sub-title">{{ dayChange  }}</p>
+                </div>
+                <div class="col-6 chart-info">
+                    <p>24H VOLUME</p>
+                    <p class="sub-title">{{ dayVolume }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </template>
 
 <style lang="sass" scoped>
@@ -227,4 +241,7 @@ $medium:750px
 
 .highcharts-data-table tr:hover
   background: #f1f7ff
+
+.highcharts-description
+  height:250px
 </style>

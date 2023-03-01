@@ -52,28 +52,38 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div.row.col-12
-  div.column.col-12.gradient-box
-    div.row
-      AccountCard.account-card(:account='account' :tokens='tokenList')
-    q-tabs(v-model="tab" no-caps).tabs
-      q-tab( name="transactions" label="Transactions" )
-      q-tab( name="contract" label="Contract" v-if="abi")
-      q-tab( name="tokens" label="Tokens" )
-      q-tab( name="keys" label="Keys" )
-      q-tab( name="children" label="Children" )
-  q-tab-panels(v-model="tab").col-12
-    q-tab-panel(name="transactions")
-      TransactionsTable(:account='account' :showTransferLabel="true")
-    q-tab-panel(name="contract" v-if="abi")
-      ContractTabs
-    q-tab-panel(name="tokens")
-      TokensPanel(:account='account')
-    q-tab-panel(name="keys")
-      KeysPanel(:account='account')
-    q-tab-panel(name="children")
-      ChildrenPanel(:account='account')
+<template>
+<div class="row col-12">
+    <div class="column col-12 gradient-box">
+        <div class="row">
+            <AccountCard class="account-card" :account="account" :tokens="tokenList"/>
+        </div>
+        <q-tabs v-model="tab" class="tabs" no-caps>
+            <q-tab name="transactions" label="Transactions"/>
+            <q-tab v-if="abi" name="contract" label="Contract"/>
+            <q-tab name="tokens" label="Tokens"/>
+            <q-tab name="keys" label="Keys"/>
+            <q-tab name="children" label="Children"/>
+        </q-tabs>
+    </div>
+    <q-tab-panels v-model="tab" class="col-12">
+        <q-tab-panel name="transactions">
+            <TransactionsTable :account="account" :showTransferLabel="true"/>
+        </q-tab-panel>
+        <q-tab-panel v-if="abi" name="contract">
+            <ContractTabs/>
+        </q-tab-panel>
+        <q-tab-panel name="tokens">
+            <TokensPanel :account="account"/>
+        </q-tab-panel>
+        <q-tab-panel name="keys">
+            <KeysPanel :account="account"/>
+        </q-tab-panel>
+        <q-tab-panel name="children">
+            <ChildrenPanel :account="account"/>
+        </q-tab-panel>
+    </q-tab-panels>
+</div>
 </template>
 
 <style lang="sass">

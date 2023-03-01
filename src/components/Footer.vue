@@ -4,14 +4,19 @@ export default {
 };
 </script>
 
-<template lang="pug">
-.row.footer-background.justify-center.text-center.q-py-md
-    .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
-        a.no-dec(href="https://telos.net/legal") LEGAL
-    .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
-        a.no-dec(href="https://telos.net/privacy-policy") PRIVACY
-    .col-lg-1.col-md-2.col-sm-2.col-xs-4.q-pa-md
-        a.no-dec(href="https://github.com/telosnetwork/open-block-explorer") REPOSITORY
+<template>
+
+<div class="row footer-background justify-center text-center q-py-md">
+    <div class="col-lg-1 col-md-2 col-sm-2 col-xs-4 q-pa-md">
+        <a class="no-dec" href="https://telos.net/legal">LEGAL</a>
+    </div>
+    <div class="col-lg-1 col-md-2 col-sm-2 col-xs-4 q-pa-md">
+        <a class="no-dec" href="https://telos.net/privacy-policy">PRIVACY</a>
+    </div>
+    <div class="col-lg-1 col-md-2 col-sm-2 col-xs-4 q-pa-md">
+        <a class="no-dec" href="https://github.com/telosnetwork/open-block-explorer">REPOSITORY</a>
+    </div>
+</div>
 
 </template>
 
