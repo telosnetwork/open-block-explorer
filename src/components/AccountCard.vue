@@ -452,16 +452,30 @@ export default defineComponent({
         .col-3
           q-btn(
             v-if='isAccount'
-            :disabled="tokensLoading || isLoading"
+            :disable="tokensLoading || isLoading"
             :label='tokensLoading ? "Loading..." : "Send"'
             color='primary'
             class="full-width"
             @click="openSendDialog = true"
           )
         .col-3
-          q-btn( @click="openResourcesDialog = true" color='primary' label='Resources' v-if='isAccount' class="full-width")
+          q-btn(
+              v-if='isAccount'
+              :disable="tokensLoading || isLoading"
+              :label='tokensLoading ? "Loading..." : "Resources"'
+              color='primary'
+              class="full-width"
+              @click="openResourcesDialog = true"
+          )
         .col-3
-          q-btn.ellipsis( @click="openStakingDialog = true" color='primary' label='staking (REX)' v-if='isAccount' class="full-width")
+          q-btn.ellipsis(
+              v-if='isAccount'
+              :label='tokensLoading ? "Loading..." : "Staking (REX)"'
+              :disable="tokensLoading || isLoading"
+              color='primary'
+              class="full-width"
+              @click="openStakingDialog = true"
+          )
     q-markup-table
       thead
         tr
