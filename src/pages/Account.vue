@@ -65,7 +65,7 @@ div.row.col-12
       q-tab( name="children" label="Children" )
   q-tab-panels(v-model="tab").col-12
     q-tab-panel(name="transactions")
-      TransactionsTable(:account='account')
+      TransactionsTable(:account='account' :showTransferLabel="true")
     q-tab-panel(name="contract" v-if="abi")
       ContractTabs
     q-tab-panel(name="tokens")

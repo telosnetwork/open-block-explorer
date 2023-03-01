@@ -53,6 +53,11 @@ export default defineComponent({
             required: false,
             default: null,
         },
+        showTransferLabel: {
+            // show/hide send/receive label for transfers
+            type: Boolean,
+            default: false,
+        },
     },
     setup(props) {
         const route = useRoute();
@@ -652,9 +657,9 @@ div.row.col-12.q-mt-xs.justify-center.text-left
                             .row.justify-left.text-weight-light(v-for='action in props.row.actions')
                                 .col-auto
                                     .q-pt-xs
-                                        ActionFormat(:action="action.action")
+                                        ActionFormat(:action="action.action" :showTransferLabel="showTransferLabel" :account="account")
                         q-td
-                            DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length == 1' :use-color="false")
+                            DataFormat(:actionData="props.row.data.data" :actionName="props.row.data.name " v-if='props.row.actions.length === 1' :use-color="false")
 
                     q-tr.expanded-row(v-show="props.expand" :props="props" v-for='action in props.row.actions')
                         q-td(auto-width)
