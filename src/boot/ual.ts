@@ -6,13 +6,10 @@ import {
     User,
 } from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
-import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 import { Dialog, Notify, copyToClipboard } from 'quasar';
 import { isValidAccount } from 'src/utils/stringValidator';
-
-const chain: Chain = getChain();
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -20,11 +17,6 @@ declare module '@vue/runtime-core' {
     $user: User;
   }
 }
-
-const mainChain = {
-    chainId: chain.getChainId(),
-    rpcEndpoints: [chain.getRPCEndpoint()],
-};
 
 async function loginHandler() {
     let accountName = 'eosio';
@@ -142,20 +134,39 @@ async function signHandler(rpc: RpcEndpoint, trx: string) {
 }
 
 async function signHandlerForMainChain(trx: string) {
-    return signHandler(chain.getRPCEndpoint(), trx);
+    return signHandler(getChain().getRPCEndpoint(), trx);
 }
 
-export const authenticators: Authenticator[] = [
-    new Anchor([mainChain], { appName: process.env.APP_NAME }),
-    new CleosAuthenticator([mainChain], {
-        appName: process.env.APP_NAME,
-        loginHandler,
-        signHandler: signHandlerForMainChain,
-    }),
-];
+function getMainChain() {
+    return {
+        chainId: getChain().getChainId(),
+        rpcEndpoints: [getChain().getRPCEndpoint()],
+    };
+}
+
+const authenticators: Authenticator[] = [];
+
+export const getAuthenticators = () => {
+    if (authenticators.length === 0) {
+        // we initialize the authenticators inside this function on demand
+        const mainChain = getMainChain();
+        authenticators.push(new Anchor([mainChain], { appName: process.env.APP_NAME })),
+        authenticators.push(new CleosAuthenticator([mainChain], {
+            appName: process.env.APP_NAME,
+            loginHandler,
+            signHandler: signHandlerForMainChain,
+        }));
+    }
+    return authenticators;
+};
+
+export const resetUalState = () => {
+    authenticators.length = 0;
+};
 
 export default boot(({ app }) => {
-    const ual = new UAL([mainChain], 'ual', authenticators);
+    const authenticators = getAuthenticators();
+    const ual = new UAL([getMainChain()], 'ual', authenticators);
 
     app.config.globalProperties.$ual = ual;
 });

@@ -170,7 +170,7 @@ export default defineComponent({
 
             .col-5.text-right.grey-3
               q-btn.full-width.button-accent(label="Refund" flat @click="sendTransaction" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
 
 </template>
 
