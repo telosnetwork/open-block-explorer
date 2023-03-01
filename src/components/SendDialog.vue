@@ -112,7 +112,7 @@ export default defineComponent({
         };
 
         const setMaxValue = () => {
-            sendAmount.value = (sendToken.value.amount - 0.1).toString();
+            sendAmount.value = sendToken.value.amount.toString();
             void formatDec();
         };
 
@@ -215,7 +215,7 @@ export default defineComponent({
                                     standout="bg-deep-purple-2 text-white"
                                     placeholder="0.0000"
                                     :debounce="1000"
-                                    :rules="[val => val > 0 && val < sendToken?.amount || 'invalid amount' ]"
+                                    :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
                                     @blur="formatDec"
                                 />
                             </div>
