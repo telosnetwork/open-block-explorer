@@ -167,34 +167,89 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section.text-grey-3
-    .row.q-col-gutter-md
-      .text-weight-bold.text-right.text-grey-3 Buy in {{symbol}} or Bytes?
-    .row.q-col-gutter-md.q-pb-md
-      q-radio(v-model="buyOption" dark color="white" :val="symbol" :label="symbol")
-      q-radio(v-model="buyOption" dark color="white" val="Bytes" label="Bytes")
-    .row
-      .col-12
-        .row.justify-between.q-pb-sm RAM Receiver:
-          q-space
-          .text-grey-3 Defaults to connected account
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="receivingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
-    .row.q-mb-md
-      .row.q-pb-sm.full-width
-        .col-6 {{ `Amount of RAM to buy in ` + buyOption}}
-        .col-6
-          .color-grey-3.flex.justify-end.items-center( @click="buyAmount = (buyLimit() - 0.1).toString()" )
-            span.text-weight-bold.balance-amount {{ `${prettyBuyLimit()} AVAILABLE` }}
-            q-icon.q-ml-xs( name="info" )
-            q-tooltip Click to fill full amount
-      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="buyAmount" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
-    .row.q-pb-sm
-      .text-weight-normal.text-right.text-grey-3 ≈ {{buyPreview}}
-    .row
-      q-btn.full-width.button-accent(label="Buy" flat :disable="disableCta" @click="buy" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
+<template>
+
+<div class="staking-form">
+    <q-card-section class="text-grey-3">
+        <div class="row q-col-gutter-md">
+            <div class="text-weight-bold text-right text-grey-3">Buy in {{symbol}} or Bytes?</div>
+        </div>
+        <div class="row q-col-gutter-md q-pb-md">
+            <q-radio
+                v-model="buyOption"
+                dark
+                color="white"
+                :val="symbol"
+                :label="symbol"
+            />
+            <q-radio
+                v-model="buyOption"
+                dark
+                color="white"
+                val="Bytes"
+                label="Bytes"
+            />
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="row justify-between q-pb-sm">RAM Receiver:
+                    <q-space/>
+                    <div class="text-grey-3">Defaults to connected account</div>
+                </div>
+                <q-input
+                    v-model="receivingAccount"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    dense
+                    dark
+                    :lazy-rules="true"
+                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
+                />
+            </div>
+        </div>
+        <div class="row q-mb-md">
+            <div class="row q-pb-sm full-width">
+                <div class="col-6">{{ `Amount of RAM to buy in ` + buyOption}}</div>
+                <div class="col-6">
+                    <div class="color-grey-3 flex justify-end items-center" @click="buyAmount = (buyLimit() - 0.1).toString()"><span class="text-weight-bold balance-amount">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
+                        <q-icon class="q-ml-xs" name="info"/>
+                        <q-tooltip>Click to fill full amount</q-tooltip>
+                    </div>
+                </div>
+            </div>
+            <q-input
+                v-model="buyAmount"
+                class="full-width"
+                standout="bg-deep-purple-2 text-white"
+                placeholder="0.0000"
+                :lazy-rules="true"
+                :rules="inputRules"
+                type="text"
+                dense
+                dark
+                @blur="formatDec"
+            />
+        </div>
+        <div class="row q-pb-sm">
+            <div class="text-weight-normal text-right text-grey-3">≈ {{buyPreview}}</div>
+        </div>
+        <div class="row">
+            <q-btn
+                class="full-width button-accent"
+                label="Buy"
+                flat
+                :disable="disableCta"
+                @click="buy"
+            />
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
 
 </template>
 

@@ -199,38 +199,55 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-q-select(
-  borderless
-  dense
-  filled
-  use-input
-  hide-selected
-  fill-input
-  hide-bottom-space
-  input-style="color:white"
-  color="white"
-  :loading="isLoading"
-  :model-value="inputValue"
-  @input-value="(value) => inputValue = value"
-  @keyup.enter="handleGoTo"
-  :options="options"
-  :option-disable="(item) => item.isHeader"
-).search-input
-  template(#prepend)
-    q-icon(name="search" color="white" size="20px").rotate-90
-
-  template(#no-option)
-    q-item
-      q-item-section.text-center
-        q-item-label(v-if="isLoading") Searching...
-        q-item-label(v-else) {{ inputValue ? 'Nothing found' : 'Search by accounts, keys, proposals and transactions' }}
-
-  template(#option="scope")
-    q-item-label(v-if="scope.opt.isHeader" header) {{ scope.opt.label }}
-    q-item(v-else v-bind="scope.itemProps" exact @click="handleGoTo(scope.opt.to)" clickable)
-      q-item-section
-        q-item-label {{ scope.opt.label }}
+<template>
+<q-select
+    borderless
+    dense
+    filled
+    use-input
+    hide-selected
+    fill-input
+    hide-bottom-space
+    input-style="color:white"
+    color="white"
+    :loading="isLoading"
+    :model-value="inputValue"
+    :options="options"
+    :option-disable="(item) => item.isHeader"
+    @input-value="(value) => inputValue = value"
+    @keyup.enter="handleGoTo"
+>
+    <template #prepend>
+        <q-icon
+            class="rotate-90"
+            name="search"
+            color="white"
+            size="20px"
+        />
+    </template>
+    <template #no-option>
+        <q-item>
+            <q-item-section class="text-center">
+                <q-item-label v-if="isLoading">Searching...</q-item-label>
+                <q-item-label v-else>{{ inputValue ? 'Nothing found' : 'Search by accounts, keys, proposals and transactions' }}</q-item-label>
+            </q-item-section>
+        </q-item>
+    </template>
+    <template #option="scope">
+        <q-item-label v-if="scope.opt.isHeader" header>{{ scope.opt.label }}</q-item-label>
+        <q-item
+            v-else
+            v-bind="scope.itemProps"
+            exact="exact"
+            clickable="clickable"
+            @click="handleGoTo(scope.opt.to)"
+        >
+            <q-item-section>
+                <q-item-label>{{ scope.opt.label }}</q-item-label>
+            </q-item-section>
+        </q-item>
+    </template>
+</q-select>
 </template>
 
 <style lang="sass">

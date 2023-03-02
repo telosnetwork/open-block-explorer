@@ -142,43 +142,95 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section.text-grey-3.text-weight-light
-    .row
-      .col-12
-        .row.justify-between.q-pb-sm CPU/NET Receiver
-          q-space
-          .text-grey-3 Defaults to connected account
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense  dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
-    .row.q-py-md
-      .col-6
-        .row.q-pb-sm
-          .col-6 ADD CPU
-          .col-6
-            .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = (accountTotal - 0.1).toString(); netTokens = '0'" )
-              span.text-weight-bold.balance-amount {{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}
-              q-icon.q-ml-xs( name="info" )
-              q-tooltip Click to fill full amount
+<template>
 
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
-
-      .col-6.q-pl-md
-        .row.q-pb-sm
-          .col-6 ADD NET
-          .col-6
-            .color-grey-3.flex.justify-end.items-center( @click="netTokens = (accountTotal - 0.1).toString(); cpuTokens = '0'" )
-              span.text-weight-bold.balance-amount {{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}
-              q-icon.q-ml-xs( name="info" )
-              q-tooltip Click to fill full amount
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
-
-    .row.text-red(v-if="notEnoughTlosForTransaction") Balance too low for transaction
-
-    .row
-      .col-12.q-pt-md
-        q-btn.full-width.button-accent(label="Confirm" flat :disable="disableCta" @click="sendTransaction" )
-  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="transaction complete")
+<div class="staking-form">
+    <q-card-section class="text-grey-3 text-weight-light">
+        <div class="row">
+            <div class="col-12">
+                <div class="row justify-between q-pb-sm">CPU/NET Receiver
+                    <q-space/>
+                    <div class="text-grey-3">Defaults to connected account</div>
+                </div>
+                <q-input
+                    v-model="stakingAccount"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    dense
+                    dark
+                    :lazy-rules="true"
+                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
+                />
+            </div>
+        </div>
+        <div class="row q-py-md">
+            <div class="col-6">
+                <div class="row q-pb-sm">
+                    <div class="col-6">ADD CPU</div>
+                    <div class="col-6">
+                        <div class="color-grey-3 flex justify-end items-center" @click="cpuTokens = (accountTotal - 0.1).toString(); netTokens = '0'"><span class="text-weight-bold balance-amount">{{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}</span>
+                            <q-icon class="q-ml-xs" name="info"/>
+                            <q-tooltip>Click to fill full amount</q-tooltip>
+                        </div>
+                    </div>
+                </div>
+                <q-input
+                    v-model="cpuTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0.0000"
+                    :lazy-rules="true"
+                    :rules="inputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+            <div class="col-6 q-pl-md">
+                <div class="row q-pb-sm">
+                    <div class="col-6">ADD NET</div>
+                    <div class="col-6">
+                        <div class="color-grey-3 flex justify-end items-center" @click="netTokens = (accountTotal - 0.1).toString(); cpuTokens = '0'"><span class="text-weight-bold balance-amount">{{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}</span>
+                            <q-icon class="q-ml-xs" name="info"/>
+                            <q-tooltip>Click to fill full amount</q-tooltip>
+                        </div>
+                    </div>
+                </div>
+                <q-input
+                    v-model="netTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0.0000"
+                    :lazy-rules="true"
+                    :rules="inputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+        </div>
+        <div v-if="notEnoughTlosForTransaction" class="row text-red">Balance too low for transaction</div>
+        <div class="row">
+            <div class="col-12 q-pt-md">
+                <q-btn
+                    class="full-width button-accent"
+                    label="Confirm"
+                    flat
+                    :disable="disableCta"
+                    @click="sendTransaction"
+                />
+            </div>
+        </div>
+    </q-card-section>
+    <ViewTransaction
+        v-model="openTransaction"
+        :transactionId="transactionId"
+        :transactionError="transactionError || ''"
+        message="transaction complete"
+    />
+</div>
 
 </template>
 

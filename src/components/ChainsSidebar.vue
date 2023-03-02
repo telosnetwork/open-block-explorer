@@ -53,46 +53,53 @@ export default {
 };
 </script>
 
-<template lang="pug">
-q-drawer(
+<template>
+
+<q-drawer
     show-if-above
     :mini="miniState"
-    @mouseover="miniState = false"
-    @mouseout="miniState = true"
     mini-to-overlay
     :width="175"
     :breakpoint="500"
     bordered
-)
-    q-scroll-area.fit
-        q-list
-            q-item(
+    @mouseover="miniState = false"
+    @mouseout="miniState = true"
+>
+    <q-scroll-area class="fit">
+        <q-list>
+            <q-item
                 v-for="(chain, index) in mainnets"
                 :key="`mainnet-${index}`"
+                v-ripple
                 :class="{ selected: isSelected(chain) }"
                 clickable
-                v-ripple
                 @click="chainSelected(chain)"
-            )
-                img( :src="chain.getSmallLogoPath()" ).sidebar-logo
-                q-item-section
-                    .q-pl-md {{ chain.getDisplay() }}
-
-            q-separator.separator
-
-            q-item(
+            ><img class="sidebar-logo" :src="chain.getSmallLogoPath()">
+                <q-item-section>
+                    <div class="q-pl-md">{{ chain.getDisplay() }}</div>
+                </q-item-section>
+            </q-item>
+            <q-separator class="separator"/>
+            <q-item
                 v-for="(chain, index) in testnets"
                 :key="`testnet-${index}`"
+                v-ripple
                 :class="{ selected: isSelected(chain) }"
                 clickable
-                v-ripple
                 @click="chainSelected(chain)"
-            )
-                .testnet-logo-container
-                    img( :src="chain.getSmallLogoPath()" ).sidebar-logo.sidebar-logo--testnet
-                    .testnet-text Testnet
-                q-item-section
-                    .q-pl-md {{ chain.getDisplay() }}
+            >
+                <div class="testnet-logo-container">
+                    <img class="sidebar-logo sidebar-logo--testnet" :src="chain.getSmallLogoPath()">
+                    <div class="testnet-text">Testnet</div>
+                </div>
+                <q-item-section>
+                    <div class="q-pl-md">{{ chain.getDisplay() }}</div>
+                </q-item-section>
+            </q-item>
+        </q-list>
+    </q-scroll-area>
+</q-drawer>
+
 </template>
 
 <style lang="sass" scoped>

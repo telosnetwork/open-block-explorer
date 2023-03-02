@@ -26,9 +26,8 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-KeyAccountsCard(:pubKey='pubKey' :accounts='accounts')
-
+<template>
+<KeyAccountsCard :pubKey="pubKey" :accounts="accounts" />
 </template>
 
 <style scoped lang="sass">

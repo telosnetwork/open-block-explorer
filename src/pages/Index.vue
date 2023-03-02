@@ -7,6 +7,6 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-q-page.row.items-center.justify-evenly
+<template>
+<q-page class="row items-center justify-evenly" />
 </template>
