@@ -47,7 +47,7 @@ export default defineComponent({
         const accountTotal = computed(() => {
             let value = 0;
             if (accountData.value) {
-                value = accountData.value?.core_liquid_balance.value;
+                value = accountData.value?.core_liquid_balance?.value ?? 0;
             }
             return value;
         });
