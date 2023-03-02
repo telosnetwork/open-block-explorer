@@ -204,7 +204,7 @@ export default defineComponent({
 
                     actionSkip += actionLimit;
                 } catch (error) {
-                    console.log(error);
+                    console.error(error);
                 }
             }
 
@@ -359,7 +359,7 @@ export default defineComponent({
                 await sleep();
                 await loadProposalAndUpdateFields();
             } catch (e) {
-                console.log(e);
+                console.error(e);
                 handleError(e, 'Unable approve proposal');
             }
         }
@@ -380,7 +380,7 @@ export default defineComponent({
                 await sleep();
                 await loadProposalAndUpdateFields();
             } catch (e) {
-                console.log(e);
+                console.error(e);
                 handleError(e, 'Unable approve proposal');
             }
         }

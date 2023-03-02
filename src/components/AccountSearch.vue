@@ -45,7 +45,6 @@ export default defineComponent({
         });
 
         onMounted(async () => {
-            console.log(props.modelValue);
             if (props.modelValue) {
                 inputValue.value = props.modelValue;
                 await searchAccounts(props.modelValue);
@@ -78,8 +77,6 @@ export default defineComponent({
                     upper_bound: value.padEnd(12, 'z'),
                 };
                 const accounts = await api.getTableByScope(request);
-
-                console.log(accounts);
 
                 if (accounts.length > 0) {
                     results.push({
