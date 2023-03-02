@@ -3,80 +3,104 @@ import { defineComponent, PropType, ref, watch } from 'vue';
 import { Token } from 'src/types';
 
 export default defineComponent({
-  name: 'CoinSelectorDialog',
-  props: {
-    availableTokens: {
-      required: true,
-      type: Array as PropType<Token[]>
+    name: 'CoinSelectorDialog',
+    props: {
+        availableTokens: {
+            required: true,
+            type: Array as PropType<Token[]>,
+        },
+        updateSelectedCoin: {
+            type: Function,
+            required: true,
+        },
     },
-    updateSelectedCoin: {
-      type: Function,
-      required: true
-    }
-  },
-  setup(props) {
-    const search = ref('');
-    const filteredTokens = ref<Token[]>([]);
+    setup(props) {
+        const search = ref('');
+        const filteredTokens = ref<Token[]>([]);
 
-    const filterTokens = () => {
-      if (search.value.length > 0) {
-        filterByText(tokensWithBalance());
-      } else filteredTokens.value = tokensWithBalance();
-    };
+        const filterTokens = () => {
+            if (search.value.length > 0) {
+                filterByText(tokensWithBalance());
+            } else {
+                filteredTokens.value = tokensWithBalance();
+            }
+        };
 
-    const filterByText = (tokens: Token[]) => {
-      filteredTokens.value = tokens.filter((token) => {
-        return (
-          token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
+        const filterByText = (tokens: Token[]) => {
+            filteredTokens.value = tokens.filter(token => (
+                token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
           token.contract.toLowerCase().includes(search.value.toLowerCase())
-        );
-      });
-    };
+            ));
+        };
 
-    const tokensWithBalance = () => {
-      return props.availableTokens.filter((token) => {
-        return token.amount > 0;
-      });
-    };
+        const tokensWithBalance = () => props.availableTokens.filter(token => token.amount > 0);
 
-    watch(search, () => {
-      void filterTokens();
-    });
+        watch(search, () => {
+            void filterTokens();
+        });
 
-    return {
-      search,
-      filteredTokens,
-      filterTokens,
-      filterByText
-    };
-  }
+        return {
+            search,
+            filteredTokens,
+            filterTokens,
+            filterByText,
+        };
+    },
 });
 </script>
 
-<template lang="pug">
-q-dialog.dialogContainer(@show='filterTokens')
-  q-card.dialogCard
-    .dialogHeader
-      .row.justify-between.items-center.q-pt-sm-center
-        .text-h6.q-pl-md Select a token
-        .q-pr-sm
-          q-btn(size="12px" flat dense round icon="clear" v-close-popup)
-      .row
-        .col-12.q-pa-sm
-          q-input( v-model="search" debounce='500' outlined dark round placeholder="Search contract name or symbol" )
-    q-separator
-    q-list.dialogList
-      q-item(v-for="token in filteredTokens"
-        :key="`${token.contract}-${token.symbol}`"
-        clickable
-        v-close-popup
-        @click="updateSelectedCoin(token);")
-        q-item-section
-          q-item-label {{ token.symbol }}
-          q-item-label {{ token.contract }}
-        q-item-section
-          q-item-label {{ token.amount }}
-      q-item(v-if="availableTokens.length == 0") No tokens found
+<template>
+
+<q-dialog class="dialogContainer" @show="filterTokens">
+    <q-card class="dialogCard">
+        <div class="dialogHeader">
+            <div class="row justify-between items-center q-pt-sm-center">
+                <div class="text-h6 q-pl-md">Select a token</div>
+                <div class="q-pr-sm">
+                    <q-btn
+                        v-close-popup
+                        size="12px"
+                        flat
+                        dense
+                        round
+                        icon="clear"
+                    />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 q-pa-sm">
+                    <q-input
+                        v-model="search"
+                        debounce="500"
+                        outlined
+                        dark
+                        round="round"
+                        placeholder="Search contract name or symbol"
+                    />
+                </div>
+            </div>
+        </div>
+        <q-separator/>
+        <q-list class="dialogList">
+            <q-item
+                v-for="token in filteredTokens"
+                :key="`${token.contract}-${token.symbol}`"
+                v-close-popup
+                clickable
+                @click="updateSelectedCoin(token);"
+            >
+                <q-item-section>
+                    <q-item-label>{{ token.symbol }}</q-item-label>
+                    <q-item-label>{{ token.contract }}</q-item-label>
+                </q-item-section>
+                <q-item-section>
+                    <q-item-label>{{ token.amount }}</q-item-label>
+                </q-item-section>
+            </q-item>
+            <q-item v-if="availableTokens.length == 0">No tokens found</q-item>
+        </q-list>
+    </q-card>
+</q-dialog>
 </template>
 
 <style lang="sass" scoped>

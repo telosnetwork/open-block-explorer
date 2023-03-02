@@ -1,40 +1,39 @@
 <script lang="ts">
-import Footer from 'components/Footer.vue';
-import Header from 'components/Header.vue';
+import AppFooter from 'components/Footer.vue';
+import AppHeader from 'components/Header.vue';
 import ChainsSidebar from 'components/ChainsSidebar.vue';
 
 export default {
-  name: 'MainLayout',
-  components: {
-    Header,
-    Footer,
-    ChainsSidebar
-  },
-  setup() {
-    return {
-      showSidebar: () => {
-        return process.env.SHOW_SIDEBAR == 'true';
-      }
-    };
-  }
+    name: 'MainLayout',
+    components: {
+        AppHeader,
+        AppFooter,
+        ChainsSidebar,
+    },
+    setup() {
+        return {
+            showSidebar: () => process.env.SHOW_SIDEBAR === 'true',
+        };
+    },
 };
 </script>
 
-<template lang="pug">
-q-layout( view="lHh lpR lff")
-  q-header
-    Header
-    q-separator.separator
+<template>
 
-  chains-sidebar(
-    v-if="showSidebar()"
-  )
-
-  q-page-container
-    router-view
-    q-separator
-  q-footer
-    Footer
+<q-layout view="lHh lpR lff">
+    <q-header>
+        <AppHeader/>
+        <q-separator class="separator"/>
+    </q-header>
+    <ChainsSidebar v-if="showSidebar()"/>
+    <q-page-container>
+        <router-view/>
+        <q-separator/>
+    </q-page-container>
+    <q-footer>
+        <AppFooter/>
+    </q-footer>
+</q-layout>
 </template>
 
 <style lang="sass" scoped>

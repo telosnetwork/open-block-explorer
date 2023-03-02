@@ -7,49 +7,86 @@ import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 
 export default defineComponent({
-  name: 'Header',
-  components: {
-    LoginHandler,
-    HeaderSearch
-  },
-  setup() {
-    const $q = useQuasar();
-    const chain = getChain();
-    const store = useStore();
-    const account = computed(() => store.state.account.accountName);
-    const isLarge = computed((): boolean => $q.screen.gt.sm);
+    name: 'AppHeader',
+    components: {
+        LoginHandler,
+        HeaderSearch,
+    },
+    setup() {
+        const $q = useQuasar();
+        const chain = getChain();
+        const store = useStore();
+        const account = computed(() => store.state.account.accountName);
+        const isLarge = computed((): boolean => $q.screen.gt.sm);
 
-    return {
-      account,
-      isLarge: isLarge,
-      chain
-    };
-  }
+        return {
+            account,
+            isLarge: isLarge,
+            chain,
+        };
+    },
 });
 </script>
 
-<template lang="pug">
-.header-background
-  .row.text-center.q-pt-sm.justify-between.q-pt-md
-    .logo-container.col-xs-2.col-sm-2.col-md-2.col-lg-2
-      .q-px-xs-xs.q-px-sm-xs.q-px-md-md.q-px-lg-md
-        a( href="/").float-left.q-ml-sm
-          img.logo( v-if="isLarge" :src="chain.getLargeLogoPath()")
-          img.logo-token( v-else :src="chain.getSmallLogoPath()")
-    .col-xs-5.col-sm-6.col-md-4.col-lg-6
-      .q-px-xs-xs.q-px-sm-xs.q-px-md-md.q-px-lg-md
-        .row.justify-center.full-width
-          .col-12
-            HeaderSearch
+<template>
 
-    LoginHandler
-  .row.justify-center.col-12.q-pt-sm
-    q-tabs(active-class="active-tab" indicator-color="white" align="justify" narrow-indicator color="white")
-      q-route-tab.deactive(name="network" label="Network" to='/')
-      q-route-tab.deactive(name="wallet" v-if="account" label="Wallet" :to="'/account/' + account")
-      q-route-tab.deactive(name="vote" label="Vote" to='/vote')
-      q-route-tab.deactive(name="proposal"  label="Proposal" to='/proposal')
-      //- q-route-tab.deactive(name="explore" label="Explore" to='/explore')
+<div class="header-background">
+    <div class="row text-center q-pt-sm justify-between q-pt-md">
+        <div class="logo-container col-xs-2 col-sm-2 col-md-2 col-lg-2">
+            <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
+                <a class="float-left q-ml-sm" href="/">
+                    <img v-if="isLarge" class="logo" :src="chain.getLargeLogoPath()">
+                    <img v-else class="logo-token" :src="chain.getSmallLogoPath()">
+                </a>
+            </div>
+        </div>
+        <div class="col-xs-5 col-sm-6 col-md-4 col-lg-6">
+            <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
+                <div class="row justify-center full-width">
+                    <div class="col-12">
+                        <HeaderSearch/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <LoginHandler/>
+    </div>
+    <div class="row justify-center col-12 q-pt-sm">
+        <q-tabs
+            active-class="active-tab"
+            indicator-color="white"
+            align="justify"
+            narrow-indicator
+            color="white"
+        >
+            <q-route-tab
+                class="deactive"
+                name="network"
+                label="Network"
+                to="/"
+            />
+            <q-route-tab
+                v-if="account"
+                class="deactive"
+                name="wallet"
+                label="Wallet"
+                :to="'/account/' + account"
+            />
+            <q-route-tab
+                class="deactive"
+                name="vote"
+                label="Vote"
+                to="/vote"
+            />
+            <q-route-tab
+                class="deactive"
+                name="proposal"
+                label="Proposal"
+                to="/proposal"
+            />
+        </q-tabs>
+    </div>
+</div>
 </template>
 
 <style lang="sass" scoped>

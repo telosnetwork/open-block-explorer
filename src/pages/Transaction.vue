@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed, watch } from 'vue';
 import TransactionsTable from 'src/components/TransactionsTable.vue';
-import TransactionCard from 'components/Transaction/TransactionCard.vue';
-import TraceTree from 'components/Transaction/TraceTree.vue';
+import TransactionCard from 'components/transaction/TransactionCard.vue';
+import TraceTree from 'components/transaction/TraceTree.vue';
 import JsonViewer from 'vue-json-viewer';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
@@ -44,61 +44,70 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div.row
-  .col-12.gradient-box
-    TransactionCard.q-pa-lg(v-if='found')
-    .q-pa-lg(v-else)
-      .row.full-width.justify-center
-        .col-xs-12.col-md-8.col-lg-6
-          q-card(flat class="info-card")
-            .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
-              q-card-section.q-pl-md
-                div(class="text-h4 text-bold") Transaction not found.
-    .q-pt-lg
-      q-tabs(
-        v-model="tab" 
-        dense class="text-grey"
-        indicator-color="grey-3"
-        active-color="grey-3"
-        align="center"
-        no-caps
-        class="text-grey-5 tab-text")
-        
-        .row.full-height.items-center
-          .col-10
-            q-tab(name="actions")
-              .text-body Actions
-                .q-pl-xs(style="display: inline-block")
-                  .bg-blur
-                    q-badge(color="transparent") {{actionCount}}
-        .row.full-height.items-center
-          .col-10
-            q-tab(name="traces")
-              .text-body Traces
-                .q-pl-xs(style="display: inline-block")
-                  .bg-blur
-                    q-badge(color="transparent") {{actionCount}}
-        q-tab(name="raw" label="Raw")
+<template>
 
-      q-separator(color="grey-8")
+<div class="row">
+  <div class="col-12 gradient-box">
+    <TransactionCard class="q-pa-lg" v-if="found" />
+    <div v-else class="q-pa-lg">
+      <div class="row full-width justify-center">
+        <div class="col-xs-12 col-md-8 col-lg-6">
+          <q-card class="info-card" flat>
+            <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
+              <q-card-section class="q-pl-md">
+                <div class="text-h4 text-bold">Transaction not found.</div>
+              </q-card-section>
+            </div>
+          </q-card>
+        </div>
+      </div>
+    </div>
+    <div class="q-pt-lg">
+      <q-tabs class="text-grey text-grey-5 tab-text" v-model="tab" dense indicator-color="grey-3" active-color="grey-3" align="center" no-caps>
+        <div class="row full-height items-center">
+          <div class="col-10">
+            <q-tab name="actions">
+              <div class="text-body">Actions
+                <div class="q-pl-xs" style="display: inline-block">
+                  <div class="bg-blur">
+                    <q-badge color="transparent">{{actionCount}}</q-badge>
+                  </div>
+                </div>
+              </div>
+            </q-tab>
+          </div>
+        </div>
+        <div class="row full-height items-center">
+          <div class="col-10">
+            <q-tab name="traces">
+              <div class="text-body">Traces
+                <div class="q-pl-xs" style="display: inline-block">
+                  <div class="bg-blur">
+                    <q-badge color="transparent">{{actionCount}}</q-badge>
+                  </div>
+                </div>
+              </div>
+            </q-tab>
+          </div>
+        </div>
+        <q-tab name="raw" label="Raw"></q-tab>
+      </q-tabs>
+      <q-separator color="grey-8"></q-separator>
+      <q-tab-panels class="tab-panel" v-model="tab">
+        <q-tab-panel name="actions">
+          <TransactionsTable :account="Array.isArray(transaction) ? transaction[0] : transaction" />
+        </q-tab-panel>
+        <q-tab-panel name="traces">
+          <TraceTree></TraceTree>
+        </q-tab-panel>
+        <q-tab-panel name="raw">
+          <json-viewer :value="jsonTransaction" :expand-depth="5" preview-mode="preview-mode" boxed="boxed" copyable="copyable" sort="sort"></json-viewer>
+        </q-tab-panel>
+      </q-tab-panels>
+    </div>
+  </div>
+</div>
 
-      q-tab-panels(v-model="tab" class="tab-panel")
-        q-tab-panel(name="actions")
-          TransactionsTable(:account='transaction')
-
-        q-tab-panel(name="traces")
-          TraceTree
-
-        q-tab-panel(name="raw")
-          json-viewer(
-            :value="jsonTransaction"
-            :expand-depth=5
-            preview-mode
-            boxed
-            copyable
-            sort)
-    
 </template>
 
 <style scoped lang="sass">

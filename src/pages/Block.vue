@@ -7,72 +7,80 @@ import { api } from 'src/api/index';
 import { Action, Block } from 'src/types';
 
 export default defineComponent({
-  name: 'Block',
-  setup() {
-    const route = useRoute();
-    const router = useRouter();
-    const found = ref(true);
-    const block = ref<Block>(null);
-    const actions = ref<Action[]>([]);
-    const tab = ref<string>((route.query['tab'] as string) || 'actions');
-    onMounted(async () => {
-      // api get block and set block
-      block.value = await api.getBlock(route.params.block as string);
-      block.value.transactions.forEach((tr) => {
-        const act = tr.trx.transaction.actions.map((act) => {
-          return {
-            ...act,
-            trx_id: tr.trx.id,
-            act: {
-              ...act.act,
-              name: act.name,
-              data: act.data,
-              account: act.account
-            },
-            '@timestamp': block.value.timestamp
-          };
+    name: 'BlockPage',
+    setup() {
+        const route = useRoute();
+        const router = useRouter();
+        const found = ref(true);
+        const block = ref<Block>(null);
+        const actions = ref<Action[]>([]);
+        const tab = ref<string>((route.query['tab'] as string) || 'actions');
+        onMounted(async () => {
+            // api get block and set block
+            block.value = await api.getBlock(route.params.block as string);
+            block.value.transactions.forEach((tr) => {
+                const act = tr.trx.transaction?.actions.map(act => ({
+                    ...act,
+                    trx_id: tr.trx.id,
+                    act: {
+                        ...act.act,
+                        name: act.name,
+                        data: act.data,
+                        account: act.account,
+                    },
+                    '@timestamp': block.value.timestamp,
+                }));
+                actions.value = actions.value.concat(act);
+            });
+            found.value = block.value ? true : false;
         });
-        actions.value = actions.value.concat(act);
-      });
-      found.value = block.value ? true : false;
-    });
-    watch([tab], () => {
-      void router.push({
-        path: router.currentRoute.value.path,
-        query: {
-          tab: tab.value
-        }
-      });
-    });
-    return {
-      tab,
-      transaction: route.params.transaction,
-      found,
-      Actions: actions,
-      block
-    };
-  },
-  components: {
-    TransactionTable,
-    BlockCard
-  }
+        watch([tab], () => {
+            void router.push({
+                path: router.currentRoute.value.path,
+                query: {
+                    tab: tab.value,
+                },
+            });
+        });
+        return {
+            tab,
+            transaction: route.params.transaction,
+            found,
+            Actions: actions,
+            block,
+        };
+    },
+    components: {
+        TransactionTable,
+        BlockCard,
+    },
 });
 </script>
 
-<template lang="pug">
-.row
-  .col-12.gradient-box.q-pb-lg
-    BlockCard.q-pa-lg(v-if='found' :block='block')
-    .q-pa-lg(v-else)
-      .row.full-width.justify-center
-        .col-xs-12.col-md-8.col-lg-6
-          q-card(flat class="info-card")
-            .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
-              q-card-section.q-pl-md
-                div(class="text-h4 text-bold") Block not found.
-  .q-pt-lg
-    TransactionTable(:actions='Actions')
-    
+<template>
+
+<div class="row">
+    <div class="col-12 gradient-box q-pb-lg">
+        <BlockCard v-if="found" class="q-pa-lg" :block="block"/>
+        <div v-else class="q-pa-lg">
+            <div class="row full-width justify-center">
+                <div class="col-xs-12 col-md-8 col-lg-6">
+                    <q-card class="info-card" flat>
+                        <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
+                            <q-card-section class="q-pl-md">
+                                <div class="text-h4 text-bold">Block not found.</div>
+                            </q-card-section>
+                        </div>
+                    </q-card>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="q-pt-lg">
+        <TransactionTable :actions="Actions"/>
+    </div>
+</div>
+
 </template>
 
 <style scoped lang="sass">

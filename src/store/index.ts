@@ -1,19 +1,19 @@
 import { store } from 'quasar/wrappers';
 import { InjectionKey } from 'vue';
 import {
-  createStore,
-  Store as VuexStore,
-  useStore as vuexUseStore
+    createStore,
+    Store as VuexStore,
+    useStore as vuexUseStore,
 } from 'vuex';
 
-import { contract } from './contract';
-import { ContractStateInterface } from './contract/state';
-import { chain } from './chain';
-import { ChainStateInterface } from './chain/state';
-import { account } from './account';
-import { AccountStateInterface } from './account/state';
-import { transaction } from './transaction';
-import { TransactionStateInterface } from './transaction/state';
+import { contract } from 'src/store/contract';
+import { ContractStateInterface } from 'src/store/contract/state';
+import { chain } from 'src/store/chain';
+import { ChainStateInterface } from 'src/store/chain/state';
+import { account } from 'src/store/account';
+import { AccountStateInterface } from 'src/store/account/state';
+import { transaction } from 'src/store/transaction';
+import { TransactionStateInterface } from 'src/store/transaction/state';
 
 /*
  * If not building with SSR mode, you can
@@ -44,22 +44,22 @@ export const storeKey: InjectionKey<VuexStore<StateInterface>> =
   Symbol('vuex-key');
 
 export default store(function () {
-  const Store = createStore<StateInterface>({
-    modules: {
-      contract,
-      chain,
-      account,
-      transaction
-    },
+    const Store = createStore<StateInterface>({
+        modules: {
+            contract,
+            chain,
+            account,
+            transaction,
+        },
 
-    // enable strict mode (adds overhead!)
-    // for dev mode and --debug builds only
-    strict: !!process.env.DEBUGGING
-  });
+        // enable strict mode (adds overhead!)
+        // for dev mode and --debug builds only
+        strict: !!process.env.DEBUGGING,
+    });
 
-  return Store;
+    return Store;
 });
 
 export function useStore() {
-  return vuexUseStore(storeKey);
+    return vuexUseStore(storeKey);
 }

@@ -4,94 +4,93 @@ import { computed, defineComponent, ref, toRefs } from 'vue';
 const PI = 3.1459;
 
 export default defineComponent({
-  name: 'PercentCircle',
-  props: {
-    fraction: {
-      type: Number,
-      required: true
+    name: 'PercentCircle',
+    props: {
+        fraction: {
+            type: Number,
+            required: true,
+        },
+        total: {
+            type: Number,
+            required: true,
+        },
+        label: {
+            type: String,
+            default: '',
+        },
+        radius: {
+            type: Number,
+            required: true,
+        },
+        unit: {
+            type: String,
+            default: '',
+        },
     },
-    total: {
-      type: Number,
-      required: true
-    },
-    label: {
-      type: String,
-      default: ''
-    },
-    radius: {
-      type: Number,
-      required: true
-    },
-    unit: {
-      type: String,
-      default: ''
-    }
-  },
-  setup(props) {
-    const offset = ref(5);
-    const { fraction, total, radius, unit } = toRefs(props);
-    const diameter = computed(() => radius.value * 2);
-    const circumference = computed(() => 2 * PI * radius.value);
-    const containerWidth = computed(() => diameter.value + 2 * offset.value);
-    const formatResourcePercent = computed(() =>
-      fraction.value && total.value
-        ? ((fraction.value / total.value) * 100.0).toFixed(2)
-        : '0.00'
-    );
-    const strokeColor = computed(() =>
-      parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white'
-    );
-    const fractionUnits = computed(
-      () => `${fraction.value}${unit.value}/${total.value}${unit.value}`
-    );
-    const available = computed(() => (total.value - fraction.value).toFixed(3));
-    const dashArray = computed(() => {
-      if (Number.isNaN(formatResourcePercent.value)) {
-        return '0';
-      }
-      const scaledPath =
+    setup(props) {
+        const offset = ref(5);
+        const { fraction, total, radius, unit } = toRefs(props);
+        const diameter = computed(() => radius.value * 2);
+        const circumference = computed(() => 2 * PI * radius.value);
+        const containerWidth = computed(() => diameter.value + 2 * offset.value);
+        const formatResourcePercent = computed(() =>
+            fraction.value && total.value
+                ? ((fraction.value / total.value) * 100.0).toFixed(2)
+                : '0.00',
+        );
+        const strokeColor = computed(() =>
+            parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white',
+        );
+        const fractionUnits = computed(
+            () => `${fraction.value}${unit.value}/${total.value}${unit.value}`,
+        );
+        const available = computed(() => (total.value - fraction.value).toFixed(3));
+        const dashArray = computed(() => {
+            if (Number.isNaN(formatResourcePercent.value)) {
+                return '0';
+            }
+            const scaledPath =
         (parseFloat(formatResourcePercent.value) / 100) * circumference.value;
-      return `${scaledPath}, ${circumference.value}`;
-    });
+            return `${scaledPath}, ${circumference.value}`;
+        });
 
-    return {
-      offset,
-      diameter,
-      circumference,
-      containerWidth,
-      formatResourcePercent,
-      strokeColor,
-      fractionUnits,
-      available,
-      dashArray
-    };
-  }
+        return {
+            offset,
+            diameter,
+            circumference,
+            containerWidth,
+            formatResourcePercent,
+            strokeColor,
+            fractionUnits,
+            available,
+            dashArray,
+        };
+    },
 });
 </script>
 
-<template lang="pug">
-div.chart-container
-  svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`${-offset * 6} ${-offset / 2} ${containerWidth} ${containerWidth}`" )
-    path.circle-bg(
-      :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
-    )
-    path.circle(
-      :stroke-dasharray="dashArray"
-      :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
-      :stroke='strokeColor'
-      :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1, 'stroke' : !Number.isNaN(formatResourcePercent) && Number(formatResourcePercent) > 80 ? 'red' : 'white' }"
-    )
-    text.text.label(
-      x="18"
-      :y="radius - offset"
-    ) {{ label }}
-    text.text.percentage(
-      x="20"
-      :y="radius + 12"
-    ) {{ formatResourcePercent }}%
-  p.text.usage USED: {{ this.fraction }} {{ this.unit }}
-  p.text.usage TOTAL: {{ this.total }} {{ this.unit }}
-  p.text.usage AVAILABLE: {{ available }} {{ this.unit }}
+<template>
+<div class="chart-container">
+    <svg
+        class="circular-chart"
+        :style="{ 'max-width': containerWidth }"
+        :viewBox="`${-offset * 6} ${-offset / 2} ${containerWidth} ${containerWidth}`"
+    >
+        <path class="circle-bg" :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"/>
+        <path
+            class="circle"
+            :stroke-dasharray="dashArray"
+            :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
+            :stroke="strokeColor"
+            :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1, 'stroke' : !Number.isNaN(formatResourcePercent) && Number(formatResourcePercent) > 80 ? 'red' : 'white' }"
+        />
+        <text class="text label" x="18" :y="radius - offset">{{ label }}</text>
+        <text class="text percentage" x="20" :y="radius + 12">{{ formatResourcePercent }}%</text>
+    </svg>
+    <p class="text usage">USED: {{ fraction }} {{ unit }}</p>
+    <p class="text usage">TOTAL: {{ total }} {{ unit }}</p>
+    <p class="text usage">AVAILABLE: {{ available }} {{ unit }}</p>
+</div>
 </template>
 
 <style lang="sass" scoped>

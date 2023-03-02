@@ -30,7 +30,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: ['config', 'axios', 'api', 'ual'],
+    boot: ['config', 'axios', 'api', 'ual', 'fuel'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.sass'],
@@ -74,13 +74,6 @@ module.exports = configure(function (ctx) {
       // https://quasar.dev/quasar-cli/handling-webpack
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
       chainWebpack: (config) => {
-        // Pug Loader
-        config.module
-          .rule('pug')
-          .test(/\.pug$/)
-          .use('pug-plain-loader')
-          .loader('pug-plain-loader')
-          .end();
         const nodePolyfillWebpackPlugin = require('node-polyfill-webpack-plugin')
         config.plugin('node-polyfill').use(nodePolyfillWebpackPlugin)
       }

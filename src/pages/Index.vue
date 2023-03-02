@@ -2,11 +2,11 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'PageIndex',
-  components: {}
+    name: 'PageIndex',
+    components: {},
 });
 </script>
 
-<template lang="pug">
-q-page.row.items-center.justify-evenly
+<template>
+<q-page class="row items-center justify-evenly" />
 </template>

@@ -11,32 +11,32 @@ const chain: Chain = getChain();
 const telosApi = axios.create({ baseURL: chain.getApiEndpoint() });
 
 telosApi.interceptors.request.use(function (config) {
-  return new Promise((resolve) => {
-    const interval = setInterval(() => {
-      if (PENDING_REQUESTS < MAX_REQUESTS_COUNT) {
-        PENDING_REQUESTS++;
-        clearInterval(interval);
-        resolve(config);
-      }
-    }, INTERVAL_MS);
-  });
+    return new Promise((resolve) => {
+        const interval = setInterval(() => {
+            if (PENDING_REQUESTS < MAX_REQUESTS_COUNT) {
+                PENDING_REQUESTS++;
+                clearInterval(interval);
+                resolve(config);
+            }
+        }, INTERVAL_MS);
+    });
 });
 
 /**
  * Axios Response Interceptor
  */
 telosApi.interceptors.response.use(
-  function (response) {
-    PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
-    return Promise.resolve(response);
-  },
-  function (error) {
-    PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
-    return Promise.reject(error);
-  }
+    function (response) {
+        PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
+        return Promise.resolve(response);
+    },
+    function (error) {
+        PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
+        return Promise.reject(error);
+    },
 );
 
 export const getApy = async function (): Promise<string> {
-  const response = await telosApi.get('apy/native');
-  return response.data as string;
+    const response = await telosApi.get('apy/native');
+    return response.data as string;
 };

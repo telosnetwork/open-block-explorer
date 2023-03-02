@@ -1,4 +1,4 @@
-import { Authorization, Action } from './index';
+import { Authorization, Action } from 'src/types/index';
 
 export interface TreeNode {
   label: string;
