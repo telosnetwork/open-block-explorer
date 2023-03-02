@@ -110,11 +110,10 @@ export default defineComponent({
 
         function buyLimit(): number {
             if (buyOption.value === buyOptions[0]) {
-                return accountData.value.core_liquid_balance.value;
+                return accountData.value.core_liquid_balance?.value ?? 0;
             } else {
                 return (
-                    (Number(accountData.value.core_liquid_balance.value) * 1000) /
-          Number(ramPrice.value)
+                    (Number(accountData.value.core_liquid_balance?.value ?? 0) * 1000) / Number(ramPrice.value)
                 );
             }
         }
