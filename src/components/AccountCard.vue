@@ -491,7 +491,7 @@ export default defineComponent({
                 <div class="col-3">
                     <q-btn
                         v-if='isAccount'
-                        :disabled="tokensLoading || isLoading"
+                        :disable="tokensLoading || isLoading"
                         :label='tokensLoading ? "Loading..." : "Send"'
                         color='primary'
                         class="full-width"
@@ -501,18 +501,20 @@ export default defineComponent({
                 <div class="col-3">
                     <q-btn
                         v-if="isAccount"
+                        :disable="tokensLoading || isLoading"
+                        :label='tokensLoading ? "Loading..." : "Resources"'
                         class="full-width"
                         color="primary"
-                        label="Resources"
                         @click="openResourcesDialog = true"
                     />
                 </div>
                 <div class="col-3">
                     <q-btn
                         v-if="isAccount"
+                        :disable="tokensLoading || isLoading"
+                        :label='tokensLoading ? "Loading..." : "Staking (REX)"'
                         class="ellipsis full-width"
                         color="primary"
-                        label="staking (REX)"
                         @click="openStakingDialog = true"
                     />
                 </div>
