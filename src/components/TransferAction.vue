@@ -1,60 +1,17 @@
-<template lang="pug">
-div(v-if="!!fields").row.q-col-gutter-md
-  div(v-for="field in fields" :key="field.name").col-12.col-sm-6
-    AccountSearch(
-      v-if="field.type === 'name'"
-      v-model="action.data[field.name]"
-      :label="field.name"
-    )
-    q-input(
-      v-else-if="field.name === 'quantity'"
-      :mask="mask"
-      :suffix="token"
-      fill-mask="0"
-      reverse-fill-mask
-      outlined
-      dense
-      hide-bottom-space
-      lazy-rules
-      v-model="action.data[field.name]"
-      :label="field.name"
-    )
-    q-input(
-      v-else
-      outlined
-      dense
-      hide-bottom-space
-      lazy-rules
-      v-model="action.data[field.name]"
-      :label="field.name"
-    )
-</template>
-
 <script lang="ts">
 import {
-  defineComponent,
-  PropType,
-  computed,
-  ref,
-  watch,
-  onMounted
+    defineComponent,
+    PropType,
+    computed,
+    ref,
+    watch,
+    onMounted,
 } from 'vue';
 import AccountSearch from 'components/AccountSearch.vue';
 import { getChain } from 'src/config/ConfigManager';
+import { ProposalAction } from 'src/types';
 
 const chain = getChain();
-
-interface Action {
-  account: string;
-  name: string;
-  authorization: {
-    actor: string;
-    permission: string;
-  }[];
-  data: {
-    [key: string]: unknown;
-  };
-}
 
 interface Field {
   name: string;
@@ -62,77 +19,110 @@ interface Field {
 }
 
 export default defineComponent({
-  name: 'TransferAction',
-  components: {
-    AccountSearch
-  },
-  props: {
-    modelValue: {
-      type: Object as PropType<Action>
+    name: 'TransferAction',
+    components: {
+        AccountSearch,
     },
-    fields: {
-      type: Object as PropType<Field[]>
-    }
-  },
-  setup(props, context) {
-    const action = ref<Action>(props.modelValue);
+    props: {
+        modelValue: {
+            type: Object as PropType<ProposalAction>,
+        },
+        fields: {
+            type: Object as PropType<Field[]>,
+        },
+    },
+    setup(props, context) {
+        const action = ref<ProposalAction>(props.modelValue);
 
-    const mask = computed(() => {
-      const { precision } = chain.getSystemToken();
-      let mask = '#';
-      if (precision > 0) {
-        mask += `.${'#'.repeat(precision)}`;
-      }
-      return mask;
-    });
+        const mask = computed(() => {
+            const { precision } = chain.getSystemToken();
+            let mask = '#';
+            if (precision > 0) {
+                mask += `.${'#'.repeat(precision)}`;
+            }
+            return mask;
+        });
 
-    const token = computed(() => {
-      return chain.getSystemToken().symbol;
-    });
+        const token = computed(() => chain.getSystemToken().symbol);
 
-    watch(action.value, (currentValue) => {
-      if (!(currentValue.data.quantity as string).includes(token.value)) {
-        let value = { ...currentValue };
-        value.data.quantity = `${currentValue.data.quantity as string} ${
-          token.value
-        }`;
-        context.emit('update:modelValue', value);
-      }
-    });
+        watch(action.value, (currentValue) => {
+            if (!currentValue.data.quantity.includes(token.value)) {
+                let value = { ...currentValue };
+                value.data.quantity = `${currentValue.data.quantity} ${token.value}`;
+                context.emit('update:modelValue', value);
+            }
+        });
 
-    onMounted(() => {
-      let newAction = { ...props.modelValue };
-      const { precision } = chain.getSystemToken();
+        onMounted(() => {
+            let newAction = { ...props.modelValue };
+            const { precision } = chain.getSystemToken();
 
-      const numberArray =
-        (newAction.data.quantity as string).match(/\d+/g) ?? [];
+            const numberArray = newAction.data.quantity.match(/\d+/g);
 
-      console.log(numberArray);
+            let quantity = '0';
+            let fractionPart = '';
 
-      let quantity = '0';
-      let fractionPart = '';
+            if (numberArray?.length > 0) {
+                quantity = numberArray[0] + '.';
 
-      if (numberArray?.length > 0) {
-        quantity = numberArray[0] + '.';
+                if (numberArray.length >= 2) {
+                    fractionPart = numberArray[1];
+                }
+            }
+            // slice will cap the fraction part to precision and padEnd will fill the precision with zeros if needed
+            quantity += fractionPart.slice(0, precision).padEnd(precision, '0');
+            newAction.data.quantity = quantity;
 
-        if (numberArray.length >= 2) {
-          fractionPart = numberArray[1];
-        }
-      }
-      quantity += fractionPart.slice(0, precision).padEnd(precision, '0');
+            action.value = newAction;
+        });
 
-      console.log(quantity);
-
-      newAction.data.quantity = quantity;
-
-      action.value = newAction;
-    });
-
-    return {
-      mask,
-      token,
-      action
-    };
-  }
+        return {
+            mask,
+            token,
+            action,
+        };
+    },
 });
 </script>
+
+<template>
+
+<div v-if="!!fields" class="row q-col-gutter-md">
+    <div v-for="field in fields" :key="field.name" class="col-12 col-sm-6">
+        <AccountSearch
+            v-if="field.type === 'name'"
+            v-model="action.data[field.name]"
+            outlined
+            :filled="false"
+            with-validation
+            remove-search-icon
+            bg-color="white"
+            lazy-rules
+            :label="field.name"
+        />
+        <q-input
+            v-else-if="field.name === 'quantity'"
+            v-model="action.data[field.name]"
+            :mask="mask"
+            :suffix="token"
+            fill-mask="0"
+            reverse-fill-mask
+            outlined
+            dense
+            hide-bottom-space
+            lazy-rules
+            :label="field.name"
+        />
+        <q-input
+            v-else
+            v-model="action.data[field.name]"
+            outlined
+            dense
+            hide-bottom-space
+            lazy-rules
+            :label="field.name"
+        />
+    </div>
+</div>
+
+</template>

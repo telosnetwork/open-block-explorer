@@ -10,6 +10,7 @@ import {
 import ProposalAuthorization from 'components/ProposalAuthorization.vue';
 import TransferAction from 'components/TransferAction.vue';
 import { api } from 'src/api';
+import { ProposalAction } from 'src/types';
 
 interface Struct {
     name: string;
@@ -18,19 +19,6 @@ interface Struct {
         type: string;
     }[];
 }
-
-interface Action {
-    account: string;
-    name: string;
-    authorization: {
-        actor: string;
-        permission: string;
-    }[];
-    data: {
-        [key: string]: string | number;
-    };
-}
-
 export default defineComponent({
     name: 'ProposalAction',
     components: {
@@ -39,7 +27,7 @@ export default defineComponent({
     },
     props: {
         modelValue: {
-            type: Object as PropType<Action>,
+            type: Object as PropType<ProposalAction>,
         },
     },
     emits: ['update:modelValue', 'remove'],
@@ -221,7 +209,7 @@ export default defineComponent({
                 v-model="action"
                 :fields="fields"
             />
-            <div v-if="!!fields" class="row q-col-gutter-md">
+            <div v-else-if="!!fields" class="row q-col-gutter-md">
                 <div v-for="field in fields" :key="field.name" class="col-12 col-sm-4">
                     <q-input
                         v-model="action.data[field.name]"
