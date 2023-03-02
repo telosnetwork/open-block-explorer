@@ -49,7 +49,12 @@ q-card.q-mt-md
                 q-item-section.text-center
                   q-item-label No option
 
-      div(v-if="!!fields").row.q-col-gutter-md
+      TransferAction(
+        v-if="action?.account === 'eosio.token' && action?.name === 'transfer'"
+        v-model="action"
+        :fields="fields"
+      )
+      div(v-else-if="!!fields").row.q-col-gutter-md
         div(v-for="field in fields" :key="field.name").col-12.col-sm-4
           q-input(
             outlined
@@ -90,6 +95,7 @@ import {
   onMounted
 } from 'vue';
 import ProposalAuthorization from 'components/ProposalAuthorization.vue';
+import TransferAction from 'components/TransferAction.vue';
 import { api } from 'src/api';
 
 interface Struct {
@@ -115,7 +121,8 @@ interface Action {
 export default defineComponent({
   name: 'ProposalAction',
   components: {
-    ProposalAuthorization
+    ProposalAuthorization,
+    TransferAction
   },
   props: {
     modelValue: {
