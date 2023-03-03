@@ -205,7 +205,6 @@ export default defineComponent({
             return Math.ceil(rowsNumber / rowsPerPage);
         });
 
-        const noData = computed(() => rows.value.length === 0);
         const hasActions = computed(() => actions.value !== null);
         const clearFilters = (): void => {
             accountsModel.value = '';
@@ -482,7 +481,6 @@ export default defineComponent({
             showAge,
             tableTitle,
             lastPage,
-            noData,
             hasActions,
             filter,
             onRequest,
@@ -709,7 +707,7 @@ export default defineComponent({
                 class="q-mt-lg row trx-table--fixed-layout"
                 flat
                 table-header-class="table-header"
-                :hide-pagination="noData"
+                hide-pagination
                 :rows="filteredRows"
                 :columns="columns"
                 :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
