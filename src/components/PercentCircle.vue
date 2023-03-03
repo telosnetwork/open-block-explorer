@@ -69,29 +69,28 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div.chart-container
-  svg.circular-chart(:style="{ 'max-width': containerWidth }" :viewBox="`${-offset * 6} ${-offset / 2} ${containerWidth} ${containerWidth}`" )
-    path.circle-bg(
-      :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
-    )
-    path.circle(
-      :stroke-dasharray="dashArray"
-      :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
-      :stroke='strokeColor'
-      :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1, 'stroke' : !Number.isNaN(formatResourcePercent) && Number(formatResourcePercent) > 80 ? 'red' : 'white' }"
-    )
-    text.text.label(
-      x="18"
-      :y="radius - offset"
-    ) {{ label }}
-    text.text.percentage(
-      x="20"
-      :y="radius + 12"
-    ) {{ formatResourcePercent }}%
-  p.text.usage USED: {{ this.fraction }} {{ this.unit }}
-  p.text.usage TOTAL: {{ this.total }} {{ this.unit }}
-  p.text.usage AVAILABLE: {{ available }} {{ this.unit }}
+<template>
+<div class="chart-container">
+    <svg
+        class="circular-chart"
+        :style="{ 'max-width': containerWidth }"
+        :viewBox="`${-offset * 6} ${-offset / 2} ${containerWidth} ${containerWidth}`"
+    >
+        <path class="circle-bg" :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"/>
+        <path
+            class="circle"
+            :stroke-dasharray="dashArray"
+            :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
+            :stroke="strokeColor"
+            :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1, 'stroke' : !Number.isNaN(formatResourcePercent) && Number(formatResourcePercent) > 80 ? 'red' : 'white' }"
+        />
+        <text class="text label" x="18" :y="radius - offset">{{ label }}</text>
+        <text class="text percentage" x="20" :y="radius + 12">{{ formatResourcePercent }}%</text>
+    </svg>
+    <p class="text usage">USED: {{ fraction }} {{ unit }}</p>
+    <p class="text usage">TOTAL: {{ total }} {{ unit }}</p>
+    <p class="text usage">AVAILABLE: {{ available }} {{ unit }}</p>
+</div>
 </template>
 
 <style lang="sass" scoped>

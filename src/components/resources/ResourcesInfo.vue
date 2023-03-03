@@ -47,7 +47,7 @@ export default defineComponent({
         const accountTotal = computed(() => {
             let value = 0;
             if (accountData.value) {
-                value = accountData.value?.core_liquid_balance.value;
+                value = accountData.value?.core_liquid_balance?.value ?? 0;
             }
             return value;
         });
@@ -91,35 +91,49 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.container.grey-3
-  .row.full-width
-    .row.full-width.q-pt-md.q-px-lg
-      .col-6.text-h6.text-bold AVAILABLE BALANCE
-      .col-6.text-h6.text-right.text-bold {{ formatValue(accountTotal) }}
-    .row.full-width.q-py-md
-      hr
-    .row.full-width.q-pb-md
-      .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
-        .row
-          .col-7.text-weight-light CPU
-          .col-5.text-right.text-bold {{ formatValue(currentCpu) }}
-        .row.q-pt-sm
-          .col-7.text-weight-light NET
-          .col-5.text-right.text-bold {{ formatValue(currentNet) }}
-        .row.q-pt-sm
-          .col-7.text-weight-light AVAILABLE RAM
-          .col-5.text-right.text-bold {{ramAvailable}} Bytes
-      .col-xs-12.col-sm-6.q-px-lg.q-pb-sm
-        .row
-          .col-7.text-weight-light DELEGATED BY OTHERS
-          .col-5.text-right.text-bold {{ formatValue(delegatedResources) }}
-        .row.q-pt-sm
-          .col-7.text-weight-light REFUNDING
-          .col-5.text-right.text-bold {{ formatValue(totalRefund) }}
-        .row.q-pt-sm
-          .col-7.text-weight-light RAM PRICE
-          .col-5.text-right.text-bold {{ramPrice}} {{token.symbol}}/KB
+<template>
+
+<div class="container grey-3">
+    <div class="row full-width">
+        <div class="row full-width q-pt-md q-px-lg">
+            <div class="col-6 text-h6 text-bold">AVAILABLE BALANCE</div>
+            <div class="col-6 text-h6 text-right text-bold">{{ formatValue(accountTotal) }}</div>
+        </div>
+        <div class="row full-width q-py-md">
+            <hr>
+        </div>
+        <div class="row full-width q-pb-md">
+            <div class="col-xs-12 col-sm-6 q-px-lg q-pb-sm">
+                <div class="row">
+                    <div class="col-7 text-weight-light">CPU</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(currentCpu) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">NET</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(currentNet) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">AVAILABLE RAM</div>
+                    <div class="col-5 text-right text-bold">{{ramAvailable}} Bytes</div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 q-px-lg q-pb-sm">
+                <div class="row">
+                    <div class="col-7 text-weight-light">DELEGATED BY OTHERS</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedResources) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">REFUNDING</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(totalRefund) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">RAM PRICE</div>
+                    <div class="col-5 text-right text-bold">{{ramPrice}} {{token.symbol}}/KB</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </template>
 

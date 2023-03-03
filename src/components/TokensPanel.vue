@@ -74,26 +74,35 @@ export default defineComponent({
     },
 });
 </script>
-<template lang="pug">
-div.row.col-12.q-my-xs.justify-center.text-left
-    div.row.col-11
-        div.row.col-12.q-mt-lg
-            div
-                p.panel-title Tokens
-            q-space
-        q-separator.row.col-12.q-mt-md.separator
-        div.col-12.q-mt-md.tokens-container
-          div(v-if="tokens.length === 0") No tokens found
-          q-card(v-for="token in tokens" :key="`${token.contract}-${token.symbol}`").token-card
-            q-item
-              q-item-section(avatar).items-center
-                q-avatar(color="white" size="2.8rem").shadow-3
-                  q-avatar(size="1.2em")
-                    img(src="~src/assets/token_placeholder.svg")
-              q-item-section
-                div(v-html="token.contract")
-                div.text-bold {{`${token.amount} ${token.symbol}`}}
-                // TODO Get USD value from oracle
+<template>
+<div class="row col-12 q-my-xs justify-center text-left">
+    <div class="row col-11">
+        <div class="row col-12 q-mt-lg">
+            <div>
+                <p class="panel-title">Tokens</p>
+            </div>
+            <q-space/>
+        </div>
+        <q-separator class="row col-12 q-mt-md separator"/>
+        <div class="col-12 q-mt-md tokens-container">
+            <div v-if="tokens.length === 0">No tokens found</div>
+            <q-card v-for="token in tokens" :key="`${token.contract}-${token.symbol}`" class="token-card">
+                <q-item>
+                    <q-item-section class="items-center" avatar>
+                        <q-avatar class="shadow-3" color="white" size="2.8rem">
+                            <q-avatar size="1.2em"><img src="~src/assets/token_placeholder.svg"></q-avatar>
+                        </q-avatar>
+                    </q-item-section>
+                    <q-item-section>
+                        <div v-html="token.contract"></div>
+                        <div class="text-bold">{{`${token.amount} ${token.symbol}`}}</div>
+                        <!-- TODO Get USD value from oracle-->
+                    </q-item-section>
+                </q-item>
+            </q-card>
+        </div>
+    </div>
+</div>
 </template>
 <style lang="sass" scoped>
 .hover-dec

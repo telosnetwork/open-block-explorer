@@ -132,7 +132,6 @@ export default class Telos extends BaseChain {
     }
 
     getFiltersSupported(prop: string): boolean {
-        console.log('getFiltersSupported', prop);
         if (prop === 'notified') {
             return true;
         }

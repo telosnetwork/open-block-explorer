@@ -1,6 +1,5 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
-import Index from 'src/pages/Index.vue';
 import PriceChart from 'components/PriceChart.vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 import WorldMap from 'components/WorldMap.vue';
@@ -9,9 +8,8 @@ import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
 
 export default defineComponent({
-    name: 'PageIndex',
+    name: 'PageNetwork',
     components: {
-        Index,
         PriceChart,
         TransactionsTable,
         WorldMap,
@@ -41,25 +39,33 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div.row
-  .col-12
-    .row.gradient-box.justify-center(v-if="mapDisplay && showMap")
-      .row.full-width.chevron-toggle.hide(@click="toggleMap")
-        .items-center.arrow-button(v-if="showMap")
-          q-icon.fas.fa-chevron-up.q-pr-lg.chevron(size="17px")
-        .full-width.text-center.justify-center.actor-font HIDE MAP
-      .col-12
-        WorldMap
-  .row.full-width.chevron-toggle(v-if='mapDisplay' @click="toggleMap")
-    .full-width.text-center.justify-center.actor-font SHOW MAP
-    .items-center.arrow-button(v-if='!showMap')
-      q-icon.fas.fa-chevron-down.q-pr-lg.chevron(size="17px")
-  .col-12.map-data-position(v-if="mapDisplay" :class="{'overlap-map' : mapDisplay && showMap}")
-    MapData(:mapVisible='showMap')
-  PriceChart.price-box-position(:class="{'overlap-map' : mapDisplay && showMap}")
-  TransactionsTable
-
+<template>
+<div class="row">
+    <div class="col-12">
+        <div v-if="mapDisplay && showMap" class="row gradient-box justify-center" >
+            <div class="row full-width chevron-toggle hide" @click="toggleMap">
+                <div v-if="showMap" class="items-center arrow-button" >
+                    <q-icon class="fas fa-chevron-up q-pr-lg chevron" size="17px"/>
+                </div>
+                <div class="full-width text-center justify-center actor-font"> HIDE MAP </div>
+            </div>
+            <div class="col-12">
+                <WorldMap/>
+            </div>
+        </div>
+    </div>
+    <div v-if="mapDisplay" class="row full-width chevron-toggle" @click="toggleMap">
+        <div class="full-width text-center justify-center actor-font"> SHOW MAP </div>
+        <div v-if="!showMap" class="items-center arrow-button" >
+            <q-icon class="fas fa-chevron-down q-pr-lg chevron" size="17px" />
+        </div>
+    </div>
+    <div v-if="mapDisplay" class="col-12 map-data-position" :class="{'overlap-map' : mapDisplay && showMap}">
+        <MapData :mapVisible="showMap" />
+    </div>
+    <PriceChart class="price-box-position" :class="{'overlap-map' : mapDisplay && showMap}"/>
+    <TransactionsTable/>
+</div>
 </template>
 
 <style lang="sass">
