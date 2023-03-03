@@ -145,16 +145,16 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         const rexActions = (await api.getActions(account, filter)).actions;
         commit('setRexActions', rexActions);
     },
-    async sendAction({ commit, state }, { account, data, name }) {
+    async sendAction({ commit, state }, { account, data, name, actor, permission }) {
         let transaction = null;
         const actions = [
             {
-                account: account as string,
+                account: account as string ?? state.abi.account_name,
                 name: name as string,
                 authorization: [
                     {
-                        actor: state.accountName,
-                        permission: state.accountPermission,
+                        actor: actor as string ?? state.accountName,
+                        permission: permission as string ?? state.accountPermission,
                     },
                 ],
                 data: data as unknown,
@@ -397,40 +397,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async updateABI({ commit }, account: string) {
         const abi = await api.getABI(account);
         commit('setABI', abi);
-    },
-    async pushTransaction(
-        { commit, state },
-        { action, actor, permission, data },
-    ) {
-        let transaction = null;
-        const actions = [
-            {
-                account: state.abi.account_name,
-                name: action as string,
-                authorization: [
-                    {
-                        actor: actor as string,
-                        permission: permission as string,
-                    },
-                ],
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                data,
-            },
-        ];
-        try {
-            transaction = await state.user.signTransaction(
-                {
-                    actions,
-                },
-                {
-                    blocksBehind: 3,
-                    expireSeconds: 180,
-                },
-            );
-            commit('setTransaction', transaction.transactionId);
-        } catch (e) {
-            commit('setTransactionError', e);
-        }
     },
     async sendVoteTransaction({ commit, state }) {
         let transaction = null;
