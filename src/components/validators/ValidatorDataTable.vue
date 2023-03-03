@@ -201,6 +201,8 @@ export default defineComponent({
 .vd-table
   &__list
     width: 100%
+    &-row
+      overflow-x: scroll
     &-col
       min-width: 1000px
 .producer-card
@@ -212,4 +214,5 @@ export default defineComponent({
   &:hover
     text-decoration: underline
     color: black
+
 </style>
