@@ -926,7 +926,13 @@ body
       th:nth-child(4)
         width: 54%
 
+@media screen and (max-width: 420px)
+.trx-table--fixed-layout
+    min-width: unset
+    width: 100%
+
 @media screen and (max-width: 665px)
   .trx-table--topleft-col, .trx-table--topright-col
     display: block
+
 </style>

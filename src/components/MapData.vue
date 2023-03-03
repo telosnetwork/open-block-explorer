@@ -83,8 +83,8 @@ hr
 
 @media screen and (max-width: 420px)
   .actor-font
-    .text-weight-bold
-        font-size: 16px
+    .text-bold
+        font-size: 18px
     .text-weight-thin
         font-size: 10px
 </style>
