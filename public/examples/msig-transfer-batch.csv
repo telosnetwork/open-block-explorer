@@ -1,2 +1,2 @@
 from, to, quantity, memo
-payingaccount, receivingaccount, 0.1 TLOS, The memo
+payingaccount, receivingaccount, 0.1, The memo
