@@ -51,8 +51,8 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 toSavingAmount.value === '0.0000' ||
-        toSavingAmount.value === '' ||
-        Number(toSavingAmount.value) >= eligibleStaked.value
+                toSavingAmount.value === '' ||
+                Number(toSavingAmount.value) >= eligibleStaked.value
             ) {
                 return;
             }
@@ -69,8 +69,8 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 fromSavingAmount.value === '0.0000' ||
-        fromSavingAmount.value === '' ||
-        Number(fromSavingAmount.value) >= assetToAmount(rexSavings.value)
+                fromSavingAmount.value === '' ||
+                Number(fromSavingAmount.value) >= assetToAmount(rexSavings.value)
             ) {
                 return;
             }

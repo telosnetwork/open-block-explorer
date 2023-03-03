@@ -145,7 +145,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         const rexActions = (await api.getActions(account, filter)).actions;
         commit('setRexActions', rexActions);
     },
-    async sendTransaction({ commit, state }, { account, data, name }) {
+    async sendAction({ commit, state }, { account, data, name }) {
         let transaction = null;
         const actions = [
             {

@@ -68,7 +68,7 @@ export default defineComponent({
             transactionError,
             transactionId,
             withdrawRexFund,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            ...mapActions({ sendAction: 'account/sendAction' }),
         };
     },
     computed: {
@@ -89,12 +89,12 @@ export default defineComponent({
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-          await this.signTransaction({
-              account: actionAccount,
-              data,
-              name: 'transfer',
-          })
-        ).transactionId as string;
+                    await this.sendAction({
+                        account: actionAccount,
+                        data,
+                        name: 'transfer',
+                    })
+                ).transactionId as string;
             } catch (e) {
                 this.transactionError = e as string;
             }
