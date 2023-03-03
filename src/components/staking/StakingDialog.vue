@@ -151,7 +151,7 @@ export default defineComponent({
                     icon="clear"
                 />
             </div>
-            <div class="col-xs-12 col-sm-10 col-md-7 col-lg-7 maxSize">
+            <div class="col-xs-12 col-sm-10 col-md-7 col-lg-7 max-dialog-width">
                 <div class="row q-pl-sm">
                     <div class="text-h4 q-pb-md inline-block color-grey-3 inline">Staking (REX)</div>
                     <div class="text-h5 q-pb-md inline-block color-grey-3 inline float-right">APY: {{ apy }}</div>

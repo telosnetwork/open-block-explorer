@@ -60,10 +60,10 @@ export default defineComponent({
             <q-icon class="fas fa-chevron-down q-pr-lg chevron" size="17px" />
         </div>
     </div>
-    <div v-if="mapDisplay" class="col-12 map-data-position" :class="{'overlap-map' : mapDisplay && showMap}">
+    <div v-if="mapDisplay" class="col-12 map-data-position" :class="{'overlap-map' : mapDisplay && showMap, 'container-max-width' : !showMap}">
         <MapData :mapVisible="showMap" />
     </div>
-    <PriceChart class="price-box-position" :class="{'overlap-map' : mapDisplay && showMap}"/>
+    <PriceChart class="price-box-position container-max-width" :class="{'overlap-map' : mapDisplay && showMap}"/>
     <TransactionsTable/>
 </div>
 </template>

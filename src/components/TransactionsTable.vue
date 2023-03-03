@@ -505,7 +505,7 @@ export default defineComponent({
 
 <template>
 
-<div class="row col-12 q-mt-xs justify-center text-left trx-table">
+<div class="row col-12 q-mt-xs justify-center text-left trx-table container-max-width">
     <div class="row trx-table--main-container">
         <div class="row col-12 q-mt-lg">
             <!-- Left column-->
@@ -825,8 +825,8 @@ export default defineComponent({
 $medium:920px
 
 .trx-table
-  max-width: 100%
   margin-top: 1rem
+  margin-bottom: 1rem
   padding-bottom: .5rem
   background-color:#ffffff
   background: #FFFFFF

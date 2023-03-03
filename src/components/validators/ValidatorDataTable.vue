@@ -198,10 +198,8 @@ export default defineComponent({
 </template>
 
 <style lang="sass" scoped>
-
 .vd-table
   &__list
-    overflow-x: scroll
     width: 100%
     &-col
       min-width: 1000px
