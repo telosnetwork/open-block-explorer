@@ -80,4 +80,11 @@ hr
   margin-left: 1rem
   margin-right: 1rem
   margin-top: -0.1rem
+
+@media screen and (max-width: 420px)
+  .actor-font
+    .text-weight-bold
+        font-size: 16px
+    .text-weight-thin
+        font-size: 10px
 </style>
