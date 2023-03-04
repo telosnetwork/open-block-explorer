@@ -824,15 +824,6 @@ export default defineComponent({
 <style lang="sass">
 $medium:920px
 
-.trx-table
-  margin-top: 1rem
-  margin-bottom: 1rem
-  padding-bottom: .5rem
-  background-color:#ffffff
-  background: #FFFFFF
-  box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
-  border-radius: 10px
-
 .trx-table--title
   font-size: 22.75px
   font-style: normal
@@ -879,9 +870,6 @@ $medium:920px
 .expand-icon
   padding-left: 2rem
   cursor: pointer
-
-body
-    height:1000px
 
 .table-container
     overflow-x: scroll
