@@ -883,6 +883,9 @@ $medium:920px
 body
     height:1000px
 
+.table-container
+    overflow-x: scroll
+
 .table-header
     color: #000000 !important
     opacity: 0.5
@@ -925,11 +928,6 @@ body
         width: 17%
       th:nth-child(4)
         width: 54%
-
-@media screen and (max-width: 420px)
-.trx-table--fixed-layout
-    min-width: unset
-    width: 100%
 
 @media screen and (max-width: 665px)
   .trx-table--topleft-col, .trx-table--topright-col
