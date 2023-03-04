@@ -1,13 +1,11 @@
 <script lang="ts">
 import {
     defineComponent,
-    computed,
     ref,
     PropType,
     toRef,
     onMounted,
 } from 'vue';
-import { useStore } from 'src/store';
 import { Action, TransferData } from 'src/types';
 import AccountFormat from 'src/components/transaction/AccountFormat.vue';
 
@@ -19,25 +17,34 @@ export default defineComponent({
             type: Object as PropType<Action>,
             required: true,
         },
+        showTransferLabel: {
+            // show/hide send/receive label for transfers
+            type: Boolean,
+            default: false,
+        },
+        account: {
+            type: String || null,
+            required: false,
+            default: null,
+        },
     },
     setup(props) {
-        const store = useStore();
-        const account = computed((): string => store.state.account.accountName);
         const divClass = ref<string>('');
         const divContent = ref<string>('');
         const tx = toRef(props, 'action');
+        const showLabel = toRef(props, 'showTransferLabel');
+        const account = toRef(props, 'account');
 
         onMounted(() => {
             const data = tx.value.act.data as TransferData;
-            if (data.from === account.value) {
-                divContent.value = 'SEND';
-                divClass.value = 'action-transfer';
-            } else if (data.to === account.value) {
-                divContent.value = 'RECEIVE';
-                divClass.value = 'action-transfer';
-            } else {
-                divContent.value = 'TRANSFER';
-                divClass.value = 'action-transfer';
+            const isTransfer = tx.value.act.name === 'transfer';
+
+            if (showLabel.value && account.value && isTransfer) {
+                if (data.from === account.value) {
+                    divContent.value = 'SEND';
+                } else if (data.to === account.value) {
+                    divContent.value = 'RECEIVE';
+                }
             }
         });
 
@@ -50,17 +57,24 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div(:class="'action '+ divClass" v-if="tx.act.name === 'transfer'") {{divContent}}
-div(v-else class="action action-general")
-  AccountFormat(:account="tx.act.account" type="account")
-  span.inline &nbsp; → &nbsp;
-  span.text-no-wrap {{tx.act.name}}
+<template>
+<div class="action-container">
+    <div class="action action-general">
+        <AccountFormat :account="tx.act.account" type="account"/><span class="inline">&nbsp; → &nbsp;</span><span class="text-no-wrap">{{tx.act.name}}</span>
+    </div>
+    <div v-if="divContent" class="action action-transfer">{{ divContent }}</div>
+</div>
+
 </template>
 
 <style lang="sass" scoped>
+.action-container
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    gap: 8px
+
 .action
-  // margin: 0.5rem 0
   padding: 0 0.5rem
   &.action-transfer
     background: rgba(196, 196, 196, 0.3)

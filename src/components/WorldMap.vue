@@ -91,7 +91,7 @@ const vector = new VectorLayer({
 });
 
 export default defineComponent({
-  name: 'Map',
+  name: 'WorldMap',
   components: {
     Map,
     View
@@ -409,24 +409,24 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.absolute.q-pa-md.producer-toggle.text-white
-  q-toggle(
-        v-model="producerToggle"
-        label="Show Active BP"
-        left-label
-        color="cyan-4"
-        @update:model-value="(val)=> updateToggleOption(val)"
-      )
-.map-container(id="map" ref="map-root")
+<template>
 
-div(id="popup" ref="popup" class="ol-popup")
-  a(href="#" id="popup-closer" ref="popup-closer" class="ol-popup-closer" v-show="$q.platform.is.mobile")
-  div(id="popup-content" ref="popup-content")
-
-div(id="producerPopup" ref="producerPopup" class="ol-popup")
-  a(href="#" id="producerPopup-closer" ref="producerPopup-closer" class="ol-popup-closer")
-  div(id="producerPopup-content" ref="producerPopup-content")
+<div class="absolute q-pa-md producer-toggle text-white">
+  <q-toggle
+    v-model="producerToggle"
+    label="Show Active BP"
+    left-label
+    color="cyan-4"
+    @update:model-value="(val)=> updateToggleOption(val)"
+  />
+</div>
+<div class="map-container" id="map" ref="map-root"></div>
+<div class="ol-popup" id="popup" ref="popup"><a class="ol-popup-closer" href="#" id="popup-closer" ref="popup-closer" v-show="$q.platform.is.mobile"></a>
+  <div id="popup-content" ref="popup-content"></div>
+</div>
+<div class="ol-popup" id="producerPopup" ref="producerPopup"><a class="ol-popup-closer" href="#" id="producerPopup-closer" ref="producerPopup-closer"></a>
+  <div id="producerPopup-content" ref="producerPopup-content"></div>
+</div>
 
 </template>
 

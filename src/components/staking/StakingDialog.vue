@@ -136,56 +136,87 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-q-dialog( @show='setDefaults' :persistent='true' maximized)
-  q-card.rexCard
-    .row.justify-center.q-pt-xl.full-height.full-width
-      .absolute-top-right
-        q-btn(size="20px" flat dense round icon="clear" v-close-popup)
-      .col-xs-12.col-sm-10.col-md-7.col-lg-7.maxSize
-        .row.q-pl-sm
-          .text-h4.q-pb-md.inline-block.color-grey-3.inline Staking (REX)
-          .text-h5.q-pb-md.inline-block.color-grey-3.inline.float-right APY: {{ apy }}
-        .q-pa-sm
-          StakingInfo
-          .q-pt-lg.q-pl-lg(v-if='rexfund > 0')
-            .row.q-col-gutter-md.items-center
-              .col-auto.text-h6.text-white REX fund: {{rexfund.toFixed(4)}} {{symbol}}
-              .col-auto
-                q-btn.full-width.button-accent(label='Withdraw' flat @click="withdrawRexFund" )
-          .q-pt-lg.text-grey-3.text-weight-light
-            q-tabs.text-grey-5.tab-text(
-              v-model="tab"
-              dense class="text-grey"
-              indicator-color="grey-3"
-              active-color="grey-3"
-              narrow-indicator
-              align="left"
-              :breakpoint="0"
-              no-caps)
+<template>
 
-              q-tab(name="stake" label="Stake")
-              q-tab(name="unstake" label="Unstake")
-              q-tab(name="stakecpunet" label="Stake from CPU/NET")
-              q-tab(name="savings" label="Savings")
-              q-tab(name="maturing" label="Maturing")
-              q-tab(name="history" label="History")
-
-            q-separator(color="grey-8")
-
-            q-tab-panels(v-model="tab" class="tab-panel")
-              q-tab-panel(name="stake")
-                StakingTab
-              q-tab-panel(name="unstake")
-                UnstakingTab
-              q-tab-panel(name="stakecpunet")
-                StakeFromResources
-              q-tab-panel(name="savings")
-                SavingsTab
-              q-tab-panel(name="maturing")
-                ProcessingTab
-              q-tab-panel(name="history")
-                HistoryTab
+<q-dialog :persistent="true" maximized @show="setDefaults">
+    <q-card class="rexCard">
+        <div class="row justify-center q-pt-xl full-height full-width">
+            <div class="absolute-top-right">
+                <q-btn
+                    v-close-popup
+                    size="20px"
+                    flat
+                    dense
+                    round
+                    icon="clear"
+                />
+            </div>
+            <div class="col-xs-12 col-sm-10 col-md-7 col-lg-7 max-dialog-width">
+                <div class="row q-pl-sm">
+                    <div class="text-h4 q-pb-md inline-block color-grey-3 inline">Staking (REX)</div>
+                    <div class="text-h5 q-pb-md inline-block color-grey-3 inline float-right">APY: {{ apy }}</div>
+                </div>
+                <div class="q-pa-sm">
+                    <StakingInfo/>
+                    <div v-if="rexfund > 0" class="q-pt-lg q-pl-lg">
+                        <div class="row q-col-gutter-md items-center">
+                            <div class="col-auto text-h6 text-white">REX fund: {{rexfund.toFixed(4)}} {{symbol}}</div>
+                            <div class="col-auto">
+                                <q-btn
+                                    class="full-width button-accent"
+                                    label="Withdraw"
+                                    flat
+                                    @click="withdrawRexFund"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="q-pt-lg text-grey-3 text-weight-light">
+                        <q-tabs
+                            v-model="tab"
+                            class="text-grey-5 tab-text text-grey"
+                            dense
+                            indicator-color="grey-3"
+                            active-color="grey-3"
+                            narrow-indicator
+                            align="left"
+                            :breakpoint="0"
+                            no-caps
+                        >
+                            <q-tab name="stake" label="Stake"/>
+                            <q-tab name="unstake" label="Unstake"/>
+                            <q-tab name="stakecpunet" label="Stake from CPU/NET"/>
+                            <q-tab name="savings" label="Savings"/>
+                            <q-tab name="maturing" label="Maturing"/>
+                            <q-tab name="history" label="History"/>
+                        </q-tabs>
+                        <q-separator color="grey-8"/>
+                        <q-tab-panels v-model="tab" class="tab-panel">
+                            <q-tab-panel name="stake">
+                                <StakingTab/>
+                            </q-tab-panel>
+                            <q-tab-panel name="unstake">
+                                <UnstakingTab/>
+                            </q-tab-panel>
+                            <q-tab-panel name="stakecpunet">
+                                <StakeFromResources/>
+                            </q-tab-panel>
+                            <q-tab-panel name="savings">
+                                <SavingsTab/>
+                            </q-tab-panel>
+                            <q-tab-panel name="maturing">
+                                <ProcessingTab/>
+                            </q-tab-panel>
+                            <q-tab-panel name="history">
+                                <HistoryTab/>
+                            </q-tab-panel>
+                        </q-tab-panels>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </q-card>
+</q-dialog>
 
 </template>
 

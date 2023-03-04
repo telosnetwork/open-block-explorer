@@ -45,14 +45,22 @@ export default defineComponent({
     },
 });
 </script>
-<template lang="pug">
-div.row.col-12.q-mt-lg.q-mb-xs.q-px-xl.justify-center.text-left
-  p.panel-title Children
-  q-space
-  q-separator.row.col-12.q-mt-md.separator
-  div.col-12.q-py-lg.row
-    div(v-if="children.length == 0 ") No children found
-    .child( v-for="child in children" :key="child" v-html="child")
+<template>
+
+<div class="row col-12 q-mt-lg q-mb-xs q-px-xl justify-center text-left">
+    <p class="panel-title">Children</p>
+    <q-space/>
+    <q-separator class="row col-12 q-mt-md separator"/>
+    <div class="col-12 q-py-lg row">
+        <div v-if="children.length == 0 ">No children found</div>
+        <div
+            v-for="child in children"
+            :key="child"
+            class="child"
+            v-html="child"
+        ></div>
+    </div>
+</div>
 
 </template>
 

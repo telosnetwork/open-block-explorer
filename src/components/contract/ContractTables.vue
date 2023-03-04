@@ -103,45 +103,49 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-q-card(
-  flat
-  style="background: #f4f0fb"
-)
-  q-card-section.q-pl-md(style="background: #eae2f7")
-    div.q-pb-sm.text-subtitle2.text-bold Select table
-    .row.justify-content.full-width
-      .col-10
-        q-select(outlined @update:model-value="updateRows" dense v-model="table" :options="options" color="primary" style="background: #ffffff")
-      .col-2.q-pl-md
-        q-btn.full-width( unelevated color="primary" label="Refresh" size="15px" @click="getRows")
+<template>
 
-  q-card-section.q-pt-none
-    .row.q-py-md.q-col-gutter-md
-      .col-xs-6.col-sm-3
-        .text-bold.q-pb-sm Scope
-        q-input(outlined @keydown.enter.prevent="getRows" @blur="getRows"  dense v-model="scope" style="background: #ffffff")
-      .col-xs-6.col-sm-3
-        .text-bold.q-pb-sm Lower Bound
-        q-input(outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="lower" dense style="background: #ffffff")
-      .col-xs-6.col-sm-3
-        .text-bold.q-pb-sm Upper Bound
-        q-input(outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="upper" dense style="background: #ffffff")
-      .col-xs-6.col-sm-3
-        .text-bold.q-pb-sm Limit
-        q-input(outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="limit" dense style="background: #ffffff")
-
-  q-card-section.q-pt-none
-    q-table(
-      :rows="rows"
-      :row-key="rows[0] ? rows[0][0] : ''"
-      :rows-per-page-options="[0]"
-    )
-      template( v-slot:bottom)
-        .row.full-width.justify-center.q-py-md.q-px-xl(v-if="canShowMore")
-          q-btn.q-ml-xs.q-mr-xs.col.button-primary( v-if='isMoreRows'
-            @click="showMore") Show more
+<q-card class="card--light-bg" flat>
+  <q-card-section class="q-pl-md section--light-bg">
+    <div class="q-pb-sm text-subtitle2 text-bold">Select table</div>
+    <div class="row justify-content full-width">
+      <div class="col-10">
+        <q-select outlined @update:model-value="updateRows" dense v-model="table" :options="options" color="primary" class="bg-white"></q-select>
+      </div>
+      <div class="col-2 q-pl-md">
+        <q-btn class="full-width" unelevated color="primary" label="Refresh" size="15px" @click="getRows"></q-btn>
+      </div>
+    </div>
+  </q-card-section>
+  <q-card-section class="q-pt-none">
+    <div class="row q-py-md q-col-gutter-md">
+      <div class="col-xs-6 col-sm-3">
+        <div class="text-bold q-pb-sm">Scope</div>
+        <q-input outlined @keydown.enter.prevent="getRows" @blur="getRows" dense v-model="scope" class="bg-white"></q-input>
+      </div>
+      <div class="col-xs-6 col-sm-3">
+        <div class="text-bold q-pb-sm">Lower Bound</div>
+        <q-input outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="lower" dense class="bg-white"></q-input>
+      </div>
+      <div class="col-xs-6 col-sm-3">
+        <div class="text-bold q-pb-sm">Upper Bound</div>
+        <q-input outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="upper" dense class="bg-white"></q-input>
+      </div>
+      <div class="col-xs-6 col-sm-3">
+        <div class="text-bold q-pb-sm">Limit</div>
+        <q-input outlined @keydown.enter.prevent="getRows" @blur="getRows" v-model="limit" dense class="bg-white"></q-input>
+      </div>
+    </div>
+  </q-card-section>
+  <q-card-section class="q-pt-none">
+    <q-table :rows="rows" :row-key="rows[0] ? rows[0][0] : ''" :rows-per-page-options="[0]">
+      <template v-slot:bottom>
+        <div class="row full-width justify-center q-py-md q-px-xl" v-if="canShowMore">
+          <q-btn class="q-ml-xs q-mr-xs col button-primary" v-if="isMoreRows" @click="showMore">Show more</q-btn>
+        </div>
+      </template>
+    </q-table>
+  </q-card-section>
+</q-card>
 
 </template>
-
-<style lang="sass"></style>

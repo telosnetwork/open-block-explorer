@@ -24,8 +24,6 @@ export default defineComponent({
     },
 });
 </script>
-<template lang="pug">
-ValidatorData
+<template>
+<ValidatorData class="container-max-width"/>
 </template>
-
-<style lang="sass" scoped></style>

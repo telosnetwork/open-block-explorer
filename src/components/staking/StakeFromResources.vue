@@ -121,32 +121,77 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section
-    .row.q-col-gutter-md
-      .col-12
-        .row
-          .row.q-pb-sm.full-width
-            .col-9 TRANSFER CPU TO STAKING
-            .col-3
-              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxCpuValue')
-                .text-weight-bold.text-right.balance-amount {{cpuWeight}}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= cpuWeight.value  || 'Invalid amount.' ]" type="text" dense dark)
-          .row
-          .row.q-pb-sm.full-width
-            .col-9 TRANSFER NET TO STAKING
-            .col-3
-              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxNetValue')
-                .text-weight-bold.text-right.balance-amount(@click='setMaxNetValue') {{netWeight}}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="[ val =>  val >= 0 && val <= netWeight.value || 'Invalid amount.' ]" type="text" dense dark)
-        .row
-          q-btn.full-width.button-accent(:label=" 'Stake ' + symbol" flat @click="stake" )
-  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+<template>
+
+<div class="staking-form">
+    <q-card-section>
+        <div class="row q-col-gutter-md">
+            <div class="col-12">
+                <div class="row">
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-9">TRANSFER CPU TO STAKING</div>
+                        <div class="col-3">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxCpuValue">
+                                <div class="text-weight-bold text-right balance-amount">{{cpuWeight}}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Click to fill full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        v-model="cpuTokens"
+                        class="full-width"
+                        dense
+                        dark
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0.0000'
+                        type="text"
+                        :lazy-rules='true'
+                        :rules="[ val => val >= 0 && val <= cpuWeight.value  || 'Invalid amount.' ]"
+                        @blur='formatDec'
+                    />
+                    <div class="row"></div>
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-9">TRANSFER NET TO STAKING</div>
+                        <div class="col-3">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxNetValue">
+                                <div class="text-weight-bold text-right balance-amount" @click="setMaxNetValue">{{netWeight}}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Click to fill full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        v-model="netTokens"
+                        class="full-width"
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0.0000'
+                        :lazy-rules='true'
+                        :rules="[ val =>  val >= 0 && val <= netWeight.value || 'Invalid amount.' ]"
+                        type="text"
+                        dense
+                        dark
+                        @blur='formatDec'
+                    />
+                </div>
+                <div class="row">
+                    <q-btn
+                        class="full-width button-accent"
+                        :label=" 'Stake ' + symbol"
+                        flat
+                        @click="stake"
+                    />
+                </div>
+            </div>
+        </div>
+    </q-card-section>
+    <ViewTransaction
+        v-model="openTransaction"
+        :transactionId="transactionId"
+        :transactionError="transactionError || ''"
+        message="transaction complete"
+    />
+</div>
 
 </template>
 

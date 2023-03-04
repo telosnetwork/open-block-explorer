@@ -5,12 +5,12 @@ import { useStore } from 'src/store';
 export default defineComponent({
     name: 'MapData',
     props: {
-        mobile: {
+        mapVisible: {
             type: Boolean,
             required: true,
         },
     },
-    setup(props) {
+    setup() {
         const store = useStore();
         const HeadBlockProducer = computed(
             (): string => store.state.chain.head_block_producer,
@@ -19,10 +19,8 @@ export default defineComponent({
         const lastIrreversibleBlock = computed(
             (): number => store.state.chain.last_irreversible_block_num,
         );
-        const isMobile = computed((): boolean => props.mobile);
 
         return {
-            isMobile,
             HeadBlock,
             HeadBlockProducer,
             lastIrreversibleBlock,
@@ -31,37 +29,33 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.row.full-width.q-pl-xl.container.actor-font(v-if="!isMobile")
-  .col
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Head Block
-      .col-12.text-h6.text-grey-3.text-bold {{HeadBlock}}
-    hr
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Producing
-      .col-12.text-h6.text-grey-3.text-bold {{HeadBlockProducer}}
-    hr
-    .row.full-width.q-pt-md.q-px-lg
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3 Irreversible Block
-      .col-12.text-h6.text-grey-3.text-bold {{lastIrreversibleBlock}}
-.row.full-width.text-center.justify-center.actor-font(v-else)
-  .col-3
-    .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Head Block
-      .col-12.text-subtitle1.text-grey-3.text-bold {{HeadBlock}}
-  .col-1
-    .hr-vertical
-  .col-3
-    .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Producing
-      .col-12.text-subtitle1.text-grey-3.text-bold {{HeadBlockProducer}}
-  .col-1
-    .hr-vertical
-  .col-3
-    .row
-      .col-12.text-subtitle1.text-weight-thin.text-grey-3.text-uppercase Irreversible
-      .col-12.text-subtitle1.text-grey-3.text-bold  {{lastIrreversibleBlock}}
+<template>
+<div class="row full-width text-center justify-center actor-font" :class="{'text-grey-3' : mapVisible}">
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Head Block</div>
+            <div class="col-12 text-subtitle1 text-bold">{{HeadBlock}}</div>
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="hr-vertical"> </div>
+    </div>
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Producing</div>
+            <div class="col-12 text-subtitle1 text-bold">{{HeadBlockProducer}}</div>
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="hr-vertical"></div>
+    </div>
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Irreversible Block</div>
+            <div class="col-12 text-subtitle1 text-bold">{{lastIrreversibleBlock}}</div>
+        </div>
+    </div>
+</div>
 </template>
 
 <style scoped lang="sass">
@@ -86,4 +80,11 @@ hr
   margin-left: 1rem
   margin-right: 1rem
   margin-top: -0.1rem
+
+@media screen and (max-width: 420px)
+  .actor-font
+    .text-bold
+        font-size: 18px
+    .text-weight-thin
+        font-size: 10px
 </style>
