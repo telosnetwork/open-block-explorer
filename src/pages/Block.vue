@@ -76,7 +76,7 @@ export default defineComponent({
             </div>
         </div>
     </div>
-    <div class="q-pt-lg">
+    <div class="q-pt-lg container-max-width">
         <TransactionTable :actions="Actions"/>
     </div>
 </div>
