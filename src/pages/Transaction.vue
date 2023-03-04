@@ -95,7 +95,7 @@ export default defineComponent({
       <q-separator color="grey-8"></q-separator>
       <q-tab-panels class="tab-panel" v-model="tab">
         <q-tab-panel name="actions">
-          <TransactionsTable :account="Array.isArray(transaction) ? transaction[0] : transaction" />
+          <TransactionsTable :account="Array.isArray(transaction) ? transaction[0] : transaction" :toggleEnabled="false" :filtersEnabled="false" />
         </q-tab-panel>
         <q-tab-panel name="traces">
           <TraceTree></TraceTree>
