@@ -10,6 +10,7 @@
     "build": "quasar clean && quasar build",
     "lint": "eslint --ext .js,.ts,.vue ./",
     "test": "jest --coverage",
+    "test2": "jest test/jest/__tests__/store/account/actions.spec.ts",
     "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
   },
   "dependencies": {
