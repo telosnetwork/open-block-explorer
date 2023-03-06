@@ -86,6 +86,7 @@ jest.mock('@greymass/eosio', () => ({
 
 let rpResponseCode = Number(0);
 
+// mocking function fetch
 global.fetch = jest.fn(() =>
     Promise.resolve({
         json: () =>

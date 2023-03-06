@@ -57,9 +57,9 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 (cpuTokens.value === '0.0000' && netTokens.value === '0.0000') ||
-        Number(cpuTokens.value) >= Number(cpuWeight.value) ||
-        Number(netTokens.value) >=
-          Number(accountData.value.total_resources.net_weight)
+                Number(cpuTokens.value) >= Number(cpuWeight.value) ||
+                Number(netTokens.value) >=
+                Number(accountData.value.total_resources.net_weight)
             ) {
                 return;
             }

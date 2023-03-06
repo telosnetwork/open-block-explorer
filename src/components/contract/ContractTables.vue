@@ -7,99 +7,99 @@ import { TableIndexType } from 'src/types/Api';
 import { PaginationSettings } from 'src/types';
 /* eslint-disable */
 export default defineComponent({
-  name: 'ContractTables',
-  setup() {
-    const store = useStore();
-    const options = computed(() =>
-      store.state.account.abi.abi.tables.map((table) => {
-        return table.name;
-      })
-    );
-    const account = computed(() => store.state.account.abi.account_name);
-    const table = ref(options.value[0]);
-    const scope = ref<string>(store.state.account.abi.account_name);
-    const lower = ref<string>(null);
-    const upper = ref<string>(null);
-    const limit = ref<string>('20');
-    const pagination = ref({
-      sortBy: 'timestamp',
-      descending: true,
-      page: 1,
-      rowsPerPage: Number(limit.value) || 10
-    } as PaginationSettings);
+    name: 'ContractTables',
+    setup() {
+        const store = useStore();
+        const options = computed(() =>
+            store.state.account.abi.abi.tables.map((table) => {
+                return table.name;
+            })
+        );
+        const account = computed(() => store.state.account.abi.account_name);
+        const table = ref(options.value[0]);
+        const scope = ref<string>(store.state.account.abi.account_name);
+        const lower = ref<string>(null);
+        const upper = ref<string>(null);
+        const limit = ref<string>('20');
+        const pagination = ref({
+            sortBy: 'timestamp',
+            descending: true,
+            page: 1,
+            rowsPerPage: Number(limit.value) || 10
+        } as PaginationSettings);
 
-    const rows = ref([]);
-    const isMoreRows = computed(() => rows.value.length >= Number(limit.value));
-    const canShowMore = computed(
-      () => Number(limit.value) >= rows.value.length
-    );
-    async function getRows() {
-      const params = {
-        code: account.value,
-        limit: limit.value,
-        lower_bound: lower.value as unknown as TableIndexType,
-        scope: scope.value,
-        table: table.value,
-        json: true,
-        key_type: 'i64',
-        upper_bound: upper.value as unknown as TableIndexType
-      } as GetTableRowsParams;
-      let data = ((await api.getTableRows(params)) as GenericTable).rows;
-      data = data.map((row) => formatData(row));
-      rows.value = data;
-    }
-    async function updateRows(val: string) {
-      const params = {
-        code: account.value,
-        limit: limit.value,
-        lower_bound: lower.value as unknown as TableIndexType,
-        scope: scope.value,
-        table: val,
-        json: true,
-        key_type: 'i64',
-        upper_bound: upper.value as unknown as TableIndexType
-      } as GetTableRowsParams;
-      let data = ((await api.getTableRows(params)) as GenericTable).rows;
-      data = data.map((row) => formatData(row));
-      rows.value = data;
-    }
-    onMounted(async () => {
-      await getRows();
-    });
-
-    async function showMore() {
-      limit.value = (Number(limit.value) + Number(limit.value)).toString();
-      await getRows();
-    }
-
-    function formatData(data: any): any {
-      var dict: any = {};
-      for (let key in data) {
-        if (data[key] instanceof Object) {
-          dict[key] = JSON.stringify(data[key]);
-        } else {
-          dict[key] = data[key];
+        const rows = ref([]);
+        const isMoreRows = computed(() => rows.value.length >= Number(limit.value));
+        const canShowMore = computed(
+            () => Number(limit.value) >= rows.value.length
+        );
+        async function getRows() {
+            const params = {
+                code: account.value,
+                limit: limit.value,
+                lower_bound: lower.value as unknown as TableIndexType,
+                scope: scope.value,
+                table: table.value,
+                json: true,
+                key_type: 'i64',
+                upper_bound: upper.value as unknown as TableIndexType
+            } as GetTableRowsParams;
+            let data = ((await api.getTableRows(params)) as GenericTable).rows;
+            data = data.map((row) => formatData(row));
+            rows.value = data;
         }
-      }
-      return dict;
-    }
+        async function updateRows(val: string) {
+            const params = {
+                code: account.value,
+                limit: limit.value,
+                lower_bound: lower.value as unknown as TableIndexType,
+                scope: scope.value,
+                table: val,
+                json: true,
+                key_type: 'i64',
+                upper_bound: upper.value as unknown as TableIndexType
+            } as GetTableRowsParams;
+            let data = ((await api.getTableRows(params)) as GenericTable).rows;
+            data = data.map((row) => formatData(row));
+            rows.value = data;
+        }
+        onMounted(async () => {
+            await getRows();
+        });
 
-    return {
-      table,
-      options,
-      scope,
-      lower,
-      upper,
-      limit,
-      rows,
-      getRows,
-      pagination,
-      updateRows,
-      showMore,
-      canShowMore,
-      isMoreRows
-    };
-  }
+        async function showMore() {
+            limit.value = (Number(limit.value) + Number(limit.value)).toString();
+            await getRows();
+        }
+
+        function formatData(data: any): any {
+            var dict: any = {};
+            for (let key in data) {
+                if (data[key] instanceof Object) {
+                    dict[key] = JSON.stringify(data[key]);
+                } else {
+                    dict[key] = data[key];
+                }
+            }
+            return dict;
+        }
+
+        return {
+            table,
+            options,
+            scope,
+            lower,
+            upper,
+            limit,
+            rows,
+            getRows,
+            pagination,
+            updateRows,
+            showMore,
+            canShowMore,
+            isMoreRows
+        };
+    }
 });
 </script>
 

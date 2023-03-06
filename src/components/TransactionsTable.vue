@@ -460,6 +460,25 @@ export default defineComponent({
             { immediate: true },
         );
 
+        const toggleDropdown = (ref: unknown) => {
+            const drop: QBtnDropdown = ref as QBtnDropdown;
+            drop.toggle();
+        };
+
+        const hidePopup = (ref: unknown) => {
+            const drop: QPopupProxy = ref as QPopupProxy;
+            drop.hide();
+        };
+
+        const moveTablePage = (ref: unknown, dir: 'next' | 'prev') => {
+            const drop: QTable = ref as QTable;
+            if (dir === 'next') {
+                drop.nextPage();
+            } else {
+                drop.prevPage();
+            }
+        };
+
         return {
             columns,
             rows,
@@ -498,9 +517,9 @@ export default defineComponent({
             onPaginationChange,
             clearFilters,
             enableLiveTransactions,
-            QBtnDropdown,
-            QPopupProxy,
-            QTable,
+            toggleDropdown,
+            hidePopup,
+            moveTablePage,
         };
     },
 });
@@ -565,7 +584,7 @@ export default defineComponent({
                         >
                             <div class="q-pa-md dropdown-filter">
                                 <div class="row">
-                                    <AccountSearch v-model="accountsModel" @update:model-value="($refs.accounts_dropdown as QBtnDropdown).toggle()"/>
+                                    <AccountSearch v-model="accountsModel" @update:model-value="toggleDropdown($refs.accounts_dropdown)"/>
                                 </div>
                             </div>
                         </q-btn-dropdown>
@@ -583,14 +602,14 @@ export default defineComponent({
                                         dense
                                         label="actions"
                                         placeholder="transfer, sellrex, etc."
-                                        @blur="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()"
-                                        @keyup.enter="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()"
+                                        @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                                        @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
                                     >
                                         <template v-slot:prepend>
                                             <q-icon class="cursor-pointer" name="search"/>
                                         </template>
                                         <template v-slot:append>
-                                            <q-btn size="sm" color="primary" @click="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()">OK</q-btn>
+                                            <q-btn size="sm" color="primary" @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)">OK</q-btn>
                                         </template>
                                     </q-input>
                                 </div>
@@ -694,7 +713,7 @@ export default defineComponent({
                         >
                             <div class="q-pa-md dropdown-filter">
                                 <div class="row">
-                                    <TokenSearch v-model="tokenModel" @update:model-value="($refs.token_dropdown as QBtnDropdown).toggle()"/>
+                                    <TokenSearch v-model="tokenModel" @update:model-value="toggleDropdown($refs.token_dropdown)"/>
                                 </div>
                             </div>
                         </q-btn-dropdown>
@@ -791,7 +810,7 @@ export default defineComponent({
                     <q-popup-proxy ref="page_size_selector" transition-show="scale" transition-hide="scale">
                         <q-list>
                             <q-item v-for="size in pageSizeOptions" :key="size" class="cursor-pointer">
-                                <q-item-section @click="changePageSize(size); ($refs.page_size_selector as QPopupProxy).hide()">{{ size }}</q-item-section>
+                                <q-item-section @click="changePageSize(size); hidePopup($refs.page_size_selector)">{{ size }}</q-item-section>
                             </q-item>
                         </q-list>
                     </q-popup-proxy>
@@ -805,7 +824,7 @@ export default defineComponent({
                             class="q-ml-xs q-mr-xs col button-primary"
                             size="sm"
                             :disable="paginationSettings.page === 1"
-                            @click="($refs.main_table as QTable).prevPage()"
+                            @click="moveTablePage($refs.main_table, 'prev')"
                         >PREV</q-btn>
                     </div>
                     <div class="col-auto q-mr-xs">
@@ -813,7 +832,7 @@ export default defineComponent({
                             class="q-ml-xs q-mr-xs col button-primary"
                             size="sm"
                             :disable="paginationSettings.page === lastPage"
-                            @click="($refs.main_table as QTable).nextPage()"
+                            @click="moveTablePage($refs.main_table, 'next')"
                         >NEXT</q-btn>
                     </div>
                 </div>

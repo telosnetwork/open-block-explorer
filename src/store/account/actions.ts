@@ -16,7 +16,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         await (authenticator as Authenticator).init();
         if (!account) {
             const requestAccount = await (
-        authenticator as Authenticator
+                authenticator as Authenticator
             ).shouldRequestAccountName();
             if (requestAccount) {
                 commit('setRequestAccount', true);
@@ -24,7 +24,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             }
         }
         const users = await (authenticator as Authenticator).login();
-        if (users.length) {
+        if (users?.length) {
             const account = new FuelUserWrapper(users[0]);
             const permission = (account as unknown as { requestPermission: string })
                 .requestPermission;
@@ -88,21 +88,21 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             upper_bound: account as TableIndexType,
         } as GetTableRowsParams;
         const rexfund = (
-      (await api.getTableRows(paramsrexfund)) as {
-        rows: {
-          owner: string;
-          balance: string;
-        }[];
-      }
+            (await api.getTableRows(paramsrexfund)) as {
+                rows: {
+                owner: string;
+                balance: string;
+                }[];
+            }
         ).rows[0];
         const rexFundBalance =
-      rexfund && rexfund.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
+            rexfund?.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
         commit('setRexFund', rexFundBalance);
         const rexbal = rexbalRows.rows[0];
         const rexBalance =
-      rexbal && rexbal.rex_balance
-          ? parseFloat(rexbal.rex_balance.split(' ')[0])
-          : 0;
+            rexbal && rexbal.rex_balance
+                ? parseFloat(rexbal.rex_balance.split(' ')[0])
+                : 0;
         const totalRex = Number(rexpool.total_rex.split(' ')[0]);
         const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
         const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
@@ -140,21 +140,39 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 maturedRex,
             });
         }
-        const filter =
-      'eosio:sellrex,eosio:buyrex,eosio:deposit,eosio:withdraw,eosio:unstaketorex,eosio:cnclrexorder,eosio:rentcpu,eosio:rentnet,eosio:fundcpuloan,eosio:fundnetloan,eosio:defcpuloan,eosio:defnetloan,eosio:updaterex,eosio:consolidate,eosio:closerex,eosio:mvfrsavings,eosio:mvtosavings,eosio:rexexec';
+        const filter = [
+            'eosio:sellrex',
+            'eosio:buyrex',
+            'eosio:deposit',
+            'eosio:withdraw',
+            'eosio:unstaketorex',
+            'eosio:cnclrexorder',
+            'eosio:rentcpu',
+            'eosio:rentnet',
+            'eosio:fundcpuloan',
+            'eosio:fundnetloan',
+            'eosio:defcpuloan',
+            'eosio:defnetloan',
+            'eosio:updaterex',
+            'eosio:consolidate',
+            'eosio:closerex',
+            'eosio:mvfrsavings',
+            'eosio:mvtosavings',
+            'eosio:rexexec',
+        ].join(',');
         const rexActions = (await api.getActions(account, filter)).actions;
         commit('setRexActions', rexActions);
     },
-    async sendTransaction({ commit, state }, { account, data, name }) {
+    async sendAction({ commit, state }, { account, data, name, actor, permission }) {
         let transaction = null;
         const actions = [
             {
-                account: account as string,
+                account: account as string ?? state.abi.account_name,
                 name: name as string,
                 authorization: [
                     {
-                        actor: state.accountName,
-                        permission: state.accountPermission,
+                        actor: actor as string ?? state.accountName,
+                        permission: permission as string ?? state.accountPermission,
                     },
                 ],
                 data: data as unknown,
@@ -398,40 +416,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         const abi = await api.getABI(account);
         commit('setABI', abi);
     },
-    async pushTransaction(
-        { commit, state },
-        { action, actor, permission, data },
-    ) {
-        let transaction = null;
-        const actions = [
-            {
-                account: state.abi.account_name,
-                name: action as string,
-                authorization: [
-                    {
-                        actor: actor as string,
-                        permission: permission as string,
-                    },
-                ],
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                data,
-            },
-        ];
-        try {
-            transaction = await state.user.signTransaction(
-                {
-                    actions,
-                },
-                {
-                    blocksBehind: 3,
-                    expireSeconds: 180,
-                },
-            );
-            commit('setTransaction', transaction.transactionId);
-        } catch (e) {
-            commit('setTransactionError', e);
-        }
-    },
     async sendVoteTransaction({ commit, state }) {
         let transaction = null;
         const actions = [
@@ -570,7 +554,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async moveToSavings({ commit, state }, { amount }) {
         let transaction = null;
         const rexToUnstake =
-      (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+            (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
         const actions = [
             {
                 account: 'eosio',
@@ -605,7 +589,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async moveFromSavings({ commit, state }, { amount }) {
         let transaction = null;
         const rexToUnstake =
-      (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+            (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
         const actions = [
             {
                 account: 'eosio',

@@ -32,8 +32,7 @@ export default defineComponent({
         const ramAvailable = computed(
             () =>
                 Number(store.state.account.data.ram_quota.value) -
-        Number(store.state.account.data.ram_usage.value),
-        );
+                Number(store.state.account.data.ram_usage.value));
         const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
 
         function formatDec() {
@@ -45,8 +44,8 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 sellAmount.value === '0.0000' ||
-        !ramAvailable.value ||
-        Number(sellAmount.value) >= ramAvailable.value
+                !ramAvailable.value ||
+                Number(sellAmount.value) >= ramAvailable.value
             ) {
                 return;
             }

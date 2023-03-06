@@ -22,32 +22,32 @@ export default defineComponent({
         const ramAvailable = computed(
             () =>
                 Number(accountData.value.ram_quota) -
-        Number(accountData.value.ram_usage),
+                Number(accountData.value.ram_usage),
         );
         const delegatedResources = computed(() => {
             const totalStakedResources =
-        Number(accountData.value.cpu_weight.value) /
-          Math.pow(10, token.value.precision) +
-        Number(accountData.value.net_weight.value) /
-          Math.pow(10, token.value.precision);
+                Number(accountData.value.cpu_weight.value) /
+                    Math.pow(10, token.value.precision) +
+                Number(accountData.value.net_weight.value) /
+                    Math.pow(10, token.value.precision);
             const selfStakedResources =
-        Number(
-            accountData.value.self_delegated_bandwidth?.net_weight.value
-                ? accountData.value.self_delegated_bandwidth.net_weight.value
-                : '0',
-        ) +
-        Number(
-            accountData.value.self_delegated_bandwidth?.cpu_weight.value
-                ? accountData.value.self_delegated_bandwidth.cpu_weight.value
-                : '0',
-        );
+                Number(
+                    accountData.value.self_delegated_bandwidth?.net_weight.value
+                        ? accountData.value.self_delegated_bandwidth.net_weight.value
+                        : '0',
+                ) +
+                Number(
+                    accountData.value.self_delegated_bandwidth?.cpu_weight.value
+                        ? accountData.value.self_delegated_bandwidth.cpu_weight.value
+                        : '0',
+                );
             return totalStakedResources - selfStakedResources;
         });
 
         const accountTotal = computed(() => {
             let value = 0;
             if (accountData.value) {
-                value = accountData.value?.core_liquid_balance.value;
+                value = accountData.value?.core_liquid_balance?.value ?? 0;
             }
             return value;
         });
@@ -63,7 +63,7 @@ export default defineComponent({
         const totalRefund = computed((): number =>
             accountData.value && accountData.value.refund_request
                 ? accountData.value.refund_request.cpu_amount.value +
-          accountData.value.refund_request.net_amount.value
+                accountData.value.refund_request.net_amount.value
                 : 0,
         );
 
