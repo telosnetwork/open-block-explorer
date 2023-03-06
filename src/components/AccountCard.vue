@@ -76,10 +76,9 @@ export default defineComponent({
         const availableTokens = ref<Token[]>([]);
 
         const stakedRefund = computed((): number =>
-            accountData.value &&
-            accountData.value.refund_request ?
-                accountData.value.refund_request?.cpu_amount.value + accountData.value.refund_request?.net_amount.value :
-                0,
+            (accountData.value?.refund_request?.cpu_amount.value +
+             accountData.value?.refund_request?.net_amount.value)
+             ?? 0,
         );
 
         const staked = computed((): number => stakedRefund.value + stakedNET.value + stakedCPU.value);
@@ -246,11 +245,11 @@ export default defineComponent({
             const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
                 .rows[0];
             const totalRexBalance =
-                rexBal && rexBal.rex_balance
+                rexBal?.rex_balance
                     ? Number(rexBal.rex_balance.split(' ')[0])
                     : 0;
             const staked =
-                rexBal && rexBal.vote_stake
+                rexBal?.vote_stake
                     ? Number(rexBal.vote_stake.split(' ')[0])
                     : 0;
 
