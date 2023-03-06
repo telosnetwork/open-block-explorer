@@ -22,7 +22,7 @@ export default defineComponent({
         const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
         const eligibleStaked = computed(() => (
             assetToAmount(store.state?.account.maturedRex) +
-        assetToAmount(store.state?.account.maturingRex)
+            assetToAmount(store.state?.account.maturingRex)
         ));
         const rexSavings = computed(() => store.state?.account.savingsRex);
 
