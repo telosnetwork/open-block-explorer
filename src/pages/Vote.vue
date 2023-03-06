@@ -11,7 +11,7 @@ export default defineComponent({
         onMounted(async () => {
             if (
                 !store.state.account.data.voter_info &&
-        store.state.account.accountName
+                store.state.account.accountName
             ) {
                 const data = await api.getAccount(store.state.account.accountName);
                 store.commit('account/setAccountData', data);

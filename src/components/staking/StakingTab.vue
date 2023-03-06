@@ -48,8 +48,8 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 stakeTokens.value === '0.0000' ||
-        Number(stakeTokens.value) >=
-          Number(accountData.value.core_liquid_balance.toString())
+                Number(stakeTokens.value) >=
+                Number(accountData.value.core_liquid_balance.toString())
             ) {
                 return;
             }

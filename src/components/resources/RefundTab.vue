@@ -30,7 +30,7 @@ export default defineComponent({
             const totalRefund = refundRequest.value
                 ? (
                     refundRequest.value.cpu_amount.value +
-            refundRequest.value.net_amount.value
+                    refundRequest.value.net_amount.value
                 ).toFixed(4)
                 : 0;
             return `${totalRefund} ${token.value.symbol}`;
@@ -45,30 +45,30 @@ export default defineComponent({
 
         function refundProgress(): number {
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value.refund_request?.request_time.toString() + 'Z',
-                ).toUTCString(),
-            ).getTime() / 1000,
-        ) +
-        259200 -
-        Math.round(new Date(Date.now()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value.refund_request?.request_time.toString() + 'Z',
+                        ).toUTCString(),
+                    ).getTime() / 1000,
+                ) +
+                259200 -
+                Math.round(new Date(Date.now()).getTime() / 1000);
             let time = diff / 259200;
             return time > 0 ? time : 0;
         }
 
         function refundCountdown(): string {
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value?.refund_request?.request_time.toString() + 'Z',
-                ),
-            ).getTime() / 1000,
-        ) +
-        259200 -
-        Math.round(new Date(new Date().toISOString()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value?.refund_request?.request_time.toString() + 'Z',
+                        ),
+                    ).getTime() / 1000,
+                ) +
+                259200 -
+                Math.round(new Date(new Date().toISOString()).getTime() / 1000);
             if (diff > 0) {
                 var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
                     hours = component(diff, 60 * 60) % 24; // hours
@@ -97,7 +97,7 @@ export default defineComponent({
             formatStaked,
             refundProgress,
             refundCountdown,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            ...mapActions({ sendAction: 'account/sendAction' }),
             transactionId: ref<string>(null),
             transactionError: null,
         };
@@ -112,12 +112,12 @@ export default defineComponent({
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-          await this.signTransaction({
-              account: 'eosio',
-              name: 'refund',
-              data,
-          })
-        ).transactionId as string;
+                    await this.sendAction({
+                        account: 'eosio',
+                        name: 'refund',
+                        data,
+                    })
+                ).transactionId as string;
             } catch (e) {
                 this.transactionError = e;
             }

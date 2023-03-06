@@ -45,9 +45,9 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 unstakeTokens.value === '0.0000' ||
-        !rexbal.value.vote_stake ||
-        Number(unstakeTokens.value) >=
-          Number(rexbal.value.vote_stake.split(' ')[0])
+                !rexbal.value.vote_stake ||
+                Number(unstakeTokens.value) >=
+                Number(rexbal.value.vote_stake.split(' ')[0])
             ) {
                 return;
             }

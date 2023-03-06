@@ -65,7 +65,7 @@ export default defineComponent({
             stakingAccount,
             cpuTokens,
             netTokens,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            ...mapActions({ sendAction: 'account/sendAction' }),
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
@@ -101,23 +101,23 @@ export default defineComponent({
                 receiver: this.stakingAccount.toLowerCase(),
                 transfer: false,
                 stake_cpu_quantity:
-          parseFloat(this.cpuTokens) > 0
-              ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-              : `0.0000 ${symbol}`,
+                    parseFloat(this.cpuTokens) > 0
+                        ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+                        : `0.0000 ${symbol}`,
                 stake_net_quantity:
-          parseFloat(this.netTokens) > 0
-              ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-              : `0.0000 ${symbol}`,
+                    parseFloat(this.netTokens) > 0
+                        ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+                        : `0.0000 ${symbol}`,
             } as StakeResourcesTransactionData;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-          await this.signTransaction({
-              account: 'eosio',
-              name: 'delegatebw',
-              data,
-          })
-        ).transactionId as string;
+            await this.sendAction({
+                account: 'eosio',
+                name: 'delegatebw',
+                data,
+            })
+            ).transactionId as string;
                 this.$store.commit('account/setTransaction', this.transactionId);
             } catch (e) {
                 this.transactionError = e;

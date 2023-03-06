@@ -30,16 +30,16 @@ export default defineComponent({
                     ((Number(buyAmount.value) * 1000) / Number(ramPrice.value)).toFixed(
                         0,
                     ) +
-          ' ' +
-          buyOptions[1]
+                    ' ' +
+                    buyOptions[1]
                 );
             } else {
                 return (
                     ((Number(buyAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
                         4,
                     ) +
-          ' ' +
-          buyOptions[0]
+                    ' ' +
+                    buyOptions[0]
                 );
             }
         });
@@ -77,9 +77,9 @@ export default defineComponent({
             if (buyOption.value === buyOptions[0]) {
                 if (
                     buyAmount.value === '0.0000' ||
-          '' ||
-          Number(buyAmount.value) >=
-            Number(accountData.value.core_liquid_balance.value)
+                    '' ||
+                    Number(buyAmount.value) >=
+                        Number(accountData.value.core_liquid_balance.value)
                 ) {
                     return;
                 }
@@ -90,10 +90,10 @@ export default defineComponent({
             } else {
                 if (
                     buyAmount.value === '0' ||
-          '' ||
-          Number(buyAmount.value) >=
-            (Number(accountData.value.core_liquid_balance.value) * 1000) /
-              Number(ramPrice.value)
+                    '' ||
+                    Number(buyAmount.value) >=
+                        (Number(accountData.value.core_liquid_balance.value) * 1000) /
+                        Number(ramPrice.value)
                 ) {
                     return;
                 }

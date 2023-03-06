@@ -6,7 +6,6 @@ import { isValidAccount } from 'src/utils/stringValidator';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
-import { mapActions } from 'vuex';
 
 const chain = getChain();
 
@@ -57,7 +56,7 @@ export default defineComponent({
                 quantity: `${sendAmount.value} ${sendToken.value.symbol}`,
                 memo: memo.value,
             };
-            await store.dispatch('account/sendTransaction', {
+            await store.dispatch('account/sendAction', {
                 account: actionAccount,
                 data,
                 name: 'transfer',
@@ -136,7 +135,6 @@ export default defineComponent({
             isValidAccount,
             formatDec,
             resetForm,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
         };
     },
 });
