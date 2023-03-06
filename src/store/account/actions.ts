@@ -96,7 +96,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             }
         ).rows[0];
         const rexFundBalance =
-            rexfund && rexfund.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
+            rexfund?.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
         commit('setRexFund', rexFundBalance);
         const rexbal = rexbalRows.rows[0];
         const rexBalance =
