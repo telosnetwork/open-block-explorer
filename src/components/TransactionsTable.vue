@@ -58,6 +58,14 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
+        toggleEnabled: {
+            type: Boolean,
+            default: true,
+        },
+        filtersEnabled: {
+            type: Boolean,
+            default: true,
+        },
     },
     setup(props) {
         const route = useRoute();
@@ -526,7 +534,7 @@ export default defineComponent({
                         />
                     </div>
                 </div>
-                <div class="row">
+                <div v-if="toggleEnabled" class="row">
                     <div class="col">
                         <q-toggle
                             v-model="enableLiveTransactions"
@@ -538,7 +546,7 @@ export default defineComponent({
                 </div>
             </div>
             <!-- Right column-->
-            <div class="col trx-table--topright-col">
+            <div v-if="filtersEnabled" class="col trx-table--topright-col">
                 <div class="row justify-end">
                     <!-- -- Filters    ---->
                     <div class="col-auto row flex trx-table--filter-buttons">
