@@ -112,11 +112,11 @@ export default defineComponent({
             <q-icon class="fas fa-chevron-down q-pr-lg chevron" size="17px" />
         </div>
     </div>
-    <div v-if="showMap" class="col-12 map-data-position overlap-map">
+    <div v-if="mapDisplay && showMap" class="col-12 map-data-position overlap-map">
         <MapData :mapVisible="showMap" />
     </div>
     <div class="container-max-width">
-        <div v-if="!showMap" class="col-12 map-data-position">
+        <div v-if="mapDisplay && !showMap" class="col-12 map-data-position">
             <MapData :mapVisible="showMap" />
         </div>
         <PriceChart class="price-box-position" :class="{'overlap-map' : mapDisplay && showMap}"/>
