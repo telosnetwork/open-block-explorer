@@ -151,4 +151,7 @@ export default defineComponent({
   margin-top: 2rem
   &.overlap-map
     margin-top: -100px
+@media screen and (max-width: 420px)
+  .container-max-width
+    max-width: 100% !important
 </style>
