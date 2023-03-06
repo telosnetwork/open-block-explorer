@@ -101,7 +101,7 @@ export default defineComponent({
                 <div v-if="showMap" class="items-center arrow-button" >
                     <q-icon class="fas fa-chevron-up q-pr-lg chevron" size="17px"/>
                 </div>
-                <div class="full-width text-center justify-center actor-font"> HIDE MAP </div>
+                <div class="full-width text-center justify-center actor-font"> </div>
             </div>
             <div class="col-12">
                 <WorldMap/>
@@ -109,7 +109,7 @@ export default defineComponent({
         </div>
     </div>
     <div v-if="mapDisplay" class="row full-width chevron-toggle" @click="toggleMap">
-        <div class="full-width text-center justify-center actor-font"> SHOW MAP </div>
+        <div class="full-width text-center justify-center actor-font">  </div>
         <div v-if="!showMap" class="items-center arrow-button" >
             <q-icon class="fas fa-chevron-down q-pr-lg chevron" size="17px" />
         </div>
@@ -124,7 +124,9 @@ export default defineComponent({
 
 <style lang="sass">
 .arrow-button
-  margin: auto
+  position: absolute
+  left: calc(50% - 33px)
+  z-index: 10
   .chevron
     padding-left: 25px
 .hide
