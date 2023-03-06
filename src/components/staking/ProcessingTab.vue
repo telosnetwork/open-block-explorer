@@ -21,15 +21,15 @@ export default defineComponent({
                 return 0;
             }
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value?.refund_request?.request_time.toString() + 'Z',
-                ).toUTCString(),
-            ).getTime() / 1000,
-        ) +
-        604800 - //The max amount it can take in seconds
-        Math.round(new Date(Date.now()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value?.refund_request?.request_time.toString() + 'Z',
+                        ).toUTCString(),
+                    ).getTime() / 1000,
+                ) +
+                604800 - //The max amount it can take in seconds
+                Math.round(new Date(Date.now()).getTime() / 1000);
             let time = diff / 604800;
             return time > 0 ? time : 0.01;
         }
@@ -39,14 +39,14 @@ export default defineComponent({
                 return 'No maturing TLOS';
             }
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value?.rex_info?.rex_maturities[0].first.toString() +
-                'Z',
-                ),
-            ).getTime() / 1000,
-        ) - Math.round(new Date(new Date().toISOString()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value?.rex_info?.rex_maturities[0].first.toString() +
+                        'Z',
+                        ),
+                    ).getTime() / 1000,
+                ) - Math.round(new Date(new Date().toISOString()).getTime() / 1000);
             if (diff > 0) {
                 var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
                     hours = component(diff, 60 * 60) % 24; // hours

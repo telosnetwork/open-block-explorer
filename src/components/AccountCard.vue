@@ -76,10 +76,9 @@ export default defineComponent({
         const availableTokens = ref<Token[]>([]);
 
         const stakedRefund = computed((): number =>
-            accountData.value && accountData.value.refund_request
-                ? accountData.value.refund_request?.cpu_amount.value +
-          accountData.value.refund_request?.net_amount.value
-                : 0,
+            (accountData.value?.refund_request?.cpu_amount.value +
+             accountData.value?.refund_request?.net_amount.value)
+             ?? 0,
         );
 
         const staked = computed((): number => stakedRefund.value + stakedNET.value + stakedCPU.value);
@@ -163,8 +162,8 @@ export default defineComponent({
                 );
 
                 stakedResources.value =
-          Number(accountData.value.total_resources.cpu_weight.value) +
-          Number(accountData.value.total_resources.net_weight.value);
+                    Number(accountData.value.total_resources.cpu_weight.value) +
+                    Number(accountData.value.total_resources.net_weight.value);
 
                 stakedCPU.value = Number(
                     accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
@@ -194,10 +193,10 @@ export default defineComponent({
         const loadAccountCreatorInfo = async () => {
             try {
                 const creatorData = (await api.getCreator(props.account)) as {
-          creator: string;
-          timestamp: string;
-          trx_id: string;
-        };
+                    creator: string;
+                    timestamp: string;
+                    trx_id: string;
+                };
                 creatingAccount.value = creatorData.creator;
                 createTime.value = creatorData.timestamp;
                 createTransaction.value = creatorData.trx_id;
@@ -217,18 +216,18 @@ export default defineComponent({
                 upper_bound: props.account as unknown as TableIndexType,
             } as GetTableRowsParams;
             const rexfund = (
-        (await api.getTableRows(paramsrexfund)) as {
-          rows: {
-            owner: string;
-            balance: string;
-          }[];
-        }
+                (await api.getTableRows(paramsrexfund)) as {
+                    rows: {
+                        owner: string;
+                        balance: string;
+                    }[];
+                }
             ).rows[0];
 
             const rexFundBalance =
-        rexfund && rexfund.balance
-            ? Number(rexfund.balance.split(' ')[0])
-            : 0.0;
+                rexfund && rexfund.balance
+                    ? Number(rexfund.balance.split(' ')[0])
+                    : 0.0;
             return rexFundBalance;
         };
 
@@ -246,13 +245,13 @@ export default defineComponent({
             const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
                 .rows[0];
             const totalRexBalance =
-        rexBal && rexBal.rex_balance
-            ? Number(rexBal.rex_balance.split(' ')[0])
-            : 0;
+                rexBal?.rex_balance
+                    ? Number(rexBal.rex_balance.split(' ')[0])
+                    : 0;
             const staked =
-        rexBal && rexBal.vote_stake
-            ? Number(rexBal.vote_stake.split(' ')[0])
-            : 0;
+                rexBal?.vote_stake
+                    ? Number(rexBal.vote_stake.split(' ')[0])
+                    : 0;
 
             const paramsrexpool = {
                 code: 'eosio',
