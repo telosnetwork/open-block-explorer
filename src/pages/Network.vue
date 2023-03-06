@@ -94,7 +94,7 @@ export default defineComponent({
 </script>
 
 <template>
-<div>
+<div class="row">
     <div class="col-12">
         <div v-if="mapDisplay" class="row gradient-box justify-center" :class="{'show-map' : showMap}">
             <div class="row full-width chevron-toggle hide" @click="toggleMap">
@@ -114,11 +114,16 @@ export default defineComponent({
             <q-icon class="fas fa-chevron-down q-pr-lg chevron" size="17px" />
         </div>
     </div>
-    <div v-if="mapDisplay" class="col-12 map-data-position" :class="{'overlap-map' : mapDisplay && showMap, 'container-max-width' : !showMap}">
+    <div v-if="showMap" class="col-12 map-data-position overlap-map">
         <MapData :mapVisible="showMap" />
     </div>
-    <PriceChart class="price-box-position container-max-width" :class="{'overlap-map' : mapDisplay && showMap}"/>
-    <TransactionsTable/>
+    <div class="container-max-width">
+        <div v-if="!showMap" class="col-12 map-data-position">
+            <MapData :mapVisible="showMap" />
+        </div>
+        <PriceChart class="price-box-position" :class="{'overlap-map' : mapDisplay && showMap}"/>
+        <TransactionsTable/>
+    </div>
 </div>
 </template>
 
