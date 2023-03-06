@@ -115,7 +115,7 @@ export default defineComponent({
     <div v-if="mapDisplay && showMap" class="col-12 map-data-position overlap-map">
         <MapData :mapVisible="showMap" />
     </div>
-    <div class="container-max-width">
+    <div class="container-max-width" :class="{'container-margin' : !showMap}">
         <div v-if="mapDisplay && !showMap" class="col-12 map-data-position">
             <MapData :mapVisible="showMap" />
         </div>
@@ -132,6 +132,8 @@ export default defineComponent({
   z-index: 10
   .chevron
     padding-left: 25px
+.container-margin
+    margin-top: 2rem
 .render-container
     position: absolute
     left: 100000px
