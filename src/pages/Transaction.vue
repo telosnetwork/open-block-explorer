@@ -52,7 +52,7 @@ export default defineComponent({
     <div v-else class="q-pa-lg">
       <div class="row full-width justify-center">
         <div class="col-xs-12 col-md-8 col-lg-6">
-          <q-card class="info-card" flat>
+          <q-card class="info-card container-max-width" flat>
             <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
               <q-card-section class="q-pl-md">
                 <div class="text-h4 text-bold">Transaction not found.</div>
