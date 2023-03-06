@@ -68,16 +68,14 @@ export default defineComponent({
         };
 
         onMounted(() => {
-
-            window.addEventListener('scroll', eventTimeout, false);
-            window.addEventListener('wheel', eventTimeout, false);
-            window.addEventListener('keyup', keyUpTimeout, false);
-
-            window.setInterval(() => {
-                if (mapDisplay) {
+            if (mapDisplay){
+                window.addEventListener('scroll', eventTimeout, false);
+                window.addEventListener('wheel', eventTimeout, false);
+                window.addEventListener('keyup', keyUpTimeout, false);
+                window.setInterval(() => {
                     void store.dispatch('chain/updateBlockData');
-                }
-            }, 2000);
+                }, 2000);
+            }
         });
 
         onBeforeUnmount(() => {
@@ -136,7 +134,7 @@ export default defineComponent({
     padding-left: 25px
 .render-container
     position: absolute
-    left: 10000px
+    left: 100000px
     &.show-map
       position: relative
       left:0
