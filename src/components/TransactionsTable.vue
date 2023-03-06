@@ -101,6 +101,7 @@ export default defineComponent({
             },
         ];
         const rows = ref<TransactionTableRow[]>([]);
+        const totalRows = ref<number>(0);
         const filteredRows = ref<TransactionTableRow[]>([]);
         const loading = ref<boolean>(false);
         const showPagesSizes = ref<boolean>(false);
@@ -201,7 +202,7 @@ export default defineComponent({
 
         const lastPage = computed(() => {
             const rowsPerPage = paginationSettings.value.rowsPerPage;
-            const rowsNumber = paginationSettings.value.rowsNumber;
+            const rowsNumber = totalRows.value;
             return Math.ceil(rowsNumber / rowsPerPage);
         });
 
@@ -274,7 +275,7 @@ export default defineComponent({
                 if (tokenModel.value) {
                     limit = 100;
                 }
-                tableData = await api.getTransactions({
+                const response = await api.getTransactions({
                     page,
                     limit,
                     account: account.value,
@@ -284,6 +285,8 @@ export default defineComponent({
                     sort,
                     extras,
                 });
+                tableData = response.data.actions;
+                totalRows.value = response.data.total.value;
             }
 
             if (tableData) {
@@ -508,6 +511,7 @@ export default defineComponent({
             loadTableData,
             checkIsMultiLine,
             filterRows,
+            totalRows,
             pageSizeOptions,
             changePageSize,
             switchPageSelector,
