@@ -119,7 +119,7 @@ export default defineComponent({
         <div v-if="mapDisplay && !showMap" class="col-12 map-data-position">
             <MapData :mapVisible="showMap" />
         </div>
-        <PriceChart class="price-box-position" :class="{'overlap-map' : mapDisplay && showMap}"/>
+        <PriceChart v-if='mapDisplay' class="price-box-position" :class="{'overlap-map' : mapDisplay && showMap}"/>
         <TransactionsTable/>
     </div>
 </div>
