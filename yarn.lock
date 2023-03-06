@@ -1162,6 +1162,17 @@
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
+"@greymass/eosio@^0.6.0", "@greymass/eosio@^0.6.9":
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/@greymass/eosio/-/eosio-0.6.9.tgz#e5475dfb6f1507da6ec2f9f0065e19684e8d4b70"
+  integrity sha512-Xd6X3sesStFQiw3+6+8tD1IauW3WX25GQnHa/zhUqIE1cB23bjzLqn89JDTcyQYKJ4R24L1rERqko/u6p7RizA==
+  dependencies:
+    bn.js "^4.11.9"
+    brorand "^1.1.0"
+    elliptic "^6.5.4"
+    hash.js "^1.0.0"
+    tslib "^2.0.3"
+
 "@humanwhocodes/config-array@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.5.0.tgz#1407967d4c6eecd7388f83acf1eaf4d0c6e58ef9"
@@ -2448,6 +2459,28 @@
   dependencies:
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
+
+"@wharfkit/session@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@wharfkit/session/-/session-0.3.0.tgz#e42312c7c14dd328d06941ab41cab4abd9926e6d"
+  integrity sha512-U/B6aRPCm6l0ipxT3/30WEsOSwu5WRuOV3W/DncnYGH2K8rpy7BwZKJURDGN1HPRruNkT9/r+4sT7t+s4EEChw==
+  dependencies:
+    "@greymass/eosio" "^0.6.9"
+    eosio-signing-request "^2.5.2"
+    pako "^2.0.4"
+    tslib "^2.1.0"
+
+"@wharfkit/wallet-plugin-mock@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@wharfkit/wallet-plugin-mock/-/wallet-plugin-mock-0.3.0.tgz#1d96ad466766cfc8eed3757eb910ecb56937df97"
+  integrity sha512-EmunrKyH9BVTUB+eXCepo0rBzh19dLRRveqfawSYg+FTIlInnaDIHS2S6J9jpJ0xqBEpnIpar/vEWJChUT97mg==
+  dependencies:
+    tslib "^2.1.0"
+
+"@wharfkit/web-ui-renderer@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@wharfkit/web-ui-renderer/-/web-ui-renderer-0.3.0.tgz#548eea1a58d938598536e0aa5a4950dd7235519e"
+  integrity sha512-757isx8XLKKqUc6bkJv4Y1HywmA3wmlcdLUIXX2oJsTNeSdt6vPQVGsKkC54LM/lz7rgzq/aGDqFqR653SaxaQ==
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
@@ -4572,7 +4605,7 @@ elementtree@0.1.7:
   dependencies:
     sax "1.1.4"
 
-elliptic@^6.5.3:
+elliptic@^6.5.3, elliptic@^6.5.4:
   version "6.5.4"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
   integrity sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==
@@ -4643,6 +4676,14 @@ env-paths@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
   integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
+
+eosio-signing-request@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/eosio-signing-request/-/eosio-signing-request-2.5.2.tgz#3cf53d71204d32bb5112e2ac84aba189661a630c"
+  integrity sha512-mkWhsjZYVfyvUujbeSBZ4u1NlT5Pks/VAT2CesUtMsffg1e4LaA2/uijrDoGNkhRzVv4VDxrssh9jVPdyV97rw==
+  dependencies:
+    "@greymass/eosio" "^0.6.0"
+    tslib "^2.0.3"
 
 err-code@^2.0.2:
   version "2.0.3"
