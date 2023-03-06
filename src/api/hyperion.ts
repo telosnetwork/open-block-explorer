@@ -29,6 +29,7 @@ import {
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 import { HyperionTransactionFilter } from 'src/types/Api';
+import { GetActionsResponse } from 'src/types/Actions';
 
 const chain: Chain = getChain();
 const hyperion = axios.create({ baseURL: chain.getHyperionEndpoint() });
@@ -122,7 +123,7 @@ export const getTokens = async function (address?: string): Promise<Token[]> {
 
 export const getTransactions = async function (
     filter: HyperionTransactionFilter,
-): Promise<Action[]> {
+): Promise<GetActionsResponse> {
     const account = filter.account || '';
     const page = filter.page || 1;
     const limit = filter.limit || 10;
@@ -160,10 +161,9 @@ export const getTransactions = async function (
 
     const params: AxiosRequestConfig = aux as AxiosRequestConfig;
 
-    const response = await hyperion.get<ActionData>('v2/history/get_actions', {
+    return await hyperion.get<ActionData>('v2/history/get_actions', {
         params,
     });
-    return response.data.actions;
 };
 
 export const getTransaction = async function (
