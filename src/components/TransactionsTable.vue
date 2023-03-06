@@ -880,7 +880,7 @@ $medium:920px
   cursor: pointer
 
 .table-container
-    overflow-x: scroll
+    overflow-x: auto
 
 .table-header
     color: #000000 !important

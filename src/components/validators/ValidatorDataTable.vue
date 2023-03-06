@@ -202,7 +202,7 @@ export default defineComponent({
   &__list
     width: 100%
     &-row
-      overflow-x: scroll
+      overflow-x: auto
     &-col
       min-width: 1000px
 .producer-card

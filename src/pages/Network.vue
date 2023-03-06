@@ -94,7 +94,7 @@ export default defineComponent({
 </script>
 
 <template>
-<div class="row">
+<div>
     <div class="col-12">
         <div v-if="mapDisplay" class="row gradient-box justify-center" :class="{'show-map' : showMap}">
             <div class="row full-width chevron-toggle hide" @click="toggleMap">

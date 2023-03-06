@@ -187,6 +187,7 @@ $medium:750px
     @media screen and (min-width: $medium) //screen > $medium
         width: 19px
 .price-box
+    z-index: 1
     width: 100%
     background-color:#ffffff
     background: #FFFFFF
