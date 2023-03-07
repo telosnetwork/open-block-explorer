@@ -64,11 +64,9 @@ export default defineComponent({
 
             if (numberArray?.length > 0) {
                 quantity = numberArray[0] + '.';
-
-                if (numberArray.length >= 2) {
-                    fractionPart = numberArray[1];
-                }
+                fractionPart = numberArray[1] ?? '';
             }
+
             // slice will cap the fraction part to precision and padEnd will fill the precision with zeros if needed
             quantity += fractionPart.slice(0, precision).padEnd(precision, '0');
             newAction.data.quantity = quantity;
