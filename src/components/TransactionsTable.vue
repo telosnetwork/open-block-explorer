@@ -58,6 +58,14 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
+        toggleEnabled: {
+            type: Boolean,
+            default: true,
+        },
+        filtersEnabled: {
+            type: Boolean,
+            default: true,
+        },
     },
     setup(props) {
         const route = useRoute();
@@ -205,7 +213,6 @@ export default defineComponent({
             return Math.ceil(rowsNumber / rowsPerPage);
         });
 
-        const noData = computed(() => rows.value.length === 0);
         const hasActions = computed(() => actions.value !== null);
         const clearFilters = (): void => {
             accountsModel.value = '';
@@ -501,7 +508,6 @@ export default defineComponent({
             showAge,
             tableTitle,
             lastPage,
-            noData,
             hasActions,
             filter,
             onRequest,
@@ -526,7 +532,7 @@ export default defineComponent({
 
 <template>
 
-<div class="row col-12 q-mt-xs justify-center text-left">
+<div class="row col-12 q-mt-xs justify-center text-left trx-table container-max-width">
     <div class="row trx-table--main-container">
         <div class="row col-12 q-mt-lg">
             <!-- Left column-->
@@ -547,7 +553,7 @@ export default defineComponent({
                         />
                     </div>
                 </div>
-                <div class="row">
+                <div v-if="toggleEnabled" class="row">
                     <div class="col">
                         <q-toggle
                             v-model="enableLiveTransactions"
@@ -559,7 +565,7 @@ export default defineComponent({
                 </div>
             </div>
             <!-- Right column-->
-            <div class="col trx-table--topright-col">
+            <div v-if="filtersEnabled" class="col trx-table--topright-col">
                 <div class="row justify-end">
                     <!-- -- Filters    ---->
                     <div class="col-auto row flex trx-table--filter-buttons">
@@ -727,8 +733,8 @@ export default defineComponent({
                 v-model:pagination="paginationSettings"
                 class="q-mt-lg row trx-table--fixed-layout"
                 flat
-                hide-pagination
                 table-header-class="table-header"
+                hide-pagination
                 :rows="filteredRows"
                 :columns="columns"
                 :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
@@ -845,9 +851,6 @@ export default defineComponent({
 <style lang="sass">
 $medium:920px
 
-.table-container
-  overflow-x: auto
-
 .trx-table--title
   font-size: 22.75px
   font-style: normal
@@ -856,6 +859,7 @@ $medium:920px
 
 .trx-table--main-container
   width: 90%
+
 .trx-table--filter-buttons
   gap: 10px 0px
 .trx-table--fixed-layout
@@ -894,8 +898,8 @@ $medium:920px
   padding-left: 2rem
   cursor: pointer
 
-body
-    height:1000px
+.table-container
+    overflow-x: auto
 
 .table-header
     color: #000000 !important
@@ -943,4 +947,5 @@ body
 @media screen and (max-width: 665px)
   .trx-table--topleft-col, .trx-table--topright-col
     display: block
+
 </style>

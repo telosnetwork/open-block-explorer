@@ -25,7 +25,5 @@ export default defineComponent({
 });
 </script>
 <template>
-<ValidatorData/>
+<ValidatorData class="container-max-width"/>
 </template>
-
-<style lang="sass" scoped></style>

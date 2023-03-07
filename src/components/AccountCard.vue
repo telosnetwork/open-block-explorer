@@ -420,7 +420,7 @@ export default defineComponent({
         <q-card-section class="resources-container">
             <div class="inline-section">
                 <div class="row justify-center full-height items-center">
-                    <div v-if="account !== system_account" class="col-5">
+                    <div v-if="account !== system_account" class="col-6">
                         <div class="text-title">{{ account }}</div>
                     </div>
                     <div v-else class="col-2">

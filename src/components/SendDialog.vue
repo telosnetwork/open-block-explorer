@@ -160,7 +160,7 @@ export default defineComponent({
                     icon="clear"
                 />
             </div>
-            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 maxSize">
+            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 max-dialog-width">
                 <div class="row">
                     <q-card-section><img class="send-img q-pr-md" src="~assets/send.svg">
                         <div class="text-h4 q-pb-md inline-block color-grey-3">Send Tokens</div>

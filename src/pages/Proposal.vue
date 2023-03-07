@@ -60,7 +60,7 @@ export default defineComponent({
 </script>
 
 <template>
-<q-page padding>
+<q-page padding class="trx-table container-max-width">
     <div class="row justify-between items-center q-pt-lg q-pb-sm">
         <h1 class="text-h5 q-ma-none">Multisig Transactions</h1>
         <q-btn
