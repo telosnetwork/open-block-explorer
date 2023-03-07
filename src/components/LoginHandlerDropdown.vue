@@ -3,6 +3,7 @@ import { defineComponent, ref, computed } from 'vue';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useStore } from 'src/store';
 import { SessionKit } from '@wharfkit/session';
+import { kit } from 'boot/wharf';
 
 export default defineComponent({
     name: 'LoginHandlerDropdown',
@@ -13,22 +14,9 @@ export default defineComponent({
         const account = computed(() => store.state.account.accountName);
         const showModal = ref(false);
 
-        // const getAuthenticator = (): Authenticator => {
-        //     const wallet = localStorage.getItem('autoLogin');
-        //     const authenticator = authenticators.find(
-        //         auth => auth.getName() === wallet,
-        //     );
-        //     return authenticator;
-        // };
-
         const onLogout = async (): Promise<void> => {
-            // TODO Wharf: logout current session
-            // const authenticator = getAuthenticator();
-            const authenticator: SessionKit = undefined;
             try {
-                // TODO Wharf: logout current session
-                authenticator && (await authenticator.logout());
-                clearAccount();
+                await kit.logout();
             } catch (error) {
                 console.error('Authenticator logout error', error);
                 clearAccount();
@@ -38,6 +26,7 @@ export default defineComponent({
         const clearAccount = (): void => {
             void store.dispatch('account/logout');
         };
+
         return {
             account,
             showModal,

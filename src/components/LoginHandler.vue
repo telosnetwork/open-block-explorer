@@ -11,8 +11,7 @@ import { kit, ui } from 'boot/wharf';
 export default defineComponent({
     name: 'LoginHandler',
     components: { LoginHandlerDropdown },
-    setup(props, context) {
-        console.log(props, context);
+    setup() {
         const store = useStore();
 
         const showDropdown = ref(false);
@@ -28,17 +27,20 @@ export default defineComponent({
                     await store.dispatch('account/login', session);
                 }
             } catch (e) {
-                console.log('error restoring session');
+                // console.log('error restoring session', e);
             }
         });
 
         return {
             showDropdown,
             login: async () => {
-                const result = await kit.login();
-                console.log(result);
-                if (result.session) {
-                    await store.dispatch('account/login', result.session);
+                try {
+                    const result = await kit.login();
+                    if (result.session) {
+                        await store.dispatch('account/login', result.session);
+                    }
+                } catch (e) {
+                    // console.log('error logging in', e)
                 }
             },
             account,
@@ -55,7 +57,7 @@ export default defineComponent({
             v-else
             class="button-primary btn-login"
             label="Connect"
-            @click=this.$kit.login()
+            @click=login()
         />
     </div>
 </div>
