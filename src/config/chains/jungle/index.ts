@@ -32,9 +32,9 @@ const TOKEN = {
     amount: 0,
     contract: 'eosio.token',
 } as Token;
-const HYPERION_ENDPOINT = 'https://jungle.eosusa.news';
+const HYPERION_ENDPOINT = 'https://jungle.eossweden.org';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
-const RPC_ENDPOINT = 'https://jungle.eosusa.news';
+const RPC_ENDPOINT = 'https://jungle4.greymass.com';
 const API_ENDPOINT = 'https://example.com';
 const DISPLAY_MAP = true;
 const THEME = {

@@ -5,54 +5,41 @@ import { useStore } from 'src/store';
 import SessionKit, { BrowserLocalStorage, LoginResult } from '@wharfkit/session';
 import { WalletPluginMock } from '@wharfkit/wallet-plugin-mock';
 import { WebUIRenderer } from '@wharfkit/web-ui-renderer';
+// import { LoginResult } from '@wharfkit/session';
+import { kit, ui } from 'boot/wharf';
 
 export default defineComponent({
     name: 'LoginHandler',
     components: { LoginHandlerDropdown },
-    setup() {
-        const authenticators = getAuthenticators();
+    setup(props, context) {
+        console.log(props, context);
         const store = useStore();
 
         const showDropdown = ref(false);
         const account = computed(() => store.state.account.accountName);
-        let kit: SessionKit;
 
-        onMounted(() => {
-            const ui = new WebUIRenderer();
-            // Manually append the dialog to the page
+        onMounted(async () => {
+            // Manually append the dialog to the page, since this is after the DOM events
             ui.appendDialogElement();
-            kit = new SessionKit({
-                appName: process.env.APP_NAME,
-                chains: [
-                    {
-                        id: '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11',
-                        url: 'https://telos.greymass.com0',
-                    },
-                ],
-                ui,
-                storage: new BrowserLocalStorage('obe'),
-                walletPlugins: [new WalletPluginMock()],
-            });
-            const storedAccount = localStorage.getItem('account');
-            if (storedAccount) {
-                // TODO Wharf: restore session
-                // void store.commit('account/setAccountName', storedAccount);
-                // const ualName = localStorage.getItem('autoLogin');
-                // const ual: Authenticator = authenticators.find(
-                //     a => a.getName() === ualName,
-                // );
-                // void store.dispatch('account/login', {
-                //     account: storedAccount,
-                //     authenticator: ual,
-                // });
+            // Attempt to restore any existing sessions
+            try {
+                const session = await kit.restore();
+                if (session) {
+                    await store.dispatch('account/login', session);
+                }
+            } catch (e) {
+                console.log('error restoring session');
             }
         });
 
         return {
             showDropdown,
             login: async () => {
-                const result: LoginResult = await kit.login();
+                const result = await kit.login();
                 console.log(result);
+                if (result.session) {
+                    await store.dispatch('account/login', result.session);
+                }
             },
             account,
         };
@@ -68,7 +55,7 @@ export default defineComponent({
             v-else
             class="button-primary btn-login"
             label="Connect"
-            @click=login
+            @click=this.$kit.login()
         />
     </div>
 </div>

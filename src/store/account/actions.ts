@@ -5,54 +5,27 @@ import { api } from 'src/api/index';
 import { Action, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
+import { Session } from '@wharfkit/session';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
-    async login({ commit }, { account, authenticator }) {
-        // await (authenticator as Authenticator).init();
-        // if (!account) {
-        //     const requestAccount = await (
-        //         authenticator as Authenticator
-        //     ).shouldRequestAccountName();
-        //     if (requestAccount) {
-        //         commit('setRequestAccount', true);
-        //         return;
-        //     }
-        // }
-        // const users = await (authenticator as Authenticator).login();
-        // if (users?.length) {
-        //     const account = new FuelUserWrapper(users[0]);
-        //     const permission = (account as unknown as { requestPermission: string })
-        //         .requestPermission;
-        //     const accountName = await account.getAccountName();
+    async login({ commit }, session: Session) {
         // TODO Wharf resolve login
-        console.log(commit, account, authenticator);
+        console.log('commit', commit, session);
         await Promise.resolve();
-        // await (authenticator as Authenticator).init();
-        // if (!account) {
-        //     const requestAccount = await (
-        // authenticator as Authenticator
-        //     ).shouldRequestAccountName();
-        //     if (requestAccount) {
-        //         commit('setRequestAccount', true);
-        //         return;
-        //     }
-        // }
-        // const users = await (authenticator as Authenticator).login();
-        // if (users.length) {
         //     const account = new FuelUserWrapper(users[0]);
         //     const permission = (account as unknown as { requestPermission: string })
         //         .requestPermission;
         //     const accountName = await account.getAccountName();
 
-        //     commit('setAccountPermission', permission || 'active');
-        //     commit('setUser', account);
-        //     commit('setIsAuthenticated', true);
-        //     commit('setAccountName', accountName);
+        commit('setAccountPermission', String(session.permission) || 'active');
+        commit('setUser', session);
+        commit('setIsAuthenticated', true);
+        commit('setAccountName', String(session.actor));
 
-        //     localStorage.setItem('account', accountName);
+        // localStorage.setItem('account', String(session.actor));
         //     localStorage.setItem(
         //         'autoLogin',
         //         (authenticator as Authenticator).getName(),

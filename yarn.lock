@@ -2477,6 +2477,13 @@
   dependencies:
     tslib "^2.1.0"
 
+"@wharfkit/wallet-plugin-privatekey@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@wharfkit/wallet-plugin-privatekey/-/wallet-plugin-privatekey-0.3.0.tgz#a54b03c9b71cbdb132a33eceaf6afec5066be101"
+  integrity sha512-ysEqenJ5CrL4Aja0qVtr3ya4Ah2ADuA4e+16mPMtBGcdDpmFkK/rF8006icLuHNQRXYh5QQTRiVrkQN04V+mZQ==
+  dependencies:
+    tslib "^2.1.0"
+
 "@wharfkit/web-ui-renderer@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@wharfkit/web-ui-renderer/-/web-ui-renderer-0.3.0.tgz#548eea1a58d938598536e0aa5a4950dd7235519e"
