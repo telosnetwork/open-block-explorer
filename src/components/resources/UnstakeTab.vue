@@ -1,11 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
+import { useAntelopeStore } from 'src/store/antelope.store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
-import { StakeResourcesTransactionData } from 'src/types/StakeResourcesTransactionData';
+import { DelegatedResources } from 'src/store/resources/state';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -16,7 +16,7 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const store = useAntelopeStore();
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>(
             store.state.account.accountName.toLowerCase() || '',
@@ -64,18 +64,65 @@ export default defineComponent({
             }
         }
 
+        const delegatedList = computed(() => store.resources.getDelegatedToOthers());
+        const isUpdating = computed(
+            () => store.resources.isLoading('updateResources'),
+        );
+
+        const selectOptions = ref<{label:string, value:DelegatedResources}[]>([]);
+        const selectModel = ref<{label:string, value:DelegatedResources}>({ label: '', value: null });
+        const receiverAccount = computed((): string => selectModel.value?.value?.to);
+
+        console.log('store.resources.updateResources() antes');
+        void store.resources.updateResources().then(() => {
+            const selfStaked = store.resources.getSelfStaked();
+            if (selfStaked) {
+                selectModel.value = {
+                    label: selfStaked?.to,
+                    value: selfStaked,
+                };
+            }
+
+            const options = delegatedList.value?.map(item => ({
+                label: item.to,
+                value: item,
+            })) ?? [];
+
+            // first option should be self staked
+            // options.unshift({
+            //     label: selfStaked?.to,
+            //     value: selfStaked,
+            // });
+
+            console.log('------------------------------------');
+            console.log(options[0].label);
+            console.log(selfStaked);
+            console.log('------------------------------------');
+
+
+            selectOptions.value = options;
+        });
+
         return {
             openTransaction,
             stakingAccount,
+            receiverAccount,
+            selectModel,
+            selectOptions,
+            delegatedList,
+            isUpdating,
             cpuTokens,
             netTokens,
-            ...mapActions({ sendAction: 'account/sendAction' }),
+            ...mapActions({ undelegateResources: 'resources/undelegateResources' }),
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
             netStake: assetToAmount(netStake.value),
             cpuStake: assetToAmount(cpuStake.value),
         };
+    },
+    async mounted() {
+        // await this.$store.dispatch('resources/updateResources');
     },
     computed: {
         cpuInputRules(): Array<(data: string) => boolean | string> {
@@ -101,33 +148,20 @@ export default defineComponent({
                 this.$q.notify('Enter valid value for CPU or NET to unstake');
                 return;
             }
-            const data = {
+
+            await this.undelegateResources({
                 from: this.stakingAccount,
-                receiver: this.stakingAccount,
+                receiver: this.receiverAccount,
                 transfer: false,
                 unstake_cpu_quantity:
-                parseFloat(this.cpuTokens) > 0
-                    ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-                    : `0.0000 ${symbol}`,
+                    parseFloat(this.cpuTokens) > 0
+                        ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+                        : `0.0000 ${symbol}`,
                 unstake_net_quantity:
-                parseFloat(this.netTokens) > 0
-                    ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-                    : `0.0000 ${symbol}`,
-            } as StakeResourcesTransactionData;
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                this.transactionId = (
-                    await this.sendAction({
-                        account: 'eosio',
-                        name: 'undelegatebw',
-                        data,
-                    })
-                ).transactionId as string;
-                this.$store.commit('account/setTransaction', this.transactionId);
-            } catch (e) {
-                this.transactionError = e;
-                this.$store.commit('account/setTransactionError', e);
-            }
+                    parseFloat(this.netTokens) > 0
+                        ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+                        : `0.0000 ${symbol}`,
+            });
             await this.loadAccountData();
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
@@ -149,8 +183,22 @@ export default defineComponent({
 
 <template>
 
-<div class="staking-form">
+<div class="unstake-tab">
     <q-card-section class="text-grey-3 text-weight-light">
+        <div class="row q-pb-md">
+            <div class="col-12">
+                <q-linear-progress v-if="isUpdating" color="primary" />
+                <q-select
+                    v-else
+                    v-model="selectModel"
+                    class="full-width unstake-tab__select"
+                    color="primary"
+                    :options="selectOptions"
+                    label="Delegated to"
+                    :rules="[val => !!val || 'Delegated to is required']"
+                />
+            </div>
+        </div>
         <div class="row q-pb-md">
             <div class="col-6">
                 <div class="row q-pb-sm">
@@ -225,4 +273,26 @@ export default defineComponent({
     background: rgba(108, 35, 255, 1)
     border-radius: 4px
     color: $grey-4
+
+.unstake-tab
+    &__select
+        color: white
+        .q-field__marginal
+            color: white
+        .q-field__native
+            color: white
+            border: none
+            border-bottom: 1px solid white
+            border-radius: 0
+            padding: 0
+            &:focus
+                border-bottom: 1px solid white
+                border-radius: 0
+                outline: none
+                box-shadow: none
+        .q-field__label
+            color: #9e9e9e
+        &.q-field--highlighted
+            .q-field__label
+                color: white
 </style>

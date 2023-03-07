@@ -53,7 +53,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async loadAccountData({ commit, state }) {
         try {
             const data = await api.getAccount(state.accountName);
-            commit('account/setAccountData', data);
+            commit('account/setAccountData', data, { root: true });
         } catch (e) {
             return;
         }
@@ -190,6 +190,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             );
             commit('setTransaction', transaction.transactionId);
         } catch (e) {
+            console.error(e);
             commit('setTransactionError', e);
         }
         return transaction;
