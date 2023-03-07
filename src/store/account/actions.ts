@@ -11,7 +11,7 @@ const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
-    async login({ commit }, session: Session) {
+    login({ commit }, session: Session) {
         commit('setAccountPermission', String(session.permission) || 'active');
         commit('setUser', session);
         commit('setIsAuthenticated', true);
