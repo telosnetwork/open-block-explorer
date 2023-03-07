@@ -2,7 +2,6 @@
 import { defineComponent, ref, computed } from 'vue';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useStore } from 'src/store';
-import { SessionKit } from '@wharfkit/session';
 import { kit } from 'boot/wharf';
 
 export default defineComponent({

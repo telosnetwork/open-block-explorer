@@ -2,10 +2,6 @@
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import LoginHandlerDropdown from 'src/components/LoginHandlerDropdown.vue';
 import { useStore } from 'src/store';
-import SessionKit, { BrowserLocalStorage, LoginResult } from '@wharfkit/session';
-import { WalletPluginMock } from '@wharfkit/wallet-plugin-mock';
-import { WebUIRenderer } from '@wharfkit/web-ui-renderer';
-// import { LoginResult } from '@wharfkit/session';
 import { kit, ui } from 'boot/wharf';
 
 export default defineComponent({
