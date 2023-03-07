@@ -18,6 +18,9 @@ export default defineComponent({
         let kit: SessionKit;
 
         onMounted(() => {
+            const ui = new WebUIRenderer();
+            // Manually append the dialog to the page
+            ui.appendDialogElement();
             kit = new SessionKit({
                 appName: process.env.APP_NAME,
                 chains: [
@@ -26,7 +29,7 @@ export default defineComponent({
                         url: 'https://telos.greymass.com0',
                     },
                 ],
-                ui: new WebUIRenderer(),
+                ui,
                 storage: new BrowserLocalStorage('obe'),
                 walletPlugins: [new WalletPluginMock()],
             });
