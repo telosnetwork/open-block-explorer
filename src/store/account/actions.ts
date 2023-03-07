@@ -53,7 +53,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async loadAccountData({ commit, state }) {
         try {
             const data = await api.getAccount(state.accountName);
-            commit('account/setAccountData', data);
+            commit('account/setAccountData', data, { root: true });
         } catch (e) {
             return;
         }
@@ -88,21 +88,21 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             upper_bound: account as TableIndexType,
         } as GetTableRowsParams;
         const rexfund = (
-      (await api.getTableRows(paramsrexfund)) as {
-        rows: {
-          owner: string;
-          balance: string;
-        }[];
-      }
+            (await api.getTableRows(paramsrexfund)) as {
+                rows: {
+                owner: string;
+                balance: string;
+                }[];
+            }
         ).rows[0];
         const rexFundBalance =
-      rexfund && rexfund.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
+            rexfund && rexfund.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
         commit('setRexFund', rexFundBalance);
         const rexbal = rexbalRows.rows[0];
         const rexBalance =
-      rexbal && rexbal.rex_balance
-          ? parseFloat(rexbal.rex_balance.split(' ')[0])
-          : 0;
+            rexbal && rexbal.rex_balance
+                ? parseFloat(rexbal.rex_balance.split(' ')[0])
+                : 0;
         const totalRex = Number(rexpool.total_rex.split(' ')[0]);
         const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
         const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
@@ -146,6 +146,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         commit('setRexActions', rexActions);
     },
     async sendTransaction({ commit, state }, { account, data, name }) {
+        console.log('sendTransaction()');
         let transaction = null;
         const actions = [
             {
@@ -172,6 +173,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             );
             commit('setTransaction', transaction.transactionId);
         } catch (e) {
+            console.error(e);
             commit('setTransactionError', e);
         }
         return transaction;

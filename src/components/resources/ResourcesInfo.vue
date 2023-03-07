@@ -19,28 +19,27 @@ export default defineComponent({
         const ramPrice = computed((): string => store.state?.chain.ram_price === '0'
             ? '0.0000'
             : store.state.chain.ram_price);
-        const ramAvailable = computed(
-            () =>
-                Number(accountData.value.ram_quota) -
-        Number(accountData.value.ram_usage),
+        const ramAvailable = computed(() =>
+            Number(accountData.value.ram_quota) -
+            Number(accountData.value.ram_usage),
         );
         const delegatedResources = computed(() => {
             const totalStakedResources =
-        Number(accountData.value.cpu_weight.value) /
-          Math.pow(10, token.value.precision) +
-        Number(accountData.value.net_weight.value) /
-          Math.pow(10, token.value.precision);
+                Number(accountData.value.cpu_weight.value) /
+                    Math.pow(10, token.value.precision) +
+                Number(accountData.value.net_weight.value) /
+                    Math.pow(10, token.value.precision);
             const selfStakedResources =
-        Number(
-            accountData.value.self_delegated_bandwidth?.net_weight.value
-                ? accountData.value.self_delegated_bandwidth.net_weight.value
-                : '0',
-        ) +
-        Number(
-            accountData.value.self_delegated_bandwidth?.cpu_weight.value
-                ? accountData.value.self_delegated_bandwidth.cpu_weight.value
-                : '0',
-        );
+                Number(
+                    accountData.value.self_delegated_bandwidth?.net_weight.value
+                        ? accountData.value.self_delegated_bandwidth.net_weight.value
+                        : '0',
+                ) +
+                Number(
+                    accountData.value.self_delegated_bandwidth?.cpu_weight.value
+                        ? accountData.value.self_delegated_bandwidth.cpu_weight.value
+                        : '0',
+                );
             return totalStakedResources - selfStakedResources;
         });
 
@@ -61,13 +60,14 @@ export default defineComponent({
         );
 
         const totalRefund = computed((): number =>
-            accountData.value && accountData.value.refund_request
-                ? accountData.value.refund_request.cpu_amount.value +
-          accountData.value.refund_request.net_amount.value
-                : 0,
+            accountData.value?.refund_request?.cpu_amount.value +
+            accountData.value?.refund_request?.net_amount.value,
         );
 
-        const formatValue = (val: number): string => `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
+        const formatValue = (_val: number): string => {
+            const val = Number(_val || 0);
+            return `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
+        };
 
         return {
             store,
