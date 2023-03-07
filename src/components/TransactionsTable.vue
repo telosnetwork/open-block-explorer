@@ -840,7 +840,7 @@ export default defineComponent({
                         <q-btn
                             class="q-ml-xs q-mr-xs col button-primary"
                             size="sm"
-                            :disable="paginationSettings.page === lastPage"
+                            :disable="paginationSettings.page === lastPage || totalRows < paginationSettings.rowsPerPage"
                             @click="moveTablePage($refs.main_table, 'next')"
                         >NEXT</q-btn>
                     </div>
