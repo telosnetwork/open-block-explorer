@@ -1,7 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import { DialogChainObject } from 'quasar';
-import { getAuthenticators } from 'src/boot/ual';
 import { useStore } from 'src/store';
 import { useQuasar } from 'quasar';
 
@@ -23,13 +22,13 @@ export default defineComponent({
             return '1.5em';
         });
 
-        const onLogin = async (idx: number) => {
-            const authenticator = authenticators[idx];
-            error.value = null;
+        const onLogin = async () => {
+            // const authenticator = authenticators[idx];
+            // error.value = null;
             try {
                 await store.dispatch('account/login', {
                     account: account.value,
-                    authenticator,
+                    // authenticator,
                 });
             } catch (e) {
                 error.value = e as string;

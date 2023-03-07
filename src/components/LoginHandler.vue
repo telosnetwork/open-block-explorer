@@ -1,40 +1,56 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import LoginHandlerDropdown from 'src/components/LoginHandlerDropdown.vue';
-import WalletModal from 'src/components/WalletModal.vue';
-import { Authenticator } from 'universal-authenticator-library';
 import { useStore } from 'src/store';
-import { getAuthenticators } from 'src/boot/ual';
+import SessionKit, { BrowserLocalStorage, LoginResult } from '@wharfkit/session';
+import { WalletPluginMock } from '@wharfkit/wallet-plugin-mock';
+import { WebUIRenderer } from '@wharfkit/web-ui-renderer';
 
 export default defineComponent({
     name: 'LoginHandler',
-    components: { LoginHandlerDropdown, WalletModal },
+    components: { LoginHandlerDropdown },
     setup() {
         const authenticators = getAuthenticators();
         const store = useStore();
 
         const showDropdown = ref(false);
-        const showModal = ref(false);
         const account = computed(() => store.state.account.accountName);
+        let kit: SessionKit;
 
         onMounted(() => {
+            kit = new SessionKit({
+                appName: process.env.APP_NAME,
+                chains: [
+                    {
+                        id: '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11',
+                        url: 'https://telos.greymass.com0',
+                    },
+                ],
+                ui: new WebUIRenderer(),
+                storage: new BrowserLocalStorage('obe'),
+                walletPlugins: [new WalletPluginMock()],
+            });
             const storedAccount = localStorage.getItem('account');
             if (storedAccount) {
-                void store.commit('account/setAccountName', storedAccount);
-                const ualName = localStorage.getItem('autoLogin');
-                const ual: Authenticator = authenticators.find(
-                    a => a.getName() === ualName,
-                );
-                void store.dispatch('account/login', {
-                    account: storedAccount,
-                    authenticator: ual,
-                });
+                // TODO Wharf: restore session
+                // void store.commit('account/setAccountName', storedAccount);
+                // const ualName = localStorage.getItem('autoLogin');
+                // const ual: Authenticator = authenticators.find(
+                //     a => a.getName() === ualName,
+                // );
+                // void store.dispatch('account/login', {
+                //     account: storedAccount,
+                //     authenticator: ual,
+                // });
             }
         });
 
         return {
             showDropdown,
-            showModal,
+            login: async () => {
+                const result: LoginResult = await kit.login();
+                console.log(result);
+            },
             account,
         };
     },
@@ -49,9 +65,8 @@ export default defineComponent({
             v-else
             class="button-primary btn-login"
             label="Connect"
-            @click="showModal = true"
+            @click=login
         />
-        <WalletModal v-model="showModal"/>
     </div>
 </div>
 </template>

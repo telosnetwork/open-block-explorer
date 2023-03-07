@@ -318,7 +318,7 @@ export default defineComponent({
             name: 'approve' | 'unapprove' | 'cancel' | 'exec';
             data: unknown;
         }) {
-            const response = await store.state.account.user.signTransaction(
+            const response = await store.state.account.user.transact(
                 {
                     actions: [
                         {
@@ -333,10 +333,6 @@ export default defineComponent({
                             data,
                         },
                     ],
-                },
-                {
-                    blocksBehind: 3,
-                    expireSeconds: 30,
                 },
             );
 

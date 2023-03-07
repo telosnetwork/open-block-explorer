@@ -1,5 +1,4 @@
 import BaseChain from 'src/config/BaseChain';
-import { RpcEndpoint } from 'universal-authenticator-library';
 import {
     getCoingeckoPriceChartData,
     getCoingeckoUsdPrice,
@@ -19,16 +18,8 @@ const TOKEN = {
     contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://eos.hyperion.eosrio.io';
-const RPC_ENDPOINT = {
-    protocol: 'https',
-    host: 'eos.hyperion.eosrio.io',
-    port: 443,
-};
-const FUEL_RPC_ENDPOINT = {
-    protocol: 'https',
-    host: 'eos.greymass.com',
-    port: 443,
-};
+const RPC_ENDPOINT = 'https://eos.hyperion.eosrio.io';
+const FUEL_RPC_ENDPOINT = 'https://eos.greymass.com';
 const API_ENDPOINT = 'https://example.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
@@ -73,11 +64,11 @@ export default class EOS extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): RpcEndpoint {
+    getRPCEndpoint(): string {
         return RPC_ENDPOINT;
     }
 
-    getFuelRPCEndpoint(): RpcEndpoint | null {
+    getFuelRPCEndpoint(): string | null {
         return FUEL_RPC_ENDPOINT;
     }
 

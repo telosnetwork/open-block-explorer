@@ -1,7 +1,7 @@
 import { Authorization, Action, Rexbal, ABI } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
-import { User } from 'universal-authenticator-library';
 import { API, UInt64 } from '@greymass/eosio';
+import { Session } from '@wharfkit/session';
 
 const chain = getChain();
 
@@ -9,7 +9,7 @@ export interface AccountStateInterface {
   loading: unknown;
   accountName: string;
   accountPermission: string;
-  user: User;
+  user: Session;
   autoLogin: unknown;
   isAuthenticated: boolean;
   linkedAccounts: Array<unknown>;

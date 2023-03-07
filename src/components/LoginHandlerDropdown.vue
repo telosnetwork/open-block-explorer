@@ -2,8 +2,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useStore } from 'src/store';
-import { getAuthenticators } from 'src/boot/ual';
-import { Authenticator } from 'universal-authenticator-library';
+import { SessionKit } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'LoginHandlerDropdown',
@@ -14,17 +13,20 @@ export default defineComponent({
         const account = computed(() => store.state.account.accountName);
         const showModal = ref(false);
 
-        const getAuthenticator = (): Authenticator => {
-            const wallet = localStorage.getItem('autoLogin');
-            const authenticator = authenticators.find(
-                auth => auth.getName() === wallet,
-            );
-            return authenticator;
-        };
+        // const getAuthenticator = (): Authenticator => {
+        //     const wallet = localStorage.getItem('autoLogin');
+        //     const authenticator = authenticators.find(
+        //         auth => auth.getName() === wallet,
+        //     );
+        //     return authenticator;
+        // };
 
         const onLogout = async (): Promise<void> => {
-            const authenticator = getAuthenticator();
+            // TODO Wharf: logout current session
+            // const authenticator = getAuthenticator();
+            const authenticator: SessionKit = undefined;
             try {
+                // TODO Wharf: logout current session
                 authenticator && (await authenticator.logout());
                 clearAccount();
             } catch (error) {
