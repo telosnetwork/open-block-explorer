@@ -12,25 +12,10 @@ const symbol = chain.getSystemToken().symbol;
 
 export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async login({ commit }, session: Session) {
-        // TODO Wharf resolve login
-        console.log('commit', commit, session);
-        await Promise.resolve();
-        //     const account = new FuelUserWrapper(users[0]);
-        //     const permission = (account as unknown as { requestPermission: string })
-        //         .requestPermission;
-        //     const accountName = await account.getAccountName();
-
         commit('setAccountPermission', String(session.permission) || 'active');
         commit('setUser', session);
         commit('setIsAuthenticated', true);
         commit('setAccountName', String(session.actor));
-
-        // localStorage.setItem('account', String(session.actor));
-        //     localStorage.setItem(
-        //         'autoLogin',
-        //         (authenticator as Authenticator).getName(),
-        //     );
-        // }
     },
     logout({ commit }) {
         commit('setIsAuthenticated', false);
