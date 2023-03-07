@@ -1,5 +1,5 @@
 /* eslint-disable jest/no-commented-out-tests */
-import { describe, jest, beforeEach } from '@jest/globals';
+import { describe, jest } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
 import { AxiosInstance, AxiosInterceptorManager, AxiosRequestConfig, AxiosResponse } from 'axios';
 
@@ -90,7 +90,7 @@ global.fetch = jest.fn(() =>
     } as unknown as Response),
 );
 
-// mocking internal implementatios
+// mocking internal chain implementation
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
         getName: () => 'telos',
@@ -116,13 +116,10 @@ global.AbortController = jest.fn(() => ({
     abort: abortFn,
 }));
 
-// Crea un mock de axios.create() que devuelve mockHyperion
-// const AxiosGetFunctionMock = jest.fn();
 jest.mock('axios', () => ({
     create: () => mockHyperion,
 }));
 
-// Define el objeto mockHyperion
 const mockHyperion: AxiosInstance = {
     get: () => Promise.resolve({
         data: userTokens,
@@ -138,38 +135,14 @@ const mockHyperion: AxiosInstance = {
 } as unknown as AxiosInstance;
 
 
-// This import is at this point of the file because there are lots of variables being accessed before the mock is created
 import {
-    // getHyperionAccountData,
-    // getCreator,
     getTokens,
-    // getTransactions,
-    // getTransaction,
-    // getTransactionV1,
-    // getChildren,
-    // getPermissionLinks,
-    // getTableByScope,
-    // getBlock,
-    // getActions,
-    // getInfo,
-    // getSchedule,
-    // getProposals,
-    // getProducers,
-    // getABI,
-    // getHyperionKeyAccounts,
-    // getProducerSchedule,
     DEFAULT_ICON,
 } from 'src/api/hyperion';
 import { Token } from 'src/types';
 
 
 describe('Hyperion API', () => {
-    beforeEach(() => {
-        // Clean mocks
-    });
-
-    // describe('getHyperionAccountData', () => {});
-    // describe('getCreator', () => {});
     describe('getTokens()', () => {
         it('getTokens() [No params] => list of all tokens (no balances)', async () => {
             const tokens = await getTokens();
@@ -191,21 +164,6 @@ describe('Hyperion API', () => {
             expect(tokens).toEqual(userTokensWithLogos);
         });
     });
-    // describe('getTransactions', () => {});
-    // describe('getTransaction', () => {});
-    // describe('getTransactionV1', () => {});
-    // describe('getChildren', () => {});
-    // describe('getPermissionLinks', () => {});
-    // describe('getTableByScope', () => {});
-    // describe('getBlock', () => {});
-    // describe('getActions', () => {});
-    // describe('getInfo', () => {});
-    // describe('getSchedule', () => {});
-    // describe('getProposals', () => {});
-    // describe('getProducers', () => {});
-    // describe('getABI', () => {});
-    // describe('getHyperionKeyAccounts', () => {});
-    // describe('getProducerSchedule', () => {});
 
     afterAll(() => {
         jest.unmock('axios');
