@@ -209,11 +209,8 @@ export default defineComponent({
         <div class="row q-mb-md">
             <div class="row q-pb-sm full-width">
                 <div class="col-6">{{ `Amount of RAM to buy in ` + buyOption}}</div>
-                <div class="col-6">
-                    <div class="color-grey-3 flex justify-end items-center" @click="buyAmount = (buyLimit() - 0.1).toString()"><span class="text-weight-bold balance-amount">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
-                        <q-icon class="q-ml-xs" name="info"/>
-                        <q-tooltip>Click to fill full amount</q-tooltip>
-                    </div>
+                <div class="col-6 text-right">
+                    <span class="text-weight-bold">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
                 </div>
             </div>
             <q-input
@@ -259,8 +256,4 @@ export default defineComponent({
   color: $grey-4
 .grey-3
   color: $grey-3
-
-.balance-amount:hover
-  color: $primary
-  cursor: pointer
 </style>

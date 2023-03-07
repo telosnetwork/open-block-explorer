@@ -76,9 +76,8 @@ export default defineComponent({
         const availableTokens = ref<Token[]>([]);
 
         const stakedRefund = computed((): number =>
-            (accountData.value?.refund_request?.cpu_amount.value +
-             accountData.value?.refund_request?.net_amount.value)
-             ?? 0,
+            (accountData.value?.refund_request?.cpu_amount.value ?? 0) +
+            (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
         const staked = computed((): number => stakedRefund.value + stakedNET.value + stakedCPU.value);
