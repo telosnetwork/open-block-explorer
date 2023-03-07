@@ -61,20 +61,6 @@ export default defineComponent({
             }
         }
 
-        function handleClickMaxCpu() {
-            if (+accountTotalAsNumber.value >= 0.1) {
-                cpuTokens.value = (+accountTotalAsNumber.value - 0.1).toString();
-                netTokens.value = '0';
-            }
-        }
-
-        function handleClickMaxNet() {
-            if (+accountTotalAsNumber.value >= 0.1) {
-                netTokens.value = (+accountTotalAsNumber.value - 0.1).toString();
-                cpuTokens.value = '0';
-            }
-        }
-
         return {
             openTransaction,
             stakingAccount,
@@ -84,8 +70,6 @@ export default defineComponent({
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
-            handleClickMaxCpu,
-            handleClickMaxNet,
             accountTotalAsNumber,
             isValidAccount,
         };
@@ -94,7 +78,7 @@ export default defineComponent({
         inputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < (this.accountTotalAsNumber - 0.1) || 'Not enough funds',
+                (val: string) => +val < this.accountTotalAsNumber || 'Not enough funds',
             ];
         },
         notEnoughTlosForTransaction(): boolean {
@@ -184,12 +168,9 @@ export default defineComponent({
             <div class="col-6">
                 <div class="row q-pb-sm">
                     <div class="col-6">ADD CPU</div>
-                    <div class="col-6">
-                        <div class="color-grey-3 flex justify-end items-center" @click="handleClickMaxCpu">
-                            <span class="text-weight-bold balance-amount">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
-                            <q-icon class="q-ml-xs" name="info"/>
-                            <q-tooltip>Click to fill full amount</q-tooltip>
-                        </div>
+                    <div class="col-6 text-right">
+                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
+
                     </div>
                 </div>
                 <q-input
@@ -208,12 +189,8 @@ export default defineComponent({
             <div class="col-6 q-pl-md">
                 <div class="row q-pb-sm">
                     <div class="col-6">ADD NET</div>
-                    <div class="col-6">
-                        <div class="color-grey-3 flex justify-end items-center" @click="handleClickMaxNet">
-                            <span class="text-weight-bold balance-amount">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
-                            <q-icon class="q-ml-xs" name="info"/>
-                            <q-tooltip>Click to fill full amount</q-tooltip>
-                        </div>
+                    <div class="col-6 text-right">
+                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
                     </div>
                 </div>
                 <q-input
@@ -258,8 +235,4 @@ export default defineComponent({
     background: rgba(108, 35, 255, 1)
     border-radius: 4px
     color: $grey-4
-
-.balance-amount:hover
-  color: $primary
-  cursor: pointer
 </style>
