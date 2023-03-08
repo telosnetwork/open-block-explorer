@@ -2491,10 +2491,10 @@
   dependencies:
     tslib "^2.1.0"
 
-"@wharfkit/web-ui-renderer@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@wharfkit/web-ui-renderer/-/web-ui-renderer-0.3.1.tgz#c8a0ce739d9c09d1964bf408eddcc15b1e53d712"
-  integrity sha512-t0bqcxr2Ky5UnIQPIk3nahrqAFPR0H6Fhynq9QJhNZJZ+w0oSzE3SjdovJGcl/Ev/y+pCdlV7rnEeAFPefBRqA==
+"@wharfkit/web-ui-renderer@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@wharfkit/web-ui-renderer/-/web-ui-renderer-0.3.2.tgz#2846a0be522a86e9f8085cbd7b3748572b75de46"
+  integrity sha512-f10AL2JfFzk1F3zGFccAtMY+V/4t3TAehIRg/V9tOoLpLrf29ngCTGid82Cw/ZZFHSpP71wf82UTTcKxVTnHtA==
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
