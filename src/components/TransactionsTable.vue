@@ -118,6 +118,7 @@ export default defineComponent({
         };
         const changePageSize = async (size: number) => {
             paginationSettings.value.rowsPerPage = size;
+            paginationSettings.value.page = 1;
             await onPaginationChange({ pagination: paginationSettings.value });
         };
         const changePagination = async (page: number, size: number) => {
@@ -570,7 +571,7 @@ export default defineComponent({
             </div>
             <!-- Right column-->
             <div v-if="filtersEnabled" class="col trx-table--topright-col">
-                <div class="row justify-end">
+                <div class="row justify-end q-mb-xl">
                     <!-- -- Filters    ---->
                     <div class="col-auto row flex trx-table--filter-buttons">
                         <q-btn
@@ -727,6 +728,10 @@ export default defineComponent({
                             </div>
                         </q-btn-dropdown>
                     </div>
+                </div>
+                <div class="row justify-end">
+                    Viewing {{ paginationSettings.rowsPerPage > totalRows ? totalRows : paginationSettings.rowsPerPage }}
+                    of {{ totalRows }} total transactions
                 </div>
             </div>
         </div>
