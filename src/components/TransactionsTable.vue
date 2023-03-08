@@ -66,6 +66,11 @@ export default defineComponent({
             type: Boolean,
             default: true,
         },
+        showPaginationExtras: {
+            // show/hide pagination "last" button and total row count
+            type: Boolean,
+            default: false,
+        },
     },
     setup(props) {
         const route = useRoute();
@@ -480,12 +485,16 @@ export default defineComponent({
             drop.hide();
         };
 
-        const moveTablePage = (ref: unknown, dir: 'next' | 'prev') => {
-            const drop: QTable = ref as QTable;
+        const moveTablePage = async (ref: unknown, dir: 'next' | 'prev' | 'first' | 'last') => {
+            const table: QTable = ref as QTable;
             if (dir === 'next') {
-                drop.nextPage();
-            } else {
-                drop.prevPage();
+                table.nextPage();
+            } else if (dir === 'prev') {
+                table.prevPage();
+            } else if (dir === 'first') {
+                table.firstPage();
+            } else if (dir === 'last') {
+                await applyPagination(lastPage.value, null);
             }
         };
 
@@ -729,7 +738,7 @@ export default defineComponent({
                         </q-btn-dropdown>
                     </div>
                 </div>
-                <div class="row justify-end">
+                <div v-if="showPaginationExtras" class="row justify-end">
                     Viewing {{ paginationSettings.rowsPerPage > totalRows ? totalRows : paginationSettings.rowsPerPage }}
                     of {{ totalRows }} total transactions
                 </div>
@@ -817,8 +826,8 @@ export default defineComponent({
         </div>
         <div class="row col-12 items-center justify-end q-mt-md q-mb-sm">
             <!-- records per page selector-->
-            <q-space/>
-            <div class="col-auto"><small>Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}</small>
+            <div class="col-auto">
+                <small>Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}</small>
                 <!-- dropdown button to select number of rows per page-->
                 <q-icon :name="showPagesSizes ? 'expand_more' : 'expand_less'" size="sm" @click="switchPageSelector">
                     <q-popup-proxy ref="page_size_selector" transition-show="scale" transition-hide="scale">
@@ -830,26 +839,53 @@ export default defineComponent({
                     </q-popup-proxy>
                 </q-icon>
             </div>
-            <div class="col-auto q-ml-lg">
-                <div class="row items-baseline">
-                    <div class="col-auto q-mr-xs"><small class="q-mr-sm">page <b>{{ paginationSettings.page }}</b></small></div>
-                    <div class="col-auto q-mr-xs">
-                        <q-btn
-                            class="q-ml-xs q-mr-xs col button-primary"
-                            size="sm"
-                            :disable="paginationSettings.page === 1"
-                            @click="moveTablePage($refs.main_table, 'prev')"
-                        >PREV</q-btn>
-                    </div>
-                    <div class="col-auto q-mr-xs">
-                        <q-btn
-                            class="q-ml-xs q-mr-xs col button-primary"
-                            size="sm"
-                            :disable="paginationSettings.page === lastPage || totalRows < paginationSettings.rowsPerPage"
-                            @click="moveTablePage($refs.main_table, 'next')"
-                        >NEXT</q-btn>
-                    </div>
-                </div>
+            <q-space />
+            <div class="col-auto">
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    :disable="paginationSettings.page === 1"
+                    @click="moveTablePage($refs.main_table, 'first')"
+                >
+                    First
+                </q-btn>
+
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    class="q-mx-sm"
+                    :disable="paginationSettings.page === 1"
+                    @click="moveTablePage($refs.main_table, 'prev')"
+                >
+                    <q-icon name="chevron_left" size="xs" />
+                </q-btn>
+
+                <small>Page {{ paginationSettings.page }} of {{ lastPage === 0 ? 1 : lastPage }}</small>
+
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    class="q-mx-sm"
+                    :disable="paginationSettings.page === lastPage || totalRows < paginationSettings.rowsPerPage"
+                    @click="moveTablePage($refs.main_table, 'next')"
+                >
+                    <q-icon name="chevron_right" size="xs" />
+                </q-btn>
+
+                <q-btn
+                    v-if="showPaginationExtras"
+                    size="sm"
+                    color="primary"
+                    outline
+                    :disable="paginationSettings.page === lastPage || lastPage === 0"
+                    @click="moveTablePage($refs.main_table, 'last')"
+                >
+                    Last
+                </q-btn>
+
             </div>
         </div>
     </div>
