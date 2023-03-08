@@ -68,7 +68,7 @@ export default defineComponent({
     </div>
     <q-tab-panels v-model="tab" class="col-12">
         <q-tab-panel name="transactions">
-            <TransactionsTable :account="account" :showTransferLabel="true"/>
+            <TransactionsTable :account="account" :showTransferLabel="true" :show-pagination-extras="true" />
         </q-tab-panel>
         <q-tab-panel v-if="abi" name="contract">
             <ContractTabs/>
