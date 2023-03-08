@@ -412,8 +412,9 @@ export default defineComponent({
             clearLiveTransactionInterval();
         });
 
-        watch([account, actions], () => {
+        watch([account, actions], async () => {
             void loadTableData();
+            await changePagination(1, paginationSettings.value.rowsPerPage);
         });
 
         watch(filter, async () => {
@@ -740,7 +741,7 @@ export default defineComponent({
                 </div>
                 <div v-if="showPaginationExtras" class="row justify-end">
                     Viewing {{ paginationSettings.rowsPerPage > totalRows ? totalRows : paginationSettings.rowsPerPage }}
-                    of {{ totalRows.toLocaleString() }} total transactions
+                    of {{ totalRows === 10000 ? ' over ' : ''}} {{ totalRows.toLocaleString() }} total transactions
                 </div>
             </div>
         </div>
