@@ -2460,14 +2460,21 @@
     "@webassemblyjs/ast" "1.11.1"
     "@xtuc/long" "4.2.2"
 
-"@wharfkit/session@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@wharfkit/session/-/session-0.3.0.tgz#e42312c7c14dd328d06941ab41cab4abd9926e6d"
-  integrity sha512-U/B6aRPCm6l0ipxT3/30WEsOSwu5WRuOV3W/DncnYGH2K8rpy7BwZKJURDGN1HPRruNkT9/r+4sT7t+s4EEChw==
+"@wharfkit/session@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@wharfkit/session/-/session-0.3.1.tgz#7aa8380481925806ba986025cca05bac8a14b773"
+  integrity sha512-ZipRLwPR2/kNDqM9kQvQyijeURJQ0mSiCtEYMOPRL17Chp39bZa3zTeBfFlTZMoY8nkn0M3k7+bkkOh9D+UwBQ==
   dependencies:
     "@greymass/eosio" "^0.6.9"
     eosio-signing-request "^2.5.2"
     pako "^2.0.4"
+    tslib "^2.1.0"
+
+"@wharfkit/wallet-plugin-cleos@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@wharfkit/wallet-plugin-cleos/-/wallet-plugin-cleos-0.3.1.tgz#aed1793fff22e67d397172d5fa078d126b533dae"
+  integrity sha512-ISfh1WMXpveGC9pAHebsmuC5tappa0TYXSi5EjbfWcutNOz3WptPcNLkQnjGBrt1ZiWTn7YWrhtr+ZNpQ8ZUHA==
+  dependencies:
     tslib "^2.1.0"
 
 "@wharfkit/wallet-plugin-mock@^0.3.0":
@@ -2484,10 +2491,10 @@
   dependencies:
     tslib "^2.1.0"
 
-"@wharfkit/web-ui-renderer@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@wharfkit/web-ui-renderer/-/web-ui-renderer-0.3.0.tgz#548eea1a58d938598536e0aa5a4950dd7235519e"
-  integrity sha512-757isx8XLKKqUc6bkJv4Y1HywmA3wmlcdLUIXX2oJsTNeSdt6vPQVGsKkC54LM/lz7rgzq/aGDqFqR653SaxaQ==
+"@wharfkit/web-ui-renderer@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@wharfkit/web-ui-renderer/-/web-ui-renderer-0.3.1.tgz#c8a0ce739d9c09d1964bf408eddcc15b1e53d712"
+  integrity sha512-t0bqcxr2Ky5UnIQPIk3nahrqAFPR0H6Fhynq9QJhNZJZ+w0oSzE3SjdovJGcl/Ev/y+pCdlV7rnEeAFPefBRqA==
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"

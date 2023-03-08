@@ -14,10 +14,11 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.13.4",
-    "@wharfkit/session": "^0.3.0",
+    "@wharfkit/session": "^0.3.1",
+    "@wharfkit/wallet-plugin-cleos": "^0.3.1",
     "@wharfkit/wallet-plugin-mock": "^0.3.0",
     "@wharfkit/wallet-plugin-privatekey": "^0.3.0",
-    "@wharfkit/web-ui-renderer": "^0.3.0",
+    "@wharfkit/web-ui-renderer": "^0.3.1",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "csvtojson": "^2.0.10",
