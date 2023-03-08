@@ -740,7 +740,7 @@ export default defineComponent({
                 </div>
                 <div v-if="showPaginationExtras" class="row justify-end">
                     Viewing {{ paginationSettings.rowsPerPage > totalRows ? totalRows : paginationSettings.rowsPerPage }}
-                    of {{ totalRows }} total transactions
+                    of {{ totalRows.toLocaleString() }} total transactions
                 </div>
             </div>
         </div>
@@ -862,7 +862,10 @@ export default defineComponent({
                     <q-icon name="chevron_left" size="xs" />
                 </q-btn>
 
-                <small>Page {{ paginationSettings.page }} of {{ lastPage === 0 ? 1 : lastPage }}</small>
+                <small>
+                    Page {{ paginationSettings.page }}
+                    {{ showPaginationExtras ? (lastPage === 0 ? ` of 1` : ` of ${lastPage}`) : '' }}
+                </small>
 
                 <q-btn
                     size="sm"
