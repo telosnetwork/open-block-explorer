@@ -105,10 +105,10 @@ export default defineComponent({
                 <q-tab-panel name="actions">
                     <TransactionsTable :account="Array.isArray(transaction) ? transaction[0] : transaction" />
                 </q-tab-panel>
-                <q-tab-panel name="traces">
+                <q-tab-panel name="traces" class="container-max-width">
                     <TraceTree/>
                 </q-tab-panel>
-                <q-tab-panel name="raw">
+                <q-tab-panel name="raw" class="container-max-width">
                     <JsonViewer
                         :value="jsonTransaction"
                         :expand-depth="5"

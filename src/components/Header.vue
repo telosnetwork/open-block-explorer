@@ -29,7 +29,6 @@ export default defineComponent({
 </script>
 
 <template>
-
 <div class="header-background">
     <div class="row text-center q-pt-sm justify-between q-pt-md">
         <div class="logo-container col-xs-2 col-sm-2 col-md-2 col-lg-2">
@@ -100,9 +99,6 @@ export default defineComponent({
 .logo-token
   width: 40px
   height: 40px
-
-.header-items
-  list-style-type: none
 
 .active-tab
   text-decoration: none

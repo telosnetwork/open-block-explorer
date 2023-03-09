@@ -76,9 +76,8 @@ export default defineComponent({
         const availableTokens = ref<Token[]>([]);
 
         const stakedRefund = computed((): number =>
-            (accountData.value?.refund_request?.cpu_amount.value +
-             accountData.value?.refund_request?.net_amount.value)
-             ?? 0,
+            (accountData.value?.refund_request?.cpu_amount.value ?? 0) +
+            (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
         const staked = computed((): number => stakedRefund.value + stakedNET.value + stakedCPU.value);
@@ -420,7 +419,7 @@ export default defineComponent({
         <q-card-section class="resources-container">
             <div class="inline-section">
                 <div class="row justify-center full-height items-center">
-                    <div v-if="account !== system_account" class="col-5">
+                    <div v-if="account !== system_account" class="col-6">
                         <div class="text-title">{{ account }}</div>
                     </div>
                     <div v-else class="col-2">

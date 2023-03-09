@@ -198,11 +198,11 @@ export default defineComponent({
 </template>
 
 <style lang="sass" scoped>
-
 .vd-table
   &__list
-    overflow-x: scroll
     width: 100%
+    &-row
+      overflow-x: auto
     &-col
       min-width: 1000px
 .producer-card
@@ -214,4 +214,5 @@ export default defineComponent({
   &:hover
     text-decoration: underline
     color: black
+
 </style>

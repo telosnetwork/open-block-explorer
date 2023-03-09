@@ -12,6 +12,15 @@ export interface ActionData {
   };
 }
 
+export interface GetActionsResponse {
+    data: {
+        actions: Action[],
+        total: {
+            value: number
+        }
+    },
+}
+
 export interface Action {
   '@timestamp': string;
   account_ram_deltas: AccountRamDelta[];

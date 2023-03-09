@@ -73,8 +73,7 @@ export default defineComponent({
 });
 </script>
 <template>
-
-<div class="row col-12 q-my-xs justify-center text-left">
+<div class="row col-12 q-my-xs justify-center text-left container-max-width">
     <div class="row col-11">
         <div class="row col-12 q-mt-lg">
             <div>
