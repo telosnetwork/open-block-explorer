@@ -14,7 +14,6 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
 
     // general update action to assert all resources related data is loaded for the current account
     async updateResources(store, force = false) {
-        console.log('updateResources() inicio');
         try {
             store.commit('setLoading', 'updateResources');
             store.commit('setForceUpdate', force);
@@ -30,9 +29,8 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
                 ]);
                 store.commit('setCurrentAccount', store.rootState.account.accountName);
             }
-            console.log('updateResources() fin');
         } catch (err) {
-            console.log('Error', err);
+            console.error('Error:', err);
         } finally {
             store.commit('setForceUpdate', false);
             store.commit('unsetLoading', 'updateResources');
@@ -41,7 +39,6 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
 
     // self staked resources actions
     async updateSelfStaked(store, account: string) {
-        console.log('updateSelfStaked() inicio');
         try {
             store.commit('setLoading', 'updateSelfStaked');
             if (
@@ -70,8 +67,8 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             };
 
             // total staked resources
-            const total_net_weight = Number(accountData.net_weight.value) / Math.pow(10, precision);
-            const total_cpu_weight = Number(accountData.cpu_weight.value) / Math.pow(10, precision);
+            const total_net_weight = Number(accountData.net_weight?.value ?? 0) / Math.pow(10, precision);
+            const total_cpu_weight = Number(accountData.cpu_weight?.value ?? 0) / Math.pow(10, precision);
 
             // resources delegated from others
             const from_others_net_weight = total_net_weight - self_net_weight;
@@ -89,9 +86,8 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
 
             store.commit('setDelegatedFromOthers', fromOthers);
             store.commit('setSelfStaked', selfStaked);
-            console.log('updateSelfStaked() fin', selfStaked);
         } catch (err) {
-            console.log('Error', err);
+            console.error('Error:', err);
         } finally {
             store.commit('unsetLoading', 'updateSelfStaked');
         }
@@ -118,7 +114,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             commit('setCurrentAccount', account);
             commit('setDelegatedToOthers', delegated);
         } catch (err) {
-            console.log('Error', err);
+            console.error('Error:', err);
         } finally {
             commit('unsetLoading', 'updateDelegatedToOthers');
         }
@@ -163,7 +159,6 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
     },
     async undelegateResources({ commit, dispatch }, order: DelegatedResources) {
         const { from, to, net_weight, cpu_weight } = order;
-        console.log('undelegateResources()');
 
         // create two actions, one for the delegatebw and one for the transfer
         try {
@@ -189,7 +184,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             ];
             await dispatch('account/sendTransaction', actions, { root: true });
         } catch (e) {
-            console.log('Error', e);
+            console.error('Error', e);
         } finally {
             void commit('unsetLoading', 'undelegateResources');
         }

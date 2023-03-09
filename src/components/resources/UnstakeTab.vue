@@ -4,7 +4,6 @@ import { useAntelopeStore } from 'src/store/antelope.store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { API } from '@greymass/eosio';
 import { DelegatedResources } from 'src/store/resources/state';
 
 const chain = getChain();
@@ -23,12 +22,6 @@ export default defineComponent({
         );
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
-        const netStake = computed((): string =>
-            store.state.account.data.total_resources.net_weight.toString(),
-        );
-        const cpuStake = computed((): string =>
-            store.state.account.data.total_resources.cpu_weight.toString(),
-        );
 
         function formatDec() {
             if (cpuTokens.value !== '0') {
@@ -65,15 +58,14 @@ export default defineComponent({
         }
 
         const delegatedList = computed(() => store.resources.getDelegatedToOthers());
-        const isUpdating = computed(
-            () => store.resources.isLoading('updateResources'),
-        );
+        const isUpdating = computed(() => store.resources.isLoading('updateResources'));
+        const isUnstaking = computed(() => store.resources.isLoading('undelegateResources'));
+        const loading = computed(() => store.resources.getLoading());
 
         const selectOptions = ref<{label:string, value:DelegatedResources}[]>([]);
         const selectModel = ref<{label:string, value:DelegatedResources}>({ label: '', value: null });
         const receiverAccount = computed((): string => selectModel.value?.value?.to);
 
-        console.log('store.resources.updateResources() antes');
         void store.resources.updateResources().then(() => {
             const selfStaked = store.resources.getSelfStaked();
             if (selfStaked) {
@@ -88,20 +80,11 @@ export default defineComponent({
                 value: item,
             })) ?? [];
 
-            // first option should be self staked
-            // options.unshift({
-            //     label: selfStaked?.to,
-            //     value: selfStaked,
-            // });
-
-            console.log('------------------------------------');
-            console.log(options[0].label);
-            console.log(selfStaked);
-            console.log('------------------------------------');
-
-
             selectOptions.value = options;
         });
+
+        const netStake = ref<number>(0);
+        const cpuStake = ref<number>(0);
 
         return {
             openTransaction,
@@ -111,30 +94,41 @@ export default defineComponent({
             selectOptions,
             delegatedList,
             isUpdating,
+            isUnstaking,
+            loading,
             cpuTokens,
             netTokens,
             ...mapActions({ undelegateResources: 'resources/undelegateResources' }),
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
-            netStake: assetToAmount(netStake.value),
-            cpuStake: assetToAmount(cpuStake.value),
+            assetToAmount,
+            netStake,
+            cpuStake,
         };
     },
-    async mounted() {
-        // await this.$store.dispatch('resources/updateResources');
+    watch: {
+        selectModel: {
+            handler() {
+                this.netStake = this.assetToAmount((this.selectModel.value as DelegatedResources)?.net_weight.toString());
+                this.cpuStake = this.assetToAmount((this.selectModel.value as DelegatedResources)?.cpu_weight.toString());
+                this.netTokens = '0';
+                this.cpuTokens = '0';
+            },
+            deep: true,
+        },
     },
     computed: {
         cpuInputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < this.cpuStake || 'Not enough staked',
+                (val: string) => +val <= this.cpuStake || 'Not enough staked',
             ];
         },
         netInputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < this.netStake || 'Not enough staked',
+                (val: string) => +val <= this.netStake || `Not enough staked, needed: ${this.netStake}`,
             ];
         },
         ctaDisabled(): boolean {
@@ -151,30 +145,20 @@ export default defineComponent({
 
             await this.undelegateResources({
                 from: this.stakingAccount,
-                receiver: this.receiverAccount,
+                to: this.receiverAccount,
                 transfer: false,
-                unstake_cpu_quantity:
+                cpu_weight:
                     parseFloat(this.cpuTokens) > 0
                         ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
                         : `0.0000 ${symbol}`,
-                unstake_net_quantity:
+                net_weight:
                     parseFloat(this.netTokens) > 0
                         ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
                         : `0.0000 ${symbol}`,
             });
-            await this.loadAccountData();
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
                 this.openTransaction = true;
-            }
-        },
-        async loadAccountData(): Promise<void> {
-            let data: API.v1.AccountObject;
-            try {
-                data = await this.$api.getAccount(this.stakingAccount);
-                this.$store.commit('account/setAccountData', data);
-            } catch (e) {
-                return;
             }
         },
     },
@@ -253,10 +237,18 @@ export default defineComponent({
                     class="full-width button-accent"
                     label="Confirm"
                     flat
-                    :disable="ctaDisabled"
+                    :disable="ctaDisabled || isUnstaking"
                     @click="sendTransaction"
-                />
+                >
+                    <q-spinner
+                        v-if="isUnstaking"
+                        size="20px"
+                        color="white"
+                        class="q-ml-sm"
+                    />
+                </q-btn>
             </div>
+
         </div>
         <ViewTransaction
             v-model="openTransaction"
@@ -276,6 +268,8 @@ export default defineComponent({
 
 .unstake-tab
     &__select
+        .q-field__control:before, .q-field__control:hover:before
+            border-bottom: 1px solid white
         color: white
         .q-field__marginal
             color: white

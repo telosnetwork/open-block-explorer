@@ -96,7 +96,7 @@ jest.mock('@greymass/eosio', () => ({
 import { actions } from 'src/store/account/actions';
 import { User } from 'universal-authenticator-library';
 
-describe('Account Actions', () => {
+describe('Store - Account Actions', () => {
     let commit: jest.Mock;
     let state: AccountStateInterface;
     let users: User[] = [];
@@ -135,7 +135,7 @@ describe('Account Actions', () => {
 
             // call the action login
             await (actions as { login: (a:any, b:any) => void }).login(
-                { commit },
+                { commit, state },
                 { account: null, authenticator },
             );
     
@@ -154,7 +154,7 @@ describe('Account Actions', () => {
         
             // call the action login
             await (actions as { login: (a:any, b:any) => void }).login(
-                { commit },
+                { commit, state },
                 { account: null, authenticator },
             );
         
@@ -179,7 +179,7 @@ describe('Account Actions', () => {
         test('when account provided - Normal case', async () => {
             // call the action login
             await (actions as { login: (a:any, b:any) => void }).login(
-                { commit },
+                { commit, state },
                 { account: 'john.doe', authenticator },
             );
         
@@ -201,7 +201,7 @@ describe('Account Actions', () => {
     describe('logout()', () => {
         test('normal case', async () => {
             // call the action logout
-            await (actions as { logout: (a:any) => void }).logout({ commit });
+            await (actions as { logout: (a:any) => void }).logout({ commit, state });
         
             // Verify that the action called the commit mutation 'setIsAuthenticated' with the value false
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', false);
