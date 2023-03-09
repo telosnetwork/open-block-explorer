@@ -36,9 +36,7 @@ export const DEFAULT_ICON = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjciIGhla
 const name = chain.getName();
 
 const url =
-  `https://raw.githubusercontent.com/Viterbo/token-list/main/tokens.${name}.json`;
-
-//  https://raw.githubusercontent.com/telosnetwork/token-list/main/tokens.telos.json
+  `https://raw.githubusercontent.com/telosnetwork/token-list/main/tokens.${name}.json`;
 
 const tokenListPromise = fetch(url)
     .then(response => response.text())
