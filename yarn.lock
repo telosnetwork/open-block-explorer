@@ -2485,6 +2485,13 @@
     pako "^2.0.4"
     tslib "^2.1.0"
 
+"@wharfkit/transact-plugin-resource-provider@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@wharfkit/transact-plugin-resource-provider/-/transact-plugin-resource-provider-0.3.0.tgz#b8163db3d4feab9ad2c3c54d054f8ebf5e963e12"
+  integrity sha512-W5Zy9xrm5Kjeq1osznVA3aodxhfkG8Ft/fVg1IWXP6/zlQYkXvZagnOemlK4DlqE7P7hghj1MlZojtVjZOUZ/A==
+  dependencies:
+    tslib "^2.1.0"
+
 "@wharfkit/wallet-plugin-anchor@^0.3.0":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@wharfkit/wallet-plugin-anchor/-/wallet-plugin-anchor-0.3.1.tgz#63e61c88d902b42e403fa652ac29a57241bab1c8"

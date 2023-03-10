@@ -2,6 +2,7 @@ import { boot } from 'quasar/wrappers';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
 import { BrowserLocalStorage, Session, SessionKit } from '@wharfkit/session';
+import { TransactPluginResourceProvider } from '@wharfkit/transact-plugin-resource-provider';
 import { WalletPluginAnchor } from '@wharfkit/wallet-plugin-anchor';
 import { WalletPluginCleos } from '@wharfkit/wallet-plugin-cleos';
 import WebUIRenderer from '@wharfkit/web-ui-renderer';
@@ -27,6 +28,9 @@ export const kit = new SessionKit({
     ],
     ui,
     storage: new BrowserLocalStorage('obe'),
+    transactPlugins: [
+        new TransactPluginResourceProvider(),
+    ],
     walletPlugins: [
         new WalletPluginAnchor(),
         new WalletPluginCleos(),
