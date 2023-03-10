@@ -50,10 +50,6 @@ export default defineComponent({
             await store.dispatch('account/sellRam', {
                 amount: sellAmount.value,
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         return {

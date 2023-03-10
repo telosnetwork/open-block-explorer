@@ -170,10 +170,6 @@ export default defineComponent({
                         ],
                     },
                 );
-                if (store.state.account.autoLogin !== 'cleos') {
-                    success.showModal = true;
-                }
-
                 success.transactionId = String(result.resolved.transaction.id);
                 success.proposalName = data.proposal_name;
             } catch (e) {

@@ -60,10 +60,6 @@ export default defineComponent({
             await store.dispatch('account/moveToSavings', {
                 amount: toSavingAmount.value || '0',
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         async function moveFromSavings() {
@@ -78,10 +74,6 @@ export default defineComponent({
             await store.dispatch('account/moveFromSavings', {
                 amount: fromSavingAmount.value || '0',
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         function setMaxSavingsValue() {

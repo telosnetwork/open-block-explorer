@@ -54,10 +54,6 @@ export default defineComponent({
             await store.dispatch('account/unstakeRex', {
                 amount: unstakeTokens.value,
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         function setMaxValue() {
