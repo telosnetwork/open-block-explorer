@@ -2,7 +2,6 @@
 import { DelegatedResources, ResourcesStateInterface } from 'src/store/resources/state';
 import { ref } from 'vue';
 
-// mocking function fetch
 global.fetch = jest.fn((input: RequestInfo | URL) =>
     Promise.resolve({
         text: () => {
@@ -48,7 +47,6 @@ global.fetch = jest.fn((input: RequestInfo | URL) =>
     } as unknown as Response),
 );
 
-// mocking localStorage
 const localStorageMock = {
     getItem: jest.fn(),
     setItem: jest.fn(),
@@ -68,7 +66,6 @@ const transactionHeaders = {
     transaction_extensions: [] as never[],
 };
 
-// mocking @greymass/eosio
 jest.mock('@greymass/eosio', () => ({
     // mocking static functions from
     Name: {
@@ -91,7 +88,6 @@ jest.mock('@greymass/eosio', () => ({
     })),
 }));
 
-// mocking internal implementations
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
         getChainId: () => 'chainId',
@@ -110,29 +106,10 @@ const getTableRows = jest.fn().mockImplementation((s: GetTableRowsParams) => {
     }   
 });
 
-// mocking src/api
 jest.mock('src/api', () => ({
-    // mocking static functions from
     api: { getTableRows },
-    // mocking the constructor of APIClient
-    APIClient: jest.fn().mockImplementation(() => ({
-        v1: {
-            chain: {
-                get_info: () => ({
-                    getTransactionHeader: () => transactionHeaders,
-                }),
-                get_abi: () => Promise.resolve({ abi: 'abi' }),
-                push_transaction: () => ({
-                    transaction_id: 'transaction_id',
-                    processed: { receipt: { status: 'status' } },
-                }),
-            },
-        },
-    })),
 }));
 
-
-// Aquí importamos las acciones a probar desde el archivo actions.ts
 import { actions } from 'src/store/resources/actions';
 import { User } from 'universal-authenticator-library';
 import { StateInterface } from 'src/store';
@@ -166,12 +143,10 @@ describe('Store - Resources Actions', () => {
             getAccountName: jest.fn().mockResolvedValue('john.doe'),
         } as unknown as User];
 
-        // We create a mock function for commit
         commit = jest.fn();
         dispatch = jest.fn();
         getTableRows.mockClear();
-        // authenticator = newAuthenticatorMock();
-        // Creamos un estado simulado
+
         state = {
             currentAccount: '',
             toOthers: [],
@@ -193,7 +168,6 @@ describe('Store - Resources Actions', () => {
     describe('updateSelfStaked()', () => {
 
         test('when executed it always brings up to 200 resoults for the given account', async () => {
-            // authenticator = newAuthenticatorMock(true);
             data = ref(null);
             setDelbandResponse([accountName]);
             
@@ -228,7 +202,6 @@ describe('Store - Resources Actions', () => {
     describe('updateResources()', () => {
 
         test('when we don\'t have account data', async () => {
-            // authenticator = newAuthenticatorMock(true);
             data = ref(null);
 
             // call the action login
@@ -254,7 +227,6 @@ describe('Store - Resources Actions', () => {
         });
 
         test('when we have account data', async () => {
-            // authenticator = newAuthenticatorMock(true);
             data = ref({});
 
             // call the action login
@@ -284,9 +256,8 @@ describe('Store - Resources Actions', () => {
     describe('updateSelfStaked()', () => {
 
         test('when current account is not the given account', async () => {
-            // authenticator = newAuthenticatorMock(true);
             let anotheraccount = 'anotheraccount';
-            rootState.account.data = {  // logged account data
+            rootState.account.data = {
                 self_delegated_bandwidth: {
                     cpu_weight: ref(1),
                     net_weight: ref(1),

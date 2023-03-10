@@ -2,7 +2,6 @@
 import { AccountStateInterface } from 'src/store/account/state';
 import { FuelUserWrapper } from 'src/api/fuel';
 
-// mocking function fetch
 global.fetch = jest.fn((input: RequestInfo | URL) =>
     Promise.resolve({
         text: () => {
@@ -48,7 +47,6 @@ global.fetch = jest.fn((input: RequestInfo | URL) =>
     } as unknown as Response),
 );
 
-// mocking localStorage
 const localStorageMock = {
     getItem: jest.fn(),
     setItem: jest.fn(),
@@ -68,13 +66,10 @@ const transactionHeaders = {
     transaction_extensions: [] as never[],
 };
 
-// mocking @greymass/eosio
 jest.mock('@greymass/eosio', () => ({
-    // mocking static functions from
     Name: {
         from: (s: string) => ({ toString: () => s }),
     },
-    // mocking the constructor of APIClient
     APIClient: jest.fn().mockImplementation(() => ({
         v1: {
             chain: {
@@ -91,8 +86,6 @@ jest.mock('@greymass/eosio', () => ({
     })),
 }));
 
-
-// Aquí importamos las acciones a probar desde el archivo actions.ts
 import { actions } from 'src/store/account/actions';
 import { User } from 'universal-authenticator-library';
 
@@ -116,10 +109,9 @@ describe('Store - Account Actions', () => {
             getAccountName: jest.fn().mockResolvedValue('john.doe'),
         } as unknown as User];
 
-        // We create a mock function for commit
         commit = jest.fn();
         authenticator = newAuthenticatorMock();
-        // Creamos un estado simulado
+        
         state = {
             isAuthenticated: false,
             user: null,
