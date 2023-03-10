@@ -43,7 +43,7 @@ export default defineComponent({
         async function sell() {
             void store.dispatch('account/resetTransaction');
             if (
-                sellAmount.value === '0.0000' ||
+                sellAmount.value === '0' ||
                 !ramAvailable.value ||
                 Number(sellAmount.value) >= ramAvailable.value
             ) {

@@ -60,7 +60,7 @@ export default defineComponent({
         return {
             openCoinDialog: ref<boolean>(false),
             recievingAccount: ref<string>(''),
-            sendAmount: ref<string>('0.0000'),
+            sendAmount: ref<string>('0'),
             memo: ref<string>(''),
             tab: ref('stake'),
             rexfund,

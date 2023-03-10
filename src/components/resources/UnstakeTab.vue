@@ -108,11 +108,11 @@ export default defineComponent({
                 unstake_cpu_quantity:
                 parseFloat(this.cpuTokens) > 0
                     ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-                    : `0.0000 ${symbol}`,
+                    : `0 ${symbol}`,
                 unstake_net_quantity:
                 parseFloat(this.netTokens) > 0
                     ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-                    : `0.0000 ${symbol}`,
+                    : `0 ${symbol}`,
             } as StakeResourcesTransactionData;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

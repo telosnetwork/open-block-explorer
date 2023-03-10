@@ -209,7 +209,7 @@ export default defineComponent({
                                     v-model="sendAmount"
                                     class="full-width"
                                     standout="bg-deep-purple-2 text-white"
-                                    placeholder="0.0000"
+                                    placeholder="0"
                                     :debounce="1000"
                                     :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
                                     type="text"

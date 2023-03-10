@@ -15,7 +15,7 @@ export default defineComponent({
         const store = useStore();
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>('');
-        const total = ref<string>('0.0000');
+        const total = ref<string>('0');
         const progress = ref<number>(0.2);
         const refundRequest = computed((): API.v1.AccountRefundRequest => accountData.value?.refund_request);
         const cpuAmount = computed(

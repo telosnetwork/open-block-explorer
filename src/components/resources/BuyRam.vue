@@ -76,7 +76,7 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (buyOption.value === buyOptions[0]) {
                 if (
-                    buyAmount.value === '0.0000' ||
+                    buyAmount.value === '0' ||
                     '' ||
                     Number(buyAmount.value) >=
                         Number(accountData.value.core_liquid_balance.value)
@@ -126,12 +126,8 @@ export default defineComponent({
             }
         }
 
-        watch(buyOption, (newVal) => {
-            if (newVal === buyOptions[0]) {
-                buyAmount.value = '0.0000';
-            } else {
-                buyAmount.value = '0';
-            }
+        watch(buyOption, () => {
+            buyAmount.value = '0';
         });
 
         return {
@@ -217,7 +213,7 @@ export default defineComponent({
                 v-model="buyAmount"
                 class="full-width"
                 standout="bg-deep-purple-2 text-white"
-                placeholder="0.0000"
+                placeholder="0"
                 :lazy-rules="true"
                 :rules="inputRules"
                 type="text"
