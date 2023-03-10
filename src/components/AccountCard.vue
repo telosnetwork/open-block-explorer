@@ -13,7 +13,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
-import { API, UInt64 } from '@greymass/eosio';
+import { API, UInt64 } from '@wharfkit/session';
 import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();

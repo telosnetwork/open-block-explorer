@@ -2,7 +2,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { Token } from 'src/types';
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency } from 'src/utils/string-utils';
 

@@ -3,7 +3,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { mapActions } from 'vuex';
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'ProcessingTab',
