@@ -12,6 +12,7 @@ import SavingsTab from 'src/components/staking/SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { API } from '@greymass/eosio';
+import {formatCurrency} from "src/utils/string-utils";
 
 const symbol = getChain().getSystemToken().symbol;
 
@@ -57,6 +58,9 @@ export default defineComponent({
                 account: store.state.account.accountName,
             });
         };
+
+        const prettyRexFund = computed(() => formatCurrency(rexfund.value, 4, symbol.value));
+
         return {
             openCoinDialog: ref<boolean>(false),
             recievingAccount: ref<string>(''),
@@ -68,6 +72,7 @@ export default defineComponent({
             transactionError,
             transactionId,
             withdrawRexFund,
+            prettyRexFund,
             ...mapActions({ sendAction: 'account/sendAction' }),
         };
     },
@@ -160,7 +165,7 @@ export default defineComponent({
                     <StakingInfo/>
                     <div v-if="rexfund > 0" class="q-pt-lg q-pl-lg">
                         <div class="row q-col-gutter-md items-center">
-                            <div class="col-auto text-h6 text-white">REX fund: {{rexfund.toFixed(4)}} {{symbol}}</div>
+                            <div class="col-auto text-h6 text-white">REX fund: {{ prettyRexFund }}</div>
                             <div class="col-auto">
                                 <q-btn
                                     class="full-width button-accent"

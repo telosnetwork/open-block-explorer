@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { API } from '@greymass/eosio';
 import { getChain } from 'src/config/ConfigManager';
+import {formatCurrency} from "src/utils/string-utils";
 
 export default defineComponent({
     name: 'ResourcesInfo',
@@ -67,7 +68,7 @@ export default defineComponent({
                 : 0,
         );
 
-        const formatValue = (val: number): string => `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
+        const formatValue = (val: number): string => formatCurrency(val, token.value.precision, token.value.symbol);
 
         return {
             store,

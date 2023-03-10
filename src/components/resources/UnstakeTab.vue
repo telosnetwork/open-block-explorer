@@ -6,6 +6,7 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 import { StakeResourcesTransactionData } from 'src/types/StakeResourcesTransactionData';
+import {formatCurrency} from "src/utils/string-utils";
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -107,11 +108,11 @@ export default defineComponent({
                 transfer: false,
                 unstake_cpu_quantity:
                 parseFloat(this.cpuTokens) > 0
-                    ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+                    ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol)
                     : `0 ${symbol}`,
                 unstake_net_quantity:
                 parseFloat(this.netTokens) > 0
-                    ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+                    ? formatCurrency(parseFloat(this.netTokens), 4, symbol)
                     : `0 ${symbol}`,
             } as StakeResourcesTransactionData;
             try {

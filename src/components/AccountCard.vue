@@ -14,6 +14,7 @@ import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
+import {formatCurrency} from "src/utils/string-utils";
 
 const chain = getChain();
 export default defineComponent({
@@ -97,10 +98,11 @@ export default defineComponent({
 
         const totalValueString = computed((): string => {
             let result = '';
+            const usd = formatCurrency(totalValue.value, 2);
+            const tokenPrice = formatCurrency(usdPrice.value, 4);
+
             if (totalValue.value && usdPrice.value) {
-                result = `$${totalValue.value.toFixed(2)} (@ $${usdPrice.value.toFixed(
-                    4,
-                )}/${chain.getSystemToken().symbol})`;
+                result = `$${usd} (@ $${tokenPrice}/${chain.getSystemToken().symbol})`;
             }
             return result;
         });
@@ -328,7 +330,7 @@ export default defineComponent({
             console.assert(typeof val === 'number' || typeof val === 'string', val);
             return typeof val === 'string'
                 ? val
-                : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
+                : formatCurrency(val, 4, chain.getSystemToken().symbol);
         };
 
         const resetBalances = () => {

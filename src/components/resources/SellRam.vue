@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
+import {formatCurrency} from "src/utils/string-utils";
 
 export default defineComponent({
     name: 'SellRam',
@@ -24,10 +25,7 @@ export default defineComponent({
         );
         const ramPrice = computed((): string => store.state?.chain.ram_price);
         const sellPreview = computed(
-            () =>
-                ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
-                    4,
-                ) + ` ${symbol.value}`,
+            () => formatCurrency((Number(sellAmount.value) / 1000) * Number(ramPrice.value), 4, symbol.value),
         );
         const ramAvailable = computed(
             () =>

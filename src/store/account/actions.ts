@@ -7,6 +7,7 @@ import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
 import { FuelUserWrapper } from 'src/api/fuel';
+import {formatCurrency} from "src/utils/string-utils";
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -196,7 +197,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     },
     async stakeRex({ commit, state }, { amount }) {
         let transaction = null;
-        const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
+        const quantityStr = formatCurrency(amount, 4, symbol);
         const actions = [
             {
                 account: 'eosio',
@@ -250,8 +251,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         if (tokenRexBalance === 0) {
             return;
         }
-        const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
-        const rexToUnstake = (Number(amount) / state.tlosRexRatio).toFixed(4);
+        const quantityStr = formatCurrency(amount, 4, symbol);
+        const rexToUnstake = formatCurrency(+amount / state.tlosRexRatio, 4);
 
         //   TODO check maturities
         const actions = [
@@ -301,7 +302,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     },
     async unstakeRexFund({ commit, state }, { amount }) {
         let transaction = null;
-        const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
+        const quantityStr = formatCurrency(amount, 4, symbol);
 
         const actions = [
             {
@@ -336,8 +337,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     },
     async stakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
         let transaction = null;
-        const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
-        const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
+        const quantityStrCPU = formatCurrency(cpuAmount, 4, symbol);
+        const quantityStrNET = formatCurrency(netAmount, 4, symbol);
         const actions = [
             {
                 account: 'eosio',
@@ -373,8 +374,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     },
     async unstakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
         let transaction = null;
-        const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
-        const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
+        const quantityStrCPU = formatCurrency(cpuAmount, 4, symbol);
+        const quantityStrNET = formatCurrency(netAmount, 4, symbol);
         const actions = [
             {
                 account: 'eosio',
@@ -553,8 +554,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     },
     async moveToSavings({ commit, state }, { amount }) {
         let transaction = null;
-        const rexToUnstake =
-            (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+        const rexToUnstake = formatCurrency((+amount / state.tlosRexRatio), 4, 'REX');
         const actions = [
             {
                 account: 'eosio',
@@ -588,8 +588,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     },
     async moveFromSavings({ commit, state }, { amount }) {
         let transaction = null;
-        const rexToUnstake =
-            (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+        const rexToUnstake = formatCurrency((+amount / state.tlosRexRatio), 4, 'REX');
+
         const actions = [
             {
                 account: 'eosio',
