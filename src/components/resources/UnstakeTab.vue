@@ -188,7 +188,8 @@ export default defineComponent({
                 <div class="row q-pb-sm">
                     <div class="col-6">REMOVE CPU</div>
                     <div class="col-6">
-                        <div class="color-grey-3 flex justify-end items-center" @click="cpuTokens = cpuStake.toString()"><span class="text-weight-bold balance-amount">{{ cpuStake ? `${cpuStake } AVAILABLE` : '--' }}</span>
+                        <div class="color-grey-3 flex justify-end items-center" @click="cpuTokens = cpuStake.toString()">
+                            <span class="text-weight-bold balance-amount">{{ `${cpuStake} AVAILABLE` }}</span>
                             <q-icon class="q-ml-xs" name="info"/>
                             <q-tooltip>Click to fill full amount</q-tooltip>
                         </div>
@@ -211,7 +212,8 @@ export default defineComponent({
                 <div class="row q-pb-sm">
                     <div class="col-6">REMOVE NET</div>
                     <div class="col-6">
-                        <div class="color-grey-3 flex justify-end items-center" @click="netTokens = netStake.toString()"><span class="text-weight-bold balance-amount">{{ netStake ? `${netStake } AVAILABLE` : '--' }}</span>
+                        <div class="color-grey-3 flex justify-end items-center" @click="netTokens = netStake.toString()">
+                            <span class="text-weight-bold balance-amount">{{ `${netStake} AVAILABLE` }}</span>
                             <q-icon class="q-ml-xs" name="info"/>
                             <q-tooltip>Click to fill full amount</q-tooltip>
                         </div>
@@ -289,4 +291,8 @@ export default defineComponent({
         &.q-field--highlighted
             .q-field__label
                 color: white
+
+.balance-amount:hover
+    cursor: pointer
+    color: $primary
 </style>

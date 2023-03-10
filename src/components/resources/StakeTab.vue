@@ -23,6 +23,7 @@ export default defineComponent({
         const accountTotal = computed((): string =>
             (store.state.account.data.core_liquid_balance ?? 0).toString(),
         );
+        const accountTotalAsNumber = computed(() => assetToAmount(accountTotal.value));
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
 
@@ -69,7 +70,7 @@ export default defineComponent({
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
-            accountTotal: assetToAmount(accountTotal.value),
+            accountTotalAsNumber,
             isValidAccount,
         };
     },
@@ -77,11 +78,11 @@ export default defineComponent({
         inputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < this.accountTotal || 'Not enough funds',
+                (val: string) => +val < this.accountTotalAsNumber || 'Not enough funds',
             ];
         },
         notEnoughTlosForTransaction(): boolean {
-            return +this.cpuTokens + +this.netTokens > this.accountTotal;
+            return +this.cpuTokens + +this.netTokens > this.accountTotalAsNumber;
         },
         disableCta(): boolean {
             const allZero = +this.cpuTokens === 0 && +this.netTokens === 0;
@@ -167,11 +168,9 @@ export default defineComponent({
             <div class="col-6">
                 <div class="row q-pb-sm">
                     <div class="col-6">ADD CPU</div>
-                    <div class="col-6">
-                        <div class="color-grey-3 flex justify-end items-center" @click="cpuTokens = (accountTotal - 0.1).toString(); netTokens = '0'"><span class="text-weight-bold balance-amount">{{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}</span>
-                            <q-icon class="q-ml-xs" name="info"/>
-                            <q-tooltip>Click to fill full amount</q-tooltip>
-                        </div>
+                    <div class="col-6 text-right">
+                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
+
                     </div>
                 </div>
                 <q-input
@@ -190,11 +189,8 @@ export default defineComponent({
             <div class="col-6 q-pl-md">
                 <div class="row q-pb-sm">
                     <div class="col-6">ADD NET</div>
-                    <div class="col-6">
-                        <div class="color-grey-3 flex justify-end items-center" @click="netTokens = (accountTotal - 0.1).toString(); cpuTokens = '0'"><span class="text-weight-bold balance-amount">{{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}</span>
-                            <q-icon class="q-ml-xs" name="info"/>
-                            <q-tooltip>Click to fill full amount</q-tooltip>
-                        </div>
+                    <div class="col-6 text-right">
+                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
                     </div>
                 </div>
                 <q-input
@@ -239,8 +235,4 @@ export default defineComponent({
     background: rgba(108, 35, 255, 1)
     border-radius: 4px
     color: $grey-4
-
-.balance-amount:hover
-  color: $primary
-  cursor: pointer
 </style>
