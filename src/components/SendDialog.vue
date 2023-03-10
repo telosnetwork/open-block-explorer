@@ -2,7 +2,7 @@
 import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { isValidAccount } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';

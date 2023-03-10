@@ -2,9 +2,9 @@ import { describe, expect, it } from '@jest/globals';
 import {
     isValidAccount,
     isValidTransactionHex,
-} from 'src/utils/stringValidator';
+} from 'src/utils/string-utils';
 
-describe('stringValidator utility functions', () => {
+describe('string-utils utility functions', () => {
     describe('isValidAccount', () => {
         it('returns true for accounts with lowercase letters, numbers 1-5, containing non-terminating periods up to 13 characters', () => {
             const validAntelopeAccount = '.abcdef.12345';

@@ -4,7 +4,7 @@ import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { isValidAccount } from 'src/utils/string-utils';
 import { API } from '@greymass/eosio';
 import { StakeResourcesTransactionData } from 'src/types';
 
