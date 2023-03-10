@@ -23,7 +23,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         commit('setUser', null);
 
         localStorage.removeItem('account');
-        localStorage.removeItem('autoLogin');
     },
     async loadAccountData({ commit, state }) {
         try {

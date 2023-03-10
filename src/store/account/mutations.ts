@@ -17,9 +17,6 @@ export const mutations: MutationTree<AccountStateInterface> = {
     setAccountName(state: AccountStateInterface, accountName: string) {
         state.accountName = accountName;
     },
-    setAutoLogin(state: AccountStateInterface, status: string) {
-        state.autoLogin = status;
-    },
     setAccountData(
         state: AccountStateInterface,
         AccountData: API.v1.AccountObject,

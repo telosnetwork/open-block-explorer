@@ -10,7 +10,6 @@ export interface AccountStateInterface {
   accountName: string;
   accountPermission: string;
   user: Session;
-  autoLogin: unknown;
   isAuthenticated: boolean;
   linkedAccounts: Array<unknown>;
   data: API.v1.AccountObject;
@@ -35,7 +34,6 @@ export function state(): AccountStateInterface {
         accountName: '',
         accountPermission: 'active',
         user: null,
-        autoLogin: null,
         isAuthenticated: false,
         linkedAccounts: [],
         data: {
