@@ -8,6 +8,7 @@ import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { Name } from '@greymass/eosio';
+import {formatCurrency} from "src/utils/string-utils";
 
 const chain = getChain();
 
@@ -23,7 +24,7 @@ export default defineComponent({
         const symbol = chain.getSystemToken().symbol;
         const account = computed(() => store.state.account.accountName);
         const balance = computed(
-            () => (Number(lastWeight.value).toFixed(2) || '0') + ` ${symbol}`,
+            () => formatCurrency(lastWeight.value, 2, symbol),
         );
         const activecount = computed(() => {
             if (store.state.chain.producers.length > 42) {
