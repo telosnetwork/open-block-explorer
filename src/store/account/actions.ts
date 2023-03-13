@@ -180,7 +180,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         return dispatch('sendTransaction', actions);
     },
     async sendTransaction({ commit, state }, actions: Action[]) {
-        console.log('sendTransaction', actions);
         let transaction = null;
         try {
             transaction = await state.user.signTransaction(
