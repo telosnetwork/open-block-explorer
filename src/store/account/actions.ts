@@ -3,7 +3,7 @@ import { ActionTree } from 'vuex';
 import { StateInterface } from 'src/store/index';
 import { AccountStateInterface } from 'src/store/account/state';
 import { api } from 'src/api/index';
-import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
+import { Action, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
 import { FuelUserWrapper } from 'src/api/fuel';
@@ -54,7 +54,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async loadAccountData({ commit, state }) {
         try {
             const data = await api.getAccount(state.accountName);
-            commit('account/setAccountData', data);
+            commit('setAccountData', data);
         } catch (e) {
             return;
         }
@@ -164,8 +164,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         const rexActions = (await api.getActions(account, filter)).actions;
         commit('setRexActions', rexActions);
     },
-    async sendAction({ commit, state }, { account, data, name, actor, permission }) {
-        let transaction = null;
+    async sendAction({ state }, { account, data, name, actor, permission }) {
         const actions = [
             {
                 account: account as string ?? state.abi.account_name,
@@ -179,6 +178,11 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 data: data as unknown,
             },
         ];
+        return this.dispatch('sendTransaction', actions);
+    },
+    async sendTransaction({ commit, state }, actions: Action[]) {
+        console.log('sendTransaction', actions);
+        let transaction = null;
         try {
             transaction = await state.user.signTransaction(
                 {
@@ -191,6 +195,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             );
             commit('setTransaction', transaction.transactionId);
         } catch (e) {
+            console.error(e);
             commit('setTransactionError', e);
         }
         return transaction;

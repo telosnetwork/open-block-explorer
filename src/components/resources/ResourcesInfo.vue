@@ -20,10 +20,9 @@ export default defineComponent({
         const ramPrice = computed((): string => store.state?.chain.ram_price === '0'
             ? '0'
             : store.state.chain.ram_price);
-        const ramAvailable = computed(
-            () =>
-                Number(accountData.value.ram_quota) -
-                Number(accountData.value.ram_usage),
+        const ramAvailable = computed(() =>
+            Number(accountData.value.ram_quota) -
+            Number(accountData.value.ram_usage),
         );
         const delegatedResources = computed(() => {
             const totalStakedResources =
@@ -62,13 +61,11 @@ export default defineComponent({
         );
 
         const totalRefund = computed((): number =>
-            accountData.value && accountData.value.refund_request
-                ? accountData.value.refund_request.cpu_amount.value +
-                accountData.value.refund_request.net_amount.value
-                : 0,
+            (accountData.value?.refund_request?.cpu_amount.value ?? 0) +
+            (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
-        const formatValue = (val: number): string => formatCurrency(val, token.value.precision, token.value.symbol);
+        const formatValue = (val: number): string => formatCurrency(val || 0, token.value.precision, token.value.symbol);
 
         return {
             store,
