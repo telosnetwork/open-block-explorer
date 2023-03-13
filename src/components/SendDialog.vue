@@ -32,8 +32,6 @@ export default defineComponent({
         const sendAmount = ref<string>('');
         const memo = ref<string>('');
 
-        console.log('availableTokens.value', availableTokens.value);
-
         const account = computed(() => store.state.account.accountName);
         const transactionId = computed(
             (): string => store.state.account.TransactionId,
@@ -51,11 +49,11 @@ export default defineComponent({
 
         const sendTransaction = async (): Promise<void> => {
             void store.dispatch('account/resetTransaction');
-            const actionAccount = sendToken.value.contract;
+            const actionAccount = sendToken.value?.contract;
             const data = {
                 from: account.value,
                 to: receivingAccount.value,
-                quantity: `${sendAmount.value} ${sendToken.value.symbol}`,
+                quantity: `${sendAmount.value} ${sendToken.value?.symbol}`,
                 memo: memo.value,
             };
             await store.dispatch('account/sendAction', {
@@ -70,19 +68,17 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (availableTokens.value.length > 0) {
                 sendToken.value = availableTokens.value.find(token => (
-                    token.symbol === sendToken.value.symbol &&
-                    token.contract === sendToken.value.contract
+                    token.symbol === sendToken.value?.symbol &&
+                    token.contract === sendToken.value?.contract
                 ));
             }
         };
 
         const updateSelectedCoin = (token: Token): void => {
-            console.log('updateSelectedCoin()', token);
             sendToken.value = token;
         };
 
         const resetForm = () => {
-            console.log('resetForm()');
             sendToken.value = {
                 symbol: chain.getSystemToken().symbol,
                 precision: 4,
@@ -101,7 +97,6 @@ export default defineComponent({
         };
 
         const formatDec = () => {
-            console.log('formatDec()');
             let amount = Number(sendAmount.value);
             if (sendAmount.value !== '') {
                 sendAmount.value = amount
@@ -141,6 +136,25 @@ export default defineComponent({
             formatDec,
             resetForm,
         };
+    },
+    // watch availableTokens and if it changes print the new value
+    watch: {
+        availableTokens: {
+            handler() {
+                if (this.availableTokens.length > 0) {
+                    this.sendToken = this.availableTokens.find(token => (
+                        token.symbol === this.sendToken.symbol &&
+                        token.contract === this.sendToken.contract
+                    ));
+                }
+
+                if (!this.sendToken || this.sendToken.amount === 0) {
+                    this.openCoinDialog = true;
+                }
+            },
+            deep: true,
+            immediate: true,
+        },
     },
 });
 </script>

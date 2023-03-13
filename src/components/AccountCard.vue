@@ -580,9 +580,19 @@ export default defineComponent({
             </thead>
         </q-markup-table>
         <div v-if="isAccount">
-            <SendDialog v-model="openSendDialog" :availableTokens="availableTokens" @update-token-balances="updateTokenBalances"/>
-            <ResourcesDialog v-if="openResourcesDialog" v-model="openResourcesDialog"/>
-            <StakingDialog v-model="openStakingDialog" :availableTokens="availableTokens"/>
+            <SendDialog
+                v-model="openSendDialog"
+                :availableTokens="availableTokens"
+                @update-token-balances="updateTokenBalances"
+            />
+            <ResourcesDialog
+                v-if="openResourcesDialog"
+                v-model="openResourcesDialog"
+            />
+            <StakingDialog
+                v-model="openStakingDialog"
+                :availableTokens="availableTokens"
+            />
         </div>
     </q-card>
     <q-card v-else class="account-card">
