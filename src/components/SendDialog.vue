@@ -32,6 +32,8 @@ export default defineComponent({
         const sendAmount = ref<string>('');
         const memo = ref<string>('');
 
+        console.log('availableTokens.value', availableTokens.value);
+
         const account = computed(() => store.state.account.accountName);
         const transactionId = computed(
             (): string => store.state.account.TransactionId,
@@ -69,16 +71,18 @@ export default defineComponent({
             if (availableTokens.value.length > 0) {
                 sendToken.value = availableTokens.value.find(token => (
                     token.symbol === sendToken.value.symbol &&
-            token.contract === sendToken.value.contract
+                    token.contract === sendToken.value.contract
                 ));
             }
         };
 
         const updateSelectedCoin = (token: Token): void => {
+            console.log('updateSelectedCoin()', token);
             sendToken.value = token;
         };
 
         const resetForm = () => {
+            console.log('resetForm()');
             sendToken.value = {
                 symbol: chain.getSystemToken().symbol,
                 precision: 4,
@@ -97,6 +101,7 @@ export default defineComponent({
         };
 
         const formatDec = () => {
+            console.log('formatDec()');
             let amount = Number(sendAmount.value);
             if (sendAmount.value !== '') {
                 sendAmount.value = amount
@@ -201,7 +206,7 @@ export default defineComponent({
                                     <div>AMOUNT</div>
                                     <q-space/>
                                     <div class="row flex-center q-hoverable cursor-pointer" @click="setMaxValue">
-                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount } AVAILABLE` }}</div>
+                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount ?? 0 } AVAILABLE` }}</div>
                                         <q-icon class="q-ml-xs" name="info"/>
                                         <q-tooltip>Click to fill full amount</q-tooltip>
                                     </div>
