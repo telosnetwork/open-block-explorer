@@ -6,7 +6,7 @@ import { markRaw } from 'vue';
 
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
-import {formatCurrency} from "src/utils/string-utils";
+import { formatCurrency } from 'src/utils/string-utils';
 
 const symbol = getChain().getSystemToken().symbol;
 

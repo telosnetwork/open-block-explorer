@@ -6,7 +6,7 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 import { StakeResourcesTransactionData } from 'src/types/StakeResourcesTransactionData';
-import {formatCurrency} from "src/utils/string-utils";
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;

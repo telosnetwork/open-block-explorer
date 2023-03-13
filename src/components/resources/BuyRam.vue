@@ -3,7 +3,7 @@ import { defineComponent, ref, computed, watch } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import {formatCurrency, isValidAccount} from 'src/utils/string-utils';
+import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();

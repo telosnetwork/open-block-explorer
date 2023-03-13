@@ -12,7 +12,7 @@ import SavingsTab from 'src/components/staking/SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { API } from '@greymass/eosio';
-import {formatCurrency} from "src/utils/string-utils";
+import { formatCurrency } from 'src/utils/string-utils';
 
 const symbol = getChain().getSystemToken().symbol;
 
