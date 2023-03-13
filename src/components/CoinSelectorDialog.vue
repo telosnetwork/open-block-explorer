@@ -33,8 +33,6 @@ export default defineComponent({
             ));
         };
 
-        console.log('props.availableTokens', props.availableTokens);
-
         const tokensWithBalance = () => props.availableTokens.filter(token => token.amount > 0);
 
         watch(search, () => {
