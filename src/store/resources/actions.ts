@@ -191,7 +191,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
     },
 };
 
-// include all actiuons in the interface as collable full-typed functions
+// include all actions in the interface as callable full-typed functions
 export interface ResourcesActions {
     updateResources: (force?: boolean) => Promise<void>;
     updateSelfStaked: (account: string) => Promise<void>;
