@@ -20,6 +20,10 @@ export const getters: GetterTree<ResourcesStateInterface, StateInterface> = {
         return store.selfStaked;
     },
 
+    getLoading(store: ResourcesStateInterface): string[] {
+        return store.loading;
+    },
+
     // is loading function name
     isLoading(store: ResourcesStateInterface): (name: string) => boolean {
         return (name: string) => store.loading.includes(name);
@@ -33,5 +37,6 @@ export interface ResourcesGetters {
     getDelegatedToOthers: () => DelegatedResources[];
     getDelegatedFromOthers: () => Ref<DelegatedResources | null>;
     getSelfStaked: () => DelegatedResources | null;
+    getLoading: () => string[];
     isLoading: (name: string) => boolean;
 }

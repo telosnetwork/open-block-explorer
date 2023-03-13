@@ -30,16 +30,16 @@ export default defineComponent({
                     ((Number(buyAmount.value) * 1000) / Number(ramPrice.value)).toFixed(
                         0,
                     ) +
-          ' ' +
-          buyOptions[1]
+                    ' ' +
+                    buyOptions[1]
                 );
             } else {
                 return (
                     ((Number(buyAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
                         4,
                     ) +
-          ' ' +
-          buyOptions[0]
+                    ' ' +
+                    buyOptions[0]
                 );
             }
         });
@@ -77,9 +77,9 @@ export default defineComponent({
             if (buyOption.value === buyOptions[0]) {
                 if (
                     buyAmount.value === '0.0000' ||
-          '' ||
-          Number(buyAmount.value) >=
-            Number(accountData.value.core_liquid_balance.value)
+                    '' ||
+                    Number(buyAmount.value) >=
+                        Number(accountData.value.core_liquid_balance.value)
                 ) {
                     return;
                 }
@@ -90,10 +90,10 @@ export default defineComponent({
             } else {
                 if (
                     buyAmount.value === '0' ||
-          '' ||
-          Number(buyAmount.value) >=
-            (Number(accountData.value.core_liquid_balance.value) * 1000) /
-              Number(ramPrice.value)
+                    '' ||
+                    Number(buyAmount.value) >=
+                        (Number(accountData.value.core_liquid_balance.value) * 1000) /
+                        Number(ramPrice.value)
                 ) {
                     return;
                 }
@@ -209,11 +209,8 @@ export default defineComponent({
         <div class="row q-mb-md">
             <div class="row q-pb-sm full-width">
                 <div class="col-6">{{ `Amount of RAM to buy in ` + buyOption}}</div>
-                <div class="col-6">
-                    <div class="color-grey-3 flex justify-end items-center" @click="buyAmount = (buyLimit() - 0.1).toString()"><span class="text-weight-bold balance-amount">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
-                        <q-icon class="q-ml-xs" name="info"/>
-                        <q-tooltip>Click to fill full amount</q-tooltip>
-                    </div>
+                <div class="col-6 text-right">
+                    <span class="text-weight-bold">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
                 </div>
             </div>
             <q-input
@@ -259,8 +256,4 @@ export default defineComponent({
   color: $grey-4
 .grey-3
   color: $grey-3
-
-.balance-amount:hover
-  color: $primary
-  cursor: pointer
 </style>

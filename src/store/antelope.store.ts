@@ -22,6 +22,7 @@ export function useAntelopeStore(): AntelopeStore {
             getDelegatedToOthers: (): DelegatedResources[] => store.getters['resources/getDelegatedToOthers'],
             getDelegatedFromOthers: ():Ref<DelegatedResources> => store.getters['resources/getDelegatedFromOthers'],
             getSelfStaked: ():DelegatedResources => store.getters['resources/getSelfStaked'],
+            getLoading: ():string[] => store.getters['resources/getLoading'],
             isLoading: (funcname: string) => store.getters['resources/isLoading'](funcname),
 
             // actions

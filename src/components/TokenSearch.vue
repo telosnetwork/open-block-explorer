@@ -83,7 +83,9 @@ export default defineComponent({
 </script>
 
 <template>
+
 <q-select
+    class="search-input"
     borderless
     dense
     filled
@@ -92,7 +94,6 @@ export default defineComponent({
     fill-input
     hide-bottom-space
     placeholder="token"
-    class="search-input"
     :loading="isLoading"
     :model-value="inputValue"
     :options="options"
@@ -121,7 +122,7 @@ export default defineComponent({
                 <q-avatar size="24px"><img :src="scope.opt.logo ?? '~src/assets/token_placeholder.svg'"></q-avatar>
             </q-item-section>
             <q-item-section>
-                <q-item-label>{{ scope.opt.symbol }} ({{scope.opt.account}})</q-item-label>
+                <q-item-label>{{ scope.opt.symbol }} ({{scope.opt.contract}})</q-item-label>
             </q-item-section>
         </q-item>
     </template>

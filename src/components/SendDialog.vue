@@ -6,7 +6,6 @@ import { isValidAccount } from 'src/utils/stringValidator';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
-import { mapActions } from 'vuex';
 
 const chain = getChain();
 
@@ -57,7 +56,7 @@ export default defineComponent({
                 quantity: `${sendAmount.value} ${sendToken.value.symbol}`,
                 memo: memo.value,
             };
-            await store.dispatch('account/sendTransaction', {
+            await store.dispatch('account/sendAction', {
                 account: actionAccount,
                 data,
                 name: 'transfer',
@@ -136,7 +135,6 @@ export default defineComponent({
             isValidAccount,
             formatDec,
             resetForm,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
         };
     },
 });
@@ -162,7 +160,7 @@ export default defineComponent({
                     icon="clear"
                 />
             </div>
-            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 maxSize">
+            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 max-dialog-width">
                 <div class="row">
                     <q-card-section><img class="send-img q-pr-md" src="~assets/send.svg">
                         <div class="text-h4 q-pb-md inline-block color-grey-3">Send Tokens</div>
@@ -202,7 +200,7 @@ export default defineComponent({
                                     <div>AMOUNT</div>
                                     <q-space/>
                                     <div class="row flex-center q-hoverable cursor-pointer" @click="setMaxValue">
-                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ sendToken?.amount ? `${sendToken.amount } AVAILABLE` : '--' }}</div>
+                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount } AVAILABLE` }}</div>
                                         <q-icon class="q-ml-xs" name="info"/>
                                         <q-tooltip>Click to fill full amount</q-tooltip>
                                     </div>

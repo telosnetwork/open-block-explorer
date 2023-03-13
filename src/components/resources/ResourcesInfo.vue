@@ -60,8 +60,8 @@ export default defineComponent({
         );
 
         const totalRefund = computed((): number =>
-            accountData.value?.refund_request?.cpu_amount.value +
-            accountData.value?.refund_request?.net_amount.value,
+            (accountData.value?.refund_request?.cpu_amount.value ?? 0) +
+            (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
         const formatValue = (_val: number): string => {

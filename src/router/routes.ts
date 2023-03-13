@@ -22,7 +22,7 @@ const routes: RouteRecordRaw[] = [
         path: '/transaction/:transaction',
         name: 'transaction',
         component: () => import('layouts/MainLayout.vue'),
-        children: [{ path: '', component: () => import('pages/Transaction.vue') }],
+        children: [{ path: '', component: () => import('src/pages/TransactionPage.vue') }],
     },
     {
         path: '/block/:block',

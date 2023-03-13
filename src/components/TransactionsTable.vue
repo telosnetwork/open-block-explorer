@@ -58,6 +58,19 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
+        toggleEnabled: {
+            type: Boolean,
+            default: true,
+        },
+        filtersEnabled: {
+            type: Boolean,
+            default: true,
+        },
+        showPaginationExtras: {
+            // show/hide pagination "last" button and total row count
+            type: Boolean,
+            default: false,
+        },
     },
     setup(props) {
         const route = useRoute();
@@ -101,6 +114,7 @@ export default defineComponent({
             },
         ];
         const rows = ref<TransactionTableRow[]>([]);
+        const totalRows = ref<number>(0);
         const filteredRows = ref<TransactionTableRow[]>([]);
         const loading = ref<boolean>(false);
         const showPagesSizes = ref<boolean>(false);
@@ -109,6 +123,7 @@ export default defineComponent({
         };
         const changePageSize = async (size: number) => {
             paginationSettings.value.rowsPerPage = size;
+            paginationSettings.value.page = 1;
             await onPaginationChange({ pagination: paginationSettings.value });
         };
         const changePagination = async (page: number, size: number) => {
@@ -201,11 +216,10 @@ export default defineComponent({
 
         const lastPage = computed(() => {
             const rowsPerPage = paginationSettings.value.rowsPerPage;
-            const rowsNumber = paginationSettings.value.rowsNumber;
+            const rowsNumber = totalRows.value;
             return Math.ceil(rowsNumber / rowsPerPage);
         });
 
-        const noData = computed(() => rows.value.length === 0);
         const hasActions = computed(() => actions.value !== null);
         const clearFilters = (): void => {
             accountsModel.value = '';
@@ -274,7 +288,7 @@ export default defineComponent({
                 if (tokenModel.value) {
                     limit = 100;
                 }
-                tableData = await api.getTransactions({
+                const response = await api.getTransactions({
                     page,
                     limit,
                     account: account.value,
@@ -284,6 +298,8 @@ export default defineComponent({
                     sort,
                     extras,
                 });
+                tableData = response.data.actions;
+                totalRows.value = response.data.total.value;
             }
 
             if (tableData) {
@@ -396,8 +412,9 @@ export default defineComponent({
             clearLiveTransactionInterval();
         });
 
-        watch([account, actions], () => {
+        watch([account, actions], async () => {
             void loadTableData();
+            await changePagination(1, paginationSettings.value.rowsPerPage);
         });
 
         watch(filter, async () => {
@@ -459,6 +476,29 @@ export default defineComponent({
             { immediate: true },
         );
 
+        const toggleDropdown = (ref: unknown) => {
+            const drop: QBtnDropdown = ref as QBtnDropdown;
+            drop.toggle();
+        };
+
+        const hidePopup = (ref: unknown) => {
+            const drop: QPopupProxy = ref as QPopupProxy;
+            drop.hide();
+        };
+
+        const moveTablePage = async (ref: unknown, dir: 'next' | 'prev' | 'first' | 'last') => {
+            const table: QTable = ref as QTable;
+            if (dir === 'next') {
+                table.nextPage();
+            } else if (dir === 'prev') {
+                table.prevPage();
+            } else if (dir === 'first') {
+                table.firstPage();
+            } else if (dir === 'last') {
+                await applyPagination(lastPage.value, null);
+            }
+        };
+
         return {
             columns,
             rows,
@@ -482,13 +522,13 @@ export default defineComponent({
             showAge,
             tableTitle,
             lastPage,
-            noData,
             hasActions,
             filter,
             onRequest,
             loadTableData,
             checkIsMultiLine,
             filterRows,
+            totalRows,
             pageSizeOptions,
             changePageSize,
             switchPageSelector,
@@ -497,9 +537,9 @@ export default defineComponent({
             onPaginationChange,
             clearFilters,
             enableLiveTransactions,
-            QBtnDropdown,
-            QPopupProxy,
-            QTable,
+            toggleDropdown,
+            hidePopup,
+            moveTablePage,
         };
     },
 });
@@ -507,7 +547,7 @@ export default defineComponent({
 
 <template>
 
-<div class="row col-12 q-mt-xs justify-center text-left">
+<div class="row col-12 q-mt-xs justify-center text-left trx-table container-max-width">
     <div class="row trx-table--main-container">
         <div class="row col-12 q-mt-lg">
             <!-- Left column-->
@@ -528,7 +568,7 @@ export default defineComponent({
                         />
                     </div>
                 </div>
-                <div class="row">
+                <div v-if="toggleEnabled" class="row">
                     <div class="col">
                         <q-toggle
                             v-model="enableLiveTransactions"
@@ -540,8 +580,8 @@ export default defineComponent({
                 </div>
             </div>
             <!-- Right column-->
-            <div class="col trx-table--topright-col">
-                <div class="row justify-end">
+            <div v-if="filtersEnabled" class="col trx-table--topright-col">
+                <div class="row justify-end q-mb-xl">
                     <!-- -- Filters    ---->
                     <div class="col-auto row flex trx-table--filter-buttons">
                         <q-btn
@@ -564,7 +604,7 @@ export default defineComponent({
                         >
                             <div class="q-pa-md dropdown-filter">
                                 <div class="row">
-                                    <AccountSearch v-model="accountsModel" @update:model-value="($refs.accounts_dropdown as QBtnDropdown).toggle()"/>
+                                    <AccountSearch v-model="accountsModel" @update:model-value="toggleDropdown($refs.accounts_dropdown)"/>
                                 </div>
                             </div>
                         </q-btn-dropdown>
@@ -582,14 +622,14 @@ export default defineComponent({
                                         dense
                                         label="actions"
                                         placeholder="transfer, sellrex, etc."
-                                        @blur="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()"
-                                        @keyup.enter="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()"
+                                        @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                                        @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
                                     >
                                         <template v-slot:prepend>
                                             <q-icon class="cursor-pointer" name="search"/>
                                         </template>
                                         <template v-slot:append>
-                                            <q-btn size="sm" color="primary" @click="actionsModel = auxModel; ($refs.actions_dropdown as QBtnDropdown).toggle()">OK</q-btn>
+                                            <q-btn size="sm" color="primary" @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)">OK</q-btn>
                                         </template>
                                     </q-input>
                                 </div>
@@ -693,11 +733,15 @@ export default defineComponent({
                         >
                             <div class="q-pa-md dropdown-filter">
                                 <div class="row">
-                                    <TokenSearch v-model="tokenModel" @update:model-value="($refs.token_dropdown as QBtnDropdown).toggle()"/>
+                                    <TokenSearch v-model="tokenModel" @update:model-value="toggleDropdown($refs.token_dropdown)"/>
                                 </div>
                             </div>
                         </q-btn-dropdown>
                     </div>
+                </div>
+                <div v-if="showPaginationExtras" class="row justify-end">
+                    Viewing {{ paginationSettings.rowsPerPage > totalRows ? totalRows : paginationSettings.rowsPerPage }}
+                    of {{ totalRows === 10000 ? ' over ' : ''}} {{ totalRows.toLocaleString() }} total transactions
                 </div>
             </div>
         </div>
@@ -708,8 +752,8 @@ export default defineComponent({
                 v-model:pagination="paginationSettings"
                 class="q-mt-lg row trx-table--fixed-layout"
                 flat
-                hide-pagination
                 table-header-class="table-header"
+                hide-pagination
                 :rows="filteredRows"
                 :columns="columns"
                 :row-key="row => row.name + row.action.action_ordinal +row.transaction.id"
@@ -783,39 +827,69 @@ export default defineComponent({
         </div>
         <div class="row col-12 items-center justify-end q-mt-md q-mb-sm">
             <!-- records per page selector-->
-            <q-space/>
-            <div class="col-auto"><small>Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}</small>
+            <div class="col-auto">
+                <small>Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}</small>
                 <!-- dropdown button to select number of rows per page-->
                 <q-icon :name="showPagesSizes ? 'expand_more' : 'expand_less'" size="sm" @click="switchPageSelector">
                     <q-popup-proxy ref="page_size_selector" transition-show="scale" transition-hide="scale">
                         <q-list>
                             <q-item v-for="size in pageSizeOptions" :key="size" class="cursor-pointer">
-                                <q-item-section @click="changePageSize(size); ($refs.page_size_selector as QPopupProxy).hide()">{{ size }}</q-item-section>
+                                <q-item-section @click="changePageSize(size); hidePopup($refs.page_size_selector)">{{ size }}</q-item-section>
                             </q-item>
                         </q-list>
                     </q-popup-proxy>
                 </q-icon>
             </div>
-            <div class="col-auto q-ml-lg">
-                <div class="row items-baseline">
-                    <div class="col-auto q-mr-xs"><small class="q-mr-sm">page <b>{{ paginationSettings.page }}</b></small></div>
-                    <div class="col-auto q-mr-xs">
-                        <q-btn
-                            class="q-ml-xs q-mr-xs col button-primary"
-                            size="sm"
-                            :disable="paginationSettings.page === 1"
-                            @click="($refs.main_table as QTable).prevPage()"
-                        >PREV</q-btn>
-                    </div>
-                    <div class="col-auto q-mr-xs">
-                        <q-btn
-                            class="q-ml-xs q-mr-xs col button-primary"
-                            size="sm"
-                            :disable="paginationSettings.page === lastPage"
-                            @click="($refs.main_table as QTable).nextPage()"
-                        >NEXT</q-btn>
-                    </div>
-                </div>
+            <q-space />
+            <div class="col-auto">
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    :disable="paginationSettings.page === 1"
+                    @click="moveTablePage($refs.main_table, 'first')"
+                >
+                    First
+                </q-btn>
+
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    class="q-mx-sm"
+                    :disable="paginationSettings.page === 1"
+                    @click="moveTablePage($refs.main_table, 'prev')"
+                >
+                    <q-icon name="chevron_left" size="xs" />
+                </q-btn>
+
+                <small>
+                    Page {{ paginationSettings.page }}
+                    {{ showPaginationExtras ? (lastPage === 0 ? ` of 1` : ` of ${lastPage}`) : '' }}
+                </small>
+
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    class="q-mx-sm"
+                    :disable="paginationSettings.page === lastPage || totalRows < paginationSettings.rowsPerPage"
+                    @click="moveTablePage($refs.main_table, 'next')"
+                >
+                    <q-icon name="chevron_right" size="xs" />
+                </q-btn>
+
+                <q-btn
+                    v-if="showPaginationExtras"
+                    size="sm"
+                    color="primary"
+                    outline
+                    :disable="paginationSettings.page === lastPage || lastPage === 0"
+                    @click="moveTablePage($refs.main_table, 'last')"
+                >
+                    Last
+                </q-btn>
+
             </div>
         </div>
     </div>
@@ -826,9 +900,6 @@ export default defineComponent({
 <style lang="sass">
 $medium:920px
 
-.table-container
-  overflow-x: auto
-
 .trx-table--title
   font-size: 22.75px
   font-style: normal
@@ -837,6 +908,7 @@ $medium:920px
 
 .trx-table--main-container
   width: 90%
+
 .trx-table--filter-buttons
   gap: 10px 0px
 .trx-table--fixed-layout
@@ -875,8 +947,8 @@ $medium:920px
   padding-left: 2rem
   cursor: pointer
 
-body
-    height:1000px
+.table-container
+    overflow-x: auto
 
 .table-header
     color: #000000 !important
@@ -924,4 +996,5 @@ body
 @media screen and (max-width: 665px)
   .trx-table--topleft-col, .trx-table--topright-col
     display: block
+
 </style>
