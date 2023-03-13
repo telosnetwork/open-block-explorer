@@ -578,6 +578,7 @@ export default defineComponent({
         </q-markup-table>
         <div v-if="isAccount">
             <SendDialog
+                v-if="openSendDialog"
                 v-model="openSendDialog"
                 :availableTokens="availableTokens"
                 @update-token-balances="updateTokenBalances"
