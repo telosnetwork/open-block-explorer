@@ -23,12 +23,8 @@ export default defineComponent({
         );
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
-        const netStake = computed((): string =>
-            store.state.account.data.total_resources.net_weight.toString(),
-        );
-        const cpuStake = computed((): string =>
-            store.state.account.data.total_resources.cpu_weight.toString(),
-        );
+        const netStake = computed((): string => (store.state.account.data.self_delegated_bandwidth?.net_weight.value || 0).toString());
+        const cpuStake = computed((): string => (store.state.account.data.self_delegated_bandwidth?.cpu_weight.value || 0).toString());
 
         function formatDec() {
             if (cpuTokens.value !== '0') {
@@ -81,13 +77,13 @@ export default defineComponent({
         cpuInputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < this.cpuStake || 'Not enough staked',
+                (val: string) => +val <= this.cpuStake || 'Not enough staked',
             ];
         },
         netInputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < this.netStake || 'Not enough staked',
+                (val: string) => +val <= this.netStake || 'Not enough staked',
             ];
         },
         ctaDisabled(): boolean {
@@ -96,6 +92,7 @@ export default defineComponent({
     },
     methods: {
         async sendTransaction(): Promise<void> {
+            console.log(this.cpuTokens);
             this.transactionError = '';
             if (parseFloat(this.cpuTokens) <= 0 && parseFloat(this.netTokens) <= 0) {
                 this.$q.notify('Enter valid value for CPU or NET to unstake');
