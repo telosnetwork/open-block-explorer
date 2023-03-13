@@ -110,7 +110,6 @@ jest.mock('src/api', () => ({
 }));
 
 import { actions } from 'src/store/resources/actions';
-import { User } from 'universal-authenticator-library';
 import { StateInterface } from 'src/store';
 
 import { GetTableRowsParams } from 'src/types';
@@ -121,7 +120,6 @@ describe('Store - Resources Actions', () => {
     let dispatch: jest.Mock;
     let state: ResourcesStateInterface;
     let rootState: StateInterface;
-    let users: User[] = [];
     const accountName = 'accountName'; // logged account
     let data: unknown = {};
 
@@ -138,11 +136,6 @@ describe('Store - Resources Actions', () => {
     };
 
     beforeEach(() => {
-        users = [{
-            name: 'John Doe',
-            getAccountName: jest.fn().mockResolvedValue('john.doe'),
-        } as unknown as User];
-
         commit = jest.fn();
         dispatch = jest.fn();
         getTableRows.mockClear();
@@ -205,7 +198,7 @@ describe('Store - Resources Actions', () => {
             data = ref(null);
 
             // call the action login
-            await (actions as { updateResources: (a:any, b:boolean) => Promise<void> }).updateResources(
+            await (actions as { updateResources: (a:unknown, b:boolean) => Promise<void> }).updateResources(
                 { commit, dispatch, state, rootState },
                 false,
             );
@@ -230,7 +223,7 @@ describe('Store - Resources Actions', () => {
             data = ref({});
 
             // call the action login
-            await (actions as { updateResources: (a:any, b:boolean) => Promise<void> }).updateResources(
+            await (actions as { updateResources: (a:unknown, b:boolean) => Promise<void> }).updateResources(
                 { commit, dispatch, state, rootState },
                 false,
             );
@@ -283,8 +276,8 @@ describe('Store - Resources Actions', () => {
             expect(commit).toHaveBeenCalledWith('setDelegatedFromOthers', {
                 from: 'not-available',
                 to: anotheraccount,
-                net_weight: '0.0000 TLOS',
-                cpu_weight: '0.0000 TLOS',
+                net_weight: '0 TLOS',
+                cpu_weight: '0 TLOS',
             });
             expect(commit).toHaveBeenCalledWith('setSelfStaked', {
                 from: anotheraccount,

@@ -50,12 +50,12 @@ describe('AntilopeStore', () => {
                     getDelegatedFromOthers: (): Ref<DelegatedResources> => ref({} as DelegatedResources),
                     getSelfStaked: (): DelegatedResources => ({} as DelegatedResources),
                     getLoading: (): string[] => [],
-                    isLoading: (funcname: string) => false,
-                    updateResources: (force?: boolean) => Promise.resolve(),
-                    updateSelfStaked: (account: string) => Promise.resolve(),
-                    updateDelegatedToOthers: (account: string) => Promise.resolve(),
-                    delegateResources: (order: DelegatedResources) => Promise.resolve(),
-                    undelegateResources: (order: DelegatedResources) => Promise.resolve(),
+                    isLoading: () => false,
+                    updateResources: () => Promise.resolve(),
+                    updateSelfStaked: () => Promise.resolve(),
+                    updateDelegatedToOthers: () => Promise.resolve(),
+                    delegateResources: () => Promise.resolve(),
+                    undelegateResources: () => Promise.resolve(),
                 },
                 state: {
                     resources: {

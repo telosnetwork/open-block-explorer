@@ -5,7 +5,7 @@ import { GetTableRowsParams } from 'src/types';
 import { api } from 'src/api';
 import { SignTransactionResponse } from 'universal-authenticator-library';
 import { getChain } from 'src/config/ConfigManager';
-import {formatCurrency} from "src/utils/string-utils";
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;

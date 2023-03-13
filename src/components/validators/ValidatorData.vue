@@ -8,7 +8,7 @@ import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { Name } from '@greymass/eosio';
-import {formatCurrency} from "src/utils/string-utils";
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();
 

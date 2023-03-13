@@ -6,7 +6,7 @@ import axios from 'axios';
 import { api } from 'src/api/index';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
-import {formatCurrency} from "src/utils/string-utils";
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain: Chain = getChain();
 
