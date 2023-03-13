@@ -75,6 +75,7 @@ export default defineComponent({
         const accountData = ref<API.v1.AccountObject>();
         const availableTokens = ref<Token[]>([]);
 
+
         const stakedRefund = computed((): number =>
             (accountData.value?.refund_request?.cpu_amount.value ?? 0) +
             (accountData.value?.refund_request?.net_amount.value ?? 0),
@@ -325,6 +326,9 @@ export default defineComponent({
         };
 
         const formatAsset = (val: number | string): string => {
+            if (typeof val === 'undefined') {
+                return '--';
+            }
             console.assert(typeof val === 'number' || typeof val === 'string', val);
             return typeof val === 'string'
                 ? val
@@ -574,7 +578,7 @@ export default defineComponent({
         </q-markup-table>
         <div v-if="isAccount">
             <SendDialog v-model="openSendDialog" :availableTokens="availableTokens" @update-token-balances="updateTokenBalances"/>
-            <ResourcesDialog v-model="openResourcesDialog"/>
+            <ResourcesDialog v-if="openResourcesDialog" v-model="openResourcesDialog"/>
             <StakingDialog v-model="openStakingDialog" :availableTokens="availableTokens"/>
         </div>
     </q-card>

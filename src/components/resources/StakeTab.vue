@@ -113,12 +113,12 @@ export default defineComponent({
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-            await this.sendAction({
-                account: 'eosio',
-                name: 'delegatebw',
-                data,
-            })
-            ).transactionId as string;
+                    await this.sendAction({
+                        account: 'eosio',
+                        name: 'delegatebw',
+                        data,
+                    })
+                ).transactionId as string;
                 this.$store.commit('account/setTransaction', this.transactionId);
             } catch (e) {
                 this.transactionError = e;

@@ -200,7 +200,7 @@ export default defineComponent({
                                     <div>AMOUNT</div>
                                     <q-space/>
                                     <div class="row flex-center q-hoverable cursor-pointer" @click="setMaxValue">
-                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken.amount } AVAILABLE` }}</div>
+                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount } AVAILABLE` }}</div>
                                         <q-icon class="q-ml-xs" name="info"/>
                                         <q-tooltip>Click to fill full amount</q-tooltip>
                                     </div>
