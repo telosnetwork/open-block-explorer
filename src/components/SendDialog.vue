@@ -141,7 +141,6 @@ export default defineComponent({
     watch: {
         availableTokens: {
             handler() {
-                console.log('availableTokens changed', this.availableTokens);
                 if (this.availableTokens.length > 0) {
                     this.sendToken = this.availableTokens.find(token => (
                         token.symbol === this.sendToken.symbol &&
