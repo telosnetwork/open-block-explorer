@@ -38,6 +38,7 @@ export function useAntelopeStore(): AntelopeStore {
             undelegateResources: (order: DelegatedResources) => store.dispatch('resources/undelegateResources', order),
         },
         state,
-        dispatch: (t: string, p?: unknown, o?: DispatchOptions): Promise<unknown> => store.dispatch(t, p, o),
+        dispatch: ((type: string, payload?: unknown, options?: DispatchOptions): Promise<unknown> =>
+            store.dispatch(type, payload, options)),
     };
 }

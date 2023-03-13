@@ -124,7 +124,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
 
         // create two actions, one for the delegatebw and one for the transfer
         try {
-            void commit('setLoading', 'delegateResources');
+            commit('setLoading', 'delegateResources');
 
             // calculate the total amount
             const amount = Number(net_weight) + Number(cpu_weight);
@@ -154,7 +154,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
         } catch (e) {
             commit('setTransactionError', e);
         } finally {
-            void commit('unsetLoading', 'delegateResources');
+            commit('unsetLoading', 'delegateResources');
         }
     },
     async undelegateResources({ commit, dispatch }, order: DelegatedResources) {
@@ -162,7 +162,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
 
         // create two actions, one for the delegatebw and one for the transfer
         try {
-            void commit('setLoading', 'undelegateResources');
+            commit('setLoading', 'undelegateResources');
 
             const actions = [
                 {
@@ -186,7 +186,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
         } catch (e) {
             console.error('Error', e);
         } finally {
-            void commit('unsetLoading', 'undelegateResources');
+            commit('unsetLoading', 'undelegateResources');
         }
     },
 };
