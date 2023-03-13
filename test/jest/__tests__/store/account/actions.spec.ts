@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { AccountStateInterface } from 'src/store/account/state';
 import { FuelUserWrapper } from 'src/api/fuel';
 
@@ -51,7 +50,7 @@ const localStorageMock = {
     getItem: jest.fn(),
     setItem: jest.fn(),
     removeItem:jest.fn(),
-}
+};
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 
@@ -94,10 +93,10 @@ describe('Store - Account Actions', () => {
     let state: AccountStateInterface;
     let users: User[] = [];
 
-    const newAuthenticatorMock = (requestName: boolean = false) => ({
+    const newAuthenticatorMock = (requestName = false) => ({
         init: jest.fn(),
-        shouldRequestAccountName: jest.fn().mockResolvedValue(new Promise((resolve) => resolve(requestName))),
-        login: jest.fn().mockResolvedValue(new Promise((resolve) => resolve(users))),
+        shouldRequestAccountName: jest.fn().mockResolvedValue(new Promise(resolve => resolve(requestName))),
+        login: jest.fn().mockResolvedValue(new Promise(resolve => resolve(users))),
         getName: jest.fn().mockReturnValue('autoLogin'),
     });
     let authenticator = newAuthenticatorMock();
@@ -111,7 +110,7 @@ describe('Store - Account Actions', () => {
 
         commit = jest.fn();
         authenticator = newAuthenticatorMock();
-        
+
         state = {
             isAuthenticated: false,
             user: null,
@@ -126,30 +125,30 @@ describe('Store - Account Actions', () => {
             authenticator = newAuthenticatorMock(true);
 
             // call the action login
-            await (actions as { login: (a:any, b:any) => void }).login(
+            await (actions as { login: (a:any, b:any) => Promise<void> }).login(
                 { commit, state },
                 { account: null, authenticator },
             );
-    
+
             // verify that the action called correctly the init function of the authenticator
             expect(authenticator.init).toHaveBeenCalled();
-    
+
             // Verify that the action called correctly the commit mutation 'setRequestAccount' with the value true
             expect(authenticator.shouldRequestAccountName).toHaveBeenCalled();
             expect(commit).toHaveBeenCalledWith('setRequestAccount', true);
-            
+
         });
 
         test('when not account provided but not needed', async () => {
             const requestAccountSpy = jest.spyOn(authenticator, 'shouldRequestAccountName');
             requestAccountSpy.mockResolvedValue(false);
-        
+
             // call the action login
-            await (actions as { login: (a:any, b:any) => void }).login(
+            await (actions as { login: (a:unknown, b:unknown) => Promise<void> }).login(
                 { commit, state },
                 { account: null, authenticator },
             );
-        
+
             // verify that the action called correctly the init function of the authenticator
             expect(authenticator.init).toHaveBeenCalled();
 
@@ -167,17 +166,17 @@ describe('Store - Account Actions', () => {
             expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
 
         });
-        
+
         test('when account provided - Normal case', async () => {
             // call the action login
-            await (actions as { login: (a:any, b:any) => void }).login(
+            await (actions as { login: (a:unknown, b:unknown) => Promise<void> }).login(
                 { commit, state },
                 { account: 'john.doe', authenticator },
             );
-        
+
             // Verify that the action called correctly the init function of the authenticator
             expect(authenticator.init).toHaveBeenCalled();
-        
+
             // Verify that the action called the login method of the authenticator
             expect(authenticator.login).toHaveBeenCalled();
             expect(commit).toHaveBeenCalledWith('setAccountPermission', 'active');
@@ -187,19 +186,19 @@ describe('Store - Account Actions', () => {
             expect(localStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
             expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
         });
-        
+
     });
-    
+
     describe('logout()', () => {
         test('normal case', async () => {
             // call the action logout
-            await (actions as { logout: (a:any) => void }).logout({ commit, state });
-        
+            await (actions as { logout: (a:unknown) => Promise<void> }).logout({ commit, state });
+
             // Verify that the action called the commit mutation 'setIsAuthenticated' with the value false
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', false);
             expect(commit).toHaveBeenCalledWith('setAccountName', '');
             expect(commit).toHaveBeenCalledWith('setUser', null);
-        
+
             expect(localStorageMock.removeItem).toHaveBeenCalledWith('account');
             expect(localStorageMock.removeItem).toHaveBeenCalledWith('autoLogin');
         });

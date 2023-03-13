@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { DelegatedResources, ResourcesStateInterface } from 'src/store/resources/state';
 import { ref } from 'vue';
 
@@ -51,7 +50,7 @@ const localStorageMock = {
     getItem: jest.fn(),
     setItem: jest.fn(),
     removeItem:jest.fn(),
-}
+};
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 
@@ -99,11 +98,11 @@ jest.mock('src/config/ConfigManager', () => ({
     }),
 }));
 
-const delbandResponse: {rows: DelegatedResources[]} = {rows: []};
+const delbandResponse: {rows: DelegatedResources[]} = { rows: [] };
 const getTableRows = jest.fn().mockImplementation((s: GetTableRowsParams) => {
     if (s.table === 'delband' && s.code === 'eosio') {
         return Promise.resolve(delbandResponse);
-    }   
+    }
 });
 
 jest.mock('src/api', () => ({
@@ -115,6 +114,7 @@ import { User } from 'universal-authenticator-library';
 import { StateInterface } from 'src/store';
 
 import { GetTableRowsParams } from 'src/types';
+import { API } from '@greymass/eosio';
 
 describe('Store - Resources Actions', () => {
     let commit: jest.Mock;
@@ -122,12 +122,12 @@ describe('Store - Resources Actions', () => {
     let state: ResourcesStateInterface;
     let rootState: StateInterface;
     let users: User[] = [];
-    let accountName = 'accountName'; // logged account
-    let data = {};
+    const accountName = 'accountName'; // logged account
+    let data: unknown = {};
 
     const setDelbandResponse = (accountList: string[]) => {
         delbandResponse.rows = [];
-        accountList.forEach(account => {
+        accountList.forEach((account) => {
             delbandResponse.rows.push({
                 from: accountName,
                 to: account,
@@ -135,7 +135,7 @@ describe('Store - Resources Actions', () => {
                 cpu_weight: '1.0000 TLOS',
             });
         });
-    }
+    };
 
     beforeEach(() => {
         users = [{
@@ -160,19 +160,19 @@ describe('Store - Resources Actions', () => {
             account: {
                 accountName,
                 data,
-            }
+            },
         } as unknown as StateInterface;
 
     });
 
-    describe('updateSelfStaked()', () => {
+    describe('updateDelegatedToOthers()', () => {
 
         test('when executed it always brings up to 200 resoults for the given account', async () => {
             data = ref(null);
             setDelbandResponse([accountName]);
-            
+
             // call the action login
-            await (actions as { updateDelegatedToOthers: (a:any, b:string) => void }).updateDelegatedToOthers(
+            await (actions as { updateDelegatedToOthers: (a:unknown, b:string) => Promise<void> }).updateDelegatedToOthers(
                 { commit, dispatch, state, rootState },
                 accountName,
             );
@@ -188,7 +188,7 @@ describe('Store - Resources Actions', () => {
                 table: 'delband',
             } as GetTableRowsParams;
             expect(getTableRows).toHaveBeenCalledWith(paramsdelband);
-            
+
             // Verify the final commits
             expect(commit).toHaveBeenCalledWith('setCurrentAccount', accountName);
             expect(commit).toHaveBeenCalledWith('setDelegatedToOthers', delbandResponse.rows);
@@ -205,7 +205,7 @@ describe('Store - Resources Actions', () => {
             data = ref(null);
 
             // call the action login
-            await (actions as { updateResources: (a:any, b:boolean) => void }).updateResources(
+            await (actions as { updateResources: (a:any, b:boolean) => Promise<void> }).updateResources(
                 { commit, dispatch, state, rootState },
                 false,
             );
@@ -230,7 +230,7 @@ describe('Store - Resources Actions', () => {
             data = ref({});
 
             // call the action login
-            await (actions as { updateResources: (a:any, b:boolean) => void }).updateResources(
+            await (actions as { updateResources: (a:any, b:boolean) => Promise<void> }).updateResources(
                 { commit, dispatch, state, rootState },
                 false,
             );
@@ -256,7 +256,7 @@ describe('Store - Resources Actions', () => {
     describe('updateSelfStaked()', () => {
 
         test('when current account is not the given account', async () => {
-            let anotheraccount = 'anotheraccount';
+            const anotheraccount = 'anotheraccount';
             rootState.account.data = {
                 self_delegated_bandwidth: {
                     cpu_weight: ref(1),
@@ -264,11 +264,11 @@ describe('Store - Resources Actions', () => {
                 },
                 net_weight: ref(10000),
                 cpu_weight: ref(10000),
-            } as any;
+            } as unknown as API.v1.AccountObject;
             setDelbandResponse([accountName]);
-            
+
             // call the action login
-            await (actions as { updateSelfStaked: (a:any, b:string) => void }).updateSelfStaked(
+            await (actions as { updateSelfStaked: (a:unknown, b:string) => Promise<void> }).updateSelfStaked(
                 { commit, dispatch, state, rootState },
                 anotheraccount,
             );
@@ -299,5 +299,5 @@ describe('Store - Resources Actions', () => {
         });
 
     });
-    
+
 });

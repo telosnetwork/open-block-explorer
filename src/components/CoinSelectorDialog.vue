@@ -29,9 +29,11 @@ export default defineComponent({
         const filterByText = (tokens: Token[]) => {
             filteredTokens.value = tokens.filter(token => (
                 token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
-          token.contract.toLowerCase().includes(search.value.toLowerCase())
+                token.contract.toLowerCase().includes(search.value.toLowerCase())
             ));
         };
+
+        console.log('props.availableTokens', props.availableTokens);
 
         const tokensWithBalance = () => props.availableTokens.filter(token => token.amount > 0);
 

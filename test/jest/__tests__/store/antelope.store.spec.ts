@@ -1,8 +1,6 @@
-/* eslint-disable */
 import { AntelopeStore, useAntelopeStore } from 'src/store/antelope.store';
-import { DelegatedResources, ResourcesStateInterface } from 'src/store/resources/state';
+import { DelegatedResources } from 'src/store/resources/state';
 import { Ref, ref } from 'vue';
-import { DispatchOptions } from 'vuex';
 
 
 const testDelegatedResources: DelegatedResources = {
@@ -10,9 +8,9 @@ const testDelegatedResources: DelegatedResources = {
     to: 'to',
     net_weight: 'net_weight',
     cpu_weight: 'cpu_weight',
-}
+};
 
-const testString: string = 'test';
+const testString = 'test';
 
 jest.mock('src/store', () => ({
     useStore: () => ({
@@ -31,7 +29,7 @@ jest.mock('src/store', () => ({
             'resources/getLoading': [testString],
             'resources/isLoading': (funcname: string) => [funcname].includes(testString),
         },
-        dispatch: (t: string, p?: unknown, o?: DispatchOptions): Promise<unknown> => Promise.resolve(),
+        dispatch: (): Promise<unknown> => Promise.resolve(),
     }),
 }));
 
@@ -43,26 +41,8 @@ describe('AntilopeStore', () => {
     });
 
     describe('useAntelopeStore()', () => {
-        
+
         it('should return the correct type', () => {
-            const store = {
-                state: {
-                    resources: {
-                        delegatedToOthers: [] as DelegatedResources[],
-                        delegatedFromOthers: {},
-                        selfStaked: {},
-                        loading: [] as string[],
-                    },
-                },
-                getters: {
-                    'resources/getDelegatedToOthers': ref([testDelegatedResources]),
-                    'resources/getDelegatedFromOthers': ref({} as DelegatedResources),
-                    'resources/getSelfStaked': ({} as DelegatedResources),
-                    'resources/getLoading': ref([testString]),
-                    'resources/isLoading': ref(false),
-                },
-                dispatch: (t: string, p?: unknown, o?: DispatchOptions): Promise<unknown> => Promise.resolve(),
-            };
             const result = useAntelopeStore();
             const expected = {
                 resources: {
@@ -85,8 +65,8 @@ describe('AntilopeStore', () => {
                         loading: [] as string[],
                     },
                 },
-                dispatch: (t: string, p?: unknown, o?: DispatchOptions): Promise<unknown> => Promise.resolve(),
-            }
+                dispatch: (): Promise<unknown> => Promise.resolve(),
+            };
             const resultToJSON = JSON.stringify(result);
             const expectedToJSON = JSON.stringify(expected);
             expect(resultToJSON).toEqual(expectedToJSON);
