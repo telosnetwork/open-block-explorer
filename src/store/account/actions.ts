@@ -177,7 +177,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 data: data as unknown,
             },
         ];
-        return this.dispatch('sendTransaction', actions);
+        return this.dispatch('account/sendTransaction', actions);
     },
     async sendTransaction({ commit, state }, actions: Action[]) {
         console.log('sendTransaction', actions);
