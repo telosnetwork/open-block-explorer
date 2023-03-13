@@ -1,12 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { StateInterface, useStore } from 'src/store';
 import { ResourcesAPI } from 'src/store/resources';
 import { DelegatedResources } from 'src/store/resources/state';
 import { Ref } from 'vue';
 import { DispatchOptions } from 'vuex';
+
+interface GettersInterface {
+    'resources/getDelegatedToOthers': DelegatedResources[];
+    'resources/getDelegatedFromOthers': Ref<DelegatedResources | null>;
+    'resources/getSelfStaked': DelegatedResources | null;
+    'resources/getLoading': string[];
+    'resources/isLoading': (name: string) => boolean;
+}
 
 export interface AntelopeStore {
     resources: ResourcesAPI;
@@ -17,13 +21,14 @@ export interface AntelopeStore {
 export function useAntelopeStore(): AntelopeStore {
     const store = useStore();
     const state = store.state;
+    const getters = store.getters as GettersInterface;
     return {
         resources: {
-            getDelegatedToOthers: (): DelegatedResources[] => store.getters['resources/getDelegatedToOthers'],
-            getDelegatedFromOthers: ():Ref<DelegatedResources> => store.getters['resources/getDelegatedFromOthers'],
-            getSelfStaked: ():DelegatedResources => store.getters['resources/getSelfStaked'],
-            getLoading: ():string[] => store.getters['resources/getLoading'],
-            isLoading: (funcname: string) => store.getters['resources/isLoading'](funcname),
+            getDelegatedToOthers: (): DelegatedResources[] => getters['resources/getDelegatedToOthers'],
+            getDelegatedFromOthers: ():Ref<DelegatedResources> => getters['resources/getDelegatedFromOthers'],
+            getSelfStaked: ():DelegatedResources => getters['resources/getSelfStaked'],
+            getLoading: ():string[] => getters['resources/getLoading'],
+            isLoading: (funcname: string) => getters['resources/isLoading'](funcname),
 
             // actions
             updateResources: (force?:boolean) => store.dispatch('resources/updateResources', force),
