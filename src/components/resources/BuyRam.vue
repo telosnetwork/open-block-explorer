@@ -30,16 +30,16 @@ export default defineComponent({
                     ((Number(buyAmount.value) * 1000) / Number(ramPrice.value)).toFixed(
                         0,
                     ) +
-          ' ' +
-          buyOptions[1]
+                    ' ' +
+                    buyOptions[1]
                 );
             } else {
                 return (
                     ((Number(buyAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
                         4,
                     ) +
-          ' ' +
-          buyOptions[0]
+                    ' ' +
+                    buyOptions[0]
                 );
             }
         });
@@ -77,9 +77,9 @@ export default defineComponent({
             if (buyOption.value === buyOptions[0]) {
                 if (
                     buyAmount.value === '0.0000' ||
-          '' ||
-          Number(buyAmount.value) >=
-            Number(accountData.value.core_liquid_balance.value)
+                    '' ||
+                    Number(buyAmount.value) >=
+                        Number(accountData.value.core_liquid_balance.value)
                 ) {
                     return;
                 }
@@ -90,10 +90,10 @@ export default defineComponent({
             } else {
                 if (
                     buyAmount.value === '0' ||
-          '' ||
-          Number(buyAmount.value) >=
-            (Number(accountData.value.core_liquid_balance.value) * 1000) /
-              Number(ramPrice.value)
+                    '' ||
+                    Number(buyAmount.value) >=
+                        (Number(accountData.value.core_liquid_balance.value) * 1000) /
+                        Number(ramPrice.value)
                 ) {
                     return;
                 }
@@ -110,11 +110,10 @@ export default defineComponent({
 
         function buyLimit(): number {
             if (buyOption.value === buyOptions[0]) {
-                return accountData.value.core_liquid_balance.value;
+                return accountData.value.core_liquid_balance?.value ?? 0;
             } else {
                 return (
-                    (Number(accountData.value.core_liquid_balance.value) * 1000) /
-          Number(ramPrice.value)
+                    (Number(accountData.value.core_liquid_balance?.value ?? 0) * 1000) / Number(ramPrice.value)
                 );
             }
         }
@@ -167,34 +166,86 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section.text-grey-3
-    .row.q-col-gutter-md
-      .text-weight-bold.text-right.text-grey-3 Buy in {{symbol}} or Bytes?
-    .row.q-col-gutter-md.q-pb-md
-      q-radio(v-model="buyOption" dark color="white" :val="symbol" :label="symbol")
-      q-radio(v-model="buyOption" dark color="white" val="Bytes" label="Bytes")
-    .row
-      .col-12
-        .row.justify-between.q-pb-sm RAM Receiver:
-          q-space
-          .text-grey-3 Defaults to connected account
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense dark v-model="receivingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
-    .row.q-mb-md
-      .row.q-pb-sm.full-width
-        .col-6 {{ `Amount of RAM to buy in ` + buyOption}}
-        .col-6
-          .color-grey-3.flex.justify-end.items-center( @click="buyAmount = (buyLimit() - 0.1).toString()" )
-            span.text-weight-bold.balance-amount {{ `${prettyBuyLimit()} AVAILABLE` }}
-            q-icon.q-ml-xs( name="info" )
-            q-tooltip Click to fill full amount
-      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="buyAmount" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
-    .row.q-pb-sm
-      .text-weight-normal.text-right.text-grey-3 ≈ {{buyPreview}}
-    .row
-      q-btn.full-width.button-accent(label="Buy" flat :disable="disableCta" @click="buy" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+<template>
+
+<div class="staking-form">
+    <q-card-section class="text-grey-3">
+        <div class="row q-col-gutter-md">
+            <div class="text-weight-bold text-right text-grey-3">Buy in {{symbol}} or Bytes?</div>
+        </div>
+        <div class="row q-col-gutter-md q-pb-md">
+            <q-radio
+                v-model="buyOption"
+                dark
+                color="white"
+                :val="symbol"
+                :label="symbol"
+            />
+            <q-radio
+                v-model="buyOption"
+                dark
+                color="white"
+                val="Bytes"
+                label="Bytes"
+            />
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="row justify-between q-pb-sm">RAM Receiver:
+                    <q-space/>
+                    <div class="text-grey-3">Defaults to connected account</div>
+                </div>
+                <q-input
+                    v-model="receivingAccount"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    dense
+                    dark
+                    :lazy-rules="true"
+                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
+                />
+            </div>
+        </div>
+        <div class="row q-mb-md">
+            <div class="row q-pb-sm full-width">
+                <div class="col-6">{{ `Amount of RAM to buy in ` + buyOption}}</div>
+                <div class="col-6 text-right">
+                    <span class="text-weight-bold">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
+                </div>
+            </div>
+            <q-input
+                v-model="buyAmount"
+                class="full-width"
+                standout="bg-deep-purple-2 text-white"
+                placeholder="0.0000"
+                :lazy-rules="true"
+                :rules="inputRules"
+                type="text"
+                dense
+                dark
+                @blur="formatDec"
+            />
+        </div>
+        <div class="row q-pb-sm">
+            <div class="text-weight-normal text-right text-grey-3">≈ {{buyPreview}}</div>
+        </div>
+        <div class="row">
+            <q-btn
+                class="full-width button-accent"
+                label="Buy"
+                flat
+                :disable="disableCta"
+                @click="buy"
+            />
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
 
 </template>
 
@@ -205,8 +256,4 @@ export default defineComponent({
   color: $grey-4
 .grey-3
   color: $grey-3
-
-.balance-amount:hover
-  color: $primary
-  cursor: pointer
 </style>

@@ -57,19 +57,29 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.row
-  .col-12.gradient-box.q-pb-lg
-    BlockCard.q-pa-lg(v-if='found' :block='block')
-    .q-pa-lg(v-else)
-      .row.full-width.justify-center
-        .col-xs-12.col-md-8.col-lg-6
-          q-card(flat class="info-card")
-            .q-pa-md-md.q-pa-sm-sm.q-pa-xs-xs.q-pa-xl-lg
-              q-card-section.q-pl-md
-                div(class="text-h4 text-bold") Block not found.
-  .q-pt-lg
-    TransactionTable(:actions='Actions')
+<template>
+
+<div class="row">
+    <div class="col-12 gradient-box q-pb-lg">
+        <BlockCard v-if="found" class="q-pa-lg" :block="block"/>
+        <div v-else class="q-pa-lg">
+            <div class="row full-width justify-center">
+                <div class="col-xs-12 col-md-8 col-lg-6">
+                    <q-card class="info-card" flat>
+                        <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
+                            <q-card-section class="q-pl-md">
+                                <div class="text-h4 text-bold">Block not found.</div>
+                            </q-card-section>
+                        </div>
+                    </q-card>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="q-pt-lg container-max-width">
+        <TransactionTable :actions="Actions" :toggleEnabled="false"/>
+    </div>
+</div>
 
 </template>
 

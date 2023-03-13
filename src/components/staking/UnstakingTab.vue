@@ -45,9 +45,9 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 unstakeTokens.value === '0.0000' ||
-        !rexbal.value.vote_stake ||
-        Number(unstakeTokens.value) >=
-          Number(rexbal.value.vote_stake.split(' ')[0])
+                !rexbal.value.vote_stake ||
+                Number(unstakeTokens.value) >=
+                Number(rexbal.value.vote_stake.split(' ')[0])
             ) {
                 return;
             }
@@ -97,24 +97,53 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section
-    .row.q-col-gutter-md
-      .col-12
-        .row
-          .row.q-pb-sm.full-width
-            .col-8 {{ `MATURED ${symbol}` }}
-            .col-4
-              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxValue')
-                .text-weight-bold.text-right.balance-amount {{maturedRex}}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="unstakeTokens" :lazy-rules='true' :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]" type="text" dense dark)
-        .row
-          q-btn.full-width.button-accent(:label='"Unstake " + symbol' flat @click="unstake" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+<template>
 
+<div class="staking-form">
+    <q-card-section>
+        <div class="row q-col-gutter-md">
+            <div class="col-12">
+                <div class="row">
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-8">{{ `MATURED ${symbol}` }}</div>
+                        <div class="col-4">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxValue">
+                                <div class="text-weight-bold text-right balance-amount">{{maturedRex}}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Click to fill full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        v-model="unstakeTokens"
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0.0000'
+                        :lazy-rules='true'
+                        :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]"
+                        type="text"
+                        dense
+                        dark
+                        @blur='formatDec'
+                    />
+                </div>
+                <div class="row">
+                    <q-btn
+                        class="full-width button-accent"
+                        :label="'Unstake ' + symbol"
+                        flat
+                        @click="unstake"
+                    />
+                </div>
+            </div>
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
 </template>
 
 <style scoped lang="sass">

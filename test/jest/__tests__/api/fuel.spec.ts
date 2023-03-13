@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { AnyTransaction } from '@greymass/eosio';
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
@@ -87,6 +86,7 @@ jest.mock('@greymass/eosio', () => ({
 
 let rpResponseCode = Number(0);
 
+// mocking function fetch
 global.fetch = jest.fn(() =>
     Promise.resolve({
         json: () =>
@@ -108,10 +108,14 @@ global.fetch = jest.fn(() =>
     } as Response),
 );
 
-// mocking internal implementatios
+// mocking internal implementations
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
+        getChainId: () => 'chainId',
+        getName: () => 'telos',
         getSymbol: () => 'TLOS',
+        getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
+        getRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
         getHyperionEndpoint: () => '',
         getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
     }),
@@ -214,7 +218,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
                 const trx = getOriginalTransaction();
                 const response = await wrapper.signTransaction(trx, configData);
                 const response_actions_json = JSON.stringify(
-                    response.transaction.actions,
+                    (response.transaction as {actions:[]}).actions,
                 );
                 const trx_actions_json = JSON.stringify(trx.actions);
                 expect(response_actions_json).toEqual(trx_actions_json);
@@ -235,7 +239,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
 
                     const response = await wrapper.signTransaction(trx, configData);
                     const response_actions_json = JSON.stringify(
-                        response.transaction.actions,
+                        (response.transaction as {actions:[]}).actions,
                     );
                     const expected_actions = [
                         noopAction,
@@ -261,7 +265,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
 
                     const response = await wrapper.signTransaction(trx, configData);
                     const response_actions_json = JSON.stringify(
-                        response.transaction.actions,
+                        (response.transaction as {actions:[]}).actions,
                     );
                     const trx_actions_json = JSON.stringify(trx.actions);
                     expect(response_actions_json).toEqual(trx_actions_json);
@@ -301,7 +305,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
                     const response = await wrapper.signTransaction(trx, configData);
 
                     const response_actions_json = JSON.stringify(
-                        response.transaction.actions,
+                        (response.transaction as {actions:[]}).actions,
                     );
                     const rp_response_trx = rp_response_file.json.data.request[1];
                     if (typeof rp_response_trx === 'string') {
@@ -333,7 +337,7 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
 
                     const response = await wrapper.signTransaction(trx, configData);
                     const response_actions_json = JSON.stringify(
-                        response.transaction.actions,
+                        (response.transaction as {actions:[]}).actions,
                     );
                     const trx_actions_json = JSON.stringify(trx.actions);
                     expect(response_actions_json).toEqual(trx_actions_json);

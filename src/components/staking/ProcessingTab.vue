@@ -3,13 +3,11 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { mapActions } from 'vuex';
-import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
 
 export default defineComponent({
     name: 'ProcessingTab',
     components: {
-        ViewTransaction,
     },
     setup() {
         const store = useStore();
@@ -23,15 +21,15 @@ export default defineComponent({
                 return 0;
             }
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value?.refund_request?.request_time.toString() + 'Z',
-                ).toUTCString(),
-            ).getTime() / 1000,
-        ) +
-        604800 - //The max amount it can take in seconds
-        Math.round(new Date(Date.now()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value?.refund_request?.request_time.toString() + 'Z',
+                        ).toUTCString(),
+                    ).getTime() / 1000,
+                ) +
+                604800 - //The max amount it can take in seconds
+                Math.round(new Date(Date.now()).getTime() / 1000);
             let time = diff / 604800;
             return time > 0 ? time : 0.01;
         }
@@ -41,14 +39,14 @@ export default defineComponent({
                 return 'No maturing TLOS';
             }
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value?.rex_info?.rex_maturities[0].first.toString() +
-                'Z',
-                ),
-            ).getTime() / 1000,
-        ) - Math.round(new Date(new Date().toISOString()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value?.rex_info?.rex_maturities[0].first.toString() +
+                        'Z',
+                        ),
+                    ).getTime() / 1000,
+                ) - Math.round(new Date(new Date().toISOString()).getTime() / 1000);
             if (diff > 0) {
                 var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
                     hours = component(diff, 60 * 60) % 24; // hours
@@ -80,19 +78,27 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.q-pt-lg
-  .container-refund.q-pa-sm
-    .row.full-width
-      .col-xs-12.col-sm-6
-        .row.q-pa-sm
-          .col-6 Staked TLOS maturing
-          .col-6.text-right.text-weight-bold {{maturingRex}}
-      .col-xs-12.col-sm-6
-        .row.q-pa-sm
-          .col-7 {{maturitiesCountdown()}}
-          .col-5.text-right.text-weight-bold
-            q-linear-progress( :value="refundProgress()" color="grey-3" class="q-mt-sm")
+<template>
+<div class="q-pt-lg">
+    <div class="container-refund q-pa-sm">
+        <div class="row full-width">
+            <div class="col-xs-12 col-sm-6">
+                <div class="row q-pa-sm">
+                    <div class="col-6">Staked TLOS maturing</div>
+                    <div class="col-6 text-right text-weight-bold">{{maturingRex}}</div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="row q-pa-sm">
+                    <div class="col-7">{{maturitiesCountdown()}}</div>
+                    <div class="col-5 text-right text-weight-bold">
+                        <q-linear-progress class="q-mt-sm" :value="refundProgress()" color="grey-3"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 </template>
 

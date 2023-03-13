@@ -4,7 +4,8 @@ export default {
 };
 </script>
 
-<template lang="pug">
-div
-    h1 Explore
+<template>
+<div>
+    <h1>Explore</h1>
+</div>
 </template>

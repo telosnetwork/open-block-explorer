@@ -21,8 +21,9 @@ export default defineComponent({
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>(store.state.account.accountName || '');
         const accountTotal = computed((): string =>
-            store.state.account.data.core_liquid_balance.toString(),
+            (store.state.account.data.core_liquid_balance ?? 0).toString(),
         );
+        const accountTotalAsNumber = computed(() => assetToAmount(accountTotal.value));
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
 
@@ -65,11 +66,11 @@ export default defineComponent({
             stakingAccount,
             cpuTokens,
             netTokens,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            ...mapActions({ sendAction: 'account/sendAction' }),
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
-            accountTotal: assetToAmount(accountTotal.value),
+            accountTotalAsNumber,
             isValidAccount,
         };
     },
@@ -77,11 +78,11 @@ export default defineComponent({
         inputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < this.accountTotal || 'Not enough funds',
+                (val: string) => +val < this.accountTotalAsNumber || 'Not enough funds',
             ];
         },
         notEnoughTlosForTransaction(): boolean {
-            return +this.cpuTokens + +this.netTokens > this.accountTotal;
+            return +this.cpuTokens + +this.netTokens > this.accountTotalAsNumber;
         },
         disableCta(): boolean {
             const allZero = +this.cpuTokens === 0 && +this.netTokens === 0;
@@ -101,23 +102,23 @@ export default defineComponent({
                 receiver: this.stakingAccount.toLowerCase(),
                 transfer: false,
                 stake_cpu_quantity:
-          parseFloat(this.cpuTokens) > 0
-              ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-              : `0.0000 ${symbol}`,
+                    parseFloat(this.cpuTokens) > 0
+                        ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+                        : `0.0000 ${symbol}`,
                 stake_net_quantity:
-          parseFloat(this.netTokens) > 0
-              ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-              : `0.0000 ${symbol}`,
+                    parseFloat(this.netTokens) > 0
+                        ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+                        : `0.0000 ${symbol}`,
             } as StakeResourcesTransactionData;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-          await this.signTransaction({
-              account: 'eosio',
-              name: 'delegatebw',
-              data,
-          })
-        ).transactionId as string;
+                    await this.sendAction({
+                        account: 'eosio',
+                        name: 'delegatebw',
+                        data,
+                    })
+                ).transactionId as string;
                 this.$store.commit('account/setTransaction', this.transactionId);
             } catch (e) {
                 this.transactionError = e;
@@ -142,43 +143,90 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section.text-grey-3.text-weight-light
-    .row
-      .col-12
-        .row.justify-between.q-pb-sm CPU/NET Receiver
-          q-space
-          .text-grey-3 Defaults to connected account
-        q-input.full-width(standout="bg-deep-purple-2 text-white" dense  dark v-model="stakingAccount" :lazy-rules='true' :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]" )
-    .row.q-py-md
-      .col-6
-        .row.q-pb-sm
-          .col-6 ADD CPU
-          .col-6
-            .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = (accountTotal - 0.1).toString(); netTokens = '0'" )
-              span.text-weight-bold.balance-amount {{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}
-              q-icon.q-ml-xs( name="info" )
-              q-tooltip Click to fill full amount
+<template>
 
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="cpuTokens" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
+<div class="staking-form">
+    <q-card-section class="text-grey-3 text-weight-light">
+        <div class="row">
+            <div class="col-12">
+                <div class="row justify-between q-pb-sm">CPU/NET Receiver
+                    <q-space/>
+                    <div class="text-grey-3">Defaults to connected account</div>
+                </div>
+                <q-input
+                    v-model="stakingAccount"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    dense
+                    dark
+                    :lazy-rules="true"
+                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
+                />
+            </div>
+        </div>
+        <div class="row q-py-md">
+            <div class="col-6">
+                <div class="row q-pb-sm">
+                    <div class="col-6">ADD CPU</div>
+                    <div class="col-6 text-right">
+                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
 
-      .col-6.q-pl-md
-        .row.q-pb-sm
-          .col-6 ADD NET
-          .col-6
-            .color-grey-3.flex.justify-end.items-center( @click="netTokens = (accountTotal - 0.1).toString(); cpuTokens = '0'" )
-              span.text-weight-bold.balance-amount {{ accountTotal ? `${accountTotal } AVAILABLE` : '--' }}
-              q-icon.q-ml-xs( name="info" )
-              q-tooltip Click to fill full amount
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="netTokens" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
-
-    .row.text-red(v-if="notEnoughTlosForTransaction") Balance too low for transaction
-
-    .row
-      .col-12.q-pt-md
-        q-btn.full-width.button-accent(label="Confirm" flat :disable="disableCta" @click="sendTransaction" )
-  ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+                    </div>
+                </div>
+                <q-input
+                    v-model="cpuTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0.0000"
+                    :lazy-rules="true"
+                    :rules="inputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+            <div class="col-6 q-pl-md">
+                <div class="row q-pb-sm">
+                    <div class="col-6">ADD NET</div>
+                    <div class="col-6 text-right">
+                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
+                    </div>
+                </div>
+                <q-input
+                    v-model="netTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0.0000"
+                    :lazy-rules="true"
+                    :rules="inputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+        </div>
+        <div v-if="notEnoughTlosForTransaction" class="row text-red">Balance too low for transaction</div>
+        <div class="row">
+            <div class="col-12 q-pt-md">
+                <q-btn
+                    class="full-width button-accent"
+                    label="Confirm"
+                    flat
+                    :disable="disableCta"
+                    @click="sendTransaction"
+                />
+            </div>
+        </div>
+    </q-card-section>
+    <ViewTransaction
+        v-model="openTransaction"
+        :transactionId="transactionId"
+        :transactionError="transactionError || ''"
+        message="transaction complete"
+    />
+</div>
 
 </template>
 
@@ -187,8 +235,4 @@ export default defineComponent({
     background: rgba(108, 35, 255, 1)
     border-radius: 4px
     color: $grey-4
-
-.balance-amount:hover
-  color: $primary
-  cursor: pointer
 </style>

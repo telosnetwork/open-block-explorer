@@ -30,7 +30,7 @@ export default defineComponent({
             const totalRefund = refundRequest.value
                 ? (
                     refundRequest.value.cpu_amount.value +
-            refundRequest.value.net_amount.value
+                    refundRequest.value.net_amount.value
                 ).toFixed(4)
                 : 0;
             return `${totalRefund} ${token.value.symbol}`;
@@ -45,30 +45,30 @@ export default defineComponent({
 
         function refundProgress(): number {
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value.refund_request?.request_time.toString() + 'Z',
-                ).toUTCString(),
-            ).getTime() / 1000,
-        ) +
-        259200 -
-        Math.round(new Date(Date.now()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value.refund_request?.request_time.toString() + 'Z',
+                        ).toUTCString(),
+                    ).getTime() / 1000,
+                ) +
+                259200 -
+                Math.round(new Date(Date.now()).getTime() / 1000);
             let time = diff / 259200;
             return time > 0 ? time : 0;
         }
 
         function refundCountdown(): string {
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value?.refund_request?.request_time.toString() + 'Z',
-                ),
-            ).getTime() / 1000,
-        ) +
-        259200 -
-        Math.round(new Date(new Date().toISOString()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value?.refund_request?.request_time.toString() + 'Z',
+                        ),
+                    ).getTime() / 1000,
+                ) +
+                259200 -
+                Math.round(new Date(new Date().toISOString()).getTime() / 1000);
             if (diff > 0) {
                 var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
                     hours = component(diff, 60 * 60) % 24; // hours
@@ -97,7 +97,7 @@ export default defineComponent({
             formatStaked,
             refundProgress,
             refundCountdown,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            ...mapActions({ sendAction: 'account/sendAction' }),
             transactionId: ref<string>(null),
             transactionError: null,
         };
@@ -112,12 +112,12 @@ export default defineComponent({
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-          await this.signTransaction({
-              account: 'eosio',
-              name: 'refund',
-              data,
-          })
-        ).transactionId as string;
+                    await this.sendAction({
+                        account: 'eosio',
+                        name: 'refund',
+                        data,
+                    })
+                ).transactionId as string;
             } catch (e) {
                 this.transactionError = e;
             }
@@ -141,37 +141,62 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.q-pt-lg
-  .container-refund
-    .row.full-width
-      .row.full-width.q-pt-lg.q-px-lg
-        .col-6.text-h6.grey-3 Refunding Total
-        .col-6.text-h6.text-right.grey-3 {{ totalRefund }}
-      .row.full-width.q-py-md
-        hr
-      .row.full-width.q-pb-lg.text-grey-3.text-weight-light
-        .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
-          .row
-            .col-6 CPU
-            .col-6.text-right.text-weight-bold {{ cpuAmount || '0'}}
-          .row.q-pt-md
-            .col-6 NET
-            .col-6.text-right.text-weight-bold {{ netAmount || '0'}}
-        .col-xs-12.col-sm-6.q-px-lg.q-pt-sm
-          .row
-            .col-7 {{refundCountdown()}}
-            .col-5.text-right.text-weight-bold
-              q-linear-progress( :value="refundProgress()" color="grey-3" class="q-mt-sm")
-          .row.q-pt-sm
-            .col-7.q-pt-sm Refund
-              q-icon(class="q-ml-xs" name="far fa-question-circle")
-                q-tooltip(anchor="top middle" self="center middle" class="bg-deep-purple-12") If it has been more than 72 hours since your unstake transaction. Click on Refund to claim your tokens.
+<template>
 
-            .col-5.text-right.grey-3
-              q-btn.full-width.button-accent(label="Refund" flat @click="sendTransaction" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
-
+<div class="q-pt-lg">
+    <div class="container-refund">
+        <div class="row full-width">
+            <div class="row full-width q-pt-lg q-px-lg">
+                <div class="col-6 text-h6 grey-3">Refunding Total</div>
+                <div class="col-6 text-h6 text-right grey-3">{{ totalRefund }}</div>
+            </div>
+            <div class="row full-width q-py-md">
+                <hr>
+            </div>
+            <div class="row full-width q-pb-lg text-grey-3 text-weight-light">
+                <div class="col-xs-12 col-sm-6 q-px-lg q-pt-sm">
+                    <div class="row">
+                        <div class="col-6">CPU</div>
+                        <div class="col-6 text-right text-weight-bold">{{ cpuAmount || '0'}}</div>
+                    </div>
+                    <div class="row q-pt-md">
+                        <div class="col-6">NET</div>
+                        <div class="col-6 text-right text-weight-bold">{{ netAmount || '0'}}</div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 q-px-lg q-pt-sm">
+                    <div class="row">
+                        <div class="col-7">{{refundCountdown()}}</div>
+                        <div class="col-5 text-right text-weight-bold">
+                            <q-linear-progress class="q-mt-sm" :value="refundProgress()" color="grey-3"/>
+                        </div>
+                    </div>
+                    <div class="row q-pt-sm">
+                        <div class="col-7 q-pt-sm">Refund
+                            <q-icon class="q-ml-xs" name="far fa-question-circle">
+                                <q-tooltip class="bg-deep-purple-12" anchor="top middle" self="center middle">If it has been more than 72 hours since your unstake transaction. Click on Refund to claim your tokens.</q-tooltip>
+                            </q-icon>
+                        </div>
+                        <div class="col-5 text-right grey-3">
+                            <q-btn
+                                class="full-width button-accent"
+                                label="Refund"
+                                flat
+                                @click="sendTransaction"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </div>
+</div>
 </template>
 
 <style lang="sass">

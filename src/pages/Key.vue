@@ -7,28 +7,27 @@ import { Name, PublicKey } from '@greymass/eosio';
 
 /* eslint-disable */
 export default defineComponent({
-  name: 'Key',
-  setup() {
-    const route = useRoute();
-    const pubKey = ref<PublicKey>(PublicKey.from(route.params.key as string));
-    const accounts = ref<Name[]>([]);
-    onMounted(async () => {
-      accounts.value = (await api.getKeyAccounts(pubKey.value)).account_names;
-    });
-    return {
-      pubKey,
-      accounts
-    };
-  },
-  components: {
-    KeyAccountsCard
-  }
+    name: 'Key',
+    setup() {
+        const route = useRoute();
+        const pubKey = ref<PublicKey>(PublicKey.from(route.params.key as string));
+        const accounts = ref<Name[]>([]);
+        onMounted(async () => {
+            accounts.value = (await api.getKeyAccounts(pubKey.value)).account_names;
+        });
+        return {
+            pubKey,
+            accounts
+        };
+    },
+    components: {
+        KeyAccountsCard
+    }
 });
 </script>
 
-<template lang="pug">
-KeyAccountsCard(:pubKey='pubKey' :accounts='accounts')
-
+<template>
+<KeyAccountsCard :pubKey="pubKey" :accounts="accounts" />
 </template>
 
 <style scoped lang="sass">

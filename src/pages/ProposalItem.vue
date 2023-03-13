@@ -37,7 +37,7 @@ export default defineComponent({
         const isCanceled = ref(false);
         const isUserApprovalList = ref(false);
 
-        const multsigTransactionData = ref<unknown>({});
+        const multsigTransactionData = ref<Action[]>([]);
         const requestedApprovalsRows = ref<RequestedApprovals[]>([]);
 
         const requestedApprovalsColumns = [
@@ -457,78 +457,114 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-div(style="height: fit-content; min-height: 25rem;").full-width.row.justify-center.items-center.gradient-box
-  div(v-if="isLoading").col.text-center
-    q-spinner(color="white" size="2em")
-
-  div(v-else style="height: 22rem; padding-top: 6rem;").col.text-center
-    h1.text-h4.text-white.q-ma-none Proposal {{proposalName}}
-    p.text-caption.text-white.text-uppercase.q-mt-xs(:style="{opacity:'0.5'}").
-      PROPOSER <router-link :to="'/account/' + proposer" class="text-white cursor-pointer">{{proposer}}</router-link> • APPROVAL STATUS {{approvalStatus}} • EXPIRATION {{expirationDate}}
-    div.q-mb-lg
-      q-badge(v-if="isExecuted && !isCanceled" color="green" label="EXECUTED")
-      q-badge(v-if="!isExecuted && !isCanceled" color="orange" label="NOT EXECUTED")
-      q-badge(v-if="isCanceled" color="red" label="CANCELED")
-
-    div.row.q-gutter-sm.justify-center.items-center
-      q-btn(v-if="isShowExecuteButton" outline padding="sm md" color="white" text-color="white" label="Execute" @click="onExecute")
-      q-btn(v-if="isShowCancelButton" outline padding="sm md" color="white" text-color="white" label="Cancel" @click="onCancel")
-      q-btn(v-if="isShowApproveButton" outline padding="sm md" color="white" text-color="white" label="Approve" @click="onApprove")
-      q-btn(v-if="isShowUnapproveButton" outline padding="sm md" color="white" text-color="white" label="Unapprove" @click="onUnapprove")
-
-q-page(padding)
-  h2.text-h6.text-weight-regular Multisig Transaction
-  q-card(
-    v-for="(multsigTransactionItem, multsigTransactionIndex) in multsigTransactionData"
-    :key="multsigTransactionIndex"
-  ).q-mt-md
-    q-expansion-item(
-      switch-toggle-side
-      default-opened
-    )
-      template(v-slot:header)
-        span.text-h6.text-weight-regular {{(multsigTransactionItem.account)}} - {{multsigTransactionItem.name}}
-      json-viewer(
-        :value="multsigTransactionItem"
-        :expand-depth="5"
-        preview-mode
-        boxed
-        copyable
-        sort
-      )
-
-  h2.text-h6.text-weight-regular.q-mt-xl
-    span Requested Approvals
-    span.text-body1.q-ml-sm.text-grey {{approvalStatus}}
-    span.q-mx-sm •
-    span Active BPs
-    span.text-body1.q-ml-sm.text-grey {{producersApprovalStatus}}
-  q-card.q-mb-xl
-    q-table(
-      color="primary"
-      flat
-      :bordered="false"
-      :square="true"
-      table-header-class="text-grey-7"
-      :rows="requestedApprovalsRows"
-      :columns="requestedApprovalsColumns"
-      row-key="index"
-      :rows-per-page-options="[25,40,80,160]"
-    )
-      template(v-slot:body="props")
-        q-tr(:props="props")
-          q-td(key="actor" :props="props")
-            router-link(
-              :to="'/account/' + props.row.actor"
-              style="text-decoration:none"
-            ).text-primary.cursor-pointer {{props.row.actor}}
-            q-badge(v-if="props.row.isBp" label="Active BP" class="q-ml-xs")
-          q-td(key="permission" :props="props")
-            span {{props.row.permission}}
-          q-td(key="status" :props="props")
-            q-badge(
-              :color="props.row.status ? 'green' : 'orange'"
-              :label="props.row.status ? 'APPROVED' : 'PENDING'"
-            )
+<template>
+<div class="proposal-item full-width row justify-center items-center gradient-box">
+    <div v-if="isLoading" class="col text-center">
+        <q-spinner color="white" size="2em"/>
+    </div>
+    <div v-else class="proposal-item__content col text-center">
+        <h1 class="proposal-item__content-title text-h4 text-white q-ma-none ">Proposal {{proposalName}}</h1>
+        <p class="proposal-item__content-sub text-caption text-white text-uppercase q-mt-xs">PROPOSER <router-link :to="'/account/' + proposer" class="text-white cursor-pointer">{{proposer}}</router-link> • APPROVAL STATUS {{approvalStatus}} • EXPIRATION {{expirationDate}}</p>
+        <div class="q-mb-lg">
+            <q-badge v-if="isExecuted &amp;&amp; !isCanceled" color="green" label="EXECUTED"/>
+            <q-badge v-if="!isExecuted &amp;&amp; !isCanceled" color="orange" label="NOT EXECUTED"/>
+            <q-badge v-if="isCanceled" color="red" label="CANCELED"/>
+        </div>
+        <div class="row q-gutter-sm justify-center items-center">
+            <q-btn
+                v-if="isShowExecuteButton"
+                outline
+                padding="sm md"
+                color="white"
+                text-color="white"
+                label="Execute"
+                @click="onExecute"
+            />
+            <q-btn
+                v-if="isShowCancelButton"
+                outline
+                padding="sm md"
+                color="white"
+                text-color="white"
+                label="Cancel"
+                @click="onCancel"
+            />
+            <q-btn
+                v-if="isShowApproveButton"
+                outline
+                padding="sm md"
+                color="white"
+                text-color="white"
+                label="Approve"
+                @click="onApprove"
+            />
+            <q-btn
+                v-if="isShowUnapproveButton"
+                outline
+                padding="sm md"
+                color="white"
+                text-color="white"
+                label="Unapprove"
+                @click="onUnapprove"
+            />
+        </div>
+    </div>
+</div>
+<q-page padding>
+    <h2 class="text-h6 text-weight-regular">Multisig Transaction</h2>
+    <q-card v-for="(multsigTransactionItem, multsigTransactionIndex) in multsigTransactionData" :key="multsigTransactionIndex" class="q-mt-md">
+        <q-expansion-item switch-toggle-side default-opened>
+            <template v-slot:header>
+                <span class="text-h6 text-weight-regular">
+                    {{(multsigTransactionItem.account)}} - {{multsigTransactionItem.name}}</span>
+            </template>
+            <JsonViewer
+                :value="multsigTransactionItem"
+                :expand-depth="5"
+                preview-mode="preview-mode"
+                boxed="boxed"
+                copyable="copyable"
+                sort="sort"
+            />
+        </q-expansion-item>
+    </q-card>
+    <h2 class="text-h6 text-weight-regular q-mt-xl"><span>Requested Approvals</span><span class="text-body1 q-ml-sm text-grey">{{approvalStatus}}</span><span class="q-mx-sm">•</span><span>Active BPs</span><span class="text-body1 q-ml-sm text-grey">{{producersApprovalStatus}}</span></h2>
+    <q-card class="q-mb-xl">
+        <q-table
+            color="primary"
+            flat
+            :bordered="false"
+            :square="true"
+            table-header-class="text-grey-7"
+            :rows="requestedApprovalsRows"
+            :columns="requestedApprovalsColumns"
+            row-key="index"
+            :rows-per-page-options="[25,40,80,160]"
+        >
+            <template v-slot:body="props">
+                <q-tr :props="props">
+                    <q-td key="actor" :props="props">
+                        <router-link class="text-primary text-no-decoration cursor-pointer" :to="'/account/' + props.row.actor">{{props.row.actor}}</router-link>
+                        <q-badge v-if="props.row.isBp" class="q-ml-xs" label="Active BP"/>
+                    </q-td>
+                    <q-td key="permission" :props="props"><span>{{props.row.permission}}</span></q-td>
+                    <q-td key="status" :props="props">
+                        <q-badge :color="props.row.status ? 'green' : 'orange'" :label="props.row.status ? 'APPROVED' : 'PENDING'"/>
+                    </q-td>
+                </q-tr>
+            </template>
+        </q-table>
+    </q-card>
+</q-page>
 </template>
+<style lang="sass">
+.proposal-item
+    height: fit-content
+    min-height: 25rem
+    &__content
+        height: 22rem
+        padding-top: 6rem
+    &__content-sub
+        opacity: 0.5
+
+</style>

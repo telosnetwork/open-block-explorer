@@ -31,6 +31,11 @@ export default defineComponent({
             () => accountData.value?.core_liquid_balance.value,
         );
 
+        const inputRules = computed((): Array<(data: string) => boolean | string> => [
+            (val: string) => +val >= 0 || 'Value must not be negative',
+            (val: string) => +val <= assetToAmount((accountData.value.core_liquid_balance ?? 0).toString()) || 'Balance too low',
+        ]);
+
         function formatDec() {
             const precision = store.state.chain.token.precision;
             if (stakeTokens.value !== '') {
@@ -48,8 +53,8 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 stakeTokens.value === '0.0000' ||
-        Number(stakeTokens.value) >=
-          Number(accountData.value.core_liquid_balance.toString())
+                Number(stakeTokens.value) >=
+                Number(accountData.value.core_liquid_balance.toString())
             ) {
                 return;
             }
@@ -77,7 +82,7 @@ export default defineComponent({
 
         function setMaxValue() {
             stakeTokens.value = (
-                assetToAmount(accountData.value.core_liquid_balance.toString()) - 0.1
+                assetToAmount(accountData.value.core_liquid_balance.toString())
             ).toString();
             void formatDec();
         }
@@ -93,6 +98,7 @@ export default defineComponent({
             maturedRex,
             liquidBalance,
             symbol,
+            inputRules,
             formatDec,
             stake,
             assetToAmount,
@@ -102,24 +108,54 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section
-    .row.q-col-gutter-md
-      .col-12
-        .row
-          .row.q-pb-sm.full-width
-            .col-8 {{ `LIQUID ${symbol}` }}
-            .col-4
-              .row.items-center.justify-end.q-hoverable.cursor-pointer(@click='setMaxValue')
-                .text-weight-bold.text-right.balance-amount {{ `${liquidBalance} ${symbol}` }}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-          q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0.0000' v-model="stakeTokens" :lazy-rules='true' :rules="[ val => val >= 0 && val <= assetToAmount(accountData.account.core_liquid_balance)  || 'Invalid amount.' ]" type="text" dense dark)
-        .row
-          q-btn.full-width.button-accent(:label='"Stake " + symbol' flat @click="stake" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+<template>
 
+<div class="staking-form">
+    <q-card-section>
+        <div class="row q-col-gutter-md">
+            <div class="col-12">
+                <div class="row q-mb-md">
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-8">{{ `LIQUID ${symbol}` }}</div>
+                        <div class="col-4">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxValue">
+                                <div class="text-weight-bold text-right balance-amount">{{ `${liquidBalance} AVAILABLE` }}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Click to fill full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        v-model="stakeTokens"
+                        dense
+                        dark
+                        class="full-width"
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0.0000'
+                        :lazy-rules='true'
+                        :rules="inputRules"
+                        type="text"
+                        @blur='formatDec'
+                    />
+                </div>
+                <div class="row">
+                    <q-btn
+                        class="full-width button-accent"
+                        :label='"Stake " + symbol'
+                        flat
+                        @click="stake"
+                    />
+                </div>
+            </div>
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
 </template>
 
 <style scoped lang="sass">

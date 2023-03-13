@@ -538,7 +538,7 @@ function validateActionsLength(
         modifiedTransaction.actions.length !==
     transaction.actions.length + expectedNewActions
     ) {
-        throw new Error('Transaction returned contains additional actions.');
+        throw new Error('transaction returned contains additional actions.');
     }
 }
 

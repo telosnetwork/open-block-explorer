@@ -32,8 +32,7 @@ export default defineComponent({
         const ramAvailable = computed(
             () =>
                 Number(store.state.account.data.ram_quota.value) -
-        Number(store.state.account.data.ram_usage.value),
-        );
+                Number(store.state.account.data.ram_usage.value));
         const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
 
         function formatDec() {
@@ -45,8 +44,8 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (
                 sellAmount.value === '0.0000' ||
-        !ramAvailable.value ||
-        Number(sellAmount.value) >= ramAvailable.value
+                !ramAvailable.value ||
+                Number(sellAmount.value) >= ramAvailable.value
             ) {
                 return;
             }
@@ -100,23 +99,53 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section.text-grey-3
-    .row
-      .row.q-pb-sm.full-width
-        .col-6 {{ `Amount of RAM to sell in Bytes` }}
-        .col-6
-          .color-grey-3.flex.justify-end.items-center( @click="sellAmount = ramAvailable.toString()" )
-            span.text-weight-bold.balance-amount {{ `${ramAvailable} AVAILABLE` }}
-            q-icon.q-ml-xs( name="info" )
-            q-tooltip Click to fill full amount
-      q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="sellAmount" :lazy-rules='true' :rules="inputRules" type="text" dense dark)
-    .row.q-pb-sm
-      .text-weight-normal.text-right.text-grey-3 ≈ {{sellPreview}}
-    .row
-      q-btn.full-width.button-accent(label="Sell" flat :disable="disableCta" @click="sell" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+<template>
+
+<div class="staking-form">
+    <q-card-section class="text-grey-3">
+        <div class="row">
+            <div class="row q-pb-sm full-width">
+                <div class="col-6">{{ `Amount of RAM to sell in Bytes` }}</div>
+                <div class="col-6">
+                    <div class="color-grey-3 flex justify-end items-center" @click="sellAmount = ramAvailable.toString()"><span class="text-weight-bold balance-amount">{{ `${ramAvailable} AVAILABLE` }}</span>
+                        <q-icon class="q-ml-xs" name="info"/>
+                        <q-tooltip>Click to fill full amount</q-tooltip>
+                    </div>
+                </div>
+            </div>
+            <q-input
+                v-model="sellAmount"
+                class="full-width"
+                standout="bg-deep-purple-2 text-white"
+                placeholder="0"
+                :lazy-rules="true"
+                :rules="inputRules"
+                type="text"
+                dense
+                dark
+                @blur="formatDec"
+            />
+        </div>
+        <div class="row q-pb-sm">
+            <div class="text-weight-normal text-right text-grey-3">≈ {{sellPreview}}</div>
+        </div>
+        <div class="row">
+            <q-btn
+                class="full-width button-accent"
+                label="Sell"
+                flat
+                :disable="disableCta"
+                @click="sell"
+            />
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
 
 </template>
 
