@@ -114,6 +114,17 @@ describe('string-utils utility functions', () => {
             expect(formatCurrency(0, 4, 'TLOS')).toBe('0 TLOS');
         });
 
+        it('should not trim trailing zeroes when preserveTrailingZeroes is true', () => {
+            expect(formatCurrency('0.0000', 2, null, true)).toBe('0.00');
+            expect(formatCurrency('0.0000', 4, null, true)).toBe('0.0000');
+            expect(formatCurrency('0.0000', 2, 'USD', true)).toBe('0.00 USD');
+            expect(formatCurrency('0.0000', 4, 'TLOS', true)).toBe('0.0000 TLOS');
+            expect(formatCurrency('0', 2, null, true)).toBe('0.00');
+            expect(formatCurrency('0', 4, null, true)).toBe('0.0000');
+            expect(formatCurrency('0', 2, 'USD', true)).toBe('0.00 USD');
+            expect(formatCurrency('0', 4, 'TLOS', true)).toBe('0.0000 TLOS');
+        });
+
         it('should throw an error when supplied an invalid amount', () => {
             const inputs = [
                 '',

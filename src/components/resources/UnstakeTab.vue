@@ -150,12 +150,12 @@ export default defineComponent({
                 transfer: false,
                 cpu_weight:
                     parseFloat(this.cpuTokens) > 0
-                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol)
-                        : `0 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol, true)
+                        : `0.0000 ${symbol}`,
                 net_weight:
                     parseFloat(this.netTokens) > 0
-                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol)
-                        : `0 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol, true)
+                        : `0.0000 ${symbol}`,
             });
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {

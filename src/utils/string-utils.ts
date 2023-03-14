@@ -17,11 +17,14 @@ export function isValidTransactionHex(hexString: string): boolean {
  * @param {number|string} amount - the quantity of the currency
  * @param {number} precision - the number of decimal places to be preserved
  * @param {string} symbol - optional, the symbol of the currency
+ * @param {boolean} preserveTrailingZeroes - optional, whether to prevent the trimming of trailing zeroes in the case of
+ *      a zero value for cases where precision is critical, e.g. if true '0.0000 TLOS' will not be converted to '0 TLOS'
  */
 export function formatCurrency(
     amount: string | number,
     precision: number,
     symbol?: string,
+    preserveTrailingZeroes?: boolean,
 ): string {
     const floatingPointNumberRegex = /^-?(0|[1-9]\d*)(\.\d+)?$/;
     const amountIsValid =
@@ -44,7 +47,7 @@ export function formatCurrency(
         return `${(+integer).toLocaleString()}.${fraction}`;
     })();
 
-    if (+amountAsString === 0) {
+    if (+amountAsString === 0 && !preserveTrailingZeroes) {
         amountAsString = '0';
     }
 

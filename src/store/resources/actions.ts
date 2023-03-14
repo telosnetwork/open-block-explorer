@@ -57,8 +57,8 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             const self_net_weight = Number(accountData.self_delegated_bandwidth?.cpu_weight.value ?? 0);
             const self_cpu_weight = Number(accountData.self_delegated_bandwidth?.net_weight.value ?? 0);
 
-            const self_net_asset = formatCurrency(self_net_weight, precision, symbol);
-            const self_cpu_asset = formatCurrency(self_cpu_weight, precision, symbol);
+            const self_net_asset = formatCurrency(self_net_weight, precision, symbol, true);
+            const self_cpu_asset = formatCurrency(self_cpu_weight, precision, symbol, true);
 
             const selfStaked: DelegatedResources = {
                 from: account,
@@ -75,8 +75,8 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             const from_others_net_weight = total_net_weight - self_net_weight;
             const from_others_cpu_weight = total_cpu_weight - self_cpu_weight;
 
-            const from_others_net_asset = formatCurrency(from_others_net_weight, precision, symbol);
-            const from_others_cpu_asset = formatCurrency(from_others_cpu_weight, precision, symbol);
+            const from_others_net_asset = formatCurrency(from_others_net_weight, precision, symbol, true);
+            const from_others_cpu_asset = formatCurrency(from_others_cpu_weight, precision, symbol, true);
 
             const fromOthers: DelegatedResources = {
                 from: 'not-available',
