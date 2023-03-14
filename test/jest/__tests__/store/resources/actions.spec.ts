@@ -276,8 +276,8 @@ describe('Store - Resources Actions', () => {
             expect(commit).toHaveBeenCalledWith('setDelegatedFromOthers', {
                 from: 'not-available',
                 to: anotheraccount,
-                net_weight: '0 TLOS',
-                cpu_weight: '0 TLOS',
+                net_weight: '0.0000 TLOS',
+                cpu_weight: '0.0000 TLOS',
             });
             expect(commit).toHaveBeenCalledWith('setSelfStaked', {
                 from: anotheraccount,
