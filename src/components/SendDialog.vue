@@ -256,7 +256,7 @@ export default defineComponent({
                             </div>
                             <div class="col-12">
                                 Click to view transaction:
-                                <a href="#" class="ellipsis-overflow text-blue" @click="navToTransaction">{{ transactionId }}</a>
+                                <a class="ellipsis-overflow text-blue" @click="navToTransaction">{{ transactionId }}</a>
                             </div>
                         </div>
                     </q-card-section>
