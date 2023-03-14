@@ -199,7 +199,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         }
         return transaction;
     },
-    async stakeRex({ commit, state }, { amount }) {
+    async stakeRex({ commit, dispatch, state }, { amount }) {
         let transaction = null;
         const quantityStr = formatCurrency(amount, 4, symbol);
         const actions = [
@@ -243,11 +243,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async unstakeRex({ commit, state }, { amount }) {
+    async unstakeRex({ commit, dispatch, state }, { amount }) {
         let transaction = null;
         const tokenRexBalance = state.rexbal.rex_balance
             ? Number(state.rexbal.rex_balance.split(' ')[0])
@@ -300,6 +302,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
