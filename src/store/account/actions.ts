@@ -164,7 +164,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         const rexActions = (await api.getActions(account, filter)).actions;
         commit('setRexActions', rexActions);
     },
-    async sendAction({ state }, { account, data, name, actor, permission }) {
+    async sendAction({ state, dispatch }, { account, data, name, actor, permission }) {
         const actions = [
             {
                 account: account as string ?? state.abi.account_name,
@@ -178,10 +178,9 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 data: data as unknown,
             },
         ];
-        return this.dispatch('sendTransaction', actions);
+        return dispatch('sendTransaction', actions);
     },
     async sendTransaction({ commit, state }, actions: Action[]) {
-        console.log('sendTransaction', actions);
         let transaction = null;
         try {
             transaction = await state.user.signTransaction(

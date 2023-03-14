@@ -43,7 +43,7 @@ export default defineComponent({
             if (
                 sellAmount.value === '0' ||
                 !ramAvailable.value ||
-                Number(sellAmount.value) >= ramAvailable.value
+                Number(sellAmount.value) > ramAvailable.value
             ) {
                 return;
             }

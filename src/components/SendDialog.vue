@@ -162,7 +162,8 @@ export default defineComponent({
             </div>
             <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 max-dialog-width">
                 <div class="row">
-                    <q-card-section><img class="send-img q-pr-md" src="~assets/send.svg">
+                    <q-card-section>
+                        <img class="send-img q-pr-md" src="~assets/send.svg">
                         <div class="text-h4 q-pb-md inline-block color-grey-3">Send Tokens</div>
                     </q-card-section>
                 </div>
@@ -251,8 +252,11 @@ export default defineComponent({
                     <q-card-section v-if="transactionId">
                         <div class="row">
                             <div class="col-12">
-                                <div class="row">You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ receivingAccount }}.</div>
-                                <div class="row ellipsis-overflow" @click="navToTransaction">Click to view transaction: {{ transactionId }}</div>
+                                <div>You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ receivingAccount }}.</div>
+                            </div>
+                            <div class="col-12">
+                                Click to view transaction:
+                                <a class="ellipsis-overflow text-blue" @click="navToTransaction">{{ transactionId }}</a>
                             </div>
                         </div>
                     </q-card-section>
@@ -263,12 +267,17 @@ export default defineComponent({
                             </div>
                         </div>
                     </q-card-section>
-                    <q-btn
-                        v-close-popup
-                        class="close-dialog"
-                        label="Close"
-                        @click="setDefaults"
-                    />
+                    <div class="row">
+                        <div class="col-12 flex justify-end">
+                            <q-btn
+                                v-close-popup
+                                flat
+                                class="close-dialog"
+                                label="Close"
+                                @click="setDefaults"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -278,6 +287,9 @@ export default defineComponent({
 </template>
 
 <style lang="sass" scoped>
+.transaction-result
+    color: white
+
 
 .sendCard
   color: $grey-6
