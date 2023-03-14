@@ -12,6 +12,15 @@ export interface ActionData {
   };
 }
 
+export interface GetActionsResponse {
+    data: {
+        actions: Action[],
+        total: {
+            value: number
+        }
+    },
+}
+
 export interface Action {
   '@timestamp': string;
   account_ram_deltas: AccountRamDelta[];
@@ -111,10 +120,12 @@ export type AccountDetails = {
   total_actions: number;
 };
 export interface Token {
+  name?: string;
   symbol: string;
   precision: number;
-  amount: number;
+  amount?: number;
   contract: string;
+  logo?: string;
 }
 interface Key {
   key: string;

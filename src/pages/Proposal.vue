@@ -59,43 +59,46 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-q-page(padding)
-  div.row.justify-between.items-center.q-pt-lg.q-pb-sm
-    h1.text-h5.q-ma-none Multisig Transactions
-    q-btn(
-      v-if="isAuthenticated"
-      padding="sm md"
-      color="primary"
-      label="New proposal"
-      to="/proposal/new")
-
-  q-tabs(v-model="tab" align="left" active-color="primary" content-class="text-grey-7"  no-caps)
-    q-tab(v-if="isAuthenticated" name="myProposal" label="My proposals")
-    q-tab(name="allProposal" label="All proposals")
-
-  q-separator
-
-  q-tab-panels(v-model="tab")
-    q-tab-panel(v-if="isAuthenticated" name="myProposal").q-pa-none
-      div.q-py-lg
-        ProposalTable(
-          title="Needs your signature"
-          type="needsYourSignature"
-          :account="account"
-        )
-        ProposalTable(
-          title="Proposals created"
-          type="proposalsCreated"
-          :account="account"
-        )
-
-    q-tab-panel(name="allProposal").q-pa-none
-      div.q-py-lg
-        ProposalTable(
-          title="Proposals"
-          type="allProposals"
-          :account="account"
-          :blockProducers="blockProducers"
-        )
+<template>
+<q-page padding class="trx-table container-max-width">
+    <div class="row justify-between items-center q-pt-lg q-pb-sm">
+        <h1 class="text-h5 q-ma-none">Multisig Transactions</h1>
+        <q-btn
+            v-if="isAuthenticated"
+            padding="sm md"
+            color="primary"
+            label="New proposal"
+            to="/proposal/new"
+        />
+    </div>
+    <q-tabs
+        v-model="tab"
+        align="left"
+        active-color="primary"
+        content-class="text-grey-7"
+        no-caps
+    >
+        <q-tab v-if="isAuthenticated" name="myProposal" label="My proposals"/>
+        <q-tab name="allProposal" label="All proposals"/>
+    </q-tabs>
+    <q-separator/>
+    <q-tab-panels v-model="tab">
+        <q-tab-panel v-if="isAuthenticated" class="q-pa-none" name="myProposal">
+            <div class="q-py-lg">
+                <ProposalTable title="Needs your signature" type="needsYourSignature" :account="account"/>
+                <ProposalTable title="Proposals created" type="proposalsCreated" :account="account"/>
+            </div>
+        </q-tab-panel>
+        <q-tab-panel class="q-pa-none" name="allProposal">
+            <div class="q-py-lg">
+                <ProposalTable
+                    title="Proposals"
+                    type="allProposals"
+                    :account="account"
+                    :blockProducers="blockProducers"
+                />
+            </div>
+        </q-tab-panel>
+    </q-tab-panels>
+</q-page>
 </template>

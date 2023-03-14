@@ -1,6 +1,6 @@
 {
   "name": "open-block-explorer",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "..",
   "productName": "Telos Block Explorer",
   "author": "DonaldPeat <don@caleos.io>",
@@ -47,8 +47,6 @@
     "eslint-plugin-jest": "^25.2.2",
     "eslint-plugin-vue": "^9.0.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "pug": "^3.0.2",
-    "pug-plain-loader": "^1.1.0",
     "vue-property-decorator": "^9.1.2"
   },
   "browserslist": [

@@ -14,6 +14,8 @@ import { account } from 'src/store/account';
 import { AccountStateInterface } from 'src/store/account/state';
 import { transaction } from 'src/store/transaction';
 import { TransactionStateInterface } from 'src/store/transaction/state';
+import { resources } from 'src/store/resources';
+import { ResourcesStateInterface } from 'src/store/resources/state';
 
 /*
  * If not building with SSR mode, you can
@@ -30,6 +32,7 @@ export interface StateInterface {
   chain: ChainStateInterface;
   account: AccountStateInterface;
   transaction: TransactionStateInterface;
+  resources: ResourcesStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -50,6 +53,7 @@ export default store(function () {
             chain,
             account,
             transaction,
+            resources,
         },
 
         // enable strict mode (adds overhead!)

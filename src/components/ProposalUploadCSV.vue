@@ -74,58 +74,64 @@ export default defineComponent({
 });
 </script>
 
-<template lang="pug">
-ol.q-px-lg
-  li.text-subtitle1.q-mb-md Download the example
-    div.q-mt-xs
-      a(
-        href="/examples/msig-transfer-batch.csv"
-        target="_blank"
-        style="text-decoration:none"
-        download
-      )
-        q-btn(
-          outline
-          padding="sm md"
-          color="white"
-          text-color="primary"
-          label="Download example")
-
-  li.text-subtitle1.q-mb-md Edit the example csv
-    ul.text-body2.text-grey-8.q-px-md.q-mt-xs
-      li The quantity token must be uppercase
-      li Must have one space between the value and the token
-      li The decimal values must be separated with a dot
-      li The memo is optional
-    code.block.q-mt-md.q-py-sm.q-px-md.bg-grey-3.text-body1.rounded-borders.
-      payingaccount, receivingaccount, 0.1 TLOS, The memo
-
-  li.text-subtitle1 Upload the example csv
-    q-file(
-      outlined
-      dense
-      hide-bottom-space
-      label="Select the CSV File"
-      accept=".csv"
-      max-files="1"
-      v-model="file"
-    ).q-mt-xs
-      template(#append)
-        q-icon(
-          v-if="file !== null"
-          name="close"
-          @click.stop.prevent="file = null"
-          class="cursor-pointer"
-        )
-
-      template(#after)
-        q-btn(
-          outline
-          padding="sm md"
-          color="white"
-          text-color="primary"
-          label="Upload"
-          @click="handleUploadCSV"
-          :disabled="file === null"
-        )
+<template>
+<ol class="q-px-lg">
+    <li class="text-subtitle1 q-mb-md">Download the example
+        <div class="q-mt-xs"><a
+            href="/examples/msig-transfer-batch.csv"
+            target="_blank"
+            class="text-no-decoration"
+            download="download"
+        >
+            <q-btn
+                outline
+                padding="sm md"
+                color="white"
+                text-color="primary"
+                label="Download example"
+            /></a></div>
+    </li>
+    <li class="text-subtitle1 q-mb-md">Edit the example csv
+        <ul class="text-body2 text-grey-8 q-px-md q-mt-xs">
+            <li>The quantity token must be uppercase</li>
+            <li>Must have one space between the value and the token</li>
+            <li>The decimal values must be separated with a dot</li>
+            <li>The memo is optional</li>
+        </ul><code class="block q-mt-md q-py-sm q-px-md bg-grey-3 text-body1 rounded-borders">
+            payingaccount, receivingaccount, 0.1 TLOS, The memo
+        </code>
+    </li>
+    <li class="text-subtitle1">Upload the example csv
+        <q-file
+            v-model="file"
+            outlined
+            dense
+            hide-bottom-space
+            class="q-mt-xs"
+            label="Select the CSV File"
+            accept=".csv"
+            max-files="1"
+        >
+            <template #append>
+                <q-icon
+                    v-if="file !== null"
+                    class="cursor-pointer"
+                    name="close"
+                    @click.stop.prevent="file = null"
+                />
+            </template>
+            <template #after>
+                <q-btn
+                    outline
+                    padding="sm md"
+                    color="white"
+                    text-color="primary"
+                    label="Upload"
+                    :disabled="file === null"
+                    @click="handleUploadCSV"
+                />
+            </template>
+        </q-file>
+    </li>
+</ol>
 </template>

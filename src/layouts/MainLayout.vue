@@ -18,21 +18,21 @@ export default {
 };
 </script>
 
-<template lang="pug">
-q-layout( view="lHh lpR lff")
-  q-header
-    AppHeader
-    q-separator.separator
+<template>
 
-  chains-sidebar(
-    v-if="showSidebar()"
-  )
-
-  q-page-container
-    router-view
-    q-separator
-  q-footer
-    AppFooter
+<q-layout view="lHh lpR lff">
+    <q-header>
+        <AppHeader/>
+        <q-separator class="separator"/>
+    </q-header>
+    <ChainsSidebar v-if="showSidebar()"/>
+    <q-page-container>
+        <router-view/>
+    </q-page-container>
+    <q-footer>
+        <AppFooter/>
+    </q-footer>
+</q-layout>
 </template>
 
 <style lang="sass" scoped>

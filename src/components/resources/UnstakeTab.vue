@@ -1,11 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
+import { useAntelopeStore } from 'src/store/antelope.store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { API } from '@greymass/eosio';
-import { StakeResourcesTransactionData } from 'src/types/StakeResourcesTransactionData';
+import { DelegatedResources } from 'src/store/resources/state';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -16,19 +15,13 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const store = useAntelopeStore();
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>(
             store.state.account.accountName.toLowerCase() || '',
         );
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
-        const netStake = computed((): string =>
-            store.state.account.data.total_resources.net_weight.toString(),
-        );
-        const cpuStake = computed((): string =>
-            store.state.account.data.total_resources.cpu_weight.toString(),
-        );
 
         function formatDec() {
             if (cpuTokens.value !== '0') {
@@ -64,30 +57,78 @@ export default defineComponent({
             }
         }
 
+        const delegatedList = computed(() => store.resources.getDelegatedToOthers());
+        const isUpdating = computed(() => store.resources.isLoading('updateResources'));
+        const isUnstaking = computed(() => store.resources.isLoading('undelegateResources'));
+        const loading = computed(() => store.resources.getLoading());
+
+        const selectOptions = ref<{label:string, value:DelegatedResources}[]>([]);
+        const selectModel = ref<{label:string, value:DelegatedResources}>({ label: '', value: null });
+        const receiverAccount = computed((): string => selectModel.value?.value?.to);
+
+        void store.resources.updateResources().then(() => {
+            const selfStaked = store.resources.getSelfStaked();
+            if (selfStaked) {
+                selectModel.value = {
+                    label: selfStaked?.to,
+                    value: selfStaked,
+                };
+            }
+
+            const options = delegatedList.value?.map(item => ({
+                label: item.to,
+                value: item,
+            })) ?? [];
+
+            selectOptions.value = options;
+        });
+
+        const netStake = ref<number>(0);
+        const cpuStake = ref<number>(0);
+
         return {
             openTransaction,
             stakingAccount,
+            receiverAccount,
+            selectModel,
+            selectOptions,
+            delegatedList,
+            isUpdating,
+            isUnstaking,
+            loading,
             cpuTokens,
             netTokens,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            ...mapActions({ undelegateResources: 'resources/undelegateResources' }),
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
-            netStake: assetToAmount(netStake.value),
-            cpuStake: assetToAmount(cpuStake.value),
+            assetToAmount,
+            netStake,
+            cpuStake,
         };
+    },
+    watch: {
+        selectModel: {
+            handler() {
+                this.netStake = this.assetToAmount((this.selectModel.value as DelegatedResources)?.net_weight.toString());
+                this.cpuStake = this.assetToAmount((this.selectModel.value as DelegatedResources)?.cpu_weight.toString());
+                this.netTokens = '0';
+                this.cpuTokens = '0';
+            },
+            deep: true,
+        },
     },
     computed: {
         cpuInputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < this.cpuStake || 'Not enough staked',
+                (val: string) => +val <= this.cpuStake || 'Not enough staked',
             ];
         },
         netInputRules(): Array<(data: string) => boolean | string> {
             return [
                 (val: string) => +val >= 0 || 'Value must not be negative',
-                (val: string) => +val < this.netStake || 'Not enough staked',
+                (val: string) => +val <= this.netStake || `Not enough staked, needed: ${this.netStake}`,
             ];
         },
         ctaDisabled(): boolean {
@@ -101,80 +142,124 @@ export default defineComponent({
                 this.$q.notify('Enter valid value for CPU or NET to unstake');
                 return;
             }
-            const data = {
+
+            await this.undelegateResources({
                 from: this.stakingAccount,
-                receiver: this.stakingAccount,
+                to: this.receiverAccount,
                 transfer: false,
-                unstake_cpu_quantity:
-          parseFloat(this.cpuTokens) > 0
-              ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-              : `0.0000 ${symbol}`,
-                unstake_net_quantity:
-          parseFloat(this.netTokens) > 0
-              ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-              : `0.0000 ${symbol}`,
-            } as StakeResourcesTransactionData;
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                this.transactionId = (
-          await this.signTransaction({
-              account: 'eosio',
-              name: 'undelegatebw',
-              data,
-          })
-        ).transactionId as string;
-                this.$store.commit('account/setTransaction', this.transactionId);
-            } catch (e) {
-                this.transactionError = e;
-                this.$store.commit('account/setTransactionError', e);
-            }
-            await this.loadAccountData();
+                cpu_weight:
+                    parseFloat(this.cpuTokens) > 0
+                        ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+                        : `0.0000 ${symbol}`,
+                net_weight:
+                    parseFloat(this.netTokens) > 0
+                        ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+                        : `0.0000 ${symbol}`,
+            });
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
                 this.openTransaction = true;
-            }
-        },
-        async loadAccountData(): Promise<void> {
-            let data: API.v1.AccountObject;
-            try {
-                data = await this.$api.getAccount(this.stakingAccount);
-                this.$store.commit('account/setAccountData', data);
-            } catch (e) {
-                return;
             }
         },
     },
 });
 </script>
 
-<template lang="pug">
-.staking-form
-  q-card-section.text-grey-3.text-weight-light
-    .row.q-pb-md
-      .col-6
-        .row.q-pb-sm
-            .col-6 REMOVE CPU
-            .col-6
-              .color-grey-3.flex.justify-end.items-center( @click="cpuTokens = cpuStake.toString()" )
-                span.text-weight-bold.balance-amount {{ cpuStake ? `${cpuStake } AVAILABLE` : '--' }}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0' v-model="cpuTokens" :lazy-rules="true"  :rules="cpuInputRules" type="text" dense dark)
+<template>
 
-      .col-6.q-pl-md
-        .row.q-pb-sm
-            .col-6 REMOVE NET
-            .col-6
-              .color-grey-3.flex.justify-end.items-center( @click="netTokens = netStake.toString()" )
-                span.text-weight-bold.balance-amount {{ netStake ? `${netStake } AVAILABLE` : '--' }}
-                q-icon.q-ml-xs( name="info" )
-                q-tooltip Click to fill full amount
-        q-input.full-width(standout="bg-deep-purple-2 text-white" @blur='formatDec' placeholder='0'  v-model="netTokens" :lazy-rules="true" :rules="netInputRules" type="text" dense dark)
-    .row
-      .col-12.q-pt-md
-        q-btn.full-width.button-accent(label="Confirm" flat :disable="ctaDisabled" @click="sendTransaction" )
-    ViewTransaction(:transactionId="transactionId" v-model="openTransaction" :transactionError="transactionError || ''" message="Transaction complete")
+<div class="unstake-tab">
+    <q-card-section class="text-grey-3 text-weight-light">
+        <div class="row q-pb-md">
+            <div class="col-12">
+                <q-linear-progress v-if="isUpdating" color="primary" />
+                <q-select
+                    v-else
+                    v-model="selectModel"
+                    class="full-width unstake-tab__select"
+                    color="primary"
+                    :options="selectOptions"
+                    label="Delegated to"
+                    :rules="[val => !!val || 'Delegated to is required']"
+                />
+            </div>
+        </div>
+        <div class="row q-pb-md">
+            <div class="col-6">
+                <div class="row q-pb-sm">
+                    <div class="col-6">REMOVE CPU</div>
+                    <div class="col-6">
+                        <div class="color-grey-3 flex justify-end items-center" @click="cpuTokens = cpuStake.toString()">
+                            <span class="text-weight-bold balance-amount">{{ `${cpuStake} AVAILABLE` }}</span>
+                            <q-icon class="q-ml-xs" name="info"/>
+                            <q-tooltip>Click to fill full amount</q-tooltip>
+                        </div>
+                    </div>
+                </div>
+                <q-input
+                    v-model="cpuTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0"
+                    :lazy-rules="true"
+                    :rules="cpuInputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+            <div class="col-6 q-pl-md">
+                <div class="row q-pb-sm">
+                    <div class="col-6">REMOVE NET</div>
+                    <div class="col-6">
+                        <div class="color-grey-3 flex justify-end items-center" @click="netTokens = netStake.toString()">
+                            <span class="text-weight-bold balance-amount">{{ `${netStake} AVAILABLE` }}</span>
+                            <q-icon class="q-ml-xs" name="info"/>
+                            <q-tooltip>Click to fill full amount</q-tooltip>
+                        </div>
+                    </div>
+                </div>
+                <q-input
+                    v-model="netTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0"
+                    :lazy-rules="true"
+                    :rules="netInputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 q-pt-md">
+                <q-btn
+                    class="full-width button-accent"
+                    label="Confirm"
+                    flat
+                    :disable="ctaDisabled || isUnstaking"
+                    @click="sendTransaction"
+                >
+                    <q-spinner
+                        v-if="isUnstaking"
+                        size="20px"
+                        color="white"
+                        class="q-ml-sm"
+                    />
+                </q-btn>
+            </div>
 
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
 </template>
 
 <style lang="sass">
@@ -182,4 +267,32 @@ export default defineComponent({
     background: rgba(108, 35, 255, 1)
     border-radius: 4px
     color: $grey-4
+
+.unstake-tab
+    &__select
+        .q-field__control:before, .q-field__control:hover:before
+            border-bottom: 1px solid white
+        color: white
+        .q-field__marginal
+            color: white
+        .q-field__native
+            color: white
+            border: none
+            border-bottom: 1px solid white
+            border-radius: 0
+            padding: 0
+            &:focus
+                border-bottom: 1px solid white
+                border-radius: 0
+                outline: none
+                box-shadow: none
+        .q-field__label
+            color: #9e9e9e
+        &.q-field--highlighted
+            .q-field__label
+                color: white
+
+.balance-amount:hover
+    cursor: pointer
+    color: $primary
 </style>

@@ -4,7 +4,8 @@ export default {
 };
 </script>
 
-<template lang="pug">
-div
-    h1 Repository
+<template>
+<div>
+    <h1>Repository</h1>
+</div>
 </template>

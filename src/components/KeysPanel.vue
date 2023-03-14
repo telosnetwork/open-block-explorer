@@ -75,16 +75,27 @@ export default defineComponent({
     },
 });
 </script>
-<template lang="pug">
-div.row.col-12.q-my-xs.justify-center.text-left
-    div.row.col-11
-      div.row.col-12.q-mt-lg
-          div
-              p.panel-title Keys and Permissions
-          q-space
-      q-separator.row.col-12.q-mt-md.separator
-      .permissions-container.col-12.q-py-lg
-        permission-card(v-if='permission' :permission="permission" :depth="0").permissions
+<template>
+
+<div class="row col-12 q-my-xs justify-center text-left container-max-width">
+    <div class="row col-11">
+        <div class="row col-12 q-mt-lg">
+            <div>
+                <p class="panel-title">Keys and Permissions</p>
+            </div>
+            <q-space/>
+        </div>
+        <q-separator class="row col-12 q-mt-md separator"/>
+        <div class="permissions-container col-12 q-py-lg">
+            <PermissionCard
+                v-if="permission"
+                class="permissions"
+                :permission="permission"
+                :depth="0"
+            />
+        </div>
+    </div>
+</div>
 
 </template>
 <style lang="sass" scoped>
