@@ -61,6 +61,7 @@ export default defineComponent({
                 data,
                 name: 'transfer',
             });
+            void store.dispatch('account/loadAccountData');
             context.emit('update-token-balances');
         };
 

@@ -84,6 +84,7 @@ export default defineComponent({
             selectOptions.value = options;
         });
 
+
         const netStake = ref<number>(0);
         const cpuStake = ref<number>(0);
 
@@ -161,6 +162,8 @@ export default defineComponent({
             if (localStorage.getItem('autoLogin') !== 'cleos') {
                 this.openTransaction = true;
             }
+
+            await this.$store.dispatch('account/loadAccountData');
         },
     },
 });

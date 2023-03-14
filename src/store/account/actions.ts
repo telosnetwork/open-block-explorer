@@ -463,7 +463,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             commit('setTransactionError', e);
         }
     },
-    async buyRam({ commit, state }, { amount, receivingAccount }) {
+    async buyRam({ commit, dispatch, state }, { amount, receivingAccount }) {
         let transaction = null;
         const actions = [
             {
@@ -493,11 +493,12 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async buyRamBytes({ commit, state }, { amount, receivingAccount }) {
+    async buyRamBytes({ commit, dispatch, state }, { amount, receivingAccount }) {
         let transaction = null;
         const actions = [
             {
@@ -527,11 +528,12 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async sellRam({ commit, state }, { amount }) {
+    async sellRam({ commit, dispatch, state }, { amount }) {
         let transaction = null;
         const actions = [
             {
@@ -560,6 +562,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
         } catch (e) {
             commit('setTransactionError', e);
         }
