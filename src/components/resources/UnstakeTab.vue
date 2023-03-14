@@ -5,6 +5,7 @@ import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { DelegatedResources } from 'src/store/resources/state';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -149,12 +150,12 @@ export default defineComponent({
                 transfer: false,
                 cpu_weight:
                     parseFloat(this.cpuTokens) > 0
-                        ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-                        : `0.0000 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol)
+                        : `0 ${symbol}`,
                 net_weight:
                     parseFloat(this.netTokens) > 0
-                        ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-                        : `0.0000 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol)
+                        : `0 ${symbol}`,
             });
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {

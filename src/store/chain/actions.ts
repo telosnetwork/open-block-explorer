@@ -6,6 +6,7 @@ import axios from 'axios';
 import { api } from 'src/api/index';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain: Chain = getChain();
 
@@ -88,7 +89,9 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
             const quote = Number(rammarket.quote.balance.split(' ')[0]);
             const price = (quote * 1000) / (base - 1000);
             // add 0.5% fee to the price
-            commit('setRamPrice', (price / 0.995).toFixed(4));
+            const formattedPrice = formatCurrency((price / 0.995), 4);
+
+            commit('setRamPrice', formattedPrice);
         } catch (err) {
             console.log('Error', err);
         }

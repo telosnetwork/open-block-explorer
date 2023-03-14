@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { API } from '@greymass/eosio';
 import { getChain } from 'src/config/ConfigManager';
+import { formatCurrency } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'ResourcesInfo',
@@ -11,13 +12,13 @@ export default defineComponent({
         const store = useStore();
         const openCoinDialog = ref<boolean>(false);
         const stakingAccount = ref<string>('');
-        const cpuTokens = ref<string>('0.0000');
-        const netTokens = ref<string>('0.0000');
-        const total = ref<string>('0.0000');
+        const cpuTokens = ref<string>('0');
+        const netTokens = ref<string>('0');
+        const total = ref<string>('0');
         const token = ref<Token>(getChain().getSystemToken());
         const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
         const ramPrice = computed((): string => store.state?.chain.ram_price === '0'
-            ? '0.0000'
+            ? '0'
             : store.state.chain.ram_price);
         const ramAvailable = computed(() =>
             Number(accountData.value.ram_quota) -
@@ -64,10 +65,7 @@ export default defineComponent({
             (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
-        const formatValue = (_val: number): string => {
-            const val = Number(_val || 0);
-            return `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
-        };
+        const formatValue = (val: number): string => formatCurrency(val || 0, token.value.precision, token.value.symbol);
 
         return {
             store,

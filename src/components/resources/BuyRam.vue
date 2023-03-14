@@ -3,7 +3,7 @@ import { defineComponent, ref, computed, watch } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
@@ -35,9 +35,7 @@ export default defineComponent({
                 );
             } else {
                 return (
-                    ((Number(buyAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
-                        4,
-                    ) +
+                    formatCurrency((Number(buyAmount.value) / 1000) * Number(ramPrice.value), 4) +
                     ' ' +
                     buyOptions[0]
                 );
@@ -76,7 +74,7 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (buyOption.value === buyOptions[0]) {
                 if (
-                    buyAmount.value === '0.0000' ||
+                    buyAmount.value === '0' ||
                     '' ||
                     Number(buyAmount.value) >=
                         Number(accountData.value.core_liquid_balance.value)
@@ -126,12 +124,8 @@ export default defineComponent({
             }
         }
 
-        watch(buyOption, (newVal) => {
-            if (newVal === buyOptions[0]) {
-                buyAmount.value = '0.0000';
-            } else {
-                buyAmount.value = '0';
-            }
+        watch(buyOption, () => {
+            buyAmount.value = '0';
         });
 
         return {
@@ -217,7 +211,7 @@ export default defineComponent({
                 v-model="buyAmount"
                 class="full-width"
                 standout="bg-deep-purple-2 text-white"
-                placeholder="0.0000"
+                placeholder="0"
                 :lazy-rules="true"
                 :rules="inputRules"
                 type="text"

@@ -2,7 +2,7 @@
 import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { isValidAccount } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
@@ -210,7 +210,7 @@ export default defineComponent({
                                     v-model="sendAmount"
                                     class="full-width"
                                     standout="bg-deep-purple-2 text-white"
-                                    placeholder="0.0000"
+                                    placeholder="0"
                                     :debounce="1000"
                                     :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
                                     type="text"

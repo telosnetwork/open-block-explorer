@@ -20,6 +20,7 @@ import {
 } from '@greymass/eosio';
 import { getChain } from 'src/config/ConfigManager';
 import { Dialog } from 'quasar';
+import { formatCurrency } from "src/utils/string-utils";
 
 // The maximum fee per transaction this script is willing to accept
 const maxFee = 0.05;
@@ -399,8 +400,12 @@ function determineExpectedActionsLength(costs: CostsType | null) {
     // If there are costs associated with this transaction, 1 new actions is added (the fee)
     if (costs) {
         expectedNewActions += 1;
-        // If there is a RAM cost associated with this transaction, 1 new actio is added (the ram purchase)
-        if (costs.ram !== '0.0000 TLOS') {
+
+        // RAM cost is in format '0.000 TLOS'
+        const ramCostAsNumber = +(costs.ram.replace(/[^0-9.]/g, ''));
+
+        // If there is a RAM cost associated with this transaction, 1 new action is added (the ram purchase)
+        if (ramCostAsNumber !== 0) {
             expectedNewActions += 1;
         }
     }
@@ -430,7 +435,7 @@ function validateActionsContent(
         if (expectedNewActions > 2) {
             validateActionsRamContent(signer, modifiedTransaction);
         }
-        return `${new Number(totalFee).toFixed(4)} TLOS`;
+        return formatCurrency(totalFee, 4, 'TLOS');
     } else {
         return null;
     }

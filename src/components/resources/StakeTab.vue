@@ -4,7 +4,7 @@ import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API } from '@greymass/eosio';
 import { StakeResourcesTransactionData } from 'src/types';
 
@@ -103,12 +103,12 @@ export default defineComponent({
                 transfer: false,
                 stake_cpu_quantity:
                     parseFloat(this.cpuTokens) > 0
-                        ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-                        : `0.0000 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol)
+                        : `0 ${symbol}`,
                 stake_net_quantity:
                     parseFloat(this.netTokens) > 0
-                        ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-                        : `0.0000 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol)
+                        : `0 ${symbol}`,
             } as StakeResourcesTransactionData;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -177,7 +177,7 @@ export default defineComponent({
                     v-model="cpuTokens"
                     class="full-width"
                     standout="bg-deep-purple-2 text-white"
-                    placeholder="0.0000"
+                    placeholder="0"
                     :lazy-rules="true"
                     :rules="inputRules"
                     type="text"
@@ -197,7 +197,7 @@ export default defineComponent({
                     v-model="netTokens"
                     class="full-width"
                     standout="bg-deep-purple-2 text-white"
-                    placeholder="0.0000"
+                    placeholder="0"
                     :lazy-rules="true"
                     :rules="inputRules"
                     type="text"
