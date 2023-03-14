@@ -556,7 +556,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             commit('setTransactionError', e);
         }
     },
-    async moveToSavings({ commit, state }, { amount }) {
+    async moveToSavings({ commit, dispatch, state }, { amount }) {
         let transaction = null;
         const rexToUnstake = formatCurrency((+amount / state.tlosRexRatio), 4, 'REX');
         const actions = [
@@ -586,11 +586,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async moveFromSavings({ commit, state }, { amount }) {
+    async moveFromSavings({ commit, dispatch, state }, { amount }) {
         let transaction = null;
         const rexToUnstake = formatCurrency((+amount / state.tlosRexRatio), 4, 'REX');
 
@@ -621,6 +623,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
