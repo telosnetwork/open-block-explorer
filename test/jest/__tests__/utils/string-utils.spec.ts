@@ -114,7 +114,8 @@ describe('string-utils utility functions', () => {
             expect(formatCurrency(0, 4, 'TLOS')).toBe('0 TLOS');
         });
 
-        it('should not trim trailing zeroes when preserveTrailingZeroes is true', () => {
+        it('should pretty print when skipPrettyPrinting is true', () => {
+            // zero-trimming should be skipped
             expect(formatCurrency('0.0000', 2, null, true)).toBe('0.00');
             expect(formatCurrency('0.0000', 4, null, true)).toBe('0.0000');
             expect(formatCurrency('0.0000', 2, 'USD', true)).toBe('0.00 USD');
@@ -123,6 +124,9 @@ describe('string-utils utility functions', () => {
             expect(formatCurrency('0', 4, null, true)).toBe('0.0000');
             expect(formatCurrency('0', 2, 'USD', true)).toBe('0.00 USD');
             expect(formatCurrency('0', 4, 'TLOS', true)).toBe('0.0000 TLOS');
+
+            // commification should be skipped
+            expect(formatCurrency('1000', 4, 'TLOS', true)).toBe('1000.0000 TLOS');
         });
 
         it('should throw an error when supplied an invalid amount', () => {
