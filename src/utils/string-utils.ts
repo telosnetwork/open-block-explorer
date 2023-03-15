@@ -44,9 +44,10 @@ export function formatCurrency(
         amountAsString = (() => {
             const [integer, fraction] = amountAsString.split('.');
 
-            return `${(+integer).toLocaleString()}.${fraction}`;
+            return `${(+integer).toLocaleString('en')}.${fraction}`;
         })();
     }
+
 
     if (+amountAsString === 0 && !skipPrettyPrinting) {
         amountAsString = '0';
