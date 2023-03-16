@@ -117,7 +117,7 @@ describe('AntilopeStore', () => {
 
         describe('resources.updateResources()', () => {
             it('should dispatch: resources/updateResources', () => {
-                const result = store.resources.updateResources();
+                const result = store.resources.updateResources({});
                 const expected = Promise.resolve();
                 expect(result).toEqual(expected);
             });
