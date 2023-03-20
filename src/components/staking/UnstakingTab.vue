@@ -5,6 +5,7 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 import { assetToAmount } from 'src/utils/string-utils';
+import { QInput } from 'quasar';
 
 const chain = getChain();
 
@@ -18,6 +19,7 @@ export default defineComponent({
         let openTransaction = ref<boolean>(false);
         const unstakeTokens = ref<string>('');
         const symbol = ref<string>(chain.getSystemToken().symbol);
+        const unstakeInput = ref<QInput>(null);
         const transactionId = computed(
             (): string => store.state.account.TransactionId,
         );
@@ -28,6 +30,7 @@ export default defineComponent({
         const rexInfo = computed(() => store.state.account.data.rex_info);
         const rexbal = computed(() => store.state.account.rexbal);
         const maturedRex = computed(() => store.state?.account.maturedRex);
+        const maxUnlend = computed(() => assetToAmount(maturedRex.value) - .0001);
 
         function formatDec() {
             const precision = store.state.chain.token.precision;
@@ -43,13 +46,11 @@ export default defineComponent({
         }
 
         async function unstake() {
+            debugger;
             void store.dispatch('account/resetTransaction');
-            if (
-                unstakeTokens.value === '0' ||
-                !rexbal.value.vote_stake ||
-                Number(unstakeTokens.value) >=
-                Number(rexbal.value.vote_stake.split(' ')[0])
-            ) {
+            console.log(unstakeTokens.value);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+            if ((unstakeInput.value as any).hasError) {
                 return;
             }
             await store.dispatch('account/unstakeRex', {
@@ -62,13 +63,14 @@ export default defineComponent({
         }
 
         function setMaxValue() {
-            unstakeTokens.value = assetToAmount(maturedRex.value).toString();
+            unstakeTokens.value = maxUnlend.value.toString();
             void formatDec();
         }
 
         return {
             openTransaction,
             unstakeTokens,
+            unstakeInput,
             transactionId,
             transactionError,
             formatDec,
@@ -78,6 +80,7 @@ export default defineComponent({
             rexInfo,
             rexbal,
             maturedRex,
+            maxUnlend,
             symbol,
             setMaxValue,
         };
@@ -96,18 +99,19 @@ export default defineComponent({
                         <div class="col-8">{{ `MATURED ${symbol}` }}</div>
                         <div class="col-4">
                             <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxValue">
-                                <div class="text-weight-bold text-right balance-amount">{{maturedRex}}</div>
+                                <div class="text-weight-bold text-right balance-amount">{{ maxUnlend }} {{ symbol }}</div>
                                 <q-icon class="q-ml-xs" name="info"/>
                                 <q-tooltip>Click to fill full amount</q-tooltip>
                             </div>
                         </div>
                     </div>
                     <q-input
+                        ref="unstakeInput"
                         v-model="unstakeTokens"
                         standout="bg-deep-purple-2 text-white"
                         placeholder='0'
                         :lazy-rules='true'
-                        :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]"
+                        :rules="[ val => val >= 0  && val < assetToAmount(maturedRex)  || 'Invalid amount.' ]"
                         type="text"
                         dense
                         dark

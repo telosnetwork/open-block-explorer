@@ -65,7 +65,6 @@ export function formatCurrency(
  * @param {string} asset - the asset value string
  */
 export function assetToAmount(asset: string): number {
-    debugger;
     try {
         const qty: string = asset.split(' ')[0];
         return parseFloat(qty);
