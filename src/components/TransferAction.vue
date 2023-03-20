@@ -3,8 +3,8 @@ import {
     defineComponent,
     PropType,
     computed,
-    ref,
     watch,
+    reactive,
     onMounted,
 } from 'vue';
 import AccountSearch from 'components/AccountSearch.vue';
@@ -32,7 +32,7 @@ export default defineComponent({
         },
     },
     setup(props, context) {
-        const action = ref<ProposalAction>(props.modelValue);
+        const action = reactive<ProposalAction>(props.modelValue);
 
         const mask = computed(() => {
             const { precision } = chain.getSystemToken();
@@ -45,19 +45,11 @@ export default defineComponent({
 
         const token = computed(() => chain.getSystemToken().symbol);
 
-        watch(action.value, (currentValue) => {
-            if (!currentValue.data.quantity.includes(token.value)) {
-                let value = { ...currentValue };
-                value.data.quantity = `${currentValue.data.quantity} ${token.value}`;
-                context.emit('update:modelValue', value);
-            }
-        });
-
-        onMounted(() => {
-            let newAction = { ...props.modelValue };
+        const updateAction = (newAction: ProposalAction) => {
+            let actionToFormat = { ...newAction };
             const { precision } = chain.getSystemToken();
 
-            const numberArray = newAction.data.quantity.match(/\d+/g);
+            const numberArray = actionToFormat.data.quantity.match(/\d+/g);
 
             let quantity = '0';
             let fractionPart = '';
@@ -69,9 +61,24 @@ export default defineComponent({
 
             // slice will cap the fraction part to precision and padEnd will fill the precision with zeros if needed
             quantity += fractionPart.slice(0, precision).padEnd(precision, '0');
-            newAction.data.quantity = quantity;
+            actionToFormat.data.quantity = quantity;
 
-            action.value = newAction;
+            action.data = actionToFormat.data;
+        };
+
+        onMounted(() => {
+            updateAction(props.modelValue);
+        });
+
+        watch(() => props.modelValue, (currentValue) => {
+            updateAction(currentValue);
+        });
+
+        watch(action, (currentValue) => {
+            if (!currentValue.data.quantity.includes(token.value)) {
+                currentValue.data.quantity = `${currentValue.data.quantity} ${token.value}`;
+            }
+            context.emit('update:modelValue', currentValue);
         });
 
         return {
