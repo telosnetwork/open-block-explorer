@@ -46,9 +46,7 @@ export default defineComponent({
         }
 
         async function unstake() {
-            debugger;
             void store.dispatch('account/resetTransaction');
-            console.log(unstakeTokens.value);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
             if ((unstakeInput.value as any).hasError) {
                 return;
