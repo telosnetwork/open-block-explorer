@@ -7,6 +7,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API } from '@greymass/eosio';
 import { StakeResourcesTransactionData } from 'src/types';
+import { assetToAmount } from 'src/utils/string-utils';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -45,19 +46,6 @@ export default defineComponent({
                         minimumFractionDigits: store.state.chain.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
-            }
-        }
-
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
             }
         }
 

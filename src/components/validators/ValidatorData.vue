@@ -8,7 +8,7 @@ import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { Name } from '@greymass/eosio';
-import { formatCurrency } from 'src/utils/string-utils';
+import { formatCurrency, assetToAmount } from 'src/utils/string-utils';
 
 const chain = getChain();
 
@@ -54,18 +54,6 @@ export default defineComponent({
         const amount_voted = ref(0);
         const votesProgress = computed(() => amount_voted.value / supply.value || 0);
 
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
-            }
-        }
         async function getVotingStatistics() {
             await getVoteWeight();
             await updateVoteAmount();

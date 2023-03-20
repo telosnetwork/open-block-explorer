@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
+import { assetToAmount } from 'src/utils/string-utils';
 
 const chain = getChain();
 
@@ -57,19 +58,6 @@ export default defineComponent({
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
                 openTransaction.value = true;
-            }
-        }
-
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
             }
         }
 
