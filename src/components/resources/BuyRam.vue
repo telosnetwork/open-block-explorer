@@ -3,7 +3,7 @@ import { defineComponent, ref, computed, watch } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API, UInt64 } from '@greymass/eosio';
 
 const chain = getChain();
@@ -30,16 +30,14 @@ export default defineComponent({
                     ((Number(buyAmount.value) * 1000) / Number(ramPrice.value)).toFixed(
                         0,
                     ) +
-          ' ' +
-          buyOptions[1]
+                    ' ' +
+                    buyOptions[1]
                 );
             } else {
                 return (
-                    ((Number(buyAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
-                        4,
-                    ) +
-          ' ' +
-          buyOptions[0]
+                    formatCurrency((Number(buyAmount.value) / 1000) * Number(ramPrice.value), 4) +
+                    ' ' +
+                    buyOptions[0]
                 );
             }
         });
@@ -76,10 +74,10 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (buyOption.value === buyOptions[0]) {
                 if (
-                    buyAmount.value === '0.0000' ||
-          '' ||
-          Number(buyAmount.value) >=
-            Number(accountData.value.core_liquid_balance.value)
+                    buyAmount.value === '0' ||
+                    '' ||
+                    Number(buyAmount.value) >=
+                        Number(accountData.value.core_liquid_balance.value)
                 ) {
                     return;
                 }
@@ -90,10 +88,10 @@ export default defineComponent({
             } else {
                 if (
                     buyAmount.value === '0' ||
-          '' ||
-          Number(buyAmount.value) >=
-            (Number(accountData.value.core_liquid_balance.value) * 1000) /
-              Number(ramPrice.value)
+                    '' ||
+                    Number(buyAmount.value) >=
+                        (Number(accountData.value.core_liquid_balance.value) * 1000) /
+                        Number(ramPrice.value)
                 ) {
                     return;
                 }
@@ -110,11 +108,10 @@ export default defineComponent({
 
         function buyLimit(): number {
             if (buyOption.value === buyOptions[0]) {
-                return accountData.value.core_liquid_balance.value;
+                return accountData.value.core_liquid_balance?.value ?? 0;
             } else {
                 return (
-                    (Number(accountData.value.core_liquid_balance.value) * 1000) /
-          Number(ramPrice.value)
+                    (Number(accountData.value.core_liquid_balance?.value ?? 0) * 1000) / Number(ramPrice.value)
                 );
             }
         }
@@ -127,12 +124,8 @@ export default defineComponent({
             }
         }
 
-        watch(buyOption, (newVal) => {
-            if (newVal === buyOptions[0]) {
-                buyAmount.value = '0.0000';
-            } else {
-                buyAmount.value = '0';
-            }
+        watch(buyOption, () => {
+            buyAmount.value = '0';
         });
 
         return {
@@ -210,18 +203,15 @@ export default defineComponent({
         <div class="row q-mb-md">
             <div class="row q-pb-sm full-width">
                 <div class="col-6">{{ `Amount of RAM to buy in ` + buyOption}}</div>
-                <div class="col-6">
-                    <div class="color-grey-3 flex justify-end items-center" @click="buyAmount = (buyLimit() - 0.1).toString()"><span class="text-weight-bold balance-amount">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
-                        <q-icon class="q-ml-xs" name="info"/>
-                        <q-tooltip>Click to fill full amount</q-tooltip>
-                    </div>
+                <div class="col-6 text-right">
+                    <span class="text-weight-bold">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
                 </div>
             </div>
             <q-input
                 v-model="buyAmount"
                 class="full-width"
                 standout="bg-deep-purple-2 text-white"
-                placeholder="0.0000"
+                placeholder="0"
                 :lazy-rules="true"
                 :rules="inputRules"
                 type="text"
@@ -260,8 +250,4 @@ export default defineComponent({
   color: $grey-4
 .grey-3
   color: $grey-3
-
-.balance-amount:hover
-  color: $primary
-  cursor: pointer
 </style>

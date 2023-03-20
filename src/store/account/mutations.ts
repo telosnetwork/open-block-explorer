@@ -6,6 +6,7 @@ import { markRaw } from 'vue';
 
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const symbol = getChain().getSystemToken().symbol;
 
@@ -47,10 +48,10 @@ export const mutations: MutationTree<AccountStateInterface> = {
     },
     ) {
         state.rexbal = params.rexbal;
-        state.coreRexBalance = `${params.coreBalance.toFixed(4)} ${symbol}`;
-        state.maturedRex = `${params.maturedRex.toFixed(4)} ${symbol}`;
-        state.maturingRex = `${params.maturingRex.toFixed(4)} ${symbol}`;
-        state.savingsRex = `${params.savingsRex.toFixed(4)} ${symbol}`;
+        state.coreRexBalance = formatCurrency(params.coreBalance, 4, symbol);
+        state.maturedRex = formatCurrency(params.maturedRex, 4, symbol);
+        state.maturingRex = formatCurrency(params.maturingRex, 4, symbol);
+        state.savingsRex = formatCurrency(params.savingsRex, 4, symbol);
     },
     setVote(state: AccountStateInterface, vote: string[]) {
         state.vote = vote.sort();

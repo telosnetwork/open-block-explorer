@@ -2,11 +2,10 @@
 import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { isValidAccount } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
-import { mapActions } from 'vuex';
 
 const chain = getChain();
 
@@ -50,18 +49,19 @@ export default defineComponent({
 
         const sendTransaction = async (): Promise<void> => {
             void store.dispatch('account/resetTransaction');
-            const actionAccount = sendToken.value.contract;
+            const actionAccount = sendToken.value?.contract;
             const data = {
                 from: account.value,
                 to: receivingAccount.value,
-                quantity: `${sendAmount.value} ${sendToken.value.symbol}`,
+                quantity: `${sendAmount.value} ${sendToken.value?.symbol}`,
                 memo: memo.value,
             };
-            await store.dispatch('account/sendTransaction', {
+            await store.dispatch('account/sendAction', {
                 account: actionAccount,
                 data,
                 name: 'transfer',
             });
+            void store.dispatch('account/loadAccountData');
             context.emit('update-token-balances');
         };
 
@@ -69,8 +69,8 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (availableTokens.value.length > 0) {
                 sendToken.value = availableTokens.value.find(token => (
-                    token.symbol === sendToken.value.symbol &&
-            token.contract === sendToken.value.contract
+                    token.symbol === sendToken.value?.symbol &&
+                    token.contract === sendToken.value?.contract
                 ));
             }
         };
@@ -136,8 +136,26 @@ export default defineComponent({
             isValidAccount,
             formatDec,
             resetForm,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
         };
+    },
+    // watch availableTokens and if it changes print the new value
+    watch: {
+        availableTokens: {
+            handler() {
+                if (this.availableTokens.length > 0) {
+                    this.sendToken = this.availableTokens.find(token => (
+                        token.symbol === this.sendToken.symbol &&
+                        token.contract === this.sendToken.contract
+                    ));
+                }
+
+                if (!this.sendToken || this.sendToken.amount === 0) {
+                    this.openCoinDialog = true;
+                }
+            },
+            deep: true,
+            immediate: true,
+        },
     },
 });
 </script>
@@ -162,9 +180,10 @@ export default defineComponent({
                     icon="clear"
                 />
             </div>
-            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 maxSize">
+            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 max-dialog-width">
                 <div class="row">
-                    <q-card-section><img class="send-img q-pr-md" src="~assets/send.svg">
+                    <q-card-section>
+                        <img class="send-img q-pr-md" src="~assets/send.svg">
                         <div class="text-h4 q-pb-md inline-block color-grey-3">Send Tokens</div>
                     </q-card-section>
                 </div>
@@ -202,7 +221,7 @@ export default defineComponent({
                                     <div>AMOUNT</div>
                                     <q-space/>
                                     <div class="row flex-center q-hoverable cursor-pointer" @click="setMaxValue">
-                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ sendToken?.amount ? `${sendToken.amount } AVAILABLE` : '--' }}</div>
+                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount ?? 0 } AVAILABLE` }}</div>
                                         <q-icon class="q-ml-xs" name="info"/>
                                         <q-tooltip>Click to fill full amount</q-tooltip>
                                     </div>
@@ -211,7 +230,7 @@ export default defineComponent({
                                     v-model="sendAmount"
                                     class="full-width"
                                     standout="bg-deep-purple-2 text-white"
-                                    placeholder="0.0000"
+                                    placeholder="0"
                                     :debounce="1000"
                                     :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
                                     type="text"
@@ -253,8 +272,11 @@ export default defineComponent({
                     <q-card-section v-if="transactionId">
                         <div class="row">
                             <div class="col-12">
-                                <div class="row">You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ receivingAccount }}.</div>
-                                <div class="row ellipsis-overflow" @click="navToTransaction">Click to view transaction: {{ transactionId }}</div>
+                                <div>You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ receivingAccount }}.</div>
+                            </div>
+                            <div class="col-12">
+                                Click to view transaction:
+                                <a class="ellipsis-overflow text-blue" @click="navToTransaction">{{ transactionId }}</a>
                             </div>
                         </div>
                     </q-card-section>
@@ -265,12 +287,17 @@ export default defineComponent({
                             </div>
                         </div>
                     </q-card-section>
-                    <q-btn
-                        v-close-popup
-                        class="close-dialog"
-                        label="Close"
-                        @click="setDefaults"
-                    />
+                    <div class="row">
+                        <div class="col-12 flex justify-end">
+                            <q-btn
+                                v-close-popup
+                                flat
+                                class="close-dialog"
+                                label="Close"
+                                @click="setDefaults"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -280,6 +307,9 @@ export default defineComponent({
 </template>
 
 <style lang="sass" scoped>
+.transaction-result
+    color: white
+
 
 .sendCard
   color: $grey-6

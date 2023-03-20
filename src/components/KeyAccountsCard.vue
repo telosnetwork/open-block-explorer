@@ -65,7 +65,7 @@ export default defineComponent({
 <template>
 
 <div class="row justify-center q-py-xl">
-    <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6 container">
+    <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6 container-max-width">
         <div class="q-pa-sm">
             <q-card>
                 <q-card-section>
@@ -130,8 +130,6 @@ export default defineComponent({
 	text-decoration: none
 	&:hover
 		text-decoration: none
-.container
-	max-width: 98vw
 .key-field
 	word-wrap: break-word
 </style>

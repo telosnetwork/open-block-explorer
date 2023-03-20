@@ -5,6 +5,7 @@ import { Token } from 'src/types';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
+import { formatCurrency } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'RefundTab',
@@ -15,7 +16,7 @@ export default defineComponent({
         const store = useStore();
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>('');
-        const total = ref<string>('0.0000');
+        const total = ref<string>('0');
         const progress = ref<number>(0.2);
         const refundRequest = computed((): API.v1.AccountRefundRequest => accountData.value?.refund_request);
         const cpuAmount = computed(
@@ -28,47 +29,42 @@ export default defineComponent({
         const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
         const totalRefund = computed((): string => {
             const totalRefund = refundRequest.value
-                ? (
-                    refundRequest.value.cpu_amount.value +
-            refundRequest.value.net_amount.value
-                ).toFixed(4)
+                ? formatCurrency((refundRequest.value.cpu_amount.value + refundRequest.value.net_amount.value), 4)
                 : 0;
             return `${totalRefund} ${token.value.symbol}`;
         });
 
         function formatStaked(staked: number): string {
-            const stakedValue = (
-                staked / Math.pow(10, token.value.precision)
-            ).toFixed(2);
-            return `${stakedValue} ${token.value.symbol}`;
+            const stakedValue = staked / Math.pow(10, token.value.precision);
+            return formatCurrency(stakedValue, 2, token.value.symbol);
         }
 
         function refundProgress(): number {
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value.refund_request?.request_time.toString() + 'Z',
-                ).toUTCString(),
-            ).getTime() / 1000,
-        ) +
-        259200 -
-        Math.round(new Date(Date.now()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value.refund_request?.request_time.toString() + 'Z',
+                        ).toUTCString(),
+                    ).getTime() / 1000,
+                ) +
+                259200 -
+                Math.round(new Date(Date.now()).getTime() / 1000);
             let time = diff / 259200;
             return time > 0 ? time : 0;
         }
 
         function refundCountdown(): string {
             let diff =
-        Math.round(
-            new Date(
-                new Date(
-                    accountData.value?.refund_request?.request_time.toString() + 'Z',
-                ),
-            ).getTime() / 1000,
-        ) +
-        259200 -
-        Math.round(new Date(new Date().toISOString()).getTime() / 1000);
+                Math.round(
+                    new Date(
+                        new Date(
+                            accountData.value?.refund_request?.request_time.toString() + 'Z',
+                        ),
+                    ).getTime() / 1000,
+                ) +
+                259200 -
+                Math.round(new Date(new Date().toISOString()).getTime() / 1000);
             if (diff > 0) {
                 var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
                     hours = component(diff, 60 * 60) % 24; // hours
@@ -97,7 +93,7 @@ export default defineComponent({
             formatStaked,
             refundProgress,
             refundCountdown,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            ...mapActions({ sendAction: 'account/sendAction' }),
             transactionId: ref<string>(null),
             transactionError: null,
         };
@@ -112,12 +108,12 @@ export default defineComponent({
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-          await this.signTransaction({
-              account: 'eosio',
-              name: 'refund',
-              data,
-          })
-        ).transactionId as string;
+                    await this.sendAction({
+                        account: 'eosio',
+                        name: 'refund',
+                        data,
+                    })
+                ).transactionId as string;
             } catch (e) {
                 this.transactionError = e;
             }

@@ -12,6 +12,7 @@ import SavingsTab from 'src/components/staking/SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { API } from '@greymass/eosio';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const symbol = getChain().getSystemToken().symbol;
 
@@ -57,10 +58,13 @@ export default defineComponent({
                 account: store.state.account.accountName,
             });
         };
+
+        const prettyRexFund = computed(() => formatCurrency(rexfund.value, 4, symbol.value));
+
         return {
             openCoinDialog: ref<boolean>(false),
             recievingAccount: ref<string>(''),
-            sendAmount: ref<string>('0.0000'),
+            sendAmount: ref<string>('0'),
             memo: ref<string>(''),
             tab: ref('stake'),
             rexfund,
@@ -68,7 +72,8 @@ export default defineComponent({
             transactionError,
             transactionId,
             withdrawRexFund,
-            ...mapActions({ signTransaction: 'account/sendTransaction' }),
+            prettyRexFund,
+            ...mapActions({ sendAction: 'account/sendAction' }),
         };
     },
     computed: {
@@ -89,12 +94,12 @@ export default defineComponent({
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-          await this.signTransaction({
-              account: actionAccount,
-              data,
-              name: 'transfer',
-          })
-        ).transactionId as string;
+                    await this.sendAction({
+                        account: actionAccount,
+                        data,
+                        name: 'transfer',
+                    })
+                ).transactionId as string;
             } catch (e) {
                 this.transactionError = e as string;
             }
@@ -151,7 +156,7 @@ export default defineComponent({
                     icon="clear"
                 />
             </div>
-            <div class="col-xs-12 col-sm-10 col-md-7 col-lg-7 maxSize">
+            <div class="col-xs-12 col-sm-10 col-md-7 col-lg-7 max-dialog-width">
                 <div class="row q-pl-sm">
                     <div class="text-h4 q-pb-md inline-block color-grey-3 inline">Staking (REX)</div>
                     <div class="text-h5 q-pb-md inline-block color-grey-3 inline float-right">APY: {{ apy }}</div>
@@ -160,7 +165,7 @@ export default defineComponent({
                     <StakingInfo/>
                     <div v-if="rexfund > 0" class="q-pt-lg q-pl-lg">
                         <div class="row q-col-gutter-md items-center">
-                            <div class="col-auto text-h6 text-white">REX fund: {{rexfund.toFixed(4)}} {{symbol}}</div>
+                            <div class="col-auto text-h6 text-white">REX fund: {{ prettyRexFund }}</div>
                             <div class="col-auto">
                                 <q-btn
                                     class="full-width button-accent"

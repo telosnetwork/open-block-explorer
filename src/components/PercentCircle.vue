@@ -36,7 +36,7 @@ export default defineComponent({
         const formatResourcePercent = computed(() =>
             fraction.value && total.value
                 ? ((fraction.value / total.value) * 100.0).toFixed(2)
-                : '0.00',
+                : '0',
         );
         const strokeColor = computed(() =>
             parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white',

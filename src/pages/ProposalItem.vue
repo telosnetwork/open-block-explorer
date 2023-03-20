@@ -203,8 +203,8 @@ export default defineComponent({
                     });
 
                     actionSkip += actionLimit;
-                } catch (error) {
-                    console.error(error);
+                } catch (e) {
+                    console.error(e);
                 }
             }
 

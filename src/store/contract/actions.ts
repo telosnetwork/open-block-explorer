@@ -7,9 +7,7 @@ export const actions: ActionTree<ContractStateInterface, StateInterface> = {
         commit('setContract', contractAddress);
         await dispatch('getContractInfo', contractAddress);
     },
-    getContractInfo({ commit }, contractAddress) {
-    //await getContract  via api
-        console.log(contractAddress); //unused var otherwise
+    getContractInfo({ commit }) {
         const response: { creator: string } = { creator: 'bob' }; //mock
         commit('setCreator', response.creator);
     },

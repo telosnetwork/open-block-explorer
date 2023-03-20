@@ -28,7 +28,6 @@ export default {
     <ChainsSidebar v-if="showSidebar()"/>
     <q-page-container>
         <router-view/>
-        <q-separator/>
     </q-page-container>
     <q-footer>
         <AppFooter/>

@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { API } from '@greymass/eosio';
 import { getChain } from 'src/config/ConfigManager';
+import { formatCurrency } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'ResourcesInfo',
@@ -11,43 +12,42 @@ export default defineComponent({
         const store = useStore();
         const openCoinDialog = ref<boolean>(false);
         const stakingAccount = ref<string>('');
-        const cpuTokens = ref<string>('0.0000');
-        const netTokens = ref<string>('0.0000');
-        const total = ref<string>('0.0000');
+        const cpuTokens = ref<string>('0');
+        const netTokens = ref<string>('0');
+        const total = ref<string>('0');
         const token = ref<Token>(getChain().getSystemToken());
         const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
         const ramPrice = computed((): string => store.state?.chain.ram_price === '0'
-            ? '0.0000'
+            ? '0'
             : store.state.chain.ram_price);
-        const ramAvailable = computed(
-            () =>
-                Number(accountData.value.ram_quota) -
-        Number(accountData.value.ram_usage),
+        const ramAvailable = computed(() =>
+            Number(accountData.value.ram_quota) -
+            Number(accountData.value.ram_usage),
         );
         const delegatedResources = computed(() => {
             const totalStakedResources =
-        Number(accountData.value.cpu_weight.value) /
-          Math.pow(10, token.value.precision) +
-        Number(accountData.value.net_weight.value) /
-          Math.pow(10, token.value.precision);
+                Number(accountData.value.cpu_weight.value) /
+                    Math.pow(10, token.value.precision) +
+                Number(accountData.value.net_weight.value) /
+                    Math.pow(10, token.value.precision);
             const selfStakedResources =
-        Number(
-            accountData.value.self_delegated_bandwidth?.net_weight.value
-                ? accountData.value.self_delegated_bandwidth.net_weight.value
-                : '0',
-        ) +
-        Number(
-            accountData.value.self_delegated_bandwidth?.cpu_weight.value
-                ? accountData.value.self_delegated_bandwidth.cpu_weight.value
-                : '0',
-        );
+                Number(
+                    accountData.value.self_delegated_bandwidth?.net_weight.value
+                        ? accountData.value.self_delegated_bandwidth.net_weight.value
+                        : '0',
+                ) +
+                Number(
+                    accountData.value.self_delegated_bandwidth?.cpu_weight.value
+                        ? accountData.value.self_delegated_bandwidth.cpu_weight.value
+                        : '0',
+                );
             return totalStakedResources - selfStakedResources;
         });
 
         const accountTotal = computed(() => {
             let value = 0;
             if (accountData.value) {
-                value = accountData.value?.core_liquid_balance.value;
+                value = accountData.value?.core_liquid_balance?.value ?? 0;
             }
             return value;
         });
@@ -61,13 +61,11 @@ export default defineComponent({
         );
 
         const totalRefund = computed((): number =>
-            accountData.value && accountData.value.refund_request
-                ? accountData.value.refund_request.cpu_amount.value +
-          accountData.value.refund_request.net_amount.value
-                : 0,
+            (accountData.value?.refund_request?.cpu_amount.value ?? 0) +
+            (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
-        const formatValue = (val: number): string => `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
+        const formatValue = (val: number): string => formatCurrency(val || 0, token.value.precision, token.value.symbol);
 
         return {
             store,

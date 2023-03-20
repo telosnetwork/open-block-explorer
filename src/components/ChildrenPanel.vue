@@ -47,7 +47,7 @@ export default defineComponent({
 </script>
 <template>
 
-<div class="row col-12 q-mt-lg q-mb-xs q-px-xl justify-center text-left">
+<div class="row col-12 q-mt-lg q-mb-xs q-px-xl justify-center text-left container-max-width">
     <p class="panel-title">Children</p>
     <q-space/>
     <q-separator class="row col-12 q-mt-md separator"/>

@@ -3,10 +3,11 @@ import { ActionTree } from 'vuex';
 import { StateInterface } from 'src/store/index';
 import { AccountStateInterface } from 'src/store/account/state';
 import { api } from 'src/api/index';
-import { GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
+import { Action, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
 import { FuelUserWrapper } from 'src/api/fuel';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -16,7 +17,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         await (authenticator as Authenticator).init();
         if (!account) {
             const requestAccount = await (
-        authenticator as Authenticator
+                authenticator as Authenticator
             ).shouldRequestAccountName();
             if (requestAccount) {
                 commit('setRequestAccount', true);
@@ -24,7 +25,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             }
         }
         const users = await (authenticator as Authenticator).login();
-        if (users.length) {
+        if (users?.length) {
             const account = new FuelUserWrapper(users[0]);
             const permission = (account as unknown as { requestPermission: string })
                 .requestPermission;
@@ -53,7 +54,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async loadAccountData({ commit, state }) {
         try {
             const data = await api.getAccount(state.accountName);
-            commit('account/setAccountData', data);
+            commit('setAccountData', data);
         } catch (e) {
             return;
         }
@@ -88,21 +89,21 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             upper_bound: account as TableIndexType,
         } as GetTableRowsParams;
         const rexfund = (
-      (await api.getTableRows(paramsrexfund)) as {
-        rows: {
-          owner: string;
-          balance: string;
-        }[];
-      }
+            (await api.getTableRows(paramsrexfund)) as {
+                rows: {
+                owner: string;
+                balance: string;
+                }[];
+            }
         ).rows[0];
         const rexFundBalance =
-      rexfund && rexfund.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
+            rexfund?.balance ? Number(rexfund.balance.split(' ')[0]) : 0.0;
         commit('setRexFund', rexFundBalance);
         const rexbal = rexbalRows.rows[0];
         const rexBalance =
-      rexbal && rexbal.rex_balance
-          ? parseFloat(rexbal.rex_balance.split(' ')[0])
-          : 0;
+            rexbal && rexbal.rex_balance
+                ? parseFloat(rexbal.rex_balance.split(' ')[0])
+                : 0;
         const totalRex = Number(rexpool.total_rex.split(' ')[0]);
         const totalLendable = Number(rexpool.total_lendable.split(' ')[0]);
         const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
@@ -140,26 +141,47 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 maturedRex,
             });
         }
-        const filter =
-      'eosio:sellrex,eosio:buyrex,eosio:deposit,eosio:withdraw,eosio:unstaketorex,eosio:cnclrexorder,eosio:rentcpu,eosio:rentnet,eosio:fundcpuloan,eosio:fundnetloan,eosio:defcpuloan,eosio:defnetloan,eosio:updaterex,eosio:consolidate,eosio:closerex,eosio:mvfrsavings,eosio:mvtosavings,eosio:rexexec';
+        const filter = [
+            'eosio:sellrex',
+            'eosio:buyrex',
+            'eosio:deposit',
+            'eosio:withdraw',
+            'eosio:unstaketorex',
+            'eosio:cnclrexorder',
+            'eosio:rentcpu',
+            'eosio:rentnet',
+            'eosio:fundcpuloan',
+            'eosio:fundnetloan',
+            'eosio:defcpuloan',
+            'eosio:defnetloan',
+            'eosio:updaterex',
+            'eosio:consolidate',
+            'eosio:closerex',
+            'eosio:mvfrsavings',
+            'eosio:mvtosavings',
+            'eosio:rexexec',
+        ].join(',');
         const rexActions = (await api.getActions(account, filter)).actions;
         commit('setRexActions', rexActions);
     },
-    async sendTransaction({ commit, state }, { account, data, name }) {
-        let transaction = null;
+    async sendAction({ state, dispatch }, { account, data, name, actor, permission }) {
         const actions = [
             {
-                account: account as string,
+                account: account as string ?? state.abi.account_name,
                 name: name as string,
                 authorization: [
                     {
-                        actor: state.accountName,
-                        permission: state.accountPermission,
+                        actor: actor as string ?? state.accountName,
+                        permission: permission as string ?? state.accountPermission,
                     },
                 ],
                 data: data as unknown,
             },
         ];
+        return dispatch('sendTransaction', actions);
+    },
+    async sendTransaction({ commit, state }, actions: Action[]) {
+        let transaction = null;
         try {
             transaction = await state.user.signTransaction(
                 {
@@ -172,13 +194,14 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             );
             commit('setTransaction', transaction.transactionId);
         } catch (e) {
+            console.error(e);
             commit('setTransactionError', e);
         }
         return transaction;
     },
-    async stakeRex({ commit, state }, { amount }) {
+    async stakeRex({ commit, dispatch, state }, { amount }) {
         let transaction = null;
-        const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
+        const quantityStr = formatCurrency(amount, 4, symbol, true);
         const actions = [
             {
                 account: 'eosio',
@@ -220,11 +243,13 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async unstakeRex({ commit, state }, { amount }) {
+    async unstakeRex({ commit, dispatch, state }, { amount }) {
         let transaction = null;
         const tokenRexBalance = state.rexbal.rex_balance
             ? Number(state.rexbal.rex_balance.split(' ')[0])
@@ -232,8 +257,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         if (tokenRexBalance === 0) {
             return;
         }
-        const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
-        const rexToUnstake = (Number(amount) / state.tlosRexRatio).toFixed(4);
+        const quantityStr = formatCurrency(amount, 4, symbol, true);
+        const rexToUnstake = formatCurrency(+amount / state.tlosRexRatio, 4, null, true);
 
         //   TODO check maturities
         const actions = [
@@ -277,13 +302,15 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
     async unstakeRexFund({ commit, state }, { amount }) {
         let transaction = null;
-        const quantityStr = `${Number(amount).toFixed(4)} ${symbol}`;
+        const quantityStr = formatCurrency(amount, 4, symbol, true);
 
         const actions = [
             {
@@ -316,10 +343,10 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             commit('setTransactionError', e);
         }
     },
-    async stakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
+    async stakeCpuNetRex({ commit, dispatch, state }, { cpuAmount, netAmount }) {
         let transaction = null;
-        const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
-        const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
+        const quantityStrCPU = formatCurrency(cpuAmount, 4, symbol, true);
+        const quantityStrNET = formatCurrency(netAmount, 4, symbol, true);
         const actions = [
             {
                 account: 'eosio',
@@ -349,14 +376,16 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async unstakeCpuNetRex({ commit, state }, { cpuAmount, netAmount }) {
+    async unstakeCpuNetRex({ commit, dispatch, state }, { cpuAmount, netAmount }) {
         let transaction = null;
-        const quantityStrCPU = `${Number(cpuAmount).toFixed(4)} ${symbol}`;
-        const quantityStrNET = `${Number(netAmount).toFixed(4)} ${symbol}`;
+        const quantityStrCPU = formatCurrency(cpuAmount, 4, symbol, true);
+        const quantityStrNET = formatCurrency(netAmount, 4, symbol, true);
         const actions = [
             {
                 account: 'eosio',
@@ -386,6 +415,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
@@ -397,40 +428,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
     async updateABI({ commit }, account: string) {
         const abi = await api.getABI(account);
         commit('setABI', abi);
-    },
-    async pushTransaction(
-        { commit, state },
-        { action, actor, permission, data },
-    ) {
-        let transaction = null;
-        const actions = [
-            {
-                account: state.abi.account_name,
-                name: action as string,
-                authorization: [
-                    {
-                        actor: actor as string,
-                        permission: permission as string,
-                    },
-                ],
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                data,
-            },
-        ];
-        try {
-            transaction = await state.user.signTransaction(
-                {
-                    actions,
-                },
-                {
-                    blocksBehind: 3,
-                    expireSeconds: 180,
-                },
-            );
-            commit('setTransaction', transaction.transactionId);
-        } catch (e) {
-            commit('setTransactionError', e);
-        }
     },
     async sendVoteTransaction({ commit, state }) {
         let transaction = null;
@@ -466,7 +463,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             commit('setTransactionError', e);
         }
     },
-    async buyRam({ commit, state }, { amount, receivingAccount }) {
+    async buyRam({ commit, dispatch, state }, { amount, receivingAccount }) {
         let transaction = null;
         const actions = [
             {
@@ -496,11 +493,12 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async buyRamBytes({ commit, state }, { amount, receivingAccount }) {
+    async buyRamBytes({ commit, dispatch, state }, { amount, receivingAccount }) {
         let transaction = null;
         const actions = [
             {
@@ -530,11 +528,12 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async sellRam({ commit, state }, { amount }) {
+    async sellRam({ commit, dispatch, state }, { amount }) {
         let transaction = null;
         const actions = [
             {
@@ -563,14 +562,14 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async moveToSavings({ commit, state }, { amount }) {
+    async moveToSavings({ commit, dispatch, state }, { amount }) {
         let transaction = null;
-        const rexToUnstake =
-      (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+        const rexToUnstake = formatCurrency((+amount / state.tlosRexRatio), 4, 'REX', true);
         const actions = [
             {
                 account: 'eosio',
@@ -598,14 +597,16 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }
     },
-    async moveFromSavings({ commit, state }, { amount }) {
+    async moveFromSavings({ commit, dispatch, state }, { amount }) {
         let transaction = null;
-        const rexToUnstake =
-      (Number(amount) / state.tlosRexRatio).toFixed(4) + ' REX';
+        const rexToUnstake = formatCurrency((+amount / state.tlosRexRatio), 4, 'REX', true);
+
         const actions = [
             {
                 account: 'eosio',
@@ -633,6 +634,8 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
                 },
             );
             commit('setTransaction', transaction.transactionId);
+            void dispatch('loadAccountData');
+            void dispatch('updateRexData', { account: state.accountName });
         } catch (e) {
             commit('setTransactionError', e);
         }

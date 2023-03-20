@@ -12,12 +12,12 @@ export default defineComponent({
         const store = useStore();
         const account = computed((): string => store.state.account.accountName);
         function getTree(actions: Action[]): TreeNode[] {
-            var array = [] as TreeNode[];
-            for (var action of actions) {
-                var act = action.act;
-                var obj = {} as TreeNode;
-                var children = [] as TreeNode[];
-                if (action.notified.length > 1) {
+            let array = [] as TreeNode[];
+            for (let action of actions) {
+                let act = action.act;
+                let obj = {} as TreeNode;
+                let children = [] as TreeNode[];
+                if ((action?.notified ?? []).length > 1) {
                     children.push({
                         label: action.global_sequence.toString(),
                         body: 'notification',

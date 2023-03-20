@@ -14,6 +14,7 @@ import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();
 export default defineComponent({
@@ -75,11 +76,10 @@ export default defineComponent({
         const accountData = ref<API.v1.AccountObject>();
         const availableTokens = ref<Token[]>([]);
 
+
         const stakedRefund = computed((): number =>
-            accountData.value && accountData.value.refund_request
-                ? accountData.value.refund_request?.cpu_amount.value +
-          accountData.value.refund_request?.net_amount.value
-                : 0,
+            (accountData.value?.refund_request?.cpu_amount.value ?? 0) +
+            (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
         const staked = computed((): number => stakedRefund.value + stakedNET.value + stakedCPU.value);
@@ -99,10 +99,12 @@ export default defineComponent({
 
         const totalValueString = computed((): string => {
             let result = '';
+
+            const usd = formatCurrency(totalValue.value ?? 0, 2);
+            const tokenPrice = formatCurrency(usdPrice.value ?? 0, 4);
+
             if (totalValue.value && usdPrice.value) {
-                result = `$${totalValue.value.toFixed(2)} (@ $${usdPrice.value.toFixed(
-                    4,
-                )}/${chain.getSystemToken().symbol})`;
+                result = `$${usd} (@ $${tokenPrice}/${chain.getSystemToken().symbol})`;
             }
             return result;
         });
@@ -163,8 +165,8 @@ export default defineComponent({
                 );
 
                 stakedResources.value =
-          Number(accountData.value.total_resources.cpu_weight.value) +
-          Number(accountData.value.total_resources.net_weight.value);
+                    Number(accountData.value.total_resources.cpu_weight.value) +
+                    Number(accountData.value.total_resources.net_weight.value);
 
                 stakedCPU.value = Number(
                     accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
@@ -194,10 +196,10 @@ export default defineComponent({
         const loadAccountCreatorInfo = async () => {
             try {
                 const creatorData = (await api.getCreator(props.account)) as {
-          creator: string;
-          timestamp: string;
-          trx_id: string;
-        };
+                    creator: string;
+                    timestamp: string;
+                    trx_id: string;
+                };
                 creatingAccount.value = creatorData.creator;
                 createTime.value = creatorData.timestamp;
                 createTransaction.value = creatorData.trx_id;
@@ -217,18 +219,18 @@ export default defineComponent({
                 upper_bound: props.account as unknown as TableIndexType,
             } as GetTableRowsParams;
             const rexfund = (
-        (await api.getTableRows(paramsrexfund)) as {
-          rows: {
-            owner: string;
-            balance: string;
-          }[];
-        }
+                (await api.getTableRows(paramsrexfund)) as {
+                    rows: {
+                        owner: string;
+                        balance: string;
+                    }[];
+                }
             ).rows[0];
 
             const rexFundBalance =
-        rexfund && rexfund.balance
-            ? Number(rexfund.balance.split(' ')[0])
-            : 0.0;
+                rexfund && rexfund.balance
+                    ? Number(rexfund.balance.split(' ')[0])
+                    : 0.0;
             return rexFundBalance;
         };
 
@@ -246,13 +248,13 @@ export default defineComponent({
             const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
                 .rows[0];
             const totalRexBalance =
-        rexBal && rexBal.rex_balance
-            ? Number(rexBal.rex_balance.split(' ')[0])
-            : 0;
+                rexBal?.rex_balance
+                    ? Number(rexBal.rex_balance.split(' ')[0])
+                    : 0;
             const staked =
-        rexBal && rexBal.vote_stake
-            ? Number(rexBal.vote_stake.split(' ')[0])
-            : 0;
+                rexBal?.vote_stake
+                    ? Number(rexBal.vote_stake.split(' ')[0])
+                    : 0;
 
             const paramsrexpool = {
                 code: 'eosio',
@@ -327,10 +329,13 @@ export default defineComponent({
         };
 
         const formatAsset = (val: number | string): string => {
+            if (typeof val === 'undefined') {
+                return '--';
+            }
             console.assert(typeof val === 'number' || typeof val === 'string', val);
             return typeof val === 'string'
                 ? val
-                : `${val.toFixed(4)} ${chain.getSystemToken().symbol}`;
+                : formatCurrency(val, 4, chain.getSystemToken().symbol);
         };
 
         const resetBalances = () => {
@@ -421,7 +426,7 @@ export default defineComponent({
         <q-card-section class="resources-container">
             <div class="inline-section">
                 <div class="row justify-center full-height items-center">
-                    <div v-if="account !== system_account" class="col-5">
+                    <div v-if="account !== system_account" class="col-6">
                         <div class="text-title">{{ account }}</div>
                     </div>
                     <div v-else class="col-2">
@@ -491,7 +496,7 @@ export default defineComponent({
                 <div class="col-3">
                     <q-btn
                         v-if='isAccount'
-                        :disabled="tokensLoading || isLoading"
+                        :disable="tokensLoading || isLoading"
                         :label='tokensLoading ? "Loading..." : "Send"'
                         color='primary'
                         class="full-width"
@@ -501,18 +506,20 @@ export default defineComponent({
                 <div class="col-3">
                     <q-btn
                         v-if="isAccount"
+                        :disable="tokensLoading || isLoading"
+                        :label='tokensLoading ? "Loading..." : "Resources"'
                         class="full-width"
                         color="primary"
-                        label="Resources"
                         @click="openResourcesDialog = true"
                     />
                 </div>
                 <div class="col-3">
                     <q-btn
                         v-if="isAccount"
+                        :disable="tokensLoading || isLoading"
+                        :label='tokensLoading ? "Loading..." : "Staking (REX)"'
                         class="ellipsis full-width"
                         color="primary"
-                        label="staking (REX)"
                         @click="openStakingDialog = true"
                     />
                 </div>
@@ -573,9 +580,20 @@ export default defineComponent({
             </thead>
         </q-markup-table>
         <div v-if="isAccount">
-            <SendDialog v-model="openSendDialog" :availableTokens="availableTokens" @update-token-balances="updateTokenBalances"/>
-            <ResourcesDialog v-model="openResourcesDialog"/>
-            <StakingDialog v-model="openStakingDialog" :availableTokens="availableTokens"/>
+            <SendDialog
+                v-if="openSendDialog"
+                v-model="openSendDialog"
+                :availableTokens="availableTokens"
+                @update-token-balances="updateTokenBalances"
+            />
+            <ResourcesDialog
+                v-if="openResourcesDialog"
+                v-model="openResourcesDialog"
+            />
+            <StakingDialog
+                v-model="openStakingDialog"
+                :availableTokens="availableTokens"
+            />
         </div>
     </q-card>
     <q-card v-else class="account-card">
@@ -641,7 +659,7 @@ $medium:750px
     border-width: 0
 
 .inline-section
-  width:100%
+  width: 100%
   display: inline-block
 
 .resources
