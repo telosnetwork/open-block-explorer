@@ -435,7 +435,7 @@ function validateActionsContent(
         if (expectedNewActions > 2) {
             validateActionsRamContent(signer, modifiedTransaction);
         }
-        return formatCurrency(totalFee, 4, 'TLOS');
+        return formatCurrency(totalFee, 4, 'TLOS', true);
     } else {
         return null;
     }

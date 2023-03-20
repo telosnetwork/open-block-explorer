@@ -103,12 +103,12 @@ export default defineComponent({
                 transfer: false,
                 stake_cpu_quantity:
                     parseFloat(this.cpuTokens) > 0
-                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol)
-                        : `0 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol, true)
+                        : `0.0000 ${symbol}`,
                 stake_net_quantity:
                     parseFloat(this.netTokens) > 0
-                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol)
-                        : `0 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol, true)
+                        : `0.0000 ${symbol}`,
             } as StakeResourcesTransactionData;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

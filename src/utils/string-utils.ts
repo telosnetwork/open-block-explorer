@@ -17,11 +17,13 @@ export function isValidTransactionHex(hexString: string): boolean {
  * @param {number|string} amount - the quantity of the currency
  * @param {number} precision - the number of decimal places to be preserved
  * @param {string} symbol - optional, the symbol of the currency
+ * @param {boolean} skipPrettyPrinting - optional, whether to prevent commification & the trimming of trailing zeroes
  */
 export function formatCurrency(
     amount: string | number,
     precision: number,
     symbol?: string,
+    skipPrettyPrinting?: boolean,
 ): string {
     const floatingPointNumberRegex = /^-?(0|[1-9]\d*)(\.\d+)?$/;
     const amountIsValid =
@@ -37,14 +39,17 @@ export function formatCurrency(
     // ensure correct precision
     amountAsString = (+amountAsString).toFixed(precision);
 
-    // commify
-    amountAsString = (() => {
-        const [integer, fraction] = amountAsString.split('.');
+    if (!skipPrettyPrinting) {
+        // commify
+        amountAsString = (() => {
+            const [integer, fraction] = amountAsString.split('.');
 
-        return `${(+integer).toLocaleString()}.${fraction}`;
-    })();
+            return `${(+integer).toLocaleString('en')}.${fraction}`;
+        })();
+    }
 
-    if (+amountAsString === 0) {
+
+    if (+amountAsString === 0 && !skipPrettyPrinting) {
         amountAsString = '0';
     }
 

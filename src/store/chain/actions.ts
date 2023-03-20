@@ -89,7 +89,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
             const quote = Number(rammarket.quote.balance.split(' ')[0]);
             const price = (quote * 1000) / (base - 1000);
             // add 0.5% fee to the price
-            const formattedPrice = formatCurrency((price / 0.995), 4);
+            const formattedPrice = formatCurrency((price / 0.995), 4, null, true);
 
             commit('setRamPrice', formattedPrice);
         } catch (err) {
