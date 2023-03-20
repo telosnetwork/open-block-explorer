@@ -44,6 +44,13 @@ export default defineComponent({
             isLoading.value = false;
         });
 
+        watch(props, async (currentValue) => {
+            if (currentValue.modelValue) {
+                inputValue.value = currentValue.modelValue;
+                await searchAccounts(currentValue.modelValue);
+            }
+        });
+
         onMounted(async () => {
             if (props.modelValue) {
                 inputValue.value = props.modelValue;
