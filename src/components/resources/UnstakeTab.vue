@@ -62,8 +62,6 @@ export default defineComponent({
         const isUpdating = computed(() => store.resources.isLoading('updateResources'));
         const isUnstaking = computed(() => store.resources.isLoading('undelegateResources'));
         const loading = computed(() => store.resources.getLoading());
-
-        // const selectOptions = ref<{label:string, value:DelegatedResources}[]>([]);
         const selectModel = ref<{label:string, value:DelegatedResources}>({ label: '', value: null });
         const receiverAccount = computed((): string => selectModel.value?.value?.to);
 

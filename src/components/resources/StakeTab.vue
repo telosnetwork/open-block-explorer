@@ -64,7 +64,6 @@ export default defineComponent({
             stakingAccount,
             cpuTokens,
             netTokens,
-            // ...mapActions({ sendAction: 'account/sendAction' }),
             ...mapActions({ delegateResources: 'resources/delegateResources' }),
             transactionId: ref<string>(null),
             transactionError: null,
