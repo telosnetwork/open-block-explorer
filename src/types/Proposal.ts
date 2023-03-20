@@ -60,6 +60,7 @@ export interface ProposalForm {
     context_free_actions: string[];
     transaction_extensions: string[];
     actions: {
+      renderKey?: number;
       account: string;
       name: string;
       authorization: {

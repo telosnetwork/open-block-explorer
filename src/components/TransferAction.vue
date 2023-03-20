@@ -63,7 +63,7 @@ export default defineComponent({
             quantity += fractionPart.slice(0, precision).padEnd(precision, '0');
             actionToFormat.data.quantity = quantity;
 
-            action.data = actionToFormat.data;
+            action.data = { ...actionToFormat.data };
         };
 
         onMounted(() => {
