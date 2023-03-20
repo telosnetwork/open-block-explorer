@@ -55,7 +55,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
             commit('setProducers', producers);
             commit('setBpList', producerData);
         } catch (err) {
-            console.log('Error', err);
+            console.error(err);
         }
     },
     async updateBlockData({ commit }) {
@@ -65,7 +65,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
             commit('setLIB', info.last_irreversible_block_num);
             commit('setHead_block_producer', info.head_block_producer);
         } catch (err) {
-            console.log('Error', err);
+            console.error(err);
         }
     },
     async updateRamPrice({ commit }) {
@@ -93,7 +93,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
 
             commit('setRamPrice', formattedPrice);
         } catch (err) {
-            console.log('Error', err);
+            console.error(err);
         }
     },
 };
