@@ -300,7 +300,6 @@ export default defineComponent({
                 });
                 tableData = response.data.actions;
                 totalRows.value = response.data.total.value;
-                console.log(response.data.total.value);
             }
 
             if (tableData) {

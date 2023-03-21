@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'src/store';
-import { Action } from 'src/types';
+import { Action, RexHistory } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { assetToAmount } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'HistoryTab',
@@ -20,11 +21,24 @@ export default defineComponent({
             });
         }
 
+        function getHistoryAmount(data: RexHistory): string {
+            if (data.rex){
+                return data.rex;
+            }
+            if (typeof data.amount === 'number') {
+                const total = (assetToAmount(data.from_cpu) + assetToAmount(data.from_net));
+                return `${total} ${symbol}`;
+            }else{
+                return data.amount;
+            }
+        }
+
         return {
             store,
+            symbol,
             rexActions,
             formatDate,
-            symbol,
+            getHistoryAmount,
         };
     },
 });
@@ -42,7 +56,7 @@ export default defineComponent({
             <div class="col-xs-12 col-sm-6">
                 <div class="row q-pa-sm">
                     <div class="col-6">{{action.act.name}}</div>
-                    <div class="col-6 text-weight-bold">{{action.act.data.amount ? action.act.data.amount : action.act.data.rex}}</div>
+                    <div class="col-6 text-weight-bold">{{ getHistoryAmount(action.act.data)}}</div>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6">
