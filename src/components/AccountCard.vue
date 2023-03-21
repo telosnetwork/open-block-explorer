@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
-import { useStore } from 'src/store';
+import { useAntelopeStore } from 'src/store/antelope.store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/resources/ResourcesDialog.vue';
@@ -35,7 +35,7 @@ export default defineComponent({
     setup(props) {
         const $q = useQuasar();
         const router = useRouter();
-        const store = useStore();
+        const store = useAntelopeStore();
 
         const createTime = ref<string>('2019-01-01T00:00:00.000');
         const createTransaction = ref<string>('');
@@ -48,7 +48,10 @@ export default defineComponent({
         const MICRO_UNIT = ref<number>(Math.pow(10, -6));
         const KILO_UNIT = ref<number>(Math.pow(10, 3));
         const resources = ref<number>(0);
-        const delegatedResources = ref<number>(0.0);
+        const delegatedByOthers = ref<number>(0.0);
+        const delegatedToOthers = computed(
+            (): number => store.resources.getDelegatedToOthersAggregated(),
+        );
         const rexStaked = ref<number>(0);
         const rexProfits = ref<number>(0);
         const rexDeposits = ref<number>(0);
@@ -116,7 +119,7 @@ export default defineComponent({
         );
 
         const setToken = (value: Token) => {
-            store.commit('chain/setToken', value);
+            void store.commit('chain/setToken', value);
         };
 
         const loadAccountData = async (): Promise<void> => {
@@ -128,6 +131,7 @@ export default defineComponent({
                 loadResources();
                 setTotalBalance();
                 await updateTokenBalances();
+                await updateResources({ account: props.account, force: true });
             } catch (e) {
                 $q.notify(`account ${props.account} not found!`);
                 accountExists.value = false;
@@ -176,14 +180,14 @@ export default defineComponent({
                     accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
                 );
 
-                delegatedResources.value = Math.abs(
+                delegatedByOthers.value = Math.abs(
                     stakedResources.value - stakedNET.value - stakedCPU.value,
                 );
             }
         };
 
         const setTotalBalance = () => {
-            totalTokens.value = liquidNative.value + rex.value + staked.value;
+            totalTokens.value = liquidNative.value + rex.value + staked.value + delegatedToOthers.value;
             isLoading.value = false;
         };
 
@@ -207,6 +211,9 @@ export default defineComponent({
                 $q.notify(`creator account for ${props.account} not found!`);
             }
         };
+
+        const updateResources = (payload: {account:string, force: boolean}) =>
+            store.resources.updateResources(payload);
 
         const getRexFund = async () => {
             const paramsrexfund = {
@@ -340,7 +347,7 @@ export default defineComponent({
 
         const resetBalances = () => {
             totalTokens.value = '--';
-            stakedResources.value = delegatedResources.value = 0;
+            stakedResources.value = delegatedByOthers.value = 0;
             rexStaked.value = 0;
             rexProfits.value = 0;
             rexDeposits.value = 0;
@@ -399,7 +406,8 @@ export default defineComponent({
             openSendDialog,
             openResourcesDialog,
             openStakingDialog,
-            delegatedResources,
+            delegatedByOthers,
+            delegatedToOthers,
             isAccount,
             token,
             createTimeFormat,
@@ -573,8 +581,12 @@ export default defineComponent({
                         <td class="text-right">{{ formatAsset(stakedRefund) }}</td>
                     </tr>
                     <tr>
+                        <td class="text-left">DELEGATED to others</td>
+                        <td class="text-right">{{ formatAsset(delegatedToOthers) }}</td>
+                    </tr>
+                    <tr>
                         <td class="text-left">DELEGATED by others</td>
-                        <td class="text-right">{{ formatAsset(delegatedResources) }}</td>
+                        <td class="text-right">{{ formatAsset(delegatedByOthers) }}</td>
                     </tr>
                 </tbody>
             </thead>

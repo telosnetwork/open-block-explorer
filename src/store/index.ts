@@ -27,24 +27,24 @@ import { ResourcesStateInterface } from 'src/store/resources/state';
  */
 
 export interface StateInterface {
-  // Define your own store structure, using submodules if needed
-  contract: ContractStateInterface;
-  chain: ChainStateInterface;
-  account: AccountStateInterface;
-  transaction: TransactionStateInterface;
-  resources: ResourcesStateInterface;
+    // Define your own store structure, using submodules if needed
+    contract: ContractStateInterface;
+    chain: ChainStateInterface;
+    account: AccountStateInterface;
+    transaction: TransactionStateInterface;
+    resources: ResourcesStateInterface;
 }
 
 // provide typings for `this.$store`
 declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $store: VuexStore<StateInterface>;
-  }
+    interface ComponentCustomProperties {
+        $store: VuexStore<StateInterface>;
+    }
 }
 
 // provide typings for `useStore` helper
 export const storeKey: InjectionKey<VuexStore<StateInterface>> =
-  Symbol('vuex-key');
+    Symbol('vuex-key');
 
 export default store(function () {
     const Store = createStore<StateInterface>({
@@ -60,7 +60,6 @@ export default store(function () {
         // for dev mode and --debug builds only
         strict: !!process.env.DEBUGGING,
     });
-
     return Store;
 });
 

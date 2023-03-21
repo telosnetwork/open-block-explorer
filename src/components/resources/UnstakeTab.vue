@@ -49,28 +49,26 @@ export default defineComponent({
         const isUpdating = computed(() => store.resources.isLoading('updateResources'));
         const isUnstaking = computed(() => store.resources.isLoading('undelegateResources'));
         const loading = computed(() => store.resources.getLoading());
-
-        const selectOptions = ref<{label:string, value:DelegatedResources}[]>([]);
         const selectModel = ref<{label:string, value:DelegatedResources}>({ label: '', value: null });
         const receiverAccount = computed((): string => selectModel.value?.value?.to);
 
-        void store.resources.updateResources().then(() => {
-            const selfStaked = store.resources.getSelfStaked();
-            if (selfStaked) {
-                selectModel.value = {
-                    label: selfStaked?.to,
-                    value: selfStaked,
-                };
-            }
-
+        const selectOptions = computed(() => {
             const options = delegatedList.value?.map(item => ({
                 label: item.to,
                 value: item,
             })) ?? [];
-
-            selectOptions.value = options;
+            return options;
         });
 
+        void store.resources.updateResources({}).then(() => {
+            const selfStaked = store.resources.getSelfStaked();
+            if (selfStaked) {
+                selectModel.value = {
+                    label: (selfStaked?.to ?? 'unknown'),
+                    value: selfStaked,
+                };
+            }
+        });
 
         const netStake = ref<number>(0);
         const cpuStake = ref<number>(0);
@@ -99,10 +97,13 @@ export default defineComponent({
     watch: {
         selectModel: {
             handler() {
-                this.netStake = this.assetToAmount((this.selectModel.value as DelegatedResources)?.net_weight.toString());
-                this.cpuStake = this.assetToAmount((this.selectModel.value as DelegatedResources)?.cpu_weight.toString());
-                this.netTokens = '0';
-                this.cpuTokens = '0';
+                this.update();
+            },
+            deep: true,
+        },
+        selectOptions: {
+            handler() {
+                this.update();
             },
             deep: true,
         },
@@ -125,6 +126,18 @@ export default defineComponent({
         },
     },
     methods: {
+        update(): void {
+
+            const current = this.selectOptions.find(item => item.value.to === (this.selectModel?.value?.to ?? ''));
+            if (current) {
+                this.selectModel = current;
+            }
+
+            this.netStake = this.assetToAmount((this.selectModel.value as DelegatedResources)?.net_weight.toString());
+            this.cpuStake = this.assetToAmount((this.selectModel.value as DelegatedResources)?.cpu_weight.toString());
+            this.netTokens = '0';
+            this.cpuTokens = '0';
+        },
         async sendTransaction(): Promise<void> {
             this.transactionError = '';
             if (parseFloat(this.cpuTokens) <= 0 && parseFloat(this.netTokens) <= 0) {
@@ -149,8 +162,6 @@ export default defineComponent({
             if (localStorage.getItem('autoLogin') !== 'cleos') {
                 this.openTransaction = true;
             }
-
-            await this.$store.dispatch('account/loadAccountData');
         },
     },
 });
