@@ -1,12 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { isValidAccount } from 'src/utils/stringValidator';
-import { API } from '@greymass/eosio';
-import { StakeResourcesTransactionData } from 'src/types';
+import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
+import { useAntelopeStore } from 'src/store/antelope.store';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -17,7 +15,7 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const store = useAntelopeStore();
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>(store.state.account.accountName || '');
         const accountTotal = computed((): string =>
@@ -66,7 +64,7 @@ export default defineComponent({
             stakingAccount,
             cpuTokens,
             netTokens,
-            ...mapActions({ sendAction: 'account/sendAction' }),
+            ...mapActions({ delegateResources: 'resources/delegateResources' }),
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
@@ -97,46 +95,22 @@ export default defineComponent({
                 this.$q.notify('Enter valid value for CPU or NET to stake');
                 return;
             }
-            const data = {
-                from: this.$store.state.account.accountName.toLowerCase(),
-                receiver: this.stakingAccount.toLowerCase(),
+            await this.delegateResources({
+                from: this.$store.state.account.accountName,
+                to: this.stakingAccount.toLowerCase().trim(),
                 transfer: false,
-                stake_cpu_quantity:
+                cpu_weight:
                     parseFloat(this.cpuTokens) > 0
-                        ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
+                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol, true)
                         : `0.0000 ${symbol}`,
-                stake_net_quantity:
+                net_weight:
                     parseFloat(this.netTokens) > 0
-                        ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
+                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol, true)
                         : `0.0000 ${symbol}`,
-            } as StakeResourcesTransactionData;
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                this.transactionId = (
-                    await this.sendAction({
-                        account: 'eosio',
-                        name: 'delegatebw',
-                        data,
-                    })
-                ).transactionId as string;
-                this.$store.commit('account/setTransaction', this.transactionId);
-            } catch (e) {
-                this.transactionError = e;
-                this.$store.commit('account/setTransactionError', e);
-            }
-            await this.loadAccountData();
+            });
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
                 this.openTransaction = true;
-            }
-        },
-        async loadAccountData(): Promise<void> {
-            let data: API.v1.AccountObject;
-            try {
-                data = await this.$api.getAccount(this.stakingAccount);
-                this.$store.commit('account/setAccountData', data);
-            } catch (e) {
-                return;
             }
         },
     },
@@ -177,7 +151,7 @@ export default defineComponent({
                     v-model="cpuTokens"
                     class="full-width"
                     standout="bg-deep-purple-2 text-white"
-                    placeholder="0.0000"
+                    placeholder="0"
                     :lazy-rules="true"
                     :rules="inputRules"
                     type="text"
@@ -197,7 +171,7 @@ export default defineComponent({
                     v-model="netTokens"
                     class="full-width"
                     standout="bg-deep-purple-2 text-white"
-                    placeholder="0.0000"
+                    placeholder="0"
                     :lazy-rules="true"
                     :rules="inputRules"
                     type="text"

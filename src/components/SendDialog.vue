@@ -2,7 +2,7 @@
 import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { isValidAccount } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
@@ -49,11 +49,11 @@ export default defineComponent({
 
         const sendTransaction = async (): Promise<void> => {
             void store.dispatch('account/resetTransaction');
-            const actionAccount = sendToken.value.contract;
+            const actionAccount = sendToken.value?.contract;
             const data = {
                 from: account.value,
                 to: receivingAccount.value,
-                quantity: `${sendAmount.value} ${sendToken.value.symbol}`,
+                quantity: `${sendAmount.value} ${sendToken.value?.symbol}`,
                 memo: memo.value,
             };
             await store.dispatch('account/sendAction', {
@@ -61,6 +61,7 @@ export default defineComponent({
                 data,
                 name: 'transfer',
             });
+            void store.dispatch('account/loadAccountData');
             context.emit('update-token-balances');
         };
 
@@ -68,8 +69,8 @@ export default defineComponent({
             void store.dispatch('account/resetTransaction');
             if (availableTokens.value.length > 0) {
                 sendToken.value = availableTokens.value.find(token => (
-                    token.symbol === sendToken.value.symbol &&
-            token.contract === sendToken.value.contract
+                    token.symbol === sendToken.value?.symbol &&
+                    token.contract === sendToken.value?.contract
                 ));
             }
         };
@@ -137,6 +138,25 @@ export default defineComponent({
             resetForm,
         };
     },
+    // watch availableTokens and if it changes print the new value
+    watch: {
+        availableTokens: {
+            handler() {
+                if (this.availableTokens.length > 0) {
+                    this.sendToken = this.availableTokens.find(token => (
+                        token.symbol === this.sendToken.symbol &&
+                        token.contract === this.sendToken.contract
+                    ));
+                }
+
+                if (!this.sendToken || this.sendToken.amount === 0) {
+                    this.openCoinDialog = true;
+                }
+            },
+            deep: true,
+            immediate: true,
+        },
+    },
 });
 </script>
 
@@ -201,7 +221,7 @@ export default defineComponent({
                                     <div>AMOUNT</div>
                                     <q-space/>
                                     <div class="row flex-center q-hoverable cursor-pointer" @click="setMaxValue">
-                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount } AVAILABLE` }}</div>
+                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount ?? 0 } AVAILABLE` }}</div>
                                         <q-icon class="q-ml-xs" name="info"/>
                                         <q-tooltip>Click to fill full amount</q-tooltip>
                                     </div>
@@ -210,7 +230,7 @@ export default defineComponent({
                                     v-model="sendAmount"
                                     class="full-width"
                                     standout="bg-deep-purple-2 text-white"
-                                    placeholder="0.0000"
+                                    placeholder="0"
                                     :debounce="1000"
                                     :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
                                     type="text"

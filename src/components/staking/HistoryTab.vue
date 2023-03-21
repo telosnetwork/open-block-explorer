@@ -42,7 +42,7 @@ export default defineComponent({
             <div class="col-xs-12 col-sm-6">
                 <div class="row q-pa-sm">
                     <div class="col-6">{{action.act.name}}</div>
-                    <div class="col-6 text-weight-bold">{{action.act.data.amount ? `${action.act.data.amount} ${symbol}` : action.act.data.rex}}</div>
+                    <div class="col-6 text-weight-bold">{{action.act.data.amount ? action.act.data.amount : action.act.data.rex}}</div>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6">

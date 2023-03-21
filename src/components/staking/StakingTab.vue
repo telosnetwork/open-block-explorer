@@ -52,7 +52,7 @@ export default defineComponent({
         async function stake() {
             void store.dispatch('account/resetTransaction');
             if (
-                stakeTokens.value === '0.0000' ||
+                stakeTokens.value === '0' ||
                 Number(stakeTokens.value) >=
                 Number(accountData.value.core_liquid_balance.toString())
             ) {
@@ -131,7 +131,7 @@ export default defineComponent({
                         dark
                         class="full-width"
                         standout="bg-deep-purple-2 text-white"
-                        placeholder='0.0000'
+                        placeholder='0'
                         :lazy-rules='true'
                         :rules="inputRules"
                         type="text"

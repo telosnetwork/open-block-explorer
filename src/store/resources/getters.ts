@@ -10,6 +10,11 @@ export const getters: GetterTree<ResourcesStateInterface, StateInterface> = {
         return store.toOthers ?? [];
     },
 
+    // get list of delegates resources to other accounts
+    getDelegatedToOthersAggregated(store: ResourcesStateInterface): number {
+        return store.toOthersAggregated ?? 0;
+    },
+
     // get list of delegates resources from other accounts
     getDelegatedFromOthers(store: ResourcesStateInterface): DelegatedResources | null {
         return store.fromOthers;
@@ -36,6 +41,7 @@ export const getters: GetterTree<ResourcesStateInterface, StateInterface> = {
 export interface ResourcesGetters {
     getDelegatedToOthers: () => DelegatedResources[];
     getDelegatedFromOthers: () => Ref<DelegatedResources | null>;
+    getDelegatedToOthersAggregated: () => number;
     getSelfStaked: () => DelegatedResources | null;
     getLoading: () => string[];
     isLoading: (name: string) => boolean;

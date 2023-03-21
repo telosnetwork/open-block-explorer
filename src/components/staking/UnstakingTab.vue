@@ -44,7 +44,7 @@ export default defineComponent({
         async function unstake() {
             void store.dispatch('account/resetTransaction');
             if (
-                unstakeTokens.value === '0.0000' ||
+                unstakeTokens.value === '0' ||
                 !rexbal.value.vote_stake ||
                 Number(unstakeTokens.value) >=
                 Number(rexbal.value.vote_stake.split(' ')[0])
@@ -117,7 +117,7 @@ export default defineComponent({
                     <q-input
                         v-model="unstakeTokens"
                         standout="bg-deep-purple-2 text-white"
-                        placeholder='0.0000'
+                        placeholder='0'
                         :lazy-rules='true'
                         :rules="[ val => val >= 0  && val <= assetToAmount(maturedRex)  || 'Invalid amount.' ]"
                         type="text"

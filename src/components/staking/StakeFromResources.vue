@@ -17,8 +17,8 @@ export default defineComponent({
         const symbol = ref<string>(chain.getSystemToken().symbol);
         const cpuTokens = ref<string>('');
         const netTokens = ref<string>('');
-        const cpuWithdraw = ref<string>('0.0000');
-        const netWithdraw = ref<string>('0.0000');
+        const cpuWithdraw = ref<string>('0');
+        const netWithdraw = ref<string>('0');
         const transactionId = ref<string>(store.state.account.TransactionId);
         const transactionError = ref<unknown>(store.state.account.TransactionError);
         const stakingAccount = computed(
@@ -56,16 +56,16 @@ export default defineComponent({
         async function stake() {
             void store.dispatch('account/resetTransaction');
             if (
-                (cpuTokens.value === '0.0000' && netTokens.value === '0.0000') ||
+                (cpuTokens.value === '0' && netTokens.value === '0') ||
                 Number(cpuTokens.value) >= Number(cpuWeight.value) ||
-                Number(netTokens.value) >=
-                Number(accountData.value.total_resources.net_weight)
+                Number(netTokens.value) >= Number(accountData.value.total_resources.net_weight)
             ) {
                 return;
             }
+
             await store.dispatch('account/stakeCpuNetRex', {
-                cpuAmount: cpuTokens.value,
-                netAmount: netTokens.value,
+                cpuAmount: cpuTokens.value || '0',
+                netAmount: netTokens.value || '0',
             });
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
@@ -75,12 +75,12 @@ export default defineComponent({
 
         async function unstake() {
             void store.dispatch('account/resetTransaction');
-            if (cpuWithdraw.value === '0.0000' && netWithdraw.value === '0.0000') {
+            if (cpuWithdraw.value === '0' && netWithdraw.value === '0') {
                 return;
             }
             await store.dispatch('account/unstakeCpuNetRex', {
-                cpuAmount: cpuWithdraw.value,
-                netAmount: netWithdraw.value,
+                cpuAmount: cpuWithdraw.value || '0',
+                netAmount: netWithdraw.value || '0',
             });
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
@@ -144,7 +144,7 @@ export default defineComponent({
                         dense
                         dark
                         standout="bg-deep-purple-2 text-white"
-                        placeholder='0.0000'
+                        placeholder='0'
                         type="text"
                         :lazy-rules='true'
                         :rules="[ val => val >= 0 && val <= cpuWeight.value  || 'Invalid amount.' ]"
@@ -165,7 +165,7 @@ export default defineComponent({
                         v-model="netTokens"
                         class="full-width"
                         standout="bg-deep-purple-2 text-white"
-                        placeholder='0.0000'
+                        placeholder='0'
                         :lazy-rules='true'
                         :rules="[ val =>  val >= 0 && val <= netWeight.value || 'Invalid amount.' ]"
                         type="text"
