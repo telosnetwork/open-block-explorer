@@ -56,19 +56,6 @@ export default defineComponent({
             }
         }
 
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
-            }
-        }
-
         return {
             openTransaction,
             sellAmount,
@@ -80,7 +67,6 @@ export default defineComponent({
             sellPreview,
             formatDec,
             sell,
-            assetToAmount,
         };
     },
     computed: {

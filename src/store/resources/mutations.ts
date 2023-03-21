@@ -15,6 +15,10 @@ export const mutations: MutationTree<ResourcesStateInterface> = {
         state.toOthers = delegated as DelegatedResources[];
     },
 
+    setDelegatedToOthersAggregated(state: ResourcesStateInterface, aggregated) {
+        state.toOthersAggregated = aggregated as number;
+    },
+
     setSelfStaked(state: ResourcesStateInterface, delegated) {
         state.selfStaked = delegated as DelegatedResources;
     },
@@ -34,5 +38,6 @@ export const mutations: MutationTree<ResourcesStateInterface> = {
     setForceUpdate(state: ResourcesStateInterface, forceUpdate: boolean) {
         state.forceUpdate = forceUpdate;
     },
+
 
 };

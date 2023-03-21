@@ -24,7 +24,7 @@ export default defineComponent({
             Number(accountData.value.ram_quota) -
             Number(accountData.value.ram_usage),
         );
-        const delegatedResources = computed(() => {
+        const delegatedByOthers = computed(() => {
             const totalStakedResources =
                 Number(accountData.value.cpu_weight.value) /
                     Math.pow(10, token.value.precision) +
@@ -43,6 +43,9 @@ export default defineComponent({
                 );
             return totalStakedResources - selfStakedResources;
         });
+        const delegatedToOthers = computed(
+            (): number => store.state.resources.toOthersAggregated,
+        );
 
         const accountTotal = computed(() => {
             let value = 0;
@@ -78,7 +81,8 @@ export default defineComponent({
             token,
             ramPrice,
             ramAvailable,
-            delegatedResources,
+            delegatedByOthers,
+            delegatedToOthers,
             accountTotal,
             currentCpu,
             currentNet,
@@ -118,16 +122,20 @@ export default defineComponent({
             <div class="col-xs-12 col-sm-6 q-px-lg q-pb-sm">
                 <div class="row">
                     <div class="col-7 text-weight-light">DELEGATED BY OTHERS</div>
-                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedResources) }}</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedByOthers) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">DELEGATED TO OTHERS</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedToOthers) }}</div>
                 </div>
                 <div class="row q-pt-sm">
                     <div class="col-7 text-weight-light">REFUNDING</div>
                     <div class="col-5 text-right text-bold">{{ formatValue(totalRefund) }}</div>
                 </div>
-                <div class="row q-pt-sm">
+                <!--div class="row q-pt-sm">
                     <div class="col-7 text-weight-light">RAM PRICE</div>
                     <div class="col-5 text-right text-bold">{{ramPrice}} {{token.symbol}}/KB</div>
-                </div>
+                </div-->
             </div>
         </div>
     </div>

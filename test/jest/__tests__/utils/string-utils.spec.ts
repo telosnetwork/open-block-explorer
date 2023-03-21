@@ -3,6 +3,7 @@ import {
     isValidAccount,
     isValidTransactionHex,
     formatCurrency,
+    assetToAmount,
 } from 'src/utils/string-utils';
 
 describe('string-utils utility functions', () => {
@@ -144,6 +145,14 @@ describe('string-utils utility functions', () => {
             inputs.forEach((input) => {
                 expect(() => formatCurrency(input, 2)).toThrow();
             });
+        });
+    });
+
+    describe('assetToAmount', () => {
+        it('given asset string, return numerical value as number type', () => {
+            const testAsset = '12.3456 COIN';
+            const expectedResult = 12.3456;
+            expect(assetToAmount(testAsset)).toEqual(expectedResult);
         });
     });
 });

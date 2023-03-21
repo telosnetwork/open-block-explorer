@@ -59,3 +59,16 @@ export function formatCurrency(
 
     return amountAsString;
 }
+
+/**
+ * Given a string asset value (e.g. `12.3456 TLOS`), returns the numerical part as a number type.
+ * @param {string} asset - the asset value string
+ */
+export function assetToAmount(asset: string): number {
+    try {
+        const qty: string = asset.split(' ')[0];
+        return parseFloat(qty);
+    } catch (error) {
+        return 0;
+    }
+}
