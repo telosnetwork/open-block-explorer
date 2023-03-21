@@ -97,9 +97,8 @@ export function getRexHistoryAsset(data: RexHistory): string {
         return data.rex;
     }
     if (typeof data.amount === 'number') {
-        const total = (assetToAmount(data.from_cpu) + assetToAmount(data.from_net));
         const symbol = getChain().getSystemToken().symbol;
-        return `${total} ${symbol}`;
+        return `${data.amount} ${symbol}`;
     }else{
         return data.amount;
     }

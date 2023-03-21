@@ -5,6 +5,7 @@ import {
     formatCurrency,
     assetToAmount,
     formatDate,
+    getRexHistoryAsset,
 } from 'src/utils/string-utils';
 
 describe('string-utils utility functions', () => {
@@ -167,6 +168,28 @@ describe('string-utils utility functions', () => {
             const testDate = '2023-03-21T21:26:16+01:23';
             const expectedResult = 'March 21, 2023';
             expect(formatDate(testDate, false)).toBe(expectedResult);
+        });
+    });
+
+    describe('getRexHistoryAsset', () => {
+        it('returns rex asset string if exists', () => {
+            const testData = {
+                rex: '4 TLOS',
+            };
+            expect(getRexHistoryAsset(testData)).toBe(testData.rex);
+        });
+        it('returns sum of cpu and net staked if amount is of type number', () => {
+            const testData = {
+                amount: 3,
+            };
+            const expectedResult = '3 TLOS';
+            expect(getRexHistoryAsset(testData)).toBe(expectedResult);
+        });
+        it('returns amount asset string if it is not a number', () => {
+            const testData = {
+                amount: '3 TLOS',
+            };
+            expect(getRexHistoryAsset(testData)).toBe(testData.amount);
         });
     });
 });
