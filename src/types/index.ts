@@ -52,3 +52,4 @@ export {
 } from 'src/types/Proposal';
 export { GetProducers, Producer } from 'src/types/Producers';
 export { ABI } from 'src/types/ABI';
+export { ProposalAction } from 'src/types/ProposalAction';

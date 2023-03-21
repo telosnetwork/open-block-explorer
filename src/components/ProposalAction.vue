@@ -8,7 +8,9 @@ import {
     onMounted,
 } from 'vue';
 import ProposalAuthorization from 'components/ProposalAuthorization.vue';
+import TransferAction from 'components/TransferAction.vue';
 import { api } from 'src/api';
+import { ProposalAction } from 'src/types';
 
 interface Struct {
     name: string;
@@ -17,27 +19,15 @@ interface Struct {
         type: string;
     }[];
 }
-
-interface Action {
-    account: string;
-    name: string;
-    authorization: {
-        actor: string;
-        permission: string;
-    }[];
-    data: {
-        [key: string]: string | number;
-    };
-}
-
 export default defineComponent({
     name: 'ProposalAction',
     components: {
         ProposalAuthorization,
+        TransferAction,
     },
     props: {
         modelValue: {
-            type: Object as PropType<Action>,
+            type: Object as PropType<ProposalAction>,
         },
     },
     emits: ['update:modelValue', 'remove'],
@@ -46,7 +36,6 @@ export default defineComponent({
         const isAccountLoading = ref(false);
         const isAccountError = ref(false);
         const waitToSearch = ref<ReturnType<typeof setTimeout> | null>(null);
-
         const action = computed({
             get: () => props.modelValue,
             set: (value) => {
@@ -215,7 +204,12 @@ export default defineComponent({
                     </q-select>
                 </div>
             </div>
-            <div v-if="!!fields" class="row q-col-gutter-md">
+            <TransferAction
+                v-if="action?.account === 'eosio.token' && action?.name === 'transfer'"
+                v-model="action"
+                :fields="fields"
+            />
+            <div v-else-if="!!fields" class="row q-col-gutter-md">
                 <div v-for="field in fields" :key="field.name" class="col-12 col-sm-4">
                     <q-input
                         v-model="action.data[field.name]"
