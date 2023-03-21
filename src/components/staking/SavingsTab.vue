@@ -3,6 +3,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
+import { assetToAmount } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'SavingsTab',
@@ -80,19 +81,6 @@ export default defineComponent({
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
                 openTransaction.value = true;
-            }
-        }
-
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
             }
         }
 

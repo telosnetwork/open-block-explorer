@@ -5,7 +5,7 @@ import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { DelegatedResources } from 'src/store/resources/state';
-import { formatCurrency } from 'src/utils/string-utils';
+import { formatCurrency, assetToAmount } from 'src/utils/string-utils';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -42,19 +42,6 @@ export default defineComponent({
                         minimumFractionDigits: store.state.chain.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
-            }
-        }
-
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
             }
         }
 

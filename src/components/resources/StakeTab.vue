@@ -4,6 +4,7 @@ import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
+import { assetToAmount } from 'src/utils/string-utils';
 import { useAntelopeStore } from 'src/store/antelope.store';
 
 const chain = getChain();
@@ -43,19 +44,6 @@ export default defineComponent({
                         minimumFractionDigits: store.state.chain.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
-            }
-        }
-
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
             }
         }
 
