@@ -185,7 +185,7 @@ describe('string-utils utility functions', () => {
             const expectedResult = '3 TLOS';
             expect(getRexHistoryAsset(testData)).toBe(expectedResult);
         });
-        it('returns amount asset string if it is not a number', () => {
+        it('returns amount asset string if it is not of type number', () => {
             const testData = {
                 amount: '3 TLOS',
             };
