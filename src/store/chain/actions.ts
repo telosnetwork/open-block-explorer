@@ -6,6 +6,7 @@ import axios from 'axios';
 import { api } from 'src/api/index';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain: Chain = getChain();
 
@@ -54,7 +55,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
             commit('setProducers', producers);
             commit('setBpList', producerData);
         } catch (err) {
-            console.log('Error', err);
+            console.error(err);
         }
     },
     async updateBlockData({ commit }) {
@@ -64,7 +65,7 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
             commit('setLIB', info.last_irreversible_block_num);
             commit('setHead_block_producer', info.head_block_producer);
         } catch (err) {
-            console.log('Error', err);
+            console.error(err);
         }
     },
     async updateRamPrice({ commit }) {
@@ -88,9 +89,11 @@ export const actions: ActionTree<ChainStateInterface, StateInterface> = {
             const quote = Number(rammarket.quote.balance.split(' ')[0]);
             const price = (quote * 1000) / (base - 1000);
             // add 0.5% fee to the price
-            commit('setRamPrice', (price / 0.995).toFixed(4));
+            const formattedPrice = formatCurrency((price / 0.995), 4, null, true);
+
+            commit('setRamPrice', formattedPrice);
         } catch (err) {
-            console.log('Error', err);
+            console.error(err);
         }
     },
 };

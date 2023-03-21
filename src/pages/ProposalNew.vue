@@ -189,7 +189,9 @@ export default defineComponent({
         }
 
         function onAddAction() {
+            const length = formData.trx.actions.length;
             formData.trx.actions.push({
+                renderKey: (formData.trx.actions[length-1]?.renderKey ?? 0) + 1,
                 account: '',
                 name: '',
                 authorization: [
@@ -228,9 +230,13 @@ export default defineComponent({
 
         /* eslint-disable */
         function onUploadCSV(actions: any) {
+            const length = formData.trx.actions.length;
+            let actionsWithRenderKey = actions.map((value: any, index: number) => ({
+                ...value, renderKey: (formData.trx.actions[length-1]?.renderKey ?? 0) + 1 + index
+            }));
             formData.trx.actions = [
                 ...formData.trx.actions,
-                ...actions
+                ...actionsWithRenderKey
             ];
         }
         /* eslint-enable */
@@ -500,8 +506,8 @@ export default defineComponent({
             </q-expansion-item>
         </q-card>
         <ProposalAction
-            v-for="(_, index) in formData.trx.actions"
-            :key="index"
+            v-for="(action, index) in formData.trx.actions"
+            :key="action.renderKey"
             v-model="formData.trx.actions[index]"
             @remove="formData.trx.actions.splice(index, 1)"
         />

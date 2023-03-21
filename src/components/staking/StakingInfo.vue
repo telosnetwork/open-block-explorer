@@ -13,7 +13,7 @@ export default defineComponent({
         const store = useStore();
         const symbol = ref<string>(chain.getSystemToken().symbol);
         const stakingAccount = ref<string>('');
-        const total = ref<string>('0.0000');
+        const total = ref<string>('0');
         const token = computed((): Token => store.state.chain.token);
         const accountData = computed((): API.v1.AccountObject => store.state.account.data);
         const liquidBalance = computed(() => accountData.value.core_liquid_balance);

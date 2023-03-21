@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
+import { formatCurrency } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'SellRam',
@@ -24,10 +25,7 @@ export default defineComponent({
         );
         const ramPrice = computed((): string => store.state?.chain.ram_price);
         const sellPreview = computed(
-            () =>
-                ((Number(sellAmount.value) / 1000) * Number(ramPrice.value)).toFixed(
-                    4,
-                ) + ` ${symbol.value}`,
+            () => formatCurrency((Number(sellAmount.value) / 1000) * Number(ramPrice.value), 4, symbol.value),
         );
         const ramAvailable = computed(
             () =>
@@ -43,7 +41,7 @@ export default defineComponent({
         async function sell() {
             void store.dispatch('account/resetTransaction');
             if (
-                sellAmount.value === '0.0000' ||
+                sellAmount.value === '0' ||
                 !ramAvailable.value ||
                 Number(sellAmount.value) > ramAvailable.value
             ) {
@@ -58,19 +56,6 @@ export default defineComponent({
             }
         }
 
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
-            }
-        }
-
         return {
             openTransaction,
             sellAmount,
@@ -82,7 +67,6 @@ export default defineComponent({
             sellPreview,
             formatDec,
             sell,
-            assetToAmount,
         };
     },
     computed: {

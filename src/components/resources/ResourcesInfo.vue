@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { API } from '@greymass/eosio';
 import { getChain } from 'src/config/ConfigManager';
+import { formatCurrency } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'ResourcesInfo',
@@ -11,19 +12,19 @@ export default defineComponent({
         const store = useStore();
         const openCoinDialog = ref<boolean>(false);
         const stakingAccount = ref<string>('');
-        const cpuTokens = ref<string>('0.0000');
-        const netTokens = ref<string>('0.0000');
-        const total = ref<string>('0.0000');
+        const cpuTokens = ref<string>('0');
+        const netTokens = ref<string>('0');
+        const total = ref<string>('0');
         const token = ref<Token>(getChain().getSystemToken());
         const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
         const ramPrice = computed((): string => store.state?.chain.ram_price === '0'
-            ? '0.0000'
+            ? '0'
             : store.state.chain.ram_price);
         const ramAvailable = computed(() =>
             Number(accountData.value.ram_quota) -
             Number(accountData.value.ram_usage),
         );
-        const delegatedResources = computed(() => {
+        const delegatedByOthers = computed(() => {
             const totalStakedResources =
                 Number(accountData.value.cpu_weight.value) /
                     Math.pow(10, token.value.precision) +
@@ -42,6 +43,9 @@ export default defineComponent({
                 );
             return totalStakedResources - selfStakedResources;
         });
+        const delegatedToOthers = computed(
+            (): number => store.state.resources.toOthersAggregated,
+        );
 
         const accountTotal = computed(() => {
             let value = 0;
@@ -64,10 +68,7 @@ export default defineComponent({
             (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
-        const formatValue = (_val: number): string => {
-            const val = Number(_val || 0);
-            return `${val.toFixed(token.value.precision)} ${token.value.symbol}`;
-        };
+        const formatValue = (val: number): string => formatCurrency(val || 0, token.value.precision, token.value.symbol);
 
         return {
             store,
@@ -80,7 +81,8 @@ export default defineComponent({
             token,
             ramPrice,
             ramAvailable,
-            delegatedResources,
+            delegatedByOthers,
+            delegatedToOthers,
             accountTotal,
             currentCpu,
             currentNet,
@@ -120,16 +122,20 @@ export default defineComponent({
             <div class="col-xs-12 col-sm-6 q-px-lg q-pb-sm">
                 <div class="row">
                     <div class="col-7 text-weight-light">DELEGATED BY OTHERS</div>
-                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedResources) }}</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedByOthers) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">DELEGATED TO OTHERS</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedToOthers) }}</div>
                 </div>
                 <div class="row q-pt-sm">
                     <div class="col-7 text-weight-light">REFUNDING</div>
                     <div class="col-5 text-right text-bold">{{ formatValue(totalRefund) }}</div>
                 </div>
-                <div class="row q-pt-sm">
+                <!--div class="row q-pt-sm">
                     <div class="col-7 text-weight-light">RAM PRICE</div>
                     <div class="col-5 text-right text-bold">{{ramPrice}} {{token.symbol}}/KB</div>
-                </div>
+                </div-->
             </div>
         </div>
     </div>
