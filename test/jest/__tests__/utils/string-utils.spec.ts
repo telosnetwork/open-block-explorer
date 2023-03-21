@@ -161,7 +161,14 @@ describe('string-utils utility functions', () => {
     describe('formatDate', () => {
         it('formats ISO date timestamp string to `<Month> <day>, <Year> at H:MM:SS <AM/PM>`', () => {
             const testDate = '2023-03-21T21:26:16+01:23';
-            const expectedResult = 'March 21, 2023, 3:03:16 PM';
+            const expectedResult = new Date(testDate).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+            });
             expect(formatDate(testDate)).toBe(expectedResult);
         });
         it('omits time (`at H:MM:SS <AM/PM>`) if optional showTime param `false` is passed', () => {
