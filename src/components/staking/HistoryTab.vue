@@ -39,7 +39,7 @@ export default defineComponent({
             <div class="col-xs-12 col-sm-6">
                 <div class="row q-pa-sm">
                     <div class="col-6"></div>
-                    <div class="col-6 text-weight-bold">{{formatDate(action.timestamp)}}</div>
+                    <div class="col-6 text-weight-bold">{{formatDate(action.timestamp, false)}}</div>
                 </div>
             </div>
             <q-separator color="grey-8"/>
