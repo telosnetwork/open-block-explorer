@@ -4,6 +4,7 @@ import {
     isValidTransactionHex,
     formatCurrency,
     assetToAmount,
+    formatDate,
 } from 'src/utils/string-utils';
 
 describe('string-utils utility functions', () => {
@@ -153,6 +154,19 @@ describe('string-utils utility functions', () => {
             const testAsset = '12.3456 COIN';
             const expectedResult = 12.3456;
             expect(assetToAmount(testAsset)).toEqual(expectedResult);
+        });
+    });
+
+    describe('formatDate', () => {
+        it('formats ISO date timestamp string to `<Month> <day>, <Year> at H:MM:SS <AM/PM>`', () => {
+            const testDate = '2023-03-21T21:26:16+01:23';
+            const expectedResult = 'March 21, 2023, 3:03:16 PM';
+            expect(formatDate(testDate)).toBe(expectedResult);
+        });
+        it('omits time (`at H:MM:SS <AM/PM>`) if optional showTime param `false` is passed', () => {
+            const testDate = '2023-03-21T21:26:16+01:23';
+            const expectedResult = 'March 21, 2023';
+            expect(formatDate(testDate, false)).toBe(expectedResult);
         });
     });
 });
