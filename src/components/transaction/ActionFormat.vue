@@ -67,7 +67,7 @@ export default defineComponent({
 
 </template>
 
-<style  scoped>
+<style lang="scss" >
 .action-container{
     display: flex;
     justify-content: flex-start;
@@ -77,14 +77,14 @@ export default defineComponent({
 
 .action{
   padding: 0 0.5rem;
-}
 
-.action.action-transfer{
+  &.action-transfer{
     background: rgba(196, 196, 196, 0.3);
     font-weight: bold;
-}
+  }
 
-.action.action-general{
+  &.action-general{
     border: 0.1rem solid rgba(196, 196, 196, 0.3);
+  }
 }
 </style>
