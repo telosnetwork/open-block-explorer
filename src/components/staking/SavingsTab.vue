@@ -134,7 +134,6 @@ export default defineComponent({
                     </div>
                     <q-input
                         v-model="toSavingAmount"
-                        class="full-width"
                         standout="bg-deep-purple-2 text-white"
                         placeholder='0'
                         :lazy-rules='true'
@@ -168,7 +167,6 @@ export default defineComponent({
                     </div>
                     <q-input
                         v-model="fromSavingAmount"
-                        class="full-width"
                         standout="bg-deep-purple-2 text-white"
                         placeholder='0'
                         :lazy-rules='true'
