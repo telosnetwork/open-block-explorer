@@ -194,7 +194,7 @@ describe('string-utils utility functions', () => {
             };
             expect(getRexHistoryAsset(testData)).toBe(testData.rex);
         });
-        it('returns sum of cpu and net staked if amount is of type number', () => {
+        it('returns sum of cpu and net staked if amount is of type number and appends the token symbol', () => {
             const testData = {
                 amount: 1.2345,
             };
