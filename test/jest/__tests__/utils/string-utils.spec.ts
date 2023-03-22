@@ -156,6 +156,10 @@ describe('string-utils utility functions', () => {
             const expectedResult = 12.3456;
             expect(assetToAmount(testAsset)).toEqual(expectedResult);
         });
+        it('should return NaN if passed invalid asset param', () => {
+            const testAsset = 'x';
+            expect(assetToAmount(testAsset)).toBeNaN();
+        });
     });
 
     describe('formatDate', () => {
@@ -175,6 +179,11 @@ describe('string-utils utility functions', () => {
             const testDate = '2023-03-21T21:26:16+01:23';
             const expectedResult = 'March 21, 2023';
             expect(formatDate(testDate, false)).toBe(expectedResult);
+        });
+        it('should return "Invalid Date" if passed invalid date param', () => {
+            const testDate = 'x';
+            const expectedResult = 'Invalid Date';
+            expect(formatDate(testDate)).toBe(expectedResult);
         });
     });
 
@@ -197,6 +206,10 @@ describe('string-utils utility functions', () => {
                 amount: '3 TLOS',
             };
             expect(getRexHistoryAsset(testData)).toBe(testData.amount);
+        });
+        it('should return undefined if passed empty or invalid (no referenced properties) data param', () => {
+            const testData = {};
+            expect(getRexHistoryAsset(testData)).toBeUndefined();
         });
     });
 });
