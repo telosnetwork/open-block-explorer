@@ -60,7 +60,7 @@ export default defineComponent({
 <template>
 <div class="action-container">
     <div class="action action-general">
-        <AccountFormat :account="tx.act.account" type="account"/><span class="inline">&nbsp; → &nbsp;</span><span class="text-no-wrap">{{tx.act.name}}</span>
+        <AccountFormat :account="tx.act.account" type="account"/><span class="inline">&nbsp; → &nbsp;</span><span>{{tx.act.name}}</span>
     </div>
     <div v-if="divContent" class="action action-transfer">{{ divContent }}</div>
 </div>
@@ -77,7 +77,6 @@ export default defineComponent({
 
 .action{
   padding: 0 0.5rem;
-  white-space: nowrap;
 }
 
 .action.action-transfer{

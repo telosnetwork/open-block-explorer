@@ -42,8 +42,3 @@ export default defineComponent({
     <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">{{ tooltipDate }}</q-tooltip>
 </div>
 </template>
-<style>
-.no-wrap{
-    white-space: nowrap;
-}
-</style>

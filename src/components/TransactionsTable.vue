@@ -554,14 +554,13 @@ export default defineComponent({
                 <div class="row flex-grow-1">
                     <div class="col">
                         <!-- -- Title ---->
-                        <p class="text-no-wrap trx-table--title">{{ tableTitle }}</p>
+                        <p class="trx-table--title">{{ tableTitle }}</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <q-toggle
                             v-model="showAge"
-                            class="text-no-wrap"
                             left-label
                             label="Show timestamp as relative"
                         />
@@ -571,7 +570,6 @@ export default defineComponent({
                     <div class="col">
                         <q-toggle
                             v-model="enableLiveTransactions"
-                            class="text-no-wrap"
                             left-label
                             label="Live transactions"
                             :disable="paginationSettings.page !== 1"
