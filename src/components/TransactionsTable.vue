@@ -23,8 +23,6 @@ import AccountSearch from 'src/components/AccountSearch.vue';
 import TokenSearch from 'src/components/TokenSearch.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
-// QBtnDropdown, QPopupProxy, QTable are actually used on the html code
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';

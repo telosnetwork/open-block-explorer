@@ -67,18 +67,25 @@ export default defineComponent({
 
 </template>
 
-<style lang="sass" scoped>
-.action-container
-    display: flex
-    justify-content: flex-start
-    align-items: center
-    gap: 8px
+<style  scoped>
+.action-container{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+}
 
-.action
-  padding: 0 0.5rem
-  &.action-transfer
-    background: rgba(196, 196, 196, 0.3)
-    font-weight: bold
-  &.action-general
-    border: 0.1rem solid rgba(196, 196, 196, 0.3)
+.action{
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+
+.action.action-transfer{
+    background: rgba(196, 196, 196, 0.3);
+    font-weight: bold;
+}
+
+.action.action-general{
+    border: 0.1rem solid rgba(196, 196, 196, 0.3);
+}
 </style>
