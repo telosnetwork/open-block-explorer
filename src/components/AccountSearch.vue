@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, onMounted } from 'vue';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
 import { useQuasar } from 'quasar';
@@ -10,14 +10,24 @@ export default defineComponent({
         modelValue: {
             type: String,
         },
+        withValidation: {
+            type: Boolean,
+            default: false,
+        },
+        removeSearchIcon: {
+            type: Boolean,
+            default: false,
+        },
     },
     emits: ['update:modelValue', 'remove'],
     setup(props, context) {
         const $q = useQuasar();
 
-        const inputValue = ref('');
         const options = ref<OptionsObj[]>([]);
         const isLoading = ref(false);
+        const isError = ref(false);
+
+        const inputValue = ref('');
 
         watch(inputValue, async () => {
             if (inputValue.value === '') {
@@ -26,13 +36,26 @@ export default defineComponent({
             }
 
             isLoading.value = true;
+            isError.value = false;
             const queryValue = inputValue.value.toLowerCase();
 
-            await Promise.all([searchAccountsDelay(queryValue)]).then((results) => {
-                options.value = ([] as OptionsObj[]).concat.apply([], results);
-            });
-
+            const results = await searchAccountsDelay(queryValue);
+            options.value = [...results];
             isLoading.value = false;
+        });
+
+        watch(props, async (currentValue) => {
+            if (currentValue.modelValue) {
+                inputValue.value = currentValue.modelValue;
+                await searchAccounts(currentValue.modelValue);
+            }
+        });
+
+        onMounted(async () => {
+            if (props.modelValue) {
+                inputValue.value = props.modelValue;
+                await searchAccounts(props.modelValue);
+            }
         });
 
         const timer = setTimeout(() => 0, 0);
@@ -87,9 +110,12 @@ export default defineComponent({
                             });
                         }
                     });
+                } else {
+                    isError.value = true;
                 }
                 return results;
             } catch (error) {
+                isError.value = true;
                 return;
             }
         }
@@ -125,6 +151,7 @@ export default defineComponent({
             inputValue,
             options,
             isLoading,
+            isError,
             handleSelected,
         };
     },
@@ -146,10 +173,13 @@ export default defineComponent({
     :model-value="inputValue"
     :options="options"
     :option-disable="(item) => item.isHeader"
+    :reactive-rules="withValidation"
+    :rules="withValidation ? [value => !!value || 'Field is required', (value) => isLoading || options.filter(o => o.label === value).length === 1 || 'Field invalid'] : []"
+    :error="withValidation && isError"
     @input-value="(value) => inputValue = value"
     @keyup.enter="handleSelected"
 >
-    <template #prepend>
+    <template v-if="!removeSearchIcon" #prepend>
         <q-icon class="rotate-90" name="search" size="20px"/>
     </template>
     <template #no-option>

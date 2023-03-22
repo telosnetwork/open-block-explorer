@@ -10,6 +10,7 @@ export interface DelegatedResources {
 export interface ResourcesStateInterface {
     currentAccount: string;
     toOthers: DelegatedResources[];
+    toOthersAggregated: number;
     fromOthers: DelegatedResources | null;
     selfStaked: DelegatedResources | null;
     loading: string[];
@@ -20,6 +21,7 @@ export function state(): ResourcesStateInterface {
     return {
         currentAccount: '',
         toOthers: [],
+        toOthersAggregated: 0,
         fromOthers: null,
         selfStaked: null,
         loading: [],

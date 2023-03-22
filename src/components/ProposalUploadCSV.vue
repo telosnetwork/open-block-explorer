@@ -98,7 +98,7 @@ export default defineComponent({
             <li>The decimal values must be separated with a dot</li>
             <li>The memo is optional</li>
         </ul><code class="block q-mt-md q-py-sm q-px-md bg-grey-3 text-body1 rounded-borders">
-            payingaccount, receivingaccount, 0.1 TLOS, The memo
+            payingaccount, receivingaccount, 0.1, The memo
         </code>
     </li>
     <li class="text-subtitle1">Upload the example csv

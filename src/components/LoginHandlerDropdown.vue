@@ -28,7 +28,7 @@ export default defineComponent({
                 authenticator && (await authenticator.logout());
                 clearAccount();
             } catch (error) {
-                console.log('Authenticator logout error', error);
+                console.error('Authenticator logout error', error);
                 clearAccount();
             }
         };

@@ -9,7 +9,7 @@ import { Anchor } from 'ual-anchor';
 import { getChain } from 'src/config/ConfigManager';
 import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 import { Dialog, Notify, copyToClipboard } from 'quasar';
-import { isValidAccount } from 'src/utils/stringValidator';
+import { isValidAccount } from 'src/utils/string-utils';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
