@@ -196,9 +196,9 @@ describe('string-utils utility functions', () => {
         });
         it('returns sum of cpu and net staked if amount is of type number', () => {
             const testData = {
-                amount: 3,
+                amount: 1.2345,
             };
-            const expectedResult = '3 TLOS';
+            const expectedResult = '1.2345 TLOS';
             expect(getRexHistoryAsset(testData)).toBe(expectedResult);
         });
         it('returns amount asset string if it is not of type number', () => {
