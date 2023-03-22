@@ -1,23 +1,25 @@
 # Project Structure & Notes
-├── public/
-├── src/
-│    ├── assets/ svgs & images
-│    ├── boot/  files comprise the entrypoint when compiled (quasar)
-│    ├── components/ vue sfcs
-│    ├── css/ - sass styles
-│    ├── layouts/
-│    ├── pages/
-│    ├── router/ - route & history management (route module example)
-│    ├── store/ - app state management
-│    ├── types/ - all types are located here and referenced via this dir
-│    ├── App.vue - app mount component
-├── test/ - contains jest unit tests (simple demo examples currently)
-├── .eslintrc.js - linter settings
-├── netlify.toml - env variables for netlify deployment
-├── jest.config.js - jest unit testing settings & reporting thresholds
-├── quasar.conf.js - quasar settings
-├── .tsconfig.json - typescript settings
 
-- This configuration supports development using both Vue 2 (options) and Vue 3 (composition) which will make upgrading/fully migrating easy in the future
-
-- There are very basic examples in store, router, and tests, one or two of the components will be fleshed out to show style and full integration
+├── public/<br>
+├── src/<br>
+&emsp;&emsp;├── api/ - third party and chain api methods<br>
+&emsp;&emsp;├── assets/ - svgs & images<br>
+&emsp;&emsp;├── boot/ - global property files comprise the entrypoint when compiled (quasar)<br>
+&emsp;&emsp;├── components/ - vue sfcs<br>
+&emsp;&emsp;├── config/ - network configuration files <br>
+&emsp;&emsp;&emsp;&emsp;&emsp;├── chains/ - network specific settings <br>
+&emsp;&emsp;├── css/ - sass styles<br>
+&emsp;&emsp;├── layouts/<br>
+&emsp;&emsp;├── pages/<br>
+&emsp;&emsp;├── router/ - route & history management<br>
+&emsp;&emsp;├── store/ - app state management<br>
+&emsp;&emsp;├── types/ - typescript types<br>
+&emsp;&emsp;├── utils/ - shared methods<br>
+&emsp;&emsp;├── App.vue - app mount component<br>
+├── test/ - contains jest unit tests<br>
+├── .eslintrc.js - linter settings<br>
+├── netlify.toml - env variables for netlify deployment<br>
+├── jest.config.js - jest unit testing settings & reporting thresholds<br>
+├── ProjectStructure.md - this file<br>
+├── quasar.conf.js - quasar settings<br>
+├── .tsconfig.json - typescript settings<br>
