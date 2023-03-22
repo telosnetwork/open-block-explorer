@@ -300,6 +300,7 @@ export default defineComponent({
                 });
                 tableData = response.data.actions;
                 totalRows.value = response.data.total.value;
+                console.log(response.data.total.value);
             }
 
             if (tableData) {
@@ -450,7 +451,7 @@ export default defineComponent({
             void updateLiveTransactionState();
         });
 
-        // create a watch for pagination and make sure it is called inmediately
+        // create a watch for pagination and make sure it is called immediately
         watch(
             () => pagination.value,
             async () => {
@@ -486,7 +487,7 @@ export default defineComponent({
             drop.hide();
         };
 
-        const moveTablePage = async (ref: unknown, dir: 'next' | 'prev' | 'first' | 'last') => {
+        const moveTablePage = (ref: unknown, dir: 'next' | 'prev' | 'first' | 'last') => {
             const table: QTable = ref as QTable;
             if (dir === 'next') {
                 table.nextPage();
@@ -495,7 +496,7 @@ export default defineComponent({
             } else if (dir === 'first') {
                 table.firstPage();
             } else if (dir === 'last') {
-                await applyPagination(lastPage.value, null);
+                void changePagination(lastPage.value, paginationSettings.value.rowsPerPage);
             }
         };
 
@@ -575,6 +576,7 @@ export default defineComponent({
                             class="text-no-wrap"
                             left-label
                             label="Live transactions"
+                            :disable="paginationSettings.page !== 1"
                         />
                     </div>
                 </div>
@@ -865,7 +867,7 @@ export default defineComponent({
 
                 <small>
                     Page {{ paginationSettings.page }}
-                    {{ showPaginationExtras ? (lastPage === 0 ? ` of 1` : ` of ${lastPage}`) : '' }}
+                    {{ (showPaginationExtras && enableLiveTransactions === false) ? (lastPage === 0 ? ` of 1` : ` of ${lastPage}`) : '' }}
                 </small>
 
                 <q-btn
@@ -880,7 +882,7 @@ export default defineComponent({
                 </q-btn>
 
                 <q-btn
-                    v-if="showPaginationExtras"
+                    v-if="showPaginationExtras && enableLiveTransactions === false"
                     size="sm"
                     color="primary"
                     outline

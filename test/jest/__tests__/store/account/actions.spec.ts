@@ -125,7 +125,7 @@ describe('Store - Account Actions', () => {
             authenticator = newAuthenticatorMock(true);
 
             // call the action login
-            await (actions as { login: (a:any, b:any) => Promise<void> }).login(
+            await (actions as { login: (a:unknown, b:unknown) => Promise<void> }).login(
                 { commit, state },
                 { account: null, authenticator },
             );
