@@ -214,6 +214,7 @@ export default defineComponent({
     :model-value="inputValue"
     :options="options"
     :option-disable="(item) => item.isHeader"
+    class="search-input"
     @input-value="(value) => inputValue = value"
     @keyup.enter="handleGoTo"
 >
