@@ -17,6 +17,7 @@
 &emsp;&emsp;├── utils/ - shared methods<br>
 &emsp;&emsp;├── App.vue - app mount component<br>
 ├── test/ - contains jest unit tests<br>
+├── .env.example - set default network and enable network sidebar<br>
 ├── .eslintrc.js - linter settings<br>
 ├── netlify.toml - env variables for netlify deployment<br>
 ├── jest.config.js - jest unit testing settings & reporting thresholds<br>
