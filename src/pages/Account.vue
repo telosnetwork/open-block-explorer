@@ -58,7 +58,7 @@ export default defineComponent({
         <div class="row">
             <AccountCard class="account-card" :account="account" :tokens="tokenList"/>
         </div>
-        <q-tabs v-model="tab" class="tabs" no-caps>
+        <q-tabs v-model="tab" class="account-view tabs" no-caps>
             <q-tab name="transactions" label="Transactions"/>
             <q-tab v-if="abi" name="contract" label="Contract"/>
             <q-tab name="tokens" label="Tokens"/>
