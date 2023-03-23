@@ -134,7 +134,6 @@ export default defineComponent({
                     </div>
                     <q-input
                         v-model="toSavingAmount"
-                        class="full-width"
                         standout="bg-deep-purple-2 text-white"
                         placeholder='0'
                         :lazy-rules='true'
@@ -154,7 +153,7 @@ export default defineComponent({
                     />
                 </div>
             </div>
-            <div class="col-12 q-pt-xl">
+            <div class="col-12">
                 <div class="row">
                     <div class="row q-pb-sm full-width">
                         <div class="col-9">UNSTAKE FROM SAVINGS</div>
@@ -199,11 +198,16 @@ export default defineComponent({
 
 </template>
 
-<style lang="sass">
-.button-accent
-  background: rgba(108, 35, 255, 1)
-  border-radius: 4px
-  color: $grey-4
-.balance-amount:hover
-  color: $primary
+<style lang="scss">
+.button-accent{
+  background: rgba(108, 35, 255, 1);
+  border-radius: 4px;
+  color: $grey-4;
+}
+.balance-amount:hover{
+  color: $primary;
+}
+.staking-form .q-field{
+    width:100%;
+}
 </style>
