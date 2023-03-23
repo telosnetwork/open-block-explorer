@@ -116,6 +116,7 @@ export default defineComponent({
                 ).transactionId as string;
             } catch (e) {
                 this.transactionError = e;
+                this.$store.commit('account/setTransactionError', e);
             }
             await this.loadAccountData();
 
