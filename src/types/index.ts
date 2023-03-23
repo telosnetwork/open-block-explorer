@@ -1,6 +1,7 @@
 export { Contract } from 'src/types/Contract';
 export { PriceStats } from 'src/types/PriceStats';
 export { PriceHistory, DateTuple } from 'src/types/PriceHistory';
+export { RexHistory } from 'src/types/RexHistory';
 export { GetTableRowsParams } from 'src/types/Api';
 export {
     ActionData,

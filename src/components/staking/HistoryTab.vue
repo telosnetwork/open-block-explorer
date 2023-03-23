@@ -2,29 +2,20 @@
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'src/store';
 import { Action } from 'src/types';
-import { getChain } from 'src/config/ConfigManager';
+import { getRexHistoryAsset, formatDate } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'HistoryTab',
     components: {},
     setup() {
         const store = useStore();
-        const symbol = getChain().getSystemToken().symbol;
         const rexActions = computed((): Action[] => store.state.account.rexActions);
-
-        function formatDate(date: string): string {
-            return new Date(date).toLocaleDateString('en-US', {
-                month: 'long',
-                year: 'numeric',
-                day: 'numeric',
-            });
-        }
 
         return {
             store,
             rexActions,
             formatDate,
-            symbol,
+            getRexHistoryAsset,
         };
     },
 });
@@ -42,13 +33,13 @@ export default defineComponent({
             <div class="col-xs-12 col-sm-6">
                 <div class="row q-pa-sm">
                     <div class="col-6">{{action.act.name}}</div>
-                    <div class="col-6 text-weight-bold">{{action.act.data.amount ? action.act.data.amount : action.act.data.rex}}</div>
+                    <div class="col-6 text-weight-bold">{{ getRexHistoryAsset(action.act.data)}}</div>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6">
                 <div class="row q-pa-sm">
                     <div class="col-6"></div>
-                    <div class="col-6 text-weight-bold">{{formatDate(action.timestamp)}}</div>
+                    <div class="col-6 text-weight-bold">{{formatDate(action.timestamp, false)}}</div>
                 </div>
             </div>
             <q-separator color="grey-8"/>

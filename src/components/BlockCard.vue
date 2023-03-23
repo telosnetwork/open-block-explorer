@@ -10,6 +10,7 @@ import {
 import { copyToClipboard, useQuasar } from 'quasar';
 import { Block } from 'src/types';
 import { useRouter } from 'vue-router';
+import { formatDate } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'BlockCard',
@@ -67,16 +68,6 @@ export default defineComponent({
                 return 0;
             }
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-        function formatDate(date: string): string {
-            return new Date(date).toLocaleDateString('en-US', {
-                month: 'long',
-                year: 'numeric',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-            });
         }
         function setBlockData() {
             if (Block.value) {

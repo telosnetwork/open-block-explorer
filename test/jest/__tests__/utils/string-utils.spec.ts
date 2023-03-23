@@ -4,6 +4,8 @@ import {
     isValidTransactionHex,
     formatCurrency,
     assetToAmount,
+    formatDate,
+    getRexHistoryAsset,
 } from 'src/utils/string-utils';
 
 describe('string-utils utility functions', () => {
@@ -153,6 +155,61 @@ describe('string-utils utility functions', () => {
             const testAsset = '12.3456 COIN';
             const expectedResult = 12.3456;
             expect(assetToAmount(testAsset)).toEqual(expectedResult);
+        });
+        it('should return NaN if passed invalid asset param', () => {
+            const testAsset = 'x';
+            expect(assetToAmount(testAsset)).toBeNaN();
+        });
+    });
+
+    describe('formatDate', () => {
+        it('formats ISO date timestamp string to `<Month> <day>, <Year> at H:MM:SS <AM/PM>`', () => {
+            const testDate = '2023-03-21T21:26:16+01:23';
+            const expectedResult = new Date(testDate).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+            });
+            expect(formatDate(testDate)).toBe(expectedResult);
+        });
+        it('omits time (`at H:MM:SS <AM/PM>`) if optional showTime param `false` is passed', () => {
+            const testDate = '2023-03-21T21:26:16+01:23';
+            const expectedResult = 'March 21, 2023';
+            expect(formatDate(testDate, false)).toBe(expectedResult);
+        });
+        it('should return "Invalid Date" if passed invalid date param', () => {
+            const testDate = 'x';
+            const expectedResult = 'Invalid Date';
+            expect(formatDate(testDate)).toBe(expectedResult);
+        });
+    });
+
+    describe('getRexHistoryAsset', () => {
+        it('returns rex asset string if exists', () => {
+            const testData = {
+                rex: '4 TLOS',
+            };
+            expect(getRexHistoryAsset(testData)).toBe(testData.rex);
+        });
+        it('returns sum of cpu and net staked if amount is of type number and appends the token symbol', () => {
+            const testData = {
+                amount: 1.2345,
+            };
+            const expectedResult = '1.2345 TLOS';
+            expect(getRexHistoryAsset(testData)).toBe(expectedResult);
+        });
+        it('returns amount asset string if it is not of type number', () => {
+            const testData = {
+                amount: '3 TLOS',
+            };
+            expect(getRexHistoryAsset(testData)).toBe(testData.amount);
+        });
+        it('should return undefined if passed empty or invalid (no referenced properties) data param', () => {
+            const testData = {};
+            expect(getRexHistoryAsset(testData)).toBeUndefined();
         });
     });
 });

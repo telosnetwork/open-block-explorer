@@ -1,4 +1,6 @@
 /* regex to validate EOSIO account name convention see: https://regex101.com/r/d8uKrG/1 */
+import { getChain } from 'src/config/ConfigManager';
+import { RexHistory } from 'src/types';
 
 export function isValidAccount(account: string): boolean {
     const regEx = /(^[a-z1-5.]{1,11}[a-z1-5]$)|(^[a-z1-5.]{12}[a-z1-5]$)/;
@@ -70,5 +72,34 @@ export function assetToAmount(asset: string): number {
         return parseFloat(qty);
     } catch (error) {
         return 0;
+    }
+}
+
+export function formatDate(date: string, showTime = true): string {
+    return showTime ?
+        new Date(date).toLocaleDateString('en-US', {
+            month: 'long',
+            year: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+        }) :
+        new Date(date).toLocaleDateString('en-US', {
+            month: 'long',
+            year: 'numeric',
+            day: 'numeric',
+        });
+}
+
+export function getRexHistoryAsset(data: RexHistory): string {
+    if (data.rex){
+        return data.rex;
+    }
+    if (typeof data.amount === 'number') {
+        const symbol = getChain().getSystemToken().symbol;
+        return `${data.amount} ${symbol}`;
+    }else{
+        return data.amount;
     }
 }
