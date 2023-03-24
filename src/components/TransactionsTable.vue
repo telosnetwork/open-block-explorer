@@ -930,9 +930,6 @@ $medium:920px
   word-break: break-all
   white-space: unset
 
-.q-table__middle
-  overflow-x: hidden
-
 .q-table td div
   overflow-y: clip
   transition: max-height 0.5s cubic-bezier(0, 1, 0, 1)
