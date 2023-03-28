@@ -1,55 +1,71 @@
 // app global css in Sass form
 @import url('https://fonts.googleapis.com/css2?family=Actor&display=swap')
 
-body
-  overflow-x: hidden
-  overflow-y: auto
-
 a
- cursor: pointer
+    cursor: pointer
 
-.q-page-container
-  margin-left: auto
-  margin-right: auto
+.actor-font
+    font-family: 'Actor'
 
-.q-btn
-    text-transform: capitalize
+body
+    overflow-x: hidden
+    overflow-y: auto
+
+.bg-dropdown-dark
+    background: var(--q-color-dropdown-card)
 
 .button-primary
     background: var(--q-primary)
     border-radius: 4px
     color: white
 
-.cursor-pointer
-  cursor: pointer
-
-.separator
-    min-width: 100%
-    min-height: 2px
-    background: var(--q-color-seperator-background)
-    border-radius: 4px
-
 .card-separator
     min-height: 2px
     background: var(--q-color-seperator-background)
     border-radius: 4px
 
-.gradient-box
-  min-height: 350px
-  height: 70vh
-  width: 100%
-  background: var(--q-color-secondary-gradient)
+.container-max-width
+    max-width: 1280px !important
+    margin-left: auto
+    margin-right: auto
 
-.price-box-position
-  margin-top: 1rem
-  z-index: 1
+.cursor-pointer
+    cursor: pointer
+
+.flex-grow-1
+    flex-grow: 1
+
+.gradient-box
+    min-height: 350px
+    height: 70vh
+    width: 100%
+    background: var(--q-color-secondary-gradient)
+
+.gradient-color
+    .q-linear-progress__model--determinate
+        background: var(--q-color-progress-gradient)
+
+.info-card
+    background-color: white
+    background: white
+    box-shadow: 0px 9px 14px var(--q-color-seperator-background), 0px 1px 4px var(--q-color-card-shadow)
+    border-radius: 10px
+
+.inline-block
+    display: inline-block
+
+.jsonViewer
+    max-width: 100vw
+    overflow: scroll
 
 .map-data-position
-  z-index: 52
+    z-index: 52
 
-//hide unimplemented ui temporarily
-.temp-hide
-    visibility: hidden
+.max-dialog-width
+    max-width: 800px !important
+
+.no-wrap
+    white-space: nowrap
 
 .panel-title
     font-style: normal
@@ -57,21 +73,25 @@ a
     font-size: 22.75px
     line-height: 27px
 
-.max-dialog-width
-    max-width: 800px !important
+.price-box-position
+    margin-top: 1rem
+    z-index: 1
 
-.container-max-width
-    max-width: 1280px !important
+q-card.card--light-bg
+    background: #f4f0fb
+
+q-card-section.section--light-bg
+    background: #eae2f7
+
+.q-btn
+    text-transform: capitalize
+
+.q-dialog-plugin
+    max-width: 100%
+
+.q-page-container
     margin-left: auto
     margin-right: auto
-
-@media screen and (max-width: 420px)
-  .container-max-width
-    max-width: 100% !important
-
-.jsonViewer
-  max-width: 100vw
-  overflow: scroll
 
 .q-tree__node-header
     min-height: 2px
@@ -79,48 +99,36 @@ a
     padding-left: 20px
     background: rgba(138, 101, 212, 0.1)
 
-.gradient-color
-  .q-linear-progress__model--determinate
-    background: var(--q-color-progress-gradient)
+.separator
+    min-width: 100%
+    min-height: 2px
+    background: var(--q-color-seperator-background)
+    border-radius: 4px
 
-.actor-font
-  font-family: 'Actor'
-
-.info-card
-  background-color: white
-  background: white
-  box-shadow: 0px 9px 14px var(--q-color-seperator-background), 0px 1px 4px var(--q-color-card-shadow)
-  border-radius: 10px
+.temp-hide
+    visibility: hidden
 
 .text-dropdown-dark
-  color: var(--q-color-dropdown-card)
-
-.bg-dropdown-dark
-  background: var(--q-color-dropdown-card)
-
-.flex-grow-1
-  flex-grow: 1
-
-.q-dialog-plugin
-  max-width: 100%
+    color: var(--q-color-dropdown-card)
 
 .text-no-decoration
-  text-decoration: none
-
-.inline-block
-  display: inline-block
-
-q-card.card--light-bg
-  background: #f4f0fb
-
-q-card-section.section--light-bg
-  background: #eae2f7
+    text-decoration: none
 
 .trx-table
-  margin-top: 1rem
-  margin-bottom: 1rem
-  padding-bottom: .5rem
-  background-color:#ffffff
-  background: #FFFFFF
-  box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
-  border-radius: 10px
+    margin-top: 1rem
+    margin-bottom: 1rem
+    padding-bottom: .5rem
+    background-color:#ffffff
+    background: #FFFFFF
+    box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
+    border-radius: 10px
+
+@media screen and (max-width: 420px)
+    .container-max-width
+        max-width: 100% !important
+    .trx-table
+        box-shadow: unset
+    .q-table
+        max-width: calc(100% - 4px)
+    .account-view .q-tab
+        padding: unset

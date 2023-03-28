@@ -231,9 +231,9 @@ export default defineComponent({
                         <q-separator class="q-my-sm"/>
                         <table>
                             <tr v-for="(item, index) in requiredAccounts.accounts" :key="index" class="q-pb-xs">
-                                <td class="text-body2 text-no-wrap">{{ item.weight }}</td>
-                                <td class="text-body2 text-weight-bold text-no-wrap q-px-md">{{ item.actor }}</td>
-                                <td class="text-body2 text-no-wrap">{{ item.permission }}</td>
+                                <td class="text-body2">{{ item.weight }}</td>
+                                <td class="text-body2 text-weight-bold q-px-md">{{ item.actor }}</td>
+                                <td class="text-body2">{{ item.permission }}</td>
                             </tr>
                         </table>
                     </q-card-section>

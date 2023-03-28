@@ -24,7 +24,7 @@ export default defineComponent({
 </script>
 
 <template>
-<a class="hover-dec text-no-wrap" :href=" '/' + type + '/' + accAccount">{{type === 'transaction' ? accAccount.slice(0, 8) : accAccount}}</a>
+<a class="hover-dec" :href=" '/' + type + '/' + accAccount">{{type === 'transaction' ? accAccount.slice(0, 8) : accAccount}}</a>
 </template>
 
 <style lang="sass" scoped>
