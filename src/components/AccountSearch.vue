@@ -110,6 +110,7 @@ export default defineComponent({
                             });
                         }
                     });
+                    context.emit('update:modelValue', inputValue.value);
                 } else {
                     isError.value = true;
                 }
