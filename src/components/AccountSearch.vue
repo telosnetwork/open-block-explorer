@@ -18,6 +18,11 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
+        // this prop control if we will also emmit the update event when the user is typing
+        emmitUpdateOnInput: {
+            type: Boolean,
+            default: false,
+        },
     },
     emits: ['update:modelValue', 'remove'],
     setup(props, context) {
@@ -112,11 +117,13 @@ export default defineComponent({
                     });
 
                     // if has only one result and it's the one that is on the inputValue, emit update
-                    if (results.length === 2 && results[1].label === inputValue.value) {
-                        isError.value = false;
-                        context.emit('update:modelValue', inputValue.value);
-                    } else {
-                        isError.value = true;
+                    if (props.emmitUpdateOnInput) {
+                        if (results.length === 2 && results[1].label === inputValue.value) {
+                            isError.value = false;
+                            context.emit('update:modelValue', inputValue.value);
+                        } else {
+                            isError.value = true;
+                        }
                     }
                 } else {
                     isError.value = true;
