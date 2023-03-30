@@ -97,7 +97,7 @@ export default defineComponent({
         <AccountSearch
             v-if="field.type === 'name'"
             v-model="action.data[field.name]"
-            emmitUpdateOnInput
+            emitUpdateOnInput
             outlined
             :filled="false"
             with-validation
