@@ -3,7 +3,7 @@ import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
-import { isValidTransactionHex } from 'src/utils/stringValidator';
+import { isValidTransactionHex } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
 
 export default defineComponent({
@@ -214,6 +214,7 @@ export default defineComponent({
     :model-value="inputValue"
     :options="options"
     :option-disable="(item) => item.isHeader"
+    class="search-input"
     @input-value="(value) => inputValue = value"
     @keyup.enter="handleGoTo"
 >

@@ -2,6 +2,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
+import {  formatDate } from 'src/utils/string-utils';
 import AccountFormat from 'src/components/transaction/AccountFormat.vue';
 
 export default defineComponent({
@@ -23,6 +24,7 @@ export default defineComponent({
         };
     },
     methods: {
+        formatDate,
         copy(value: string) {
             copyToClipboard(value)
                 .then((): void => {
@@ -47,16 +49,6 @@ export default defineComponent({
                 return 0;
             }
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        },
-        formatDate(date: string): string {
-            return new Date(date).toLocaleDateString('en-US', {
-                month: 'long',
-                year: 'numeric',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-            });
         },
     },
 });

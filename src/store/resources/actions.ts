@@ -3,8 +3,8 @@ import { StateInterface } from 'src/store/index';
 import { DelegatedResources, ResourcesStateInterface } from 'src/store/resources/state';
 import { GetTableRowsParams } from 'src/types';
 import { api } from 'src/api';
-import { SignTransactionResponse } from 'universal-authenticator-library';
 import { getChain } from 'src/config/ConfigManager';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -13,21 +13,22 @@ const precision = chain.getSystemToken().precision;
 export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
 
     // general update action to assert all resources related data is loaded for the current account
-    async updateResources(store, force = false) {
+    async updateResources(store, { account, force }) {
+        const currentAccount = (account as string) ?? (store.rootState.account.accountName);
         try {
             store.commit('setLoading', 'updateResources');
             store.commit('setForceUpdate', force);
             if (
-                store.state.currentAccount !== store.rootState.account.accountName ||
+                store.state.currentAccount !== currentAccount ||
                 !store.rootState.account.data ||
                 force
             ) {
                 // dispatch updateSelfStaked and updateDelegatedToOthers actions in parallel awaiting for both to finish
                 await Promise.all([
-                    store.dispatch('updateSelfStaked', store.rootState.account.accountName),
-                    store.dispatch('updateDelegatedToOthers', store.rootState.account.accountName),
+                    store.dispatch('updateSelfStaked', currentAccount),
+                    store.dispatch('updateDelegatedToOthers', currentAccount),
                 ]);
-                store.commit('setCurrentAccount', store.rootState.account.accountName);
+                store.commit('setCurrentAccount', currentAccount);
             }
         } catch (err) {
             console.error('Error:', err);
@@ -44,7 +45,8 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             if (
                 store.state.currentAccount !== account ||
                 store.state.selfStaked?.from !== account ||
-                store.state.selfStaked?.to !== account
+                store.state.selfStaked?.to !== account ||
+                store.state.forceUpdate
             ) {
                 // dispatch loadAccountData action from account module
                 await store.dispatch('account/loadAccountData', account, { root: true });
@@ -53,11 +55,11 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             const accountData = store.rootState.account.data;
 
             // self staked resources
-            const self_net_weight = Number(accountData.self_delegated_bandwidth?.cpu_weight.value ?? 0);
-            const self_cpu_weight = Number(accountData.self_delegated_bandwidth?.net_weight.value ?? 0);
+            const self_net_weight = Number(accountData.self_delegated_bandwidth?.net_weight.value ?? 0);
+            const self_cpu_weight = Number(accountData.self_delegated_bandwidth?.cpu_weight.value ?? 0);
 
-            const self_net_asset = `${self_net_weight.toFixed(precision)} ${symbol}`;
-            const self_cpu_asset = `${self_cpu_weight.toFixed(precision)} ${symbol}`;
+            const self_net_asset = formatCurrency(self_net_weight, precision, symbol, true);
+            const self_cpu_asset = formatCurrency(self_cpu_weight, precision, symbol, true);
 
             const selfStaked: DelegatedResources = {
                 from: account,
@@ -74,8 +76,8 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             const from_others_net_weight = total_net_weight - self_net_weight;
             const from_others_cpu_weight = total_cpu_weight - self_cpu_weight;
 
-            const from_others_net_asset = `${from_others_net_weight.toFixed(precision)} ${symbol}`;
-            const from_others_cpu_asset = `${from_others_cpu_weight.toFixed(precision)} ${symbol}`;
+            const from_others_net_asset = formatCurrency(from_others_net_weight, precision, symbol, true);
+            const from_others_cpu_asset = formatCurrency(from_others_cpu_weight, precision, symbol, true);
 
             const fromOthers: DelegatedResources = {
                 from: 'not-available',
@@ -111,8 +113,20 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
                 }
             ).rows;
 
+            const delegatedToOthers = delegated.filter(item => item.to !== account);
+            const delegatedToOthersNet = delegatedToOthers.reduce(
+                (acc, item) => acc + parseFloat(item.net_weight),
+                0,
+            );
+            const delegatedToOthersCpu = delegatedToOthers.reduce(
+                (acc, item) => acc + parseFloat(item.cpu_weight),
+                0,
+            );
+            const totalDelegatedToOthers = delegatedToOthersCpu + delegatedToOthersNet;
+
             commit('setCurrentAccount', account);
             commit('setDelegatedToOthers', delegated);
+            commit('setDelegatedToOthersAggregated', totalDelegatedToOthers);
         } catch (err) {
             console.error('Error:', err);
         } finally {
@@ -127,7 +141,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
             commit('setLoading', 'delegateResources');
 
             // calculate the total amount
-            const amount = Number(net_weight) + Number(cpu_weight);
+            const amount = Number(net_weight ?? '0') + Number(cpu_weight ?? '0');
 
             const actions = [
                 {
@@ -149,8 +163,9 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
                     },
                 },
             ];
-            const transaction = (await dispatch('sendTransaction', actions)) as undefined as SignTransactionResponse;
-            commit('setTransaction', transaction.transactionId);
+
+            await dispatch('account/sendTransaction', actions, { root: true });
+            await dispatch('updateResources', { account:from, force: true });
         } catch (e) {
             commit('setTransactionError', e);
         } finally {
@@ -183,17 +198,25 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
                 },
             ];
             await dispatch('account/sendTransaction', actions, { root: true });
+            await dispatch('updateResources', { account:from, force: true });
         } catch (e) {
             console.error('Error', e);
         } finally {
             commit('unsetLoading', 'undelegateResources');
         }
     },
+
+    // reset interlad data when there's no logged in account
+    resetResources({ commit }) {
+        commit('setDelegatedFromOthers', null);
+        commit('setDelegatedToOthers', []);
+        commit('setSelfStaked', null);
+    },
 };
 
 // include all actions in the interface as callable full-typed functions
 export interface ResourcesActions {
-    updateResources: (force?: boolean) => Promise<void>;
+    updateResources: (payload: {account?:string, force?: boolean}) => Promise<void>;
     updateSelfStaked: (account: string) => Promise<void>;
     updateDelegatedToOthers: (account: string) => Promise<void>;
     delegateResources: (order: DelegatedResources) => Promise<void>;

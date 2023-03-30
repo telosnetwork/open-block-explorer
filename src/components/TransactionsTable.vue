@@ -23,8 +23,6 @@ import AccountSearch from 'src/components/AccountSearch.vue';
 import TokenSearch from 'src/components/TokenSearch.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
-// QBtnDropdown, QPopupProxy, QTable are actually used on the html code
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
@@ -450,7 +448,7 @@ export default defineComponent({
             void updateLiveTransactionState();
         });
 
-        // create a watch for pagination and make sure it is called inmediately
+        // create a watch for pagination and make sure it is called immediately
         watch(
             () => pagination.value,
             async () => {
@@ -486,7 +484,7 @@ export default defineComponent({
             drop.hide();
         };
 
-        const moveTablePage = async (ref: unknown, dir: 'next' | 'prev' | 'first' | 'last') => {
+        const moveTablePage = (ref: unknown, dir: 'next' | 'prev' | 'first' | 'last') => {
             const table: QTable = ref as QTable;
             if (dir === 'next') {
                 table.nextPage();
@@ -495,7 +493,7 @@ export default defineComponent({
             } else if (dir === 'first') {
                 table.firstPage();
             } else if (dir === 'last') {
-                await applyPagination(lastPage.value, null);
+                void changePagination(lastPage.value, paginationSettings.value.rowsPerPage);
             }
         };
 
@@ -555,14 +553,13 @@ export default defineComponent({
                 <div class="row flex-grow-1">
                     <div class="col">
                         <!-- -- Title ---->
-                        <p class="text-no-wrap trx-table--title">{{ tableTitle }}</p>
+                        <p class="trx-table--title">{{ tableTitle }}</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <q-toggle
                             v-model="showAge"
-                            class="text-no-wrap"
                             left-label
                             label="Show timestamp as relative"
                         />
@@ -572,9 +569,9 @@ export default defineComponent({
                     <div class="col">
                         <q-toggle
                             v-model="enableLiveTransactions"
-                            class="text-no-wrap"
                             left-label
                             label="Live transactions"
+                            :disable="paginationSettings.page !== 1"
                         />
                     </div>
                 </div>
@@ -865,7 +862,7 @@ export default defineComponent({
 
                 <small>
                     Page {{ paginationSettings.page }}
-                    {{ showPaginationExtras ? (lastPage === 0 ? ` of 1` : ` of ${lastPage}`) : '' }}
+                    {{ (showPaginationExtras && enableLiveTransactions === false) ? (lastPage === 0 ? ` of 1` : ` of ${lastPage}`) : '' }}
                 </small>
 
                 <q-btn
@@ -880,7 +877,7 @@ export default defineComponent({
                 </q-btn>
 
                 <q-btn
-                    v-if="showPaginationExtras"
+                    v-if="showPaginationExtras && enableLiveTransactions === false"
                     size="sm"
                     color="primary"
                     outline
@@ -931,9 +928,6 @@ $medium:920px
 .q-table--no-wrap td
   word-break: break-all
   white-space: unset
-
-.q-table__middle
-  overflow-x: hidden
 
 .q-table td div
   overflow-y: clip

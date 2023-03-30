@@ -3,6 +3,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
+import { assetToAmount } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'SavingsTab',
@@ -50,14 +51,14 @@ export default defineComponent({
         async function moveToSavings() {
             void store.dispatch('account/resetTransaction');
             if (
-                toSavingAmount.value === '0.0000' ||
+                toSavingAmount.value === '0' ||
                 toSavingAmount.value === '' ||
                 Number(toSavingAmount.value) >= eligibleStaked.value
             ) {
                 return;
             }
             await store.dispatch('account/moveToSavings', {
-                amount: toSavingAmount.value,
+                amount: toSavingAmount.value || '0',
             });
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
@@ -68,31 +69,18 @@ export default defineComponent({
         async function moveFromSavings() {
             void store.dispatch('account/resetTransaction');
             if (
-                fromSavingAmount.value === '0.0000' ||
+                fromSavingAmount.value === '0' ||
                 fromSavingAmount.value === '' ||
                 Number(fromSavingAmount.value) >= assetToAmount(rexSavings.value)
             ) {
                 return;
             }
             await store.dispatch('account/moveFromSavings', {
-                amount: fromSavingAmount.value,
+                amount: fromSavingAmount.value || '0',
             });
 
             if (localStorage.getItem('autoLogin') !== 'cleos') {
                 openTransaction.value = true;
-            }
-        }
-
-        function assetToAmount(asset: string, decimals = -1): number {
-            try {
-                let qty: string = asset.split(' ')[0];
-                let val: number = parseFloat(qty);
-                if (decimals > -1) {
-                    qty = val.toFixed(decimals);
-                }
-                return val;
-            } catch (error) {
-                return 0;
             }
         }
 
@@ -146,9 +134,8 @@ export default defineComponent({
                     </div>
                     <q-input
                         v-model="toSavingAmount"
-                        class="full-width"
                         standout="bg-deep-purple-2 text-white"
-                        placeholder='0.0000'
+                        placeholder='0'
                         :lazy-rules='true'
                         :rules="[ val => val >= 0 && val <= eligibleStaked  || 'Invalid amount.' ]"
                         type="text"
@@ -166,7 +153,7 @@ export default defineComponent({
                     />
                 </div>
             </div>
-            <div class="col-12 q-pt-xl">
+            <div class="col-12">
                 <div class="row">
                     <div class="row q-pb-sm full-width">
                         <div class="col-9">UNSTAKE FROM SAVINGS</div>
@@ -181,7 +168,7 @@ export default defineComponent({
                     <q-input
                         v-model="fromSavingAmount"
                         standout="bg-deep-purple-2 text-white"
-                        placeholder='0.0000'
+                        placeholder='0'
                         :lazy-rules='true'
                         :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]"
                         type="text"
@@ -211,11 +198,16 @@ export default defineComponent({
 
 </template>
 
-<style lang="sass">
-.button-accent
-  background: rgba(108, 35, 255, 1)
-  border-radius: 4px
-  color: $grey-4
-.balance-amount:hover
-  color: $primary
+<style lang="scss">
+.button-accent{
+  background: rgba(108, 35, 255, 1);
+  border-radius: 4px;
+  color: $grey-4;
+}
+.balance-amount:hover{
+  color: $primary;
+}
+.staking-form .q-field{
+    width:100%;
+}
 </style>
