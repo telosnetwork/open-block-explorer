@@ -140,10 +140,9 @@ export default defineComponent({
         };
 
         const loadBalances = async () => {
-            const { staked, profits } = await getRexBalance();
+            const total  = await getRexBalance();
             rexDeposits.value = await getRexFund();
-            rexStaked.value = staked;
-            rexProfits.value = profits;
+            rexStaked.value = total;
         };
 
         const loadResources = () => {
@@ -254,13 +253,10 @@ export default defineComponent({
 
             const rexBal = ((await api.getTableRows(paramsrexbal)) as RexbalRows)
                 .rows[0];
+
             const totalRexBalance =
                 rexBal?.rex_balance
                     ? Number(rexBal.rex_balance.split(' ')[0])
-                    : 0;
-            const staked =
-                rexBal?.vote_stake
-                    ? Number(rexBal.vote_stake.split(' ')[0])
                     : 0;
 
             const paramsrexpool = {
@@ -279,12 +275,7 @@ export default defineComponent({
             const tlosRexRatio = totalRex > 0 ? totalLendable / totalRex : 1;
 
             const total = totalRex > 0 ? tlosRexRatio * totalRexBalance : 0.0;
-            const profits = total - staked;
-            return {
-                total,
-                profits,
-                staked,
-            };
+            return total;
         };
 
         const fixDec = (val: number): number => parseFloat(val.toFixed(3));
@@ -349,7 +340,6 @@ export default defineComponent({
             totalTokens.value = '--';
             stakedResources.value = delegatedByOthers.value = 0;
             rexStaked.value = 0;
-            rexProfits.value = 0;
             rexDeposits.value = 0;
         };
 
@@ -395,7 +385,6 @@ export default defineComponent({
             totalValueString,
             rex,
             rexStaked,
-            rexProfits,
             rexDeposits,
             none,
             system_account,
@@ -559,10 +548,6 @@ export default defineComponent({
                     <tr>
                         <td class="text-left">REX staked (includes savings)</td>
                         <td class="text-right">{{ formatAsset(rexStaked) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">REX profits</td>
-                        <td class="text-right">{{ formatAsset(rexProfits) }}</td>
                     </tr>
                     <tr>
                         <td class="text-left">REX liquid deposits</td>
