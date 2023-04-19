@@ -50,24 +50,24 @@ const API_ENDPOINT = 'https://mainnet.koy.network/v1';
 const S3_PRODUCER_BUCKET = '';
 const DISPLAY_MAP = true;
 const THEME = {
-    primary: '#000000',
-    secondary: '#006600',
-    accent: '#BB0000',
-    dark: '#000000',
+    primary: '#CE1C61',
+    secondary: '#82103C',
+    accent: '#EE05F2',
+    dark: '#1d1d1d',
     positive: '#21BA45',
     negative: '#ff0000',
-    info: '#31CCEC',
-    warning: '#F2C037',
-    'color-map': '#115820',
-    'color-primary-gradient': 'linear-gradient(90deg, #006600 0%, #1AFF37 100%)',
+    info: '#90B862',
+    warning: '#FFBB69',
+    'color-map': '#CE1C61',
+    'color-primary-gradient': 'linear-gradient(90deg, #82103C 65%, #492030 100%)',
     'color-secondary-gradient':
-    'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
+    'linear-gradient(180deg, #82103C 20%, #5492030 85%)',
     'color-tertiary-gradient':
-    'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
+    'linear-gradient(90deg, #82103C 35%, #82103C 65%)',
     'color-progress-gradient':
-    'linear-gradient(90deg, #571AFF 0%, #A088F9 48.44%, #CBCAF5 100%)',
+    'linear-gradient(90deg, #82103C 10%, #CBCAF5 75%)',
     'color-producer-card-background': '#f5f4fe',
-    'color-select-box-background': '#DFFBE4',
+    'color-select-box-background': '#e0dffb',
 };
 
 export default class Telos extends BaseChain {
