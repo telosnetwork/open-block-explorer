@@ -36,4 +36,8 @@ export default abstract class BaseChain implements Chain {
   abstract getMapDisplay(): boolean;
   abstract getTheme(): Theme;
   abstract getFiltersSupported(prop: string): boolean;
+
+  isTestnet(): boolean {
+      return false;
+  }
 }

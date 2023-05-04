@@ -133,4 +133,8 @@ export default class TelosTestnet extends BaseChain {
         }
         return true;
     }
+
+    isTestnet(): boolean {
+        return true;
+    }
 }
