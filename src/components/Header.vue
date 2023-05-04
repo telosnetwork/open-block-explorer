@@ -35,7 +35,7 @@ export default defineComponent({
 <template>
 <div class="header-background">
     <div class="row text-center q-pt-sm justify-between q-pt-md">
-        <div class="logo-container col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        <div class="logo-container col-xs-3 col-sm-2 col-md-2 col-lg-2">
             <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
                 <div class="logo-header-container">
                     <div class="logo-chain-selector-container">
@@ -49,7 +49,7 @@ export default defineComponent({
                 </div>
             </div>
         </div>
-        <div class="col-xs-5 col-sm-6 col-md-4 col-lg-6">
+        <div class="col-xs-4 col-sm-6 col-md-4 col-lg-6">
             <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
                 <div class="row justify-center full-width">
                     <div class="col-12">
@@ -104,6 +104,7 @@ export default defineComponent({
     font-size: 18px
 
 .logo-header-container
+    position: relative
     display: flex
     flex-direction: column
     gap: 8px
@@ -126,8 +127,10 @@ export default defineComponent({
     height: 40px
 
 .testnet-text
+    position: absolute
+    bottom: -20px
     color: white
-    font-size: 14px
+    font-size: 10px
     width: 100%
     height: min-content
     padding: 4px 8px
