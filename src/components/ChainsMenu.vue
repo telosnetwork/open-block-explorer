@@ -99,7 +99,6 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .chain-button
-    margin-top: 4px
     padding: 0px 4px
 
 .q-item
