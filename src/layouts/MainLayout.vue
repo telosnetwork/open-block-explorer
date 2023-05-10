@@ -23,7 +23,6 @@ export default {
 <q-layout view="lHh lpR lff">
     <q-header>
         <AppHeader/>
-        <q-separator class="separator"/>
     </q-header>
     <ChainsSidebar v-if="showSidebar()"/>
     <q-page-container>
@@ -36,9 +35,4 @@ export default {
 </template>
 
 <style lang="sass" scoped>
-.q-header
-  background-color: var(--q-secondary)
-.separator
-  height: 2px
-  min-height: 2px
 </style>

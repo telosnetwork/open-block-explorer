@@ -54,7 +54,7 @@ export default defineComponent({
 
 <template>
 <div class="row col-12">
-    <div class="column col-12 gradient-box">
+    <div class="column col-12 header-support">
         <div class="row">
             <AccountCard class="account-card" :account="account" :tokens="tokenList"/>
         </div>

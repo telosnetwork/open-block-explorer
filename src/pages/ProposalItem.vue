@@ -458,7 +458,7 @@ export default defineComponent({
 </script>
 
 <template>
-<div class="proposal-item full-width row justify-center items-center gradient-box">
+<div class="proposal-item full-width row justify-center items-center header-support">
     <div v-if="isLoading" class="col text-center">
         <q-spinner color="white" size="2em"/>
     </div>
