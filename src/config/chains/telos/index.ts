@@ -68,6 +68,7 @@ const THEME = {
     'color-producer-card-background': '#f5f4fe',
     'color-select-box-background': '#e0dffb',
     'color-header-background': '#071A5F',
+    'color-header-border': '#8a65d41a',
     'color-header-support-background': 'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
     'color-graph-shadow': '#571aff28',
 };

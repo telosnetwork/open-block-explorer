@@ -48,8 +48,6 @@ const THEME = {
     'color-tertiary-gradient':
     'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
     'color-progress-gradient': '#28417c',
-    'color-producer-card-background': '#f5f4fe',
-    'color-select-box-background': '#e0dffb',
     'color-header-background': '#000000',
     'color-header-border': '#444',
     'color-header-support-background': '#000',
