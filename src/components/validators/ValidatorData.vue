@@ -257,7 +257,7 @@ export default defineComponent({
                 <q-card-section class="full-height">
                     <div class="column justify-center full-height">
                         <div class="row">
-                            <div class="col-12 subtitle2 q-pb-md text-weight-light text-grey-4 q-pt-lg text-center">SELECTED {{currentVote.length}} BLOCK PRODUCERS</div>
+                            <div class="col-12 subtitle2 q-pb-md text-weight-regular text-grey q-pt-lg text-center">SELECTED {{currentVote.length}} BLOCK PRODUCERS</div>
                             <div class="col-12">
                                 <q-btn
                                     class="full-width q-pa-sm"
