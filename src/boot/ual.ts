@@ -147,12 +147,14 @@ function getMainChain() {
 const authenticators: Authenticator[] = [];
 
 export const getAuthenticators = () => {
+    // we initialize the authenticators inside this function on demand
     if (authenticators.length === 0) {
-        // we initialize the authenticators inside this function on demand
+        // UAL is not looking at the chain when checking the localstorage for an already logged in account
+        // A quick fix is to add the chain in appName until we move forward with WharfKit
         const mainChain = getMainChain();
-        authenticators.push(new Anchor([mainChain], { appName: process.env.APP_NAME })),
+        authenticators.push(new Anchor([mainChain], { appName: `${process.env.APP_NAME}_${getChain().getName()}` })),
         authenticators.push(new CleosAuthenticator([mainChain], {
-            appName: process.env.APP_NAME,
+            appName: `${process.env.APP_NAME}_${getChain().getName()}`,
             loginHandler,
             signHandler: signHandlerForMainChain,
         }));
