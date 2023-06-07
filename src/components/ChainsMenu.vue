@@ -4,6 +4,7 @@ import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
 import { useStore } from 'src/store';
 import { getAuthenticators } from 'src/boot/ual';
+import { useRoute, useRouter } from 'vue-router';
 
 const configMgr = ConfigManager.get();
 
@@ -12,6 +13,8 @@ export default defineComponent({
     setup() {
         const menuOpened = ref(false);
         const store = useStore();
+        const route = useRoute();
+        const router = useRouter();
         const account = computed(() => store.state.account);
 
         const menuIcon = computed(() => menuOpened.value ? 'expand_less' : 'expand_more');
@@ -45,17 +48,17 @@ export default defineComponent({
             if (isSelected(chain)) {
                 return;
             }
-            // TODO: maybe we can reload vue store and boot files instead of full reload?
-            localStorage.setItem(
-                ConfigManager.CHAIN_LOCAL_STORAGE,
-                chain.getName(),
-            );
 
             if (account.value) {
                 void logout();
             }
 
-            location.reload();
+            void router.push({
+                path: route.path,
+                query: { network: chain.getName() },
+            });
+
+            menuOpened.value = false;
         }
 
         onMounted(() => {

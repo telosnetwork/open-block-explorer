@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
@@ -14,19 +14,38 @@ export default defineComponent({
         HeaderSearch,
         ChainsMenu,
     },
-    setup() {
+    props: {
+        network: {
+            type: String,
+            required: false,
+        },
+    },
+    setup(props) {
         const $q = useQuasar();
-        const chain = getChain();
         const store = useStore();
+
+        const network = computed(() => props.network);
         const account = computed(() => store.state.account.accountName);
         const isLarge = computed((): boolean => $q.screen.gt.sm);
         const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
 
+        const isTestnet = ref(getChain().isTestnet());
+        const smallLogoPath = ref(getChain().getSmallLogoPath());
+        const largeLogoPath = ref(getChain().getLargeLogoPath());
+
+        watch(network, () => {
+            smallLogoPath.value = getChain().getSmallLogoPath();
+            largeLogoPath.value = getChain().getLargeLogoPath();
+            isTestnet.value = getChain().isTestnet();
+        });
+
         return {
             account,
             isLarge: isLarge,
-            chain,
             showMultichainSelector,
+            smallLogoPath,
+            largeLogoPath,
+            isTestnet,
         };
     },
 });
@@ -40,12 +59,12 @@ export default defineComponent({
                 <div class="logo-header-container">
                     <div class="logo-chain-selector-container">
                         <a class="float-left" href="/">
-                            <img v-if="isLarge" class="logo" :src="chain.getLargeLogoPath()">
-                            <img v-else class="logo-token" :src="chain.getSmallLogoPath()">
+                            <img v-if="isLarge" class="logo" :src="largeLogoPath">
+                            <img v-else class="logo-token" :src="smallLogoPath">
                         </a>
                         <ChainsMenu v-if="showMultichainSelector"/>
                     </div>
-                    <div v-if="chain.isTestnet()" class="testnet-text">TESTNET</div>
+                    <div v-if="isTestnet" class="testnet-text">TESTNET</div>
                 </div>
             </div>
         </div>

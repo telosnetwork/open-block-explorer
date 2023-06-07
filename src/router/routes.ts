@@ -4,12 +4,14 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/',
         name: 'home',
+        props: route => ({ network: route.query.network }),
         component: () => import('layouts/MainLayout.vue'),
         children: [{ path: '', component: () => import('pages/Network.vue') }],
     },
     {
         path: '/account/:account',
         name: 'account',
+        props: route => ({ network: route.query.network }),
         component: () => import('layouts/MainLayout.vue'),
         children: [
             {
