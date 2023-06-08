@@ -2,6 +2,7 @@
 import { defineComponent, PropType, computed, toRefs } from 'vue';
 import { Permission } from 'src/types';
 import KeyToggle from 'src/components/KeyToggle.vue';
+import moment from 'moment';
 
 export default defineComponent({
     name: 'PermissionCard',
@@ -40,11 +41,17 @@ export default defineComponent({
             type: 'account' | 'transaction' | 'block',
         ): string => `<a href="/${type}/${name}" class="hover-dec">${name}</a>`;
 
+        const formatWait = (wait: number): string =>
+            // we use moment js to format the wait time
+            moment.duration(wait, 'seconds').humanize() + ' wait'
+        ;
+
         return {
             branchTopClass,
             branchBottomClass,
             permissionCardClass,
             formatAccount,
+            formatWait,
             permissionLocal,
         };
     },
@@ -69,6 +76,9 @@ export default defineComponent({
                     </div>
                     <div v-for="a in permissionLocal.required_auth.accounts" :key="`${a.permission.actor}-${a.permission.permission}`">
                         <div><span>{{`+${a.weight} &nbsp; &nbsp; `}}</span><span class="text-bold" v-html="formatAccount(a.permission.actor?.toString(), 'account')"></span><span> @{{a.permission.permission}}</span></div>
+                    </div>
+                    <div v-for="w in permissionLocal.required_auth.waits" :key="`${w.wait_sec}-${w.weight}`">
+                        <div><span>{{`+${w.weight} &nbsp; &nbsp; `}}</span><span v-html="formatWait(w.wait_sec.value)"></span></div>
                     </div>
                 </q-card-section>
                 <q-card-section v-if="permissionLocal.permission_links.length > 0" class="permission-action-section">
