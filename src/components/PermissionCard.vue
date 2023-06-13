@@ -78,7 +78,7 @@ export default defineComponent({
                         <div><span>{{`+${a.weight} &nbsp; &nbsp; `}}</span><span class="text-bold" v-html="formatAccount(a.permission.actor?.toString(), 'account')"></span><span> @{{a.permission.permission}}</span></div>
                     </div>
                     <div v-for="w in permissionLocal.required_auth.waits" :key="`${w.wait_sec}-${w.weight}`">
-                        <div><span>{{`+${w.weight} &nbsp; &nbsp; `}}</span><span v-html="formatWait(w.wait_sec.value)"></span></div>
+                        <div><span>{{`+${w.weight} &nbsp; &nbsp; `}}</span><span>{{ formatWait(w.wait_sec.value) }}</span></div>
                     </div>
                 </q-card-section>
                 <q-card-section v-if="permissionLocal.permission_links.length > 0" class="permission-action-section">
