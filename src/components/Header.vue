@@ -99,6 +99,7 @@ export default defineComponent({
 .logo-token
   width: 40px
   height: 40px
+  object-fit: contain
 
 .active-tab
   text-decoration: none
