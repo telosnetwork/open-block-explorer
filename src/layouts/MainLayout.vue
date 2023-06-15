@@ -6,7 +6,8 @@ import { setCssVar } from 'quasar';
 import ConfigManager from 'src/config/ConfigManager';
 import { themeProps } from 'src/types/Theme';
 import { DEFAULT_THEME } from 'src/config/BaseChain';
-import { computed, defineComponent, onMounted, watch } from 'vue';
+import { defineComponent, onMounted, watch } from 'vue';
+import { useRouteDataNetwork } from 'src/router';
 
 export default defineComponent({
     name: 'MainLayout',
@@ -14,14 +15,8 @@ export default defineComponent({
         AppHeader,
         AppFooter,
     },
-    props: {
-        network: {
-            type: String,
-            required: false,
-        },
-    },
-    setup(props) {
-        const networkChain = computed(() => props.network);
+    setup() {
+        const networkChain = useRouteDataNetwork();
 
         function setTheme(): void {
             const theme = ConfigManager.get().getCurrentChain().getTheme();
@@ -65,7 +60,7 @@ export default defineComponent({
 
 <q-layout view="lHh lpR lff">
     <q-header>
-        <AppHeader :network="networkChain"/>
+        <AppHeader/>
         <q-separator class="separator"/>
     </q-header>
     <q-page-container>

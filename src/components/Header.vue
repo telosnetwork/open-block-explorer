@@ -6,6 +6,7 @@ import HeaderSearch from 'components/HeaderSearch.vue';
 import ChainsMenu from 'components/ChainsMenu.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
+import { useRouteDataNetwork } from 'src/router';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -14,17 +15,10 @@ export default defineComponent({
         HeaderSearch,
         ChainsMenu,
     },
-    props: {
-        network: {
-            type: String,
-            required: false,
-        },
-    },
-    setup(props) {
+    setup() {
         const $q = useQuasar();
         const store = useStore();
 
-        const network = computed(() => props.network);
         const account = computed(() => store.state.account.accountName);
         const isLarge = computed((): boolean => $q.screen.gt.sm);
         const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
@@ -32,6 +26,8 @@ export default defineComponent({
         const isTestnet = ref(getChain().isTestnet());
         const smallLogoPath = ref(getChain().getSmallLogoPath());
         const largeLogoPath = ref(getChain().getLargeLogoPath());
+
+        const network = useRouteDataNetwork();
 
         watch(network, () => {
             smallLogoPath.value = getChain().getSmallLogoPath();
