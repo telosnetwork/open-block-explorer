@@ -57,10 +57,13 @@ const THEME = {
     'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
     'color-tertiary-gradient':
     'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
-    'color-progress-gradient':
-    'linear-gradient(90deg, #571AFF 0%, #A088F9 48.44%, #CBCAF5 100%)',
+    'color-progress-gradient': '#571aff',
     'color-producer-card-background': '#f5f4fe',
     'color-select-box-background': '#e0dffb',
+    'color-header-background': '#071A5F',
+    'color-header-border': '#8a65d41a',
+    'color-header-support-background': 'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
+    'color-graph-shadow': '#571aff28',
 };
 
 export default class TelosTestnet extends BaseChain {

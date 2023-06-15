@@ -72,11 +72,11 @@ export default class UX extends BaseChain {
     }
 
     getLargeLogoPath(): string {
-        return 'chains/ux/logo_sm.jpeg';
+        return 'chains/ux/logo_sm.png';
     }
 
     getSmallLogoPath(): string {
-        return 'chains/ux/logo_sm.jpeg';
+        return 'chains/ux/logo_sm.png';
     }
 
     getMapDisplay(): boolean {

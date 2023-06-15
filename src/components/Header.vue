@@ -96,19 +96,23 @@ export default defineComponent({
 .logo
   width: 104px
   height:40px
+  object-fit: contain
+
 .logo-token
   width: 40px
   height: 40px
+  object-fit: contain
 
 .active-tab
   text-decoration: none
-  color: #ffffff
+  color: var(--q-color-header-text)
   opacity: 1 !important
 
 .deactive
-  opacity: 0.3
+  opacity: 0.65
   font-size: 18px
 
 .header-background
-  background: var(--q-secondary)
+  border-bottom: 2px solid var(--q-color-header-border)
+  background: var(--q-color-header-background)
 </style>
