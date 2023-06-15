@@ -433,7 +433,7 @@ export default defineComponent({
             await loadTableData();
             await updateLiveTransactionState();
 
-            const showAccountFilter = ref<boolean>(getChain().getFiltersSupported('notified'));
+            showAccountFilter.value = getChain().getFiltersSupported('notified');
         });
 
         const updateLiveTransactionState = async () => {
