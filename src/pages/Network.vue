@@ -6,6 +6,7 @@ import WorldMap from 'components/WorldMap.vue';
 import MapData from 'components/MapData.vue';
 import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
+import { useRouteDataNetwork } from 'src/router';
 
 enum MapReveal {
     Reveal,
@@ -23,18 +24,22 @@ export default defineComponent({
     },
     setup() {
         const store = useStore();
-        const mapDisplay = ConfigManager.get().getCurrentChain().getMapDisplay();
+        const network = useRouteDataNetwork();
+
+        const mapDisplay = ref(ConfigManager.get().getCurrentChain().getMapDisplay());
         const showMap = ref(false);
         const showMapHint = ref(false);
         const SCROLL_TIMEOUT = 100;
         let mapReveal = ref(MapReveal.None);
         let isScrolling: NodeJS.Timeout;
+
         const toggleMap = () => {
             showMap.value = !showMap.value;
             if (!showMap.value && mapReveal.value !== MapReveal.None) {
                 mapReveal.value = MapReveal.None;
             }
         };
+
         const scrollReveal = () => {
             if (document.documentElement.scrollTop === 0){
                 if (!showMap.value){
@@ -49,10 +54,11 @@ export default defineComponent({
                         toggleMap();
                     }
                 }
-            }else{
+            } else {
                 mapReveal.value = MapReveal.None;
             }
         };
+
         watch(mapReveal, (val) => {
             if (val === MapReveal.Top){
                 showMapHint.value = true;
@@ -61,15 +67,18 @@ export default defineComponent({
                 }, 2000);
             }
         });
+
         const eventTimeout = function () {
             window.clearTimeout(isScrolling);
             isScrolling = setTimeout(scrollReveal, SCROLL_TIMEOUT);
         };
+
         const keyUpTimeout = function (e: KeyboardEvent) {
             if (e.key === 'ArrowUp'){
                 eventTimeout();
             }
         };
+
         const clearListeners = () => {
             window.removeEventListener('scroll', eventTimeout);
             window.removeEventListener('wheel', eventTimeout);
@@ -77,7 +86,7 @@ export default defineComponent({
         };
 
         onMounted(() => {
-            if (mapDisplay){
+            if (mapDisplay.value){
                 window.addEventListener('scroll', eventTimeout, false);
                 window.addEventListener('wheel', eventTimeout, false);
                 window.addEventListener('keyup', keyUpTimeout, false);
@@ -89,6 +98,24 @@ export default defineComponent({
 
         onBeforeUnmount(() => {
             clearListeners();
+        });
+
+        watch(network, () => {
+            const newMapDisplay = ConfigManager.get().getCurrentChain().getMapDisplay();
+            if (mapDisplay.value) {
+                clearListeners();
+            }
+            if (newMapDisplay) {
+                window.addEventListener('scroll', eventTimeout, false);
+                window.addEventListener('wheel', eventTimeout, false);
+                window.addEventListener('keyup', keyUpTimeout, false);
+                window.setInterval(() => {
+                    void store.dispatch('chain/updateBlockData');
+                }, 2000);
+            }
+            mapDisplay.value = newMapDisplay;
+            showMap.value = false;
+            showMapHint.value = false;
         });
 
         return {

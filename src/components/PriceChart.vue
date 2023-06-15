@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 import { Chart } from 'highcharts-vue';
 import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
@@ -7,8 +7,7 @@ import { DateTuple } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { getCssVar } from 'quasar';
-
-const chain = getChain();
+import { useRouteDataNetwork } from 'src/router';
 
 const ONE_MILLION = 1000000;
 const ONE_BILLION = 1000000000;
@@ -20,6 +19,9 @@ export default defineComponent({
         Highcharts: Chart,
     },
     setup() {
+        const network = useRouteDataNetwork();
+
+        const symbol = ref(getChain().getSystemToken().symbol);
         const hcInstance = Highcharts;
         const chartOptions = ref({
             //   uncomment to fill area
@@ -76,7 +78,7 @@ export default defineComponent({
             },
             series: [
                 {
-                    name: chain.getSystemToken().symbol,
+                    name: symbol,
                     color: getCssVar('primary'),
                     data: [] as DateTuple[],
                 },
@@ -95,7 +97,8 @@ export default defineComponent({
         const dayChange = ref('');
 
         const fetchPriceChartData = async () => {
-            const data: PriceChartData = await chain.getPriceData();
+            symbol.value = getChain().getSystemToken().symbol;
+            const data: PriceChartData = await getChain().getPriceData();
             lastUpdated.value = data.lastUpdated;
             tokenPrice.value = formatCurrencyValue(data.tokenPrice);
             dayChange.value = formatPercentage(data.dayChange);
@@ -113,6 +116,11 @@ export default defineComponent({
         onMounted(async () => {
             await fetchPriceChartData();
         });
+
+        watch(network, async () => {
+            await fetchPriceChartData();
+        });
+
         return {
             hcInstance,
             chartOptions,

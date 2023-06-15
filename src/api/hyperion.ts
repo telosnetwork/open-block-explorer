@@ -4,7 +4,7 @@
  * https://testnet.telos.net/v2/docs/static/index.html#/ (testnet)
  */
 
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import {
     ActionData,
     Action,
@@ -28,83 +28,106 @@ import { getChain } from 'src/config/ConfigManager';
 import { AccountCreatorInfo, HyperionTransactionFilter } from 'src/types/Api';
 import { GetActionsResponse } from 'src/types/Actions';
 
-const chain: Chain = getChain();
-const hyperion = axios.create({ baseURL: chain.getHyperionEndpoint() });
-const controller = new AbortController();
 export const DEFAULT_ICON = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjciIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAyNyAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTgiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=';
-
-const name = chain.getName();
-
-const url =
-  `https://raw.githubusercontent.com/telosnetwork/token-list/main/tokens.${name}.json`;
-
-const tokenListPromise = fetch(url)
-    .then(response => response.text())
-    .then((fileContent: string) => JSON.parse(fileContent) as { account: string }[])
-    .then(originals => originals.map(token => token as unknown as Token))
-    .catch((error) => {
-        console.error(error);
-        return [];
-    });
 
 const MAX_REQUESTS_COUNT = 5;
 const INTERVAL_MS = 10;
 let PENDING_REQUESTS = 0;
 
-/**
- * Axios Request Interceptor
- */
-hyperion.interceptors.request.use(function (config) {
-    return new Promise((resolve) => {
-        const interval = setInterval(() => {
-            if (PENDING_REQUESTS < MAX_REQUESTS_COUNT) {
-                PENDING_REQUESTS++;
-                clearInterval(interval);
-                resolve(config);
-            }
-        }, INTERVAL_MS);
-    });
-});
+// TODO: check the necessity regarding cancelling all ongoing operations...
+class Hyperion {
+    static instance: Hyperion;
 
-/**
- * Axios Response Interceptor
- */
-hyperion.interceptors.response.use(
-    function (response) {
-        PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
-        return Promise.resolve(response);
-    },
-    function (error) {
-        PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
-        return Promise.reject(error);
-    },
-);
+    static getInstance(): Hyperion {
+        if (!this.instance || this.instance.chain.getName() !== getChain().getName()) {
+            this.instance?.controller?.abort();
+            this.instance = new Hyperion();
+        }
+        return this.instance;
+    }
+
+    chain: Chain;
+    api: AxiosInstance;
+    controller: AbortController;
+    tokenListPromise: Promise<Token[]>;
+
+    constructor() {
+        PENDING_REQUESTS = 0;
+
+        this.chain = getChain();
+
+        this.tokenListPromise = fetch(`https://raw.githubusercontent.com/telosnetwork/token-list/main/tokens.${this.chain.getName()}.json`)
+            .then(response => response.text())
+            .then((fileContent: string) => JSON.parse(fileContent) as { account: string }[])
+            .then(originals => originals.map(token => token as unknown as Token))
+            .catch((error) => {
+                console.error(error);
+                return [];
+            });
+
+
+        this.controller = new AbortController();
+        this.api = axios.create({ baseURL: this.chain.getHyperionEndpoint() });
+
+        /**
+         * Axios Request Interceptor
+         */
+        this.api.interceptors.request.use(function (config) {
+            return new Promise((resolve) => {
+                const interval = setInterval(() => {
+                    if (PENDING_REQUESTS < MAX_REQUESTS_COUNT) {
+                        PENDING_REQUESTS++;
+                        clearInterval(interval);
+                        resolve(config);
+                    }
+                }, INTERVAL_MS);
+            });
+        });
+
+        /**
+         * Axios Response Interceptor
+         */
+        this.api.interceptors.response.use(
+            function (response) {
+                PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
+                return Promise.resolve(response);
+            },
+            function (error) {
+                PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
+                return Promise.reject(error);
+            },
+        );
+    }
+}
 
 export const getHyperionAccountData = async function (
     address: string,
 ): Promise<AccountDetails> {
-    const response = await hyperion.get('v2/state/get_account', {
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.get('v2/state/get_account', {
         params: { account: address },
     });
     return response.data as AccountDetails;
 };
 
 export const getCreator = async function (address: string): Promise<AccountCreatorInfo> {
-    const response = await hyperion.get('v2/history/get_creator', {
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.get('v2/history/get_creator', {
         params: { account: address },
     });
     return response.data as AccountCreatorInfo;
 };
 
 export const getTokens = async function (address?: string): Promise<Token[]> {
+    const hyperion = Hyperion.getInstance();
     if (address) {
-        const response = await hyperion.get('v2/state/get_tokens', {
+        const response = await hyperion.api.get('v2/state/get_tokens', {
             params: { account: address },
         });
-        const tokens = await tokenListPromise;
-        const balances = (response.data as {tokens:Token[]}).tokens;
-        return balances.map((token:Token) => {
-            const tk = tokens.find((t:Token) => t.symbol === token.symbol) as Token;
+        const tokens = await hyperion.tokenListPromise;
+        const balances = (response.data as { tokens: Token[] }).tokens;
+        return balances.map((token: Token) => {
+            const tk = tokens.find((t: Token) => t.symbol === token.symbol);
             if (tk && tk.logo) {
                 token.logo = tk?.logo;
             } else {
@@ -113,7 +136,7 @@ export const getTokens = async function (address?: string): Promise<Token[]> {
             return token;
         });
     } else {
-        return await tokenListPromise;
+        return await hyperion.tokenListPromise;
     }
 };
 
@@ -156,8 +179,9 @@ export const getTransactions = async function (
     }
 
     const params: AxiosRequestConfig = aux as AxiosRequestConfig;
+    const hyperion = Hyperion.getInstance();
 
-    return await hyperion.get<ActionData>('v2/history/get_actions', {
+    return await hyperion.api.get<ActionData>('v2/history/get_actions', {
         params,
     });
 };
@@ -165,7 +189,8 @@ export const getTransactions = async function (
 export const getTransaction = async function (
     address?: string,
 ): Promise<ActionData> {
-    const response = await hyperion.get<ActionData>(
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.get<ActionData>(
         'v2/history/get_transaction',
         {
             params: { id: address },
@@ -177,7 +202,8 @@ export const getTransaction = async function (
 export const getTransactionV1 = async function (
     id?: string,
 ): Promise<Transaction> {
-    const response = await hyperion.post<Transaction>(
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.post<Transaction>(
         'v1/history/get_transaction',
         {
             id: id,
@@ -189,7 +215,8 @@ export const getTransactionV1 = async function (
 export const getChildren = async function (
     address?: string,
 ): Promise<Action[]> {
-    const response = await hyperion.get<ActionData>('v2/history/get_actions', {
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.get<ActionData>('v2/history/get_actions', {
         params: {
             limit: 100,
             account: address,
@@ -203,7 +230,8 @@ export const getChildren = async function (
 export const getPermissionLinks = async function (
     address?: string,
 ): Promise<PermissionLinks[]> {
-    const response = await hyperion.get<PermissionLinksData>(
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.get<PermissionLinksData>(
         'v2/state/get_links',
         {
             params: {
@@ -217,15 +245,17 @@ export const getPermissionLinks = async function (
 export const getTableByScope = async function (
     data: unknown,
 ): Promise<TableByScope[]> {
-    const response = await hyperion.post('v1/chain/get_table_by_scope', data);
-    return (response.data as {rows:TableByScope[]}).rows;
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.post('v1/chain/get_table_by_scope', data);
+    return (response.data as { rows: TableByScope[] }).rows;
 };
 
 export const getBlock = async function (block: string): Promise<Block> {
-    controller.abort();
-    const response = await hyperion.post('v1/chain/get_block', {
+    const hyperion = Hyperion.getInstance();
+    hyperion.controller.abort();
+    const response = await hyperion.api.post('v1/chain/get_block', {
         block_num_or_id: block,
-        signal: controller.signal,
+        signal: hyperion.controller.signal,
     });
     return response.data as Block;
 };
@@ -236,8 +266,9 @@ export const getActions = async function (
     limit?: number,
     skip?: number,
 ): Promise<Get_actions> {
-    controller.abort();
-    const response = await hyperion.get('v2/history/get_actions', {
+    const hyperion = Hyperion.getInstance();
+    hyperion.controller.abort();
+    const response = await hyperion.api.get('v2/history/get_actions', {
         params: {
             account,
             filter,
@@ -249,14 +280,16 @@ export const getActions = async function (
 };
 
 export const getInfo = async function (): Promise<ChainInfo> {
-    controller.abort();
-    const response = await hyperion.get('v1/chain/get_info');
+    const hyperion = Hyperion.getInstance();
+    hyperion.controller.abort();
+    const response = await hyperion.api.get('v1/chain/get_info');
     return response.data as ChainInfo;
 };
 
 export const getSchedule = async function (): Promise<ProducerSchedule> {
-    controller.abort();
-    const response = await hyperion.get('v1/chain/get_producer_schedule');
+    const hyperion = Hyperion.getInstance();
+    hyperion.controller.abort();
+    const response = await hyperion.api.get('v1/chain/get_producer_schedule');
     return response.data as ProducerSchedule;
 };
 
@@ -269,7 +302,8 @@ export const getProposals = async function ({
     limit,
     skip,
 }: GetProposalsProps): Promise<GetProposals> {
-    const response = await hyperion.get('v2/state/get_proposals', {
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.get('v2/state/get_proposals', {
         params: {
             proposer,
             proposal,
@@ -284,7 +318,8 @@ export const getProposals = async function ({
 };
 
 export const getProducers = async function (): Promise<GetProducers> {
-    const response = await hyperion.post('v1/chain/get_producers', {
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.post('v1/chain/get_producers', {
         json: true,
         limit: 10000,
     });
@@ -292,7 +327,8 @@ export const getProducers = async function (): Promise<GetProducers> {
 };
 
 export const getABI = async function (account: string): Promise<ABI> {
-    const response = await hyperion.post('v1/chain/get_abi', {
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.post('v1/chain/get_abi', {
         account_name: account,
     });
     return response.data as ABI;
@@ -301,15 +337,17 @@ export const getABI = async function (account: string): Promise<ABI> {
 export const getHyperionKeyAccounts = async function (
     key: string,
 ): Promise<{ account_names: string[] }> {
-    const response = await hyperion.get('v2/state/get_key_accounts', {
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.get('v2/state/get_key_accounts', {
         params: { public_key: key },
     });
     return response.data as { account_names: string[] };
 };
 
 export const getProducerSchedule = async function (): Promise<{
-  active: { producers: { producer_name: string }[] };
+    active: { producers: { producer_name: string }[] };
 }> {
-    const response = await hyperion.get('v1/chain/get_producer_schedule');
+    const hyperion = Hyperion.getInstance();
+    const response = await hyperion.api.get('v1/chain/get_producer_schedule');
     return response.data as { active: { producers: { producer_name: string }[] } };
 };

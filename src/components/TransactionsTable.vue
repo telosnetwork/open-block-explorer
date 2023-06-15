@@ -24,9 +24,8 @@ import TokenSearch from 'src/components/TokenSearch.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
-import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
-const chain: Chain = getChain();
+import { useRouteDataNetwork } from 'src/router';
 
 const TWO_SECONDS = 2000;
 
@@ -73,6 +72,7 @@ export default defineComponent({
     setup(props) {
         const route = useRoute();
         const router = useRouter();
+        const network = useRouteDataNetwork();
         const pagination = computed(
             () => (route.query['page'] as string) || '1,10',
         );
@@ -152,7 +152,7 @@ export default defineComponent({
         });
 
         // accounts filter
-        const showAccountFilter = ref<boolean>(chain.getFiltersSupported('notified'));
+        const showAccountFilter = ref<boolean>(getChain().getFiltersSupported('notified'));
         const accountsModel = ref('');
         const accountsDisplay = computed(() => {
             if (accountsModel.value) {
@@ -426,6 +426,14 @@ export default defineComponent({
 
         watch(showAge, (val) => {
             localStorage.setItem('showAge', val ? 'true' : 'false');
+        });
+
+        watch(network, async () => {
+            clearLiveTransactionInterval();
+            await loadTableData();
+            await updateLiveTransactionState();
+
+            const showAccountFilter = ref<boolean>(getChain().getFiltersSupported('notified'));
         });
 
         const updateLiveTransactionState = async () => {

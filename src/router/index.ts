@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { StateInterface } from 'src/store';
 import routes from 'src/router/routes';
 import ConfigManager from 'src/config/ConfigManager';
+import { computed, reactive } from 'vue';
 
 const configMgr = ConfigManager.get();
 
@@ -14,6 +15,8 @@ const configMgr = ConfigManager.get();
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
+
+const routeData = reactive({ network: '' });
 
 export default route<StateInterface>(function (/* { store, ssrContext } */) {
     const createHistory = createWebHistory;
@@ -34,7 +37,8 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
             console.log('if doesn\'t have network param');
             if (selectedChainOnStore) { // if has a chain selected on sotre
                 console.log('if has a chain selected on sotre');
-                return({
+                routeData.network = selectedChainOnStore;
+                return ({
                     ...to,
                     query: {
                         ...to.query,
@@ -44,7 +48,8 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
             } else { // if doesn't have chain selected on store, attempt to get telos, if not find, get the first one
                 const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0];
                 configMgr.setCurrentChain(chain);
-                return({
+                routeData.network = selectedChainOnStore;
+                return ({
                     ...to,
                     query: {
                         ...to.query,
@@ -55,7 +60,8 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
         } else if (chains.filter(chain => chain.getName() === to.query.network).length === 0) { // check if the network is not part of the system
             const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0]; // attempt to get telos network or the first one
             configMgr.setCurrentChain(chain);
-            return({
+            routeData.network = chain.getName();
+            return ({
                 ...to,
                 query: {
                     ...to.query,
@@ -67,6 +73,7 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
             console.log(selectedChainOnStore);
             console.log(from);
             const chain = chains.filter(chain => chain.getName() === to.query.network)[0];
+            routeData.network = chain.getName();
             configMgr.setCurrentChain(chain);
         } else {
             console.log('else');
@@ -76,3 +83,7 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
 
     return Router;
 });
+
+export function useRouteDataNetwork() {
+    return computed(() => routeData.network);
+}
