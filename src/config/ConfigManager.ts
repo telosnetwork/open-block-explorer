@@ -18,11 +18,11 @@ export default class ConfigManager {
   }
 
   private init(): void {
-      const showSidebar = process.env.SHOW_SIDEBAR;
+      const showMultichainSelector = process.env.SHOW_MULTICHAIN_SELECTOR;
       const configuredChain = process.env.CHAIN_NAME;
       this.testnets = chainsConfig.testnets;
       this.mainnets = chainsConfig.mainnets;
-      if (showSidebar) {
+      if (showMultichainSelector) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           const userConfiguredChain = this.getSelectedChain();
 
