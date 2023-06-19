@@ -4,6 +4,7 @@ import {
     isValidTransactionHex,
     formatCurrency,
     assetToAmount,
+    formatNumberWithCommas,
     formatDate,
     getRexHistoryAsset,
 } from 'src/utils/string-utils';
@@ -159,6 +160,24 @@ describe('string-utils utility functions', () => {
         it('should return NaN if passed invalid asset param', () => {
             const testAsset = 'x';
             expect(assetToAmount(testAsset)).toBeNaN();
+        });
+    });
+
+    describe('formatNumberWithCommas', () => {
+        it('passed a number less than one thousand returns the same number as a string', () => {
+            const testValue = 123;
+            const expectedResult = '123';
+            expect(formatNumberWithCommas(testValue)).toEqual(expectedResult);
+        });
+        it('inserts commas for numbers larger than four digits', () => {
+            const testValue = 123456789;
+            const expectedResult = '123,456,789';
+            expect(formatNumberWithCommas(testValue)).toEqual(expectedResult);
+        });
+        it('does not insert commas for trailing decimal places exceeding four digits', () => {
+            const testValue = 12345.6789;
+            const expectedResult = '12,345.6789';
+            expect(formatNumberWithCommas(testValue)).toEqual(expectedResult);
         });
     });
 
