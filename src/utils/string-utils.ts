@@ -76,10 +76,10 @@ export function assetToAmount(asset: string): number {
 }
 
 export function formatNumberWithCommas(num: number): string {
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 20,
-  }).format(num);
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 20,
+    }).format(num);
 }
 
 export function formatDate(date: string, showTime = true): string {
