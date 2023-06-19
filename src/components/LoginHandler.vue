@@ -1,10 +1,11 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue';
+import { defineComponent, ref, onMounted, computed, watch } from 'vue';
 import LoginHandlerDropdown from 'src/components/LoginHandlerDropdown.vue';
 import WalletModal from 'src/components/WalletModal.vue';
 import { Authenticator } from 'universal-authenticator-library';
 import { useStore } from 'src/store';
 import { getAuthenticators } from 'src/boot/ual';
+import { useRouteDataNetwork } from 'src/router';
 
 export default defineComponent({
     name: 'LoginHandler',
@@ -12,12 +13,13 @@ export default defineComponent({
     setup() {
         const authenticators = getAuthenticators();
         const store = useStore();
+        const network = useRouteDataNetwork();
 
         const showDropdown = ref(false);
         const showModal = ref(false);
         const account = computed(() => store.state.account.accountName);
 
-        onMounted(() => {
+        function loadAccount() {
             const storedAccount = localStorage.getItem('account');
             if (storedAccount) {
                 void store.commit('account/setAccountName', storedAccount);
@@ -30,7 +32,11 @@ export default defineComponent({
                     authenticator: ual,
                 });
             }
-        });
+        }
+
+        onMounted(loadAccount);
+
+        watch(network, loadAccount);
 
         return {
             showDropdown,

@@ -15,6 +15,7 @@ import {
     Error,
 } from 'src/types';
 import { api } from 'src/api';
+import { useRouteDataNetwork } from 'src/router';
 
 const initialStatePagination = {
     sortBy: 'desc',
@@ -47,6 +48,7 @@ export default defineComponent({
     },
     setup(setupProps) {
         const $q = useQuasar();
+        const network = useRouteDataNetwork();
 
         const rows = ref<ProposalTableRow[]>([]);
         const pagination = ref(initialStatePagination);
@@ -146,6 +148,13 @@ export default defineComponent({
         }
 
         onMounted(async () => {
+            await onRequest({
+                pagination: pagination.value,
+            });
+        });
+
+        watch(network, async () => {
+            pagination.value = initialStatePagination;
             await onRequest({
                 pagination: pagination.value,
             });

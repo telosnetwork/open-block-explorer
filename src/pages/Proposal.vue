@@ -4,6 +4,7 @@ import ProposalTable from 'src/components/ProposalTable.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
+import { useRouteDataNetwork } from 'src/router';
 
 export default defineComponent({
     name: 'ProposalPage',
@@ -13,6 +14,7 @@ export default defineComponent({
     setup() {
         const route = useRoute();
         const router = useRouter();
+        const network = useRouteDataNetwork();
         const store = useStore();
         const blockProducers = ref<string[]>([]);
         const account = computed(() => store.state.account.accountName);
@@ -20,13 +22,7 @@ export default defineComponent({
 
         const tab = ref<string>((route.query['tab'] as string) || 'myProposal');
 
-        onMounted(() => {
-            if (!isAuthenticated.value) {
-                tab.value = 'allProposal';
-            }
-        });
-
-        onMounted(async () => {
+        async function loadProducers() {
             const producers = await api.getProducers();
             const producersAccount = [] as string[];
 
@@ -38,6 +34,20 @@ export default defineComponent({
             }
 
             blockProducers.value = producersAccount;
+        }
+
+        onMounted(() => {
+            if (!isAuthenticated.value) {
+                tab.value = 'allProposal';
+            }
+        });
+
+        onMounted(async () => {
+            await loadProducers();
+        });
+
+        watch(network, async () => {
+            await loadProducers();
         });
 
         watch([tab], () => {
