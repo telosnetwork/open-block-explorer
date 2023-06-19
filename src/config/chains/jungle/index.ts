@@ -1,13 +1,13 @@
 /*
 NETWORK_CHAIN_ID=
-NETWORK_HOST=testnet.telos.caleos.io
+NETWORK_HOST=testnet.telos.net
 NETWORK_PORT=443
 NETWORK_PROTOCOL=https
 NETWORK_EVM_RPC=https://testnet.telos.net/evm
-NETWORK_EVM_ENDPOINT=https://testnet.telos.caleos.io
+NETWORK_EVM_ENDPOINT=https://testnet.telos.net
 NETWORK_EVM_CONTRACT=eosio.evm
 NETWORK_EVM_CHAIN_ID=41
-HYPERION_ENDPOINT=https://testnet.telos.caleos.io
+HYPERION_ENDPOINT=https://testnet.telos.net
 TELOS_API_ENDPOINT=https://api-dev.telos.net/v1
 
 # TELOS_API_ENDPOINT=localhost:9999/v1
