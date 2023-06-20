@@ -26,7 +26,7 @@ export default defineComponent({
 
         async function signAction() {
             await store.dispatch('account/sendAction', {
-                action: action.value,
+                name: action.value,
                 actor: actor.value,
                 permission: permission.value,
                 data: memo.value,

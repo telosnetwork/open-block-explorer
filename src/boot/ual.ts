@@ -12,10 +12,10 @@ import { Dialog, Notify, copyToClipboard } from 'quasar';
 import { isValidAccount } from 'src/utils/string-utils';
 
 declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $ual: UAL;
-    $user: User;
-  }
+    interface ComponentCustomProperties {
+        $ual: UAL;
+        $user: User;
+    }
 }
 
 async function loginHandler() {
@@ -153,11 +153,11 @@ export const getAuthenticators = () => {
         // A quick fix is to add the chain in appName until we move forward with WharfKit
         const mainChain = getMainChain();
         authenticators.push(new Anchor([mainChain], { appName: `${process.env.APP_NAME}_${getChain().getName()}` })),
-        authenticators.push(new CleosAuthenticator([mainChain], {
-            appName: `${process.env.APP_NAME}_${getChain().getName()}`,
-            loginHandler,
-            signHandler: signHandlerForMainChain,
-        }));
+            authenticators.push(new CleosAuthenticator([mainChain], {
+                appName: `${process.env.APP_NAME}_${getChain().getName()}`,
+                loginHandler,
+                signHandler: signHandlerForMainChain,
+            }));
     }
     return authenticators;
 };

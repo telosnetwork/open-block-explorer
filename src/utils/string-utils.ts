@@ -69,10 +69,17 @@ export function formatCurrency(
 export function assetToAmount(asset: string): number {
     try {
         const qty: string = asset.split(' ')[0];
-        return parseFloat(qty);
+        return parseFloat(qty.replace(/,/g, '')); // remove commas
     } catch (error) {
         return 0;
     }
+}
+
+export function formatNumberWithCommas(num: number): string {
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 20,
+    }).format(num);
 }
 
 export function formatDate(date: string, showTime = true): string {

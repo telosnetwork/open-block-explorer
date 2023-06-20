@@ -416,7 +416,7 @@ export default defineComponent({
     v-model="producerToggle"
     label="Show Active BP"
     left-label
-    color="cyan-4"
+    color="white"
     @update:model-value="(val)=> updateToggleOption(val)"
   />
 </div>

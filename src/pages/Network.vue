@@ -131,7 +131,7 @@ export default defineComponent({
 <template>
 <div class="row">
     <div class="col-12">
-        <div v-if="mapDisplay" class="row gradient-box justify-center render-container" :class="{'show-map' : showMap}">
+        <div v-if="mapDisplay" class="row header-support justify-center render-container" :class="{'show-map' : showMap}">
             <div class="row full-width chevron-toggle hide" @click="toggleMap">
                 <div v-if="showMap" class="items-center arrow-button" >
                     <q-icon class="fas fa-chevron-up q-pr-lg chevron" size="17px"/>

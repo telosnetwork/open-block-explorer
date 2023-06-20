@@ -47,7 +47,7 @@ export default defineComponent({
 <template>
 
 <div class="row">
-    <div class="col-12 gradient-box">
+    <div class="col-12 header-support">
         <TransactionCard v-if="found" class="q-pa-lg" />
         <div v-else class="q-pa-lg">
             <div class="row full-width justify-center">

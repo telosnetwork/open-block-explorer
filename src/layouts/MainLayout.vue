@@ -61,7 +61,6 @@ export default defineComponent({
 <q-layout view="lHh lpR lff">
     <q-header>
         <AppHeader/>
-        <q-separator class="separator"/>
     </q-header>
     <q-page-container>
         <router-view/>
@@ -73,9 +72,4 @@ export default defineComponent({
 </template>
 
 <style lang="sass" scoped>
-.q-header
-  background-color: var(--q-secondary)
-.separator
-  height: 2px
-  min-height: 2px
 </style>
