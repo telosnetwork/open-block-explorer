@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // Most of this code was taken and addapted from https://gist.github.com/aaroncox/d74a73b3d9fbc20836c32ea9deda5d70
 import {
+    RpcEndpoint,
     SignTransactionConfig,
     SignTransactionResponse,
     User,
@@ -21,6 +22,7 @@ import {
 import { getChain } from 'src/config/ConfigManager';
 import { Dialog } from 'quasar';
 import { formatCurrency } from "src/utils/string-utils";
+import { Chain } from 'src/types/Chain';
 
 // The maximum fee per transaction this script is willing to accept
 const maxFee = 0.05;
@@ -28,42 +30,54 @@ const maxFee = 0.05;
 // expire time in millisec
 const expireSeconds = 3600;
 
-const chain = getChain();
-const client = new APIClient({
-    url: chain.getHyperionEndpoint(),
-});
+// const chain = getChain();
+// const client = new APIClient({
+//     url: chain.getHyperionEndpoint(),
+// });
 
-const fuelrpc = chain.getFuelRPCEndpoint();
-const resourceProviderEndpoint = `${fuelrpc?.protocol}://${fuelrpc?.host}:${fuelrpc?.port}/v1/resource_provider/request_transaction`;
+// const fuelrpc = chain.getFuelRPCEndpoint();
+// const resourceProviderEndpoint = `${fuelrpc?.protocol}://${fuelrpc?.host}:${fuelrpc?.port}/v1/resource_provider/request_transaction`;
 
 // Auxiliar interfaces
 interface ResourceProviderResponse {
-  code: number;
-  data: ResponseData;
+    code: number;
+    data: ResponseData;
 }
 
 interface CostsType {
-  ram: string;
-  cpu: string;
-  net: string;
+    ram: string;
+    cpu: string;
+    net: string;
 }
 
 interface ResponseData {
-  request: [string, SignedTransaction];
-  signatures: Signature[];
-  version: number;
-  costs?: CostsType;
+    request: [string, SignedTransaction];
+    signatures: Signature[];
+    version: number;
+    costs?: CostsType;
 }
 
 interface SignedTransactionResponse extends SignTransactionResponse {
-  transaction: { signatures: Signature[] };
+    transaction: { signatures: Signature[] };
 }
 
 // Wrapper for the user to intersect the signTransaction call
 export class FuelUserWrapper extends User {
     constructor(private user: User) {
         super();
+
+        this.chain = getChain();
+        this.client = new APIClient({
+            url: this.chain.getHyperionEndpoint(),
+        });
+        this.fuelrpc = this.chain.getFuelRPCEndpoint();
+        this.resourceProviderEndpoint = `${this.fuelrpc?.protocol}://${this.fuelrpc?.host}:${this.fuelrpc?.port}/v1/resource_provider/request_transaction`;
     }
+
+    chain: Chain;
+    fuelrpc: RpcEndpoint;
+    client: APIClient;
+    resourceProviderEndpoint: string;
 
     async signTransaction(
         originalTransaction: AnyTransaction,
@@ -71,17 +85,17 @@ export class FuelUserWrapper extends User {
     ): Promise<SignTransactionResponse> {
         try {
             // if fuel is not supported, just let the normal implementation perform
-            if (!fuelrpc) {
+            if (!this.fuelrpc) {
                 return this.user.signTransaction(originalTransaction, originalconfig);
             }
 
             // Retrieve transaction headers
-            const info = await client.v1.chain.get_info();
+            const info = await this.client.v1.chain.get_info();
             const header = info.getTransactionHeader(expireSeconds);
 
             // collect all contract abis
             const abi_promises = originalTransaction.actions.map(a =>
-                client.v1.chain.get_abi(a.account),
+                this.client.v1.chain.get_abi(a.account),
             );
             const responses = await Promise.all(abi_promises);
             const abis = responses.map(x => x.abi);
@@ -112,7 +126,7 @@ export class FuelUserWrapper extends User {
             });
 
             // Submit the transaction to the resource provider endpoint
-            const cosigned = await fetch(resourceProviderEndpoint, {
+            const cosigned = await fetch(this.resourceProviderEndpoint, {
                 body: JSON.stringify({
                     signer,
                     packedTransaction,
@@ -122,7 +136,7 @@ export class FuelUserWrapper extends User {
 
             // Interpret the resulting JSON
             const rpResponse =
-        (await cosigned.json()) as unknown as ResourceProviderResponse;
+                (await cosigned.json()) as unknown as ResourceProviderResponse;
 
             switch (rpResponse.code) {
             case 402: {
@@ -159,10 +173,10 @@ export class FuelUserWrapper extends User {
                 modifiedTransaction.signatures = [...data.signatures];
                 // Sign the modified transaction
                 const locallySigned: SignedTransactionResponse =
-            (await this.user.signTransaction(
-                modifiedTransaction,
-                Object.assign({ broadcast: false }, originalconfig),
-            )) as SignedTransactionResponse;
+                        (await this.user.signTransaction(
+                            modifiedTransaction,
+                            Object.assign({ broadcast: false }, originalconfig),
+                        )) as SignedTransactionResponse;
 
                 // When using CleosAuthenticator the transaction returns empty
                 if (!locallySigned.transaction.signatures) {
@@ -178,7 +192,7 @@ export class FuelUserWrapper extends User {
                 ];
 
                 // Broadcast the signed transaction to the blockchain
-                const pushResponse = await client.v1.chain.push_transaction(
+                const pushResponse = await this.client.v1.chain.push_transaction(
                     modifiedTransaction,
                 );
 
@@ -199,9 +213,9 @@ export class FuelUserWrapper extends User {
             default:
                 throw (
                     'Code ' +
-            (+rpResponse.code).toString() +
-            ' not expected from resource provider endpoint: ' +
-            resourceProviderEndpoint
+                        (+rpResponse.code).toString() +
+                        ' not expected from resource provider endpoint: ' +
+                        this.resourceProviderEndpoint
                 );
             }
 
@@ -220,62 +234,62 @@ export class FuelUserWrapper extends User {
         );
     }
 
-  // These functions are just proxies
-  signArbitrary = async (
-      publicKey: string,
-      data: string,
-      helpText: string,
-  ): Promise<string> => this.user.signArbitrary(publicKey, data, helpText);
-  verifyKeyOwnership = async (challenge: string): Promise<boolean> =>
-      this.user.verifyKeyOwnership(challenge);
-  getAccountName = async (): Promise<string> => this.user.getAccountName();
-  getChainId = async (): Promise<string> => this.user.getChainId();
-  getKeys = async (): Promise<string[]> => this.user.getKeys();
+    // These functions are just proxies
+    signArbitrary = async (
+        publicKey: string,
+        data: string,
+        helpText: string,
+    ): Promise<string> => this.user.signArbitrary(publicKey, data, helpText);
+    verifyKeyOwnership = async (challenge: string): Promise<boolean> =>
+        this.user.verifyKeyOwnership(challenge);
+    getAccountName = async (): Promise<string> => this.user.getAccountName();
+    getChainId = async (): Promise<string> => this.user.getChainId();
+    getKeys = async (): Promise<string[]> => this.user.getKeys();
 }
 
 // Auxiliar functions to validate with the user the use of the service
 interface Preference {
-  remember?: boolean;
-  approve?: boolean;
+    remember?: boolean;
+    approve?: boolean;
 }
 export default class GreymassFuelService {
-  static preferences: { [account: string]: Preference } = {};
-  static globals: Record<string, (s: string) => string> = null;
-  static save() {
-      localStorage.setItem(
-          'fuel_preferences',
-          JSON.stringify(GreymassFuelService.preferences),
-      );
-  }
-  static drop() {
-      localStorage.removeItem('fuel_preferences');
-  }
-  static load() {
-      try {
-          GreymassFuelService.preferences = GreymassFuelService.preferences || {};
-          const str = localStorage.getItem('fuel_preferences');
-          if (str) {
-              GreymassFuelService.preferences = JSON.parse(str);
-          }
-      } catch (e) {
-          console.error('ERROR: ', e);
-      }
-  }
+    static preferences: { [account: string]: Preference } = {};
+    static globals: Record<string, (s: string) => string> = null;
+    static save() {
+        localStorage.setItem(
+            'fuel_preferences',
+            JSON.stringify(GreymassFuelService.preferences),
+        );
+    }
+    static drop() {
+        localStorage.removeItem('fuel_preferences');
+    }
+    static load() {
+        try {
+            GreymassFuelService.preferences = GreymassFuelService.preferences || {};
+            const str = localStorage.getItem('fuel_preferences');
+            if (str) {
+                GreymassFuelService.preferences = JSON.parse(str);
+            }
+        } catch (e) {
+            console.error('ERROR: ', e);
+        }
+    }
 
-  static setPreferences(account: string, p: Preference) {
-      GreymassFuelService.preferences[account] = {
-          ...GreymassFuelService.preferences[account],
-          ...p,
-      };
-      if (GreymassFuelService.preferences[account].remember) {
-          GreymassFuelService.save();
-      } else {
-          GreymassFuelService.drop();
-      }
-  }
-  static setGlobals(g: Record<string, (s: string) => string>) {
-      GreymassFuelService.globals = g;
-  }
+    static setPreferences(account: string, p: Preference) {
+        GreymassFuelService.preferences[account] = {
+            ...GreymassFuelService.preferences[account],
+            ...p,
+        };
+        if (GreymassFuelService.preferences[account].remember) {
+            GreymassFuelService.save();
+        } else {
+            GreymassFuelService.drop();
+        }
+    }
+    static setGlobals(g: Record<string, (s: string) => string>) {
+        GreymassFuelService.globals = g;
+    }
 }
 
 async function confirmWithUser(user: User, fees: string | null) {
@@ -284,10 +298,10 @@ async function confirmWithUser(user: User, fees: string | null) {
     mymodel = [];
 
     return new Promise<void>((resolve, reject) => {
-    // Try and see if the user already answer (remembered)
+        // Try and see if the user already answer (remembered)
         if (
             GreymassFuelService.preferences[username] &&
-      GreymassFuelService.preferences[username].remember
+            GreymassFuelService.preferences[username].remember
         ) {
             // ok, the user did. What's the answer?
             if (GreymassFuelService.preferences[username].approve) {
@@ -311,21 +325,21 @@ async function confirmWithUser(user: User, fees: string | null) {
         const cancel: string | boolean = 'Reject';
         const ok = 'Confirm';
         let message =
-      "Your account doesn't have sufficient resources (CPU, NET, or RAM) to pay for your next transaction. " +
-      'Don\'t worry! Telos has partnered with Greymass to proceed with your transaction using "Greymass Fuel", allowing you to continue for free.<br/><br/>' +
-      'We recommend powering up your account with at least 0.5 TLOS in CPU and NET each and purchasing RAM, as this service is not supported on all dAPPs in our ecosystem. Please <a src="https://wallet.telos.net/" target="_blank">click here</a> to proceed and power up your account';
+            "Your account doesn't have sufficient resources (CPU, NET, or RAM) to pay for your next transaction. " +
+            'Don\'t worry! Telos has partnered with Greymass to proceed with your transaction using "Greymass Fuel", allowing you to continue for free.<br/><br/>' +
+            'We recommend powering up your account with at least 0.5 TLOS in CPU and NET each and purchasing RAM, as this service is not supported on all dAPPs in our ecosystem. Please <a src="https://wallet.telos.net/" target="_blank">click here</a> to proceed and power up your account';
 
         // If the wallet is Greymass Anchor is not possible to avoid Fuel service (it is incorporated)
         try {
             if (typeof fees === 'string') {
                 message =
-          "Your account doesn't have sufficient resources (CPU, NET, or RAM) to pay for your next transaction and it can not be processed without fees. " +
-          'Telos has partnered with Greymass to proceed with your transaction using "Greymass Fuel", reducing cost significantly.<br/><br/>' +
-          'Please confirm fees below to proceed.<br/><br/>' +
-          `<div><center><h5><b>${fees}</b></h5></center><div><br/>` +
-          'We recommend powering up your account with at least 0.5 TLOS in CPU and NET each and purchasing RAM, as this service is not supported on all dAPPs in our ecosystem. Please <a src="https://wallet.telos.net/" target="_blank">click here</a> to proceed and power up your account';
+                    "Your account doesn't have sufficient resources (CPU, NET, or RAM) to pay for your next transaction and it can not be processed without fees. " +
+                    'Telos has partnered with Greymass to proceed with your transaction using "Greymass Fuel", reducing cost significantly.<br/><br/>' +
+                    'Please confirm fees below to proceed.<br/><br/>' +
+                    `<div><center><h5><b>${fees}</b></h5></center><div><br/>` +
+                    'We recommend powering up your account with at least 0.5 TLOS in CPU and NET each and purchasing RAM, as this service is not supported on all dAPPs in our ecosystem. Please <a src="https://wallet.telos.net/" target="_blank">click here</a> to proceed and power up your account';
             }
-        } catch (e) {}
+        } catch (e) { }
 
         Dialog.create({
             title: 'Resource Warning!',
@@ -348,7 +362,7 @@ async function confirmWithUser(user: User, fees: string | null) {
                 ],
             },
         })
-        // all answers should save the preferences
+            // all answers should save the preferences
             .onOk(() => handler(true))
             .onCancel(() => handler(false));
     });
@@ -442,7 +456,7 @@ function validateActionsContent(
 }
 
 interface AuxTransactionData {
-  [key: string]: string;
+    [key: string]: string;
 }
 
 function descerialize(data: unknown): AuxTransactionData {
@@ -462,8 +476,8 @@ function validateActionsFeeContent(
     }
     if (
         feeAction.account.toString() !== 'eosio.token' ||
-    feeAction.name.toString() !== 'transfer' ||
-    data.to.toString() !== 'fuel.gm'
+        feeAction.name.toString() !== 'transfer' ||
+        data.to.toString() !== 'fuel.gm'
     ) {
         throw new Error('Fee action was deemed invalid.');
     }
@@ -481,9 +495,9 @@ function validateActionsRamContent(
 
     if (
         ramAction.account.toString() !== 'eosio' ||
-    !['buyram', 'buyrambytes'].includes(String(ramAction.name)) ||
-    data.payer.toString() !== 'greymassfuel' ||
-    data.receiver.toString() !== signer.actor.toString()
+        !['buyram', 'buyrambytes'].includes(String(ramAction.name)) ||
+        data.payer.toString() !== 'greymassfuel' ||
+        data.receiver.toString() !== signer.actor.toString()
     ) {
         throw new Error('RAM action was deemed invalid.');
     }
@@ -497,7 +511,7 @@ function validateActionsOriginalContent(
     transaction: Transaction,
 ) {
     for (const [i] of modifiedTransaction.actions.entries()) {
-    // Skip the expected new actions
+        // Skip the expected new actions
         if (i < expectedNewActions) {
             continue;
         }
@@ -505,25 +519,25 @@ function validateActionsOriginalContent(
         const original = transaction.actions[i - expectedNewActions];
         const action = modifiedTransaction.actions[i];
         const matchesAccount =
-      action.account.toString() === original.account.toString();
+            action.account.toString() === original.account.toString();
         const matchesAction = action.name.toString() === original.name.toString();
         const matchesLength =
-      action.authorization.length === original.authorization.length;
+            action.authorization.length === original.authorization.length;
         const matchesActor =
-      action.authorization[0].actor.toString() ===
-      original.authorization[0].actor.toString();
+            action.authorization[0].actor.toString() ===
+            original.authorization[0].actor.toString();
         const matchesPermission =
-      action.authorization[0].permission.toString() ===
-      original.authorization[0].permission.toString();
+            action.authorization[0].permission.toString() ===
+            original.authorization[0].permission.toString();
         const matchesData = action.data.toString() === original.data.toString();
         if (
             !action ||
-      !matchesAccount ||
-      !matchesAction ||
-      !matchesLength ||
-      !matchesActor ||
-      !matchesPermission ||
-      !matchesData
+            !matchesAccount ||
+            !matchesAction ||
+            !matchesLength ||
+            !matchesActor ||
+            !matchesPermission ||
+            !matchesData
         ) {
             const { account, name } = original;
             throw new Error(
@@ -541,7 +555,7 @@ function validateActionsLength(
 ) {
     if (
         modifiedTransaction.actions.length !==
-    transaction.actions.length + expectedNewActions
+        transaction.actions.length + expectedNewActions
     ) {
         throw new Error('transaction returned contains additional actions.');
     }
@@ -558,13 +572,13 @@ function validateNoop(modifiedTransaction: Transaction) {
     const [firstAuthorization] = firstAction.authorization;
     if (
         firstAction.account.toString() !== expectedCosignerContract.toString() ||
-    firstAction.name.toString() !== expectedCosignerAction.toString() ||
-    firstAuthorization.actor.toString() !==
-      expectedCosignerAccountName.toString() ||
-    firstAuthorization.permission.toString() !==
-      expectedCosignerAccountPermission.toString() ||
-    (JSON.stringify(firstAction.data) !== '""' &&
-      JSON.stringify(firstAction.data) !== '{}')
+        firstAction.name.toString() !== expectedCosignerAction.toString() ||
+        firstAuthorization.actor.toString() !==
+        expectedCosignerAccountName.toString() ||
+        firstAuthorization.permission.toString() !==
+        expectedCosignerAccountPermission.toString() ||
+        (JSON.stringify(firstAction.data) !== '""' &&
+            JSON.stringify(firstAction.data) !== '{}')
     ) {
         throw new Error(
             `First action within transaction response is not valid noop (${expectedCosignerContract.toString()}:${expectedCosignerAction.toString()} signed by ${expectedCosignerAccountName.toString()}:${expectedCosignerAccountPermission.toString()}).`,
