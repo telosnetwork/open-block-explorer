@@ -137,7 +137,7 @@ async function signHandlerForMainChain(trx: string) {
     return signHandler(getChain().getRPCEndpoint(), trx);
 }
 
-function getMainChain() {
+export function getMainChain() {
     return {
         chainId: getChain().getChainId(),
         rpcEndpoints: [getChain().getRPCEndpoint()],

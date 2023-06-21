@@ -1,20 +1,22 @@
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { DialogChainObject } from 'quasar';
 import { getAuthenticators } from 'src/boot/ual';
 import { useStore } from 'src/store';
 import { useQuasar } from 'quasar';
+import { useRouteDataNetwork } from 'src/router';
 
 
 export default defineComponent({
     name: 'WalletModal',
     setup() {
-        const authenticators = getAuthenticators();
+        const authenticators = ref(getAuthenticators());
         const $q = useQuasar();
         const store = useStore();
         const error = ref<string>(null);
         const account = computed(() => store.state.account.accountName);
         const loading = {};
+        const network = useRouteDataNetwork();
         const walletDialog = ref<DialogChainObject>(null);
         const iconSize = computed(() => {
             if ($q.screen.width > 420) {
@@ -24,7 +26,7 @@ export default defineComponent({
         });
 
         const onLogin = async (idx: number) => {
-            const authenticator = authenticators[idx];
+            const authenticator = authenticators.value[idx];
             error.value = null;
             try {
                 await store.dispatch('account/login', {
@@ -40,6 +42,10 @@ export default defineComponent({
         // TODO: check if this is the intention of the original author
         // because the original code was not present
         const openUrl = (url: string) => window.open(url, '_blank');
+
+        watch(network, () => {
+            authenticators.value = getAuthenticators();
+        });
 
         return {
             error,

@@ -1,10 +1,12 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onMounted, ref, watch } from 'vue';
 import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
 import { useStore } from 'src/store';
-import { getAuthenticators } from 'src/boot/ual';
+import { useRouteDataNetwork } from 'src/router';
+import { getAuthenticators, getMainChain, resetUalState } from 'src/boot/ual';
 import { useRoute, useRouter } from 'vue-router';
+import { UAL } from 'universal-authenticator-library';
 
 const configMgr = ConfigManager.get();
 
@@ -16,6 +18,8 @@ export default defineComponent({
         const route = useRoute();
         const router = useRouter();
         const account = computed(() => store.state.account);
+        const app = getCurrentInstance();
+        const network = useRouteDataNetwork();
 
         const menuIcon = computed(() => menuOpened.value ? 'expand_less' : 'expand_more');
         const mainnets = computed(() => sortChainsUsingName(configMgr.getMainnets()));
@@ -68,6 +72,13 @@ export default defineComponent({
                 const telos = chains.filter(chain => chain.getName() === 'telos')[0];
                 chainSelected(telos);
             }
+        });
+
+        watch(network, () => {
+            resetUalState();
+            const authenticators = getAuthenticators();
+            const newUAL = new UAL([getMainChain()], 'ual', authenticators);
+            app.appContext.config.globalProperties.$ual = newUAL;
         });
 
         return {

@@ -32,11 +32,11 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     Router.beforeEach((to, from) => {
         const chains = configMgr.getAllChains();
         const selectedChainOnStore = localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
-        console.log(to);
+        // console.log(to);
         if (!to.query.network) { // if doesn't have network param
-            console.log('if doesn\'t have network param');
+            // console.log('if doesn\'t have network param');
             if (selectedChainOnStore) { // if has a chain selected on sotre
-                console.log('if has a chain selected on sotre');
+                // console.log('if has a chain selected on sotre');
                 routeData.network = selectedChainOnStore;
                 return ({
                     ...to,
@@ -48,7 +48,7 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
             } else { // if doesn't have chain selected on store, attempt to get telos, if not find, get the first one
                 const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0];
                 configMgr.setCurrentChain(chain);
-                routeData.network = selectedChainOnStore;
+                routeData.network = chain.getName();
                 return ({
                     ...to,
                     query: {
@@ -69,14 +69,14 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
                 },
             });
         } else if ((from.query.network && from.query.network !== to.query.network) || selectedChainOnStore !== to.query.network) { // if i'm changing from network
-            console.log('changing network');
-            console.log(selectedChainOnStore);
-            console.log(from);
+            // console.log('changing network');
+            // console.log(selectedChainOnStore);
+            // console.log(from);
             const chain = chains.filter(chain => chain.getName() === to.query.network)[0];
             routeData.network = chain.getName();
             configMgr.setCurrentChain(chain);
         } else {
-            console.log('else');
+            // console.log('else');
         }
 
     });
