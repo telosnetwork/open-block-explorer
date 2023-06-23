@@ -2,7 +2,7 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <!-- eslint-disable vue/no-static-inline-styles -->
 <script lang="ts">
-import { defineComponent, reactive, ref, onMounted, computed } from 'vue';
+import { defineComponent, reactive, ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import moment from 'moment';
 import ProposalSuccess from 'components/ProposalSuccess.vue';
@@ -36,7 +36,6 @@ export default defineComponent({
 
         const context_free_actions_input = ref('');
         const transaction_extensions_input = ref('');
-
 
         const success = reactive({
             proposalName: '',
@@ -74,6 +73,12 @@ export default defineComponent({
         });
 
         onMounted(async () => {
+            if (!isAuthenticated.value) {
+                await router.push('/proposal');
+            }
+        });
+
+        watch(isAuthenticated, async () => {
             if (!isAuthenticated.value) {
                 await router.push('/proposal');
             }

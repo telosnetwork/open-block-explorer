@@ -9,6 +9,7 @@ import ContractTabs from 'components/contract/ContractTabs.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
+import { useRouteDataNetwork } from 'src/router';
 
 export default defineComponent({
     name: 'AccountPage',
@@ -24,12 +25,17 @@ export default defineComponent({
         const store = useStore();
         const route = useRoute();
         const router = useRouter();
+        const network = useRouteDataNetwork();
         const tab = ref<string>((route.query['tab'] as string) || 'transactions');
         const account = computed(() => (route.params.account as string) || '');
         const abi = computed(() => store.state.account.abi.abi);
         const tokenList = ref(api.getTokens(account.value));
 
         onMounted(async () => {
+            await store.dispatch('account/updateABI', route.params.account);
+        });
+
+        watch(network, async () => {
             await store.dispatch('account/updateABI', route.params.account);
         });
 

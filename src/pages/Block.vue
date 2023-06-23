@@ -5,17 +5,20 @@ import BlockCard from 'components/BlockCard.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/api/index';
 import { Action, Block } from 'src/types';
+import { useRouteDataNetwork } from 'src/router';
 
 export default defineComponent({
     name: 'BlockPage',
     setup() {
         const route = useRoute();
         const router = useRouter();
+        const network = useRouteDataNetwork();
         const found = ref(true);
         const block = ref<Block>(null);
         const actions = ref<Action[]>([]);
         const tab = ref<string>((route.query['tab'] as string) || 'actions');
-        onMounted(async () => {
+
+        async function getAndSetBlock() {
             // api get block and set block
             block.value = await api.getBlock(route.params.block as string);
             block.value.transactions.forEach((tr) => {
@@ -33,7 +36,11 @@ export default defineComponent({
                 actions.value = actions.value.concat(act);
             });
             found.value = block.value ? true : false;
-        });
+        }
+
+        onMounted(getAndSetBlock);
+        watch(network, getAndSetBlock);
+
         watch([tab], () => {
             void router.push({
                 path: router.currentRoute.value.path,
@@ -42,6 +49,7 @@ export default defineComponent({
                 },
             });
         });
+
         return {
             tab,
             transaction: route.params.transaction,

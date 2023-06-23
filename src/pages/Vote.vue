@@ -1,14 +1,18 @@
 <script lang="ts">
 import ValidatorData from 'src/components/validators/ValidatorData.vue';
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, watch } from 'vue';
 import { useStore } from 'src/store';
 import { api } from 'src/api';
+import { useRouteDataNetwork } from 'src/router';
+
 export default defineComponent({
     name: 'VotePage',
     components: { ValidatorData },
     setup() {
         const store = useStore();
-        onMounted(async () => {
+        const network = useRouteDataNetwork();
+
+        async function loadVote() {
             if (
                 !store.state.account.data.voter_info &&
                 store.state.account.accountName
@@ -20,7 +24,11 @@ export default defineComponent({
             window.setInterval(() => {
                 void store.dispatch('chain/updateBlockData');
             }, 2000);
-        });
+        }
+
+        onMounted(loadVote);
+        watch(network, loadVote);
+
     },
 });
 </script>

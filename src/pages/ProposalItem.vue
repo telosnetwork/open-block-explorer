@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue';
+import { defineComponent, ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import JsonViewer from 'vue-json-viewer';
@@ -11,6 +11,7 @@ import { ABI, ABIDef, Action, Serializer, Transaction } from '@greymass/eosio';
 import { useStore } from 'src/store';
 import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
 import { sleep } from 'src/utils/sleep';
+import { useRouteDataNetwork } from 'src/router';
 
 export default defineComponent({
     name: 'ProposalItem',
@@ -22,6 +23,7 @@ export default defineComponent({
         const router = useRouter();
         const $q = useQuasar();
         const store = useStore();
+        const network = useRouteDataNetwork();
 
         const { proposalName } = route.params;
         const account = computed(() => store.state.account.accountName);
@@ -268,6 +270,7 @@ export default defineComponent({
         }
 
         onMounted(loadProposalAndUpdateFields);
+        watch(network, loadProposalAndUpdateFields);
 
         async function loadProposalAndUpdateFields() {
             isLoading.value = true;

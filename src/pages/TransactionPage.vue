@@ -6,6 +6,7 @@ import TraceTree from 'components/transaction/TraceTree.vue';
 import JsonViewer from 'vue-json-viewer';
 import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
+import { useRouteDataNetwork } from 'src/router';
 
 export default defineComponent({
     name: 'TransactionPage',
@@ -13,11 +14,19 @@ export default defineComponent({
         const store = useStore();
         const route = useRoute();
         const router = useRouter();
+        const network = useRouteDataNetwork();
         const tab = ref<string>((route.query['tab'] as string) || 'actions');
+
         onMounted(() => {
             store.commit('transaction/setTransactionId', route.params.transaction);
             void store.dispatch('transaction/updateTransaction');
         });
+
+        watch(network, () => {
+            store.commit('transaction/setTransactionId', route.params.transaction);
+            void store.dispatch('transaction/updateTransaction');
+        });
+
         watch([tab], () => {
             void router.push({
                 path: router.currentRoute.value.path,
@@ -26,6 +35,7 @@ export default defineComponent({
                 },
             });
         });
+
         return {
             tab,
             transaction: route.params.transaction,
