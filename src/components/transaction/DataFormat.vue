@@ -22,8 +22,8 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const { actionName, actionData, useColor } = toRefs(props);
-        const dataBox = ref(null);
+        const { actionName, actionData } = toRefs(props);
+        const dataBox = ref<null | HTMLElement>(null);
         const showOverflow = ref(false);
         const maxHeight = ref(57);
         const switchHeight = ref(20);
@@ -33,29 +33,32 @@ export default defineComponent({
         let currentData = ref<string | unknown>(null);
 
 
-        function compareJsonObjects(obj1: Record<string, unknown>, obj2: Record<string, unknown>): boolean {
+        function compareJsonObjects(obj1: unknown, obj2: unknown): boolean {
             if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
                 return false;
             }
 
+            const objectOne = obj1 as Record<string, unknown>;
+            const objectTwo = obj2 as Record<string, unknown>;
+
             for (const key of Object.keys(obj1)) {
-                if (!obj1?.[key]) {
+                if (!objectOne[key]) {
                     // this is an empty key
                     // sometimes the answer includes them, sometimes it doesn't
                     // so we won't compare them
                     continue;
                 }
 
-                if (typeof obj1[key] !== typeof obj2[key]) {
+                if (typeof objectOne[key] !== typeof objectTwo[key]) {
                     return false;
                 }
 
-                if (obj1[key] !== null && typeof obj1[key] === 'object') {
-                    if (!compareJsonObjects(obj1[key], obj2[key])) {
+                if (objectOne[key] !== null && typeof objectOne[key] === 'object') {
+                    if (!compareJsonObjects(objectOne[key], objectTwo[key])) {
                         return false;
                     }
                 } else {
-                    if (obj1[key] !== obj2[key]) {
+                    if (objectOne[key] !== objectTwo[key]) {
                         return false;
                     }
                 }
@@ -101,7 +104,6 @@ export default defineComponent({
         }
 
         return {
-            actionData,
             currentData,
             transferData,
             name: actionName,
@@ -113,7 +115,6 @@ export default defineComponent({
             toggleOverflow,
             maxHeight,
             switchHeight,
-            useColor,
         };
     },
 });
