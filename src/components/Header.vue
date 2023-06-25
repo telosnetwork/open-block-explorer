@@ -39,13 +39,13 @@ export default defineComponent({
             <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
                 <div class="logo-header-container">
                     <div class="logo-chain-selector-container">
-                        <a class="float-left" href="/">
+                        <a class="float-left" hidden="hidden" href="/">
                             <img v-if="isLarge" class="logo" :src="chain.getLargeLogoPath()">
                             <img v-else class="logo-token" :src="chain.getSmallLogoPath()">
                         </a>
                         <ChainsMenu v-if="showMultichainSelector"/>
                     </div>
-                    <div v-if="chain.isTestnet()" class="testnet-text">TESTNET</div>
+                    <div class="text-h3 text-warning">ChainBass</div>
                 </div>
             </div>
         </div>
