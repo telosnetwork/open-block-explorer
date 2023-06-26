@@ -20,7 +20,6 @@ export default defineComponent({
 
         return {
             indent,
-            depth: depth.value,
             type,
             list,
         };
@@ -30,7 +29,7 @@ export default defineComponent({
 </script>
 
 <template>
-<div v-for="key in list" v-bind="key" class="payload">
+<div v-for="key, index in list" :key="index" class="payload">
     <template v-if="Array.isArray(payload[key])">
         <span class="text-bold">{{ key }}:</span>
         <span v-if="payload[key].length === 0">{{` [ ]`}}</span>
