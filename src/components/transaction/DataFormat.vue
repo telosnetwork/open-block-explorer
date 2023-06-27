@@ -25,13 +25,15 @@ export default defineComponent({
         const { actionName, actionData } = toRefs(props);
         const dataBox = ref<null | HTMLElement>(null);
         const showOverflow = ref(false);
-        const maxHeight = ref(57);
-        const switchHeight = ref(20);
         const isOverflowing = ref(false);
         const transferData = computed(() => actionData.value as TransferData);
         const clientHeight = computed(() => dataBox.value?.clientHeight ?? 0);
         let currentData = ref<string | unknown>(null);
-
+        const maxHeight = 57; // the maximum row height
+        const switchHeight = 20;
+        const maxHeightStyle = computed(() =>
+            `calc(${maxHeight}px - ${switchHeight}px)`,
+        );
 
         function compareJsonObjects(obj1: unknown, obj2: unknown): boolean {
             if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
@@ -53,7 +55,7 @@ export default defineComponent({
                     return false;
                 }
 
-                if (objectOne[key] !== null && typeof objectOne[key] === 'object') {
+                if (typeof objectOne[key] === 'object') {
                     if (!compareJsonObjects(objectOne[key], objectTwo[key])) {
                         return false;
                     }
@@ -76,7 +78,7 @@ export default defineComponent({
         }
 
         function updateOverflowing() {
-            isOverflowing.value = (dataBox.value?.clientHeight ?? 0) > maxHeight.value;
+            isOverflowing.value = (dataBox.value?.clientHeight ?? 0) > maxHeight;
         }
 
         watch([actionData, clientHeight], () => {
@@ -113,8 +115,7 @@ export default defineComponent({
             isOverflowing,
             showOverflow,
             toggleOverflow,
-            maxHeight,
-            switchHeight,
+            maxHeightStyle,
         };
     },
 });
@@ -123,8 +124,7 @@ export default defineComponent({
 <template>
 <div
     class="relative-position"
-    :class="showOverflow ? '' : 'overflow-hidden'"
-    :style="showOverflow || !isOverflowing ? '' : `max-height: calc(${maxHeight}px - ${switchHeight}px)`"
+    :class="{'overflow-hidden': !showOverflow, 'div-compressed': !showOverflow}"
 >
     <div v-if="actionName === 'transfer'" ref="dataBox" class="row">
         <div class="col-12">
@@ -171,4 +171,8 @@ export default defineComponent({
   flex-direction: column
   gap: 5px
   word-break: break-all
+
+.div-compressed
+    max-height: v-bind(maxHeightStyle)
+
 </style>
