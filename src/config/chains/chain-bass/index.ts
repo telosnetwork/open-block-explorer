@@ -25,8 +25,8 @@ import { Token } from 'src/types';
 
 const CHAIN_ID =
   '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11';
-const NAME = 'telos';
-const DISPLAY = 'Telos';
+const NAME = 'chain-base';
+const DISPLAY = 'ChainBase';
 const TOKEN = {
     symbol: 'TLOS',
     precision: 4,
@@ -34,7 +34,7 @@ const TOKEN = {
     contract: 'eosio.token',
 } as Token;
 
-const HYPERION_ENDPOINT = 'https://mainnet.telos.net';
+const HYPERION_ENDPOINT = 'http://10.101.20.11:801/zjchain/';
 
 const RPC_ENDPOINT = {
     protocol: 'https',
@@ -73,7 +73,7 @@ const THEME = {
     'color-graph-shadow': '#571aff28',
 };
 
-export default class Telos extends BaseChain {
+export default class ChainBass extends BaseChain {
     getName(): string {
         return NAME;
     }

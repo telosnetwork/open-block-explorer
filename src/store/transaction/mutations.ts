@@ -1,20 +1,14 @@
 import { MutationTree } from 'vuex';
 import { TransactionStateInterface } from 'src/store/transaction/state';
-import { ActionData } from 'src/types';
+import { Transaction } from 'src/types/zj_tpyes/ZjActionData';
 
 export const mutations: MutationTree<TransactionStateInterface> = {
-    setTransaction(state: TransactionStateInterface, transaction: ActionData) {
-        if (transaction && transaction.actions && transaction.actions.length > 0) {
+    setTransaction(state: TransactionStateInterface, transaction: Transaction) {
+        if (transaction && transaction.tx_hash.length > 0) {
             state.transaction = transaction;
-            state.executed = transaction.executed || false;
-            const action = transaction.actions[0];
-            state.blockNum = action.block_num;
-            state.timestamp = action.timestamp;
-            state.cpuUsage = action.cpu_usage_us;
-            state.netUsage = action.net_usage_words * 8;
-            state.actionCount = transaction.actions.length;
-            state.irreversable = transaction.lib > action.block_num;
-            state.actions = transaction.actions;
+            state.executed = false;
+            state.blockNum = transaction.hash.slice(0, 6);
+            state.timestamp = transaction.timestamp;
             state.transactionFound = true;
         } else {
             state.transactionFound = false;
@@ -22,29 +16,5 @@ export const mutations: MutationTree<TransactionStateInterface> = {
     },
     setTransactionId(state: TransactionStateInterface, transactionId: string) {
         state.transactionId = transactionId;
-    },
-    setTimestamp(state: TransactionStateInterface, timestamp: string) {
-        state.timestamp = timestamp;
-    },
-    setBlockNum(state: TransactionStateInterface, blockNum: number) {
-        state.blockNum = blockNum;
-    },
-    setExecuted(state: TransactionStateInterface, executed: boolean) {
-        state.executed = executed;
-    },
-    setCpuUsage(state: TransactionStateInterface, cpuUsage: number) {
-        state.cpuUsage = cpuUsage;
-    },
-    setNetUsage(state: TransactionStateInterface, netUsage: number) {
-        state.netUsage = netUsage;
-    },
-    setActionCount(state: TransactionStateInterface, actionCount: number) {
-        state.actionCount = actionCount;
-    },
-    setIrreversable(state: TransactionStateInterface, irreversable: boolean) {
-        state.irreversable = irreversable;
-    },
-    setTransactionFounde(state: TransactionStateInterface, found: boolean) {
-        state.transactionFound = found;
     },
 };

@@ -1,9 +1,10 @@
-import { ActionData, Action } from 'src/types';
+import { Transaction } from 'src/types/zj_tpyes/ZjActionData';
+import { Action } from '@greymass/eosio';
 
 export interface TransactionStateInterface {
-  transaction: ActionData;
+  transaction: Transaction;
   transactionId: string;
-  blockNum: number;
+  blockNum: string;
   timestamp: string;
   executed: boolean;
   cpuUsage: number;
@@ -16,16 +17,17 @@ export interface TransactionStateInterface {
 
 export function state(): TransactionStateInterface {
     return {
-        transaction: {} as ActionData,
-        transactionId: '',
-        blockNum: 0,
-        timestamp: '',
-        executed: false,
-        cpuUsage: 0,
-        netUsage: 0,
         actionCount: 0,
+        actions: [],
+        blockNum: '',
+        cpuUsage: 0,
+        executed: false,
         irreversable: false,
-        actions: [] as Action[],
-        transactionFound: true,
+        netUsage: 0,
+        timestamp: '',
+        transaction:{} as Transaction,
+        transactionFound: false,
+        transactionId: '',
+
     };
 }

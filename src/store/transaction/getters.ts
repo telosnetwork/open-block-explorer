@@ -1,10 +1,10 @@
 import { GetterTree } from 'vuex';
 import { StateInterface } from 'src/store/index';
 import { TransactionStateInterface } from 'src/store/transaction/state';
-import { ActionData } from 'src/types';
+import { Transaction } from 'src/types/zj_tpyes/ZjActionData';
 
 export const getters: GetterTree<TransactionStateInterface, StateInterface> = {
-    getTransaction({ transaction }): ActionData {
+    getTransaction({ transaction }): Transaction {
         return transaction;
     },
     getTransactionId({ transactionId }): string {

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, onBeforeUnmount, ref, watch } from 'vue';
 import PriceChart from 'components/PriceChart.vue';
-import TransactionsTable from 'components/TransactionsTable.vue';
+import TransactionsTable from 'components/zjcomponents/TransactionsTable.vue';
 import WorldMap from 'components/WorldMap.vue';
 import MapData from 'components/MapData.vue';
 import { useStore } from 'src/store';
