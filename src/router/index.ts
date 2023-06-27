@@ -32,11 +32,8 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     Router.beforeEach((to, from) => {
         const chains = configMgr.getAllChains();
         const selectedChainOnStore = localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
-        // console.log(to);
         if (!to.query.network) { // if doesn't have network param
-            // console.log('if doesn\'t have network param');
             if (selectedChainOnStore) { // if has a chain selected on sotre
-                // console.log('if has a chain selected on sotre');
                 routeData.network = selectedChainOnStore;
                 return ({
                     ...to,
@@ -59,18 +56,12 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
 
             setTimeout(() => location.reload(), 500);
         } else if ((from.query.network && from.query.network !== to.query.network) || selectedChainOnStore !== to.query.network) { // if i'm changing from network
-            // console.log('changing network');
-            // console.log(selectedChainOnStore);
-            // console.log(from);
             const chain = chains.filter(chain => chain.getName() === to.query.network)[0];
             routeData.network = chain.getName();
             configMgr.setCurrentChain(chain);
 
             setTimeout(() => location.reload(), 500);
-        } else {
-            // console.log('else');
         }
-
     });
 
     return Router;
