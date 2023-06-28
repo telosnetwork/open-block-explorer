@@ -4,23 +4,57 @@ import { copyToClipboard } from 'quasar';
 import { useStore } from 'src/store';
 import {  formatDate } from 'src/utils/string-utils';
 import AccountFormat from 'src/components/transaction/AccountFormat.vue';
+import TypeFormat from 'components/transaction/TypeFormat.vue';
+import TextFormat from 'components/transaction/TextFormat.vue';
 
 export default defineComponent({
     name: 'TransactionCard',
-    components: { AccountFormat },
+    components: { TextFormat, TypeFormat, AccountFormat },
     setup() {
         const store = useStore();
+        const propertyOrder: string[] = [
+            'date',
+            'shard_id',
+            'pool_index',
+            'height',
+            'transfers',
+            'version',
+            'vss',
+            'elect_height',
+            'bitmap',
+            'timeblock_height',
+            'bls_agg_sign_x',
+            'bls_agg_sign_y',
+            'commit_bitmap',
+            'gid',
+            'from_field',
+            'from_pubkey',
+            'from_sign',
+            'to',
+            'amount',
+            'gas_limit',
+            'gas_used',
+            'gas_price',
+            'balance',
+            'to_add',
+            'type',
+            'attrs',
+            'status',
+            'call_contract_step',
+            'storages',
+        ];
         return {
             transaction: computed(() => store.state.transaction.transactionId),
             transactionData: computed(() => store.state.transaction.transaction),
             blockNum: computed(() => store.state.transaction.blockNum.toString()),
             timestamp: computed(() => store.state.transaction.timestamp),
-            executed: computed(() => store.state.transaction.executed),
+            status: computed(() => store.state.transaction.transaction.status),
             irreversable: computed(() => store.state.transaction.irreversable),
             cpuUsage: computed(() => store.state.transaction.cpuUsage),
             netUsage: computed(() => store.state.transaction.netUsage),
             actionsTraces: ref<string>(''),
             actionNum: computed(() => store.state.transaction.actionCount),
+            propertyOrder,
         };
     },
     methods: {
@@ -86,7 +120,7 @@ export default defineComponent({
                 <q-card-section>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6">
-                            <div class="text-body1 text-weight-medium text-uppercase">Block number</div>
+                            <div class="text-body1 text-weight-medium text-uppercase">Block Hash</div>
                         </div>
                         <div class="col-xs-12 col-sm-6 text-right text-bold">
                             <AccountFormat :account="blockNum" type="block"/>
@@ -114,54 +148,27 @@ export default defineComponent({
                 <q-card-section>
                     <div class="row">
                         <div class="col-xs-12 col-sm-6">
-                            <div class="text-body1 text-weight-medium text-uppercase">Status</div>
+                            <div class="text-body1 text-weight-medium text-uppercase">Type</div>
                         </div>
                         <div class="col-xs-12 col-sm-6 text-right text-bold">
-                            <q-badge
-                                class="text-bold"
-                                transparent
-                                align="middle"
-                                color="purple-2"
-                                text-color="black"
-                            >{{executed ? 'EXECUTED' : 'PENDING'}}</q-badge>
-                            <q-badge
-                                v-if="irreversable"
-                                class="q-ml-sm text-bold"
-                                transparent
-                                align="middle"
-                                color="deep-orange-2"
-                                text-color="black"
-                            >{{'IRREVERSIBLE'}}</q-badge>
+                            <TypeFormat :type="transactionData.type"/>
                         </div>
                     </div>
                 </q-card-section>
-                <q-separator class="card-separator" inset="inset"/>
-                <q-card-section>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="text-body1 text-weight-medium text-uppercase">CPU usage</div>
+                <div v-for="property in propertyOrder" :key="property">
+                    <q-separator class="card-separator" inset="inset"/>
+
+                    <q-card-section>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="text-body1 text-weight-medium text-uppercase">{{ property.toUpperCase() }}</div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 text-right text-bold">
+                                <TextFormat :text="transactionData[property]"/>
+                            </div>
                         </div>
-                        <div class="col-xs-12 col-sm-6 text-right text-bold">{{cpuUsage + ' μs'}}</div>
-                    </div>
-                </q-card-section>
-                <q-separator class="card-separator" inset="inset"/>
-                <q-card-section>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="text-body1 text-weight-medium text-uppercase">Net usage</div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 text-right text-bold">{{netUsage + ' Bytes'}}</div>
-                    </div>
-                </q-card-section>
-                <q-separator class="card-separator" inset="inset"/>
-                <q-card-section>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="text-body1 text-weight-medium text-uppercase">Actions/Traces</div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 text-right text-bold">{{actionNum+'/'+actionNum}}</div>
-                    </div>
-                </q-card-section>
+                    </q-card-section>
+                </div>
             </div>
         </q-card>
     </div>

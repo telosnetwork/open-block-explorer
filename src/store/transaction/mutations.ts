@@ -7,7 +7,7 @@ export const mutations: MutationTree<TransactionStateInterface> = {
         if (transaction && transaction.tx_hash.length > 0) {
             state.transaction = transaction;
             state.executed = false;
-            state.blockNum = transaction.hash.slice(0, 6);
+            state.blockNum = transaction.hash;
             state.timestamp = transaction.timestamp;
             state.transactionFound = true;
         } else {
