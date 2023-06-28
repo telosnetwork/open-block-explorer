@@ -23,7 +23,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
-import { Transaction, TransactionTableRow } from 'src/types/zj_tpyes/ZjActionData';
+import { Transaction, TransactionTableRow } from 'src/types/zj_tpyes/Transaction';
 import TypeFormat from 'components/transaction/TypeFormat.vue';
 
 const chain: Chain = getChain();
@@ -45,7 +45,7 @@ export default defineComponent({
             required: false,
             default: null,
         },
-        actions: {
+        transactions: {
             type: Object as PropType<Transaction[]>,
             required: false,
             default: null,
@@ -76,7 +76,7 @@ export default defineComponent({
             () => (route.query['page'] as string) || '1,10',
         );
         const pageSizeOptions = [10, 20, 50, 100, 200];
-        const { account, actions } = toRefs(props);
+        const { account, transactions } = toRefs(props);
         const columns = [
             {
                 name: 'transaction',
@@ -217,7 +217,7 @@ export default defineComponent({
             return Math.ceil(rowsNumber / rowsPerPage);
         });
 
-        const hasActions = computed(() => actions.value !== null);
+        const hasTransactions = computed(() => transactions.value !== null);
         const clearFilters = (): void => {
             accountsModel.value = '';
             actionsModel.value = '';
@@ -240,8 +240,8 @@ export default defineComponent({
             let tableData: Transaction[];
             if (isTransaction.value) {
                 tableData = [(await zjApi.getTransaction(account.value))];
-            } else if (hasActions.value) {
-                tableData = actions.value;
+            } else if (hasTransactions.value) {
+                tableData = transactions.value;
             } else {
                 const page = paginationSettings.value.page;
                 let limit = paginationSettings.value.rowsPerPage;
@@ -340,7 +340,7 @@ export default defineComponent({
             clearLiveTransactionInterval();
         });
 
-        watch([account, actions], async () => {
+        watch([account, transactions], async () => {
             void loadTableData();
             await changePagination(1, paginationSettings.value.rowsPerPage);
         });
@@ -450,7 +450,7 @@ export default defineComponent({
             showAge,
             tableTitle,
             lastPage,
-            hasActions,
+            hasTransactions,
             filter,
             onRequest,
             loadTableData,

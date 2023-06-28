@@ -1,13 +1,16 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { TransactionFilter, ZjResponse, Transaction } from 'src/types/zj_tpyes/ZjActionData';
+import { TransactionFilter, ZjResponse, Transaction } from 'src/types/zj_tpyes/Transaction';
+import { Block } from 'src/types/zj_tpyes/Block';
+
 
 
 // const endpoint = 'http://10.101.20.11:801/zjchain/';
-const endpoint= process.env.DEBUGGING ?  'http://127.0.0.1:8000/zjchain/' :'http://10.101.20.11:801/zjchain/';
+const endpoint= 'http://127.0.0.1:801/zjchain/';
 
 
 const zjAxios = axios.create({ baseURL: endpoint });
+const controller = new AbortController();
 
 export const getTransactions = async function (
     filter: TransactionFilter,
@@ -66,7 +69,22 @@ export const getTransaction = async function (
     return response.data.data;
 };
 
+
+export const getBlock = async function (
+    block?: string,
+): Promise<Block> {
+    controller.abort();
+    const response = await zjAxios.get<ZjResponse<Block>>(
+        'get_block',
+        {
+            params: { block_hash: block },
+        },
+    );
+    return response.data.data;
+};
+
 export const zjApi = {
     getTransactions,
     getTransaction,
+    getBlock,
 };

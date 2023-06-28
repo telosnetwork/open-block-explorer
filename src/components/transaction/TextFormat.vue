@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { copyToClipboard } from 'quasar';
 
 export default defineComponent({
@@ -32,10 +32,12 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const longText : boolean = props.text.length > 8;
+        const accText  = computed(() => props.text ? props.text : '');
+        const longText : boolean = accText.value.length > 8;
         return {
-            textDes :  longText ? props.text.slice(0, 8).concat('...') :props.text,
+            textDes :  longText ? accText.value.slice(0, 8).concat('...') :accText.value,
             longText,
+            accText,
         };
     },
 });
@@ -45,7 +47,7 @@ export default defineComponent({
 <div>
     {{textDes}}
     <q-tooltip v-if="longText">
-        {{ text}}
+        {{ accText}}
     </q-tooltip>
     <q-btn
         v-if="longText"
@@ -54,7 +56,7 @@ export default defineComponent({
         color="black"
         icon="content_copy"
         size="sm"
-        @click="copy(text)"
+        @click="copy(accText)"
     />
 </div>
 

@@ -1,4 +1,4 @@
-import { Transaction } from 'src/types/zj_tpyes/ZjActionData';
+import { Transaction } from 'src/types/zj_tpyes/Transaction';
 import { Action } from '@greymass/eosio';
 
 export interface TransactionStateInterface {

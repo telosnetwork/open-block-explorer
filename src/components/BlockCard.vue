@@ -1,19 +1,14 @@
 <script lang="ts">
-import {
-    defineComponent,
-    ref,
-    computed,
-    PropType,
-    watch,
-    onMounted,
-} from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import { copyToClipboard, useQuasar } from 'quasar';
-import { Block } from 'src/types';
+import { Block } from 'src/types/zj_tpyes/Block';
 import { useRouter } from 'vue-router';
 import { formatDate } from 'src/utils/string-utils';
+import TextFormat from 'components/transaction/TextFormat.vue';
 
 export default defineComponent({
     name: 'BlockCard',
+    components: { TextFormat },
     props: {
         block: {
             type: Object as PropType<Block>,
@@ -24,22 +19,12 @@ export default defineComponent({
     setup(props) {
         const router = useRouter();
         const q = useQuasar();
-        const Block = computed(() => props.block);
-        const blockInfo = ref<{ key: string; value: string }[]>([]);
-        async function nextBlock() {
-            await router.push({
-                name: 'block',
-                params: {
-                    block: Block.value.block_num + 1,
-                },
-            });
-            router.go(0);
-        }
+        const blockData = computed(() => props.block);
         async function previousBlock() {
             await router.push({
                 name: 'block',
                 params: {
-                    block: Block.value.block_num - 1,
+                    block: blockData.value.prehash,
                 },
             });
             void router.go(0);
@@ -63,55 +48,32 @@ export default defineComponent({
                     });
                 });
         }
-        function numberWithCommas(x: number) {
-            if (!x) {
-                return 0;
-            }
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-        function setBlockData() {
-            if (Block.value) {
-                let actionCount = 0;
-                let cpu = 0;
-                let net = 0;
-                Block.value.transactions.forEach((tx) => {
-                    if (tx.trx.transaction && tx.trx.transaction.actions) {
-                        actionCount += tx.trx.transaction.actions.length;
-                    }
-                    cpu += tx.cpu_usage_us;
-                    net += tx.net_usage_words;
-                });
-                blockInfo.value = [
-                    { key: 'Producer', value: Block.value.producer },
-                    { key: 'Block time', value: formatDate(Block.value.timestamp) },
-                    { key: 'CPU usage', value: cpu.toString() + ' μs' },
-                    { key: 'Net usage', value: (net * 8).toString() + ' Bytes' },
-                    {
-                        key: 'Schedule Version',
-                        value: Block.value.schedule_version.toString(),
-                    },
-                    {
-                        key: 'Transactions',
-                        value: Block.value.transactions.length.toString(),
-                    },
-                    { key: 'Actions', value: actionCount.toString() },
-                ];
-            }
-        }
-        watch(Block, () => {
-            setBlockData();
-        });
-        onMounted(() => {
-            setBlockData();
-        });
+
+        const propertyOrder: Array<string> = [
+            'shard_id',
+            'pool_index',
+            'height',
+            'prehash',
+            'hash',
+            'version',
+            'vss',
+            'elect_height',
+            'bitmap',
+            'timeblock_height',
+            'bls_agg_sign_x',
+            'bls_agg_sign_y',
+            'commit_bitmap',
+            'tx_size',
+            'date',
+            'gas_used_sum',
+        ];
         return {
-            block_num: computed(() => Block.value?.block_num || 0),
-            nextBlock,
+            block_hash: computed(() => blockData.value?.hash || ''),
             previousBlock,
-            numberWithCommas,
             formatDate,
             copy,
-            blockInfo,
+            blockData,
+            propertyOrder,
         };
     },
 });
@@ -138,23 +100,13 @@ export default defineComponent({
                                         @click="previousBlock"
                                     />
                                 </div>
-                                <div class="col-auto">
-                                    <q-btn
-                                        class="button-primary"
-                                        flat
-                                        dense
-                                        size="md"
-                                        icon="arrow_forward"
-                                        @click="nextBlock"
-                                    />
-                                </div>
                             </div>
                         </div>
                     </div>
                 </q-card-section>
                 <q-card-section class="q-pt-none">
                     <div class="row items-center">
-                        <div class="col-11 text-bold ellipsis">{{numberWithCommas(block_num)}}</div>
+                        <div class="col-11 text-bold ellipsis">{{block_hash}}</div>
                         <div class="col-1">
                             <q-btn
                                 class="float-right"
@@ -163,7 +115,7 @@ export default defineComponent({
                                 color="black"
                                 icon="content_copy"
                                 size="sm"
-                                @click="copy(block_num.toString())"
+                                @click="copy(block_hash.toString())"
                             />
                         </div>
                     </div>
@@ -171,14 +123,24 @@ export default defineComponent({
                 <q-card-section>
                     <div class="text-grey-7">SUMMARY</div>
                 </q-card-section>
-                <div v-for="item in blockInfo" :key="item.key">
+                <q-card-section>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="text-body1 text-weight-medium text-uppercase">Block time</div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 text-right text-bold">{{formatDate(block.timestamp)}}</div>
+                    </div>
+                </q-card-section>
+                <div v-for="property in propertyOrder" :key="property">
                     <q-separator class="card-separator" inset="inset"/>
                     <q-card-section>
                         <div class="row">
                             <div class="col-xs-12 col-sm-6">
-                                <div class="text-body1 text-weight-medium text-uppercase">{{item.key}}</div>
+                                <div class="text-body1 text-weight-medium text-uppercase">{{ property.toUpperCase() }}</div>
                             </div>
-                            <div class="col-xs-12 col-sm-6 text-right text-bold">{{item.value}}</div>
+                            <div class="col-xs-12 col-sm-6 text-right text-bold">
+                                <TextFormat :text="blockData[property].toString()"/>
+                            </div>
                         </div>
                     </q-card-section>
                 </div>

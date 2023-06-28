@@ -157,7 +157,6 @@ export default defineComponent({
                 </q-card-section>
                 <div v-for="property in propertyOrder" :key="property">
                     <q-separator class="card-separator" inset="inset"/>
-
                     <q-card-section>
                         <div class="row">
                             <div class="col-xs-12 col-sm-6">

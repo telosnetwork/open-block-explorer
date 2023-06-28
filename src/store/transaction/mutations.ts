@@ -1,6 +1,6 @@
 import { MutationTree } from 'vuex';
 import { TransactionStateInterface } from 'src/store/transaction/state';
-import { Transaction } from 'src/types/zj_tpyes/ZjActionData';
+import { Transaction } from 'src/types/zj_tpyes/Transaction';
 
 export const mutations: MutationTree<TransactionStateInterface> = {
     setTransaction(state: TransactionStateInterface, transaction: Transaction) {

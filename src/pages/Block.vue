@@ -1,36 +1,26 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from 'vue';
-import TransactionTable from 'src/components/TransactionsTable.vue';
+import TransactionTable from 'src/components/zjcomponents/TransactionsTable.vue';
 import BlockCard from 'components/BlockCard.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { api } from 'src/api/index';
-import { Action, Block } from 'src/types';
+import { zjApi } from 'src/api/zjApi';
+import { Block } from 'src/types/zj_tpyes/Block';
+import { Transaction } from 'src/types/zj_tpyes/Transaction';
 
 export default defineComponent({
     name: 'BlockPage',
     setup() {
         const route = useRoute();
         const router = useRouter();
-        const found = ref(true);
+        const found = ref(false);
         const block = ref<Block>(null);
-        const actions = ref<Action[]>([]);
+        const transactions = ref<Transaction[]>([]);
         const tab = ref<string>((route.query['tab'] as string) || 'actions');
         onMounted(async () => {
             // api get block and set block
-            block.value = await api.getBlock(route.params.block as string);
+            block.value = await zjApi.getBlock(route.params.block as string);
             block.value.transactions.forEach((tr) => {
-                const act = tr.trx.transaction?.actions.map(act => ({
-                    ...act,
-                    trx_id: tr.trx.id,
-                    act: {
-                        ...act.act,
-                        name: act.name,
-                        data: act.data,
-                        account: act.account,
-                    },
-                    '@timestamp': block.value.timestamp,
-                }));
-                actions.value = actions.value.concat(act);
+                transactions.value = transactions.value.concat(tr);
             });
             found.value = block.value ? true : false;
         });
@@ -46,7 +36,7 @@ export default defineComponent({
             tab,
             transaction: route.params.transaction,
             found,
-            Actions: actions,
+            Transactions: transactions,
             block,
         };
     },
@@ -77,7 +67,7 @@ export default defineComponent({
         </div>
     </div>
     <div class="q-pt-lg container-max-width">
-        <TransactionTable :actions="Actions" :toggleEnabled="false"/>
+        <TransactionTable :transactions="Transactions" :toggleEnabled="false"/>
     </div>
 </div>
 

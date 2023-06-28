@@ -77,7 +77,7 @@ export function assetToAmount(asset: string): number {
 
 export function formatDate(date: string, showTime = true): string {
     return showTime ?
-        new Date(date).toLocaleDateString('en-US', {
+        new Date(date).toLocaleDateString('zh-CN', {
             month: 'long',
             year: 'numeric',
             day: 'numeric',
@@ -85,7 +85,7 @@ export function formatDate(date: string, showTime = true): string {
             minute: 'numeric',
             second: 'numeric',
         }) :
-        new Date(date).toLocaleDateString('en-US', {
+        new Date(date).toLocaleDateString('zh-CN', {
             month: 'long',
             year: 'numeric',
             day: 'numeric',
