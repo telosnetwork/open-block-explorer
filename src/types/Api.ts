@@ -10,7 +10,7 @@ import {
     UInt32Type,
     API,
     PublicKey,
-} from '@greymass/eosio';
+} from '@wharfkit/session';
 import { Transaction } from 'src/types/Transaction';
 import {
     AccountDetails,

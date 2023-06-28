@@ -1,24 +1,21 @@
 import { MutationTree } from 'vuex';
 import { AccountStateInterface } from 'src/store/account/state';
 import { Action, Rexbal, ABI } from 'src/types';
-import { User } from 'universal-authenticator-library';
 import { markRaw } from 'vue';
 
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
+import { Session } from '@wharfkit/session';
 
 const symbol = getChain().getSystemToken().symbol;
 
 export const mutations: MutationTree<AccountStateInterface> = {
-    setUser(state: AccountStateInterface, user: User) {
+    setUser(state: AccountStateInterface, user: Session) {
         state.user = user ? markRaw(user) : user;
     },
     setAccountName(state: AccountStateInterface, accountName: string) {
         state.accountName = accountName;
-    },
-    setAutoLogin(state: AccountStateInterface, status: string) {
-        state.autoLogin = status;
     },
     setAccountData(
         state: AccountStateInterface,

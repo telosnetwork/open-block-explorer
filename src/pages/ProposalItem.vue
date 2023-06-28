@@ -7,7 +7,7 @@ import moment from 'moment';
 import { api } from 'src/api';
 import { RequestedApprovals, Error, Proposal } from 'src/types';
 import sha256 from 'fast-sha256';
-import { ABI, ABIDef, Action, Serializer, Transaction } from '@greymass/eosio';
+import { ABI, ABIDef, Action, Serializer, Transaction } from '@wharfkit/session';
 import { useStore } from 'src/store';
 import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
 import { sleep } from 'src/utils/sleep';
@@ -318,7 +318,7 @@ export default defineComponent({
             name: 'approve' | 'unapprove' | 'cancel' | 'exec';
             data: unknown;
         }) {
-            const response = await store.state.account.user.signTransaction(
+            const response = await store.state.account.user.transact(
                 {
                     actions: [
                         {
@@ -333,10 +333,6 @@ export default defineComponent({
                             data,
                         },
                     ],
-                },
-                {
-                    blocksBehind: 3,
-                    expireSeconds: 30,
                 },
             );
 

@@ -17,7 +17,6 @@ PRODUCER_BUCKET_URL=
  */
 
 import BaseChain from 'src/config/BaseChain';
-import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { getEmptyPriceChartData } from 'src/api/price';
 import { Theme } from 'src/types/Theme';
@@ -33,13 +32,9 @@ const TOKEN = {
     amount: 0,
     contract: 'eosio.token',
 } as Token;
-const HYPERION_ENDPOINT = 'https://jungle.eosusa.news';
+const HYPERION_ENDPOINT = 'https://jungle.eossweden.org';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
-const RPC_ENDPOINT = {
-    protocol: 'https',
-    host: 'jungle.eosusa.news',
-    port: 443,
-};
+const RPC_ENDPOINT = 'https://jungle4.greymass.com';
 const API_ENDPOINT = 'https://example.com';
 const DISPLAY_MAP = true;
 const THEME = {
@@ -81,11 +76,11 @@ export default class TelosTestnet extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): RpcEndpoint {
+    getRPCEndpoint(): string {
         return RPC_ENDPOINT;
     }
 
-    getFuelRPCEndpoint(): RpcEndpoint | null {
+    getFuelRPCEndpoint(): string | null {
         return null;
     }
 

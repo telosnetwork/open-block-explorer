@@ -153,7 +153,7 @@ export default defineComponent({
                     data.trx.actions[i].data = hexData as { [key: string]: string | number; };
                 }
 
-                const transaction = await store.state.account.user.signTransaction(
+                const result = await store.state.account.user.transact(
                     {
                         actions: [
                             {
@@ -169,16 +169,8 @@ export default defineComponent({
                             },
                         ],
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 30,
-                    },
                 );
-                if (store.state.account.autoLogin !== 'cleos') {
-                    success.showModal = true;
-                }
-
-                success.transactionId = transaction.transactionId;
+                success.transactionId = String(result.resolved.transaction.id);
                 success.proposalName = data.proposal_name;
             } catch (e) {
                 const error = JSON.parse(JSON.stringify(e)) as Error;

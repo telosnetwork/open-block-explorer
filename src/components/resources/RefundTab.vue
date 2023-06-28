@@ -4,7 +4,7 @@ import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 import { formatCurrency } from 'src/utils/string-utils';
 
 export default defineComponent({
@@ -119,10 +119,6 @@ export default defineComponent({
                 this.$store.commit('account/setTransactionError', e);
             }
             await this.loadAccountData();
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                this.openTransaction = true;
-            }
         },
         async loadAccountData(): Promise<void> {
             try {

@@ -1,40 +1,54 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue';
+import ConfigManager from 'src/config/ConfigManager';
 import LoginHandlerDropdown from 'src/components/LoginHandlerDropdown.vue';
-import WalletModal from 'src/components/WalletModal.vue';
-import { Authenticator } from 'universal-authenticator-library';
 import { useStore } from 'src/store';
-import { getAuthenticators } from 'src/boot/ual';
+import { kit, ui } from 'boot/wharf';
 
 export default defineComponent({
     name: 'LoginHandler',
-    components: { LoginHandlerDropdown, WalletModal },
+    components: { LoginHandlerDropdown },
     setup() {
-        const authenticators = getAuthenticators();
         const store = useStore();
 
         const showDropdown = ref(false);
-        const showModal = ref(false);
         const account = computed(() => store.state.account.accountName);
 
-        onMounted(() => {
-            const storedAccount = localStorage.getItem('account');
-            if (storedAccount) {
-                void store.commit('account/setAccountName', storedAccount);
-                const ualName = localStorage.getItem('autoLogin');
-                const ual: Authenticator = authenticators.find(
-                    a => a.getName() === ualName,
+        onMounted(async () => {
+            // Manually append the dialog to the page, since this is after the DOM events
+            ui.appendDialogElement();
+            // Attempt to restore any existing sessions
+            try {
+                // This is only needed because the application state doesn't allow dynamic switching of chains
+                const sessions = await kit.getSessions();
+                const manager = ConfigManager.get();
+                // It'll restore the first matching account for the chain once switching chains
+                const matchingSession = sessions.find(session =>
+                    session.chain === manager.getCurrentChain().getChainId(),
                 );
-                void store.dispatch('account/login', {
-                    account: storedAccount,
-                    authenticator: ual,
-                });
+                if (matchingSession) {
+                    const session = await kit.restore(matchingSession);
+                    if (session) {
+                        await store.dispatch('account/login', session);
+                    }
+                }
+            } catch (e) {
+                // console.log('error restoring session', e);
             }
         });
 
         return {
             showDropdown,
-            showModal,
+            login: async () => {
+                try {
+                    const result = await kit.login();
+                    if (result.session) {
+                        await store.dispatch('account/login', result.session);
+                    }
+                } catch (e) {
+                    // console.log('error logging in', e)
+                }
+            },
             account,
         };
     },
@@ -49,9 +63,8 @@ export default defineComponent({
             v-else
             class="button-primary btn-login"
             label="Connect"
-            @click="showModal = true"
+            @click=login()
         />
-        <WalletModal v-model="showModal"/>
     </div>
 </div>
 </template>

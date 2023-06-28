@@ -62,10 +62,6 @@ export default defineComponent({
             await store.dispatch('account/stakeRex', {
                 amount: stakeTokens.value,
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         function setMaxValue() {

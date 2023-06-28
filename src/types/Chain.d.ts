@@ -1,4 +1,3 @@
-import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types/Actions';
@@ -10,8 +9,8 @@ export interface Chain {
   getSmallLogoPath(): string;
   getLargeLogoPath(): string;
   getChainId(): string;
-  getRPCEndpoint(): RpcEndpoint;
-  getFuelRPCEndpoint(): RpcEndpoint | null;
+  getRPCEndpoint(): string;
+  getFuelRPCEndpoint(): string | null;
   getHyperionEndpoint(): string;
   getApiEndpoint(): string;
   getS3ProducerBucket(): string;

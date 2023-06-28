@@ -53,8 +53,8 @@ export default defineComponent({
             }
         }
 
-        onMounted(async () => {
-            actor.value = await store.state.account.user.getAccountName();
+        onMounted(() => {
+            actor.value = String(store.state.account.user.actor);
             permission.value = store.state.account.accountPermission;
         });
 

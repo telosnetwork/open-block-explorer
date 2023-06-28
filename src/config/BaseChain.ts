@@ -1,5 +1,4 @@
 import { Chain } from 'src/types/Chain';
-import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
@@ -27,8 +26,8 @@ export default abstract class BaseChain implements Chain {
   abstract getChainId(): string;
   abstract getDisplay(): string;
   abstract getHyperionEndpoint(): string;
-  abstract getRPCEndpoint(): RpcEndpoint;
-  abstract getFuelRPCEndpoint(): RpcEndpoint | null;
+  abstract getRPCEndpoint(): string;
+  abstract getFuelRPCEndpoint(): string | null;
   abstract getApiEndpoint(): string;
   abstract getS3ProducerBucket(): string;
   abstract getPriceData(): Promise<PriceChartData>;

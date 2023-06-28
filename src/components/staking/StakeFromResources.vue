@@ -3,7 +3,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { API, Asset } from '@greymass/eosio';
+import { API, Asset } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'StakeFromResources',
@@ -67,10 +67,6 @@ export default defineComponent({
                 cpuAmount: cpuTokens.value || '0',
                 netAmount: netTokens.value || '0',
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         async function unstake() {
@@ -82,10 +78,6 @@ export default defineComponent({
                 cpuAmount: cpuWithdraw.value || '0',
                 netAmount: netWithdraw.value || '0',
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         function setMaxNetValue() {

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, computed, onMounted } from 'vue';
 import { api } from 'src/api';
-import { Name, UInt32 } from '@greymass/eosio';
+import { Name, UInt32 } from '@wharfkit/session';
 
 interface RequiredAccounts {
     permissionName: Name;

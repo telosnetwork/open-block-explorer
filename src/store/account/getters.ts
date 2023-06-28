@@ -1,5 +1,4 @@
-import { API } from '@greymass/eosio';
-import { User } from 'universal-authenticator-library';
+import { API, Session } from '@wharfkit/session';
 import { GetterTree } from 'vuex';
 import { StateInterface } from 'src/store/index';
 import { AccountStateInterface } from 'src/store/account/state';
@@ -17,7 +16,7 @@ export const getters: GetterTree<AccountStateInterface, StateInterface> = {
     getAccountData(state): API.v1.AccountObject {
         return state.data;
     },
-    getUser(state): User {
+    getUser(state): Session {
         return state.user;
     },
 };

@@ -2,7 +2,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 import { assetToAmount } from 'src/utils/string-utils';
 
 export default defineComponent({
@@ -60,10 +60,6 @@ export default defineComponent({
             await store.dispatch('account/moveToSavings', {
                 amount: toSavingAmount.value || '0',
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         async function moveFromSavings() {
@@ -78,10 +74,6 @@ export default defineComponent({
             await store.dispatch('account/moveFromSavings', {
                 amount: fromSavingAmount.value || '0',
             });
-
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
-                openTransaction.value = true;
-            }
         }
 
         function setMaxSavingsValue() {
