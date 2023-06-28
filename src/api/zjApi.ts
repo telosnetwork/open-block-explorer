@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { TransactionFilter, ZjResponse, Transaction } from 'src/types/zj_tpyes/Transaction';
-import { Block } from 'src/types/zj_tpyes/Block';
+import { Block, BlockFilter } from 'src/types/zj_tpyes/Block';
 
 
 
@@ -69,6 +69,50 @@ export const getTransaction = async function (
     return response.data.data;
 };
 
+export const getBlocks = async function (
+    filter: BlockFilter,
+): Promise<AxiosResponse<ZjResponse<Block>>> {
+    const account = filter.account || '';
+    const page = filter.page || 1;
+    const limit = filter.limit || 10;
+    const skip = Math.max(0, page - 1) * limit;
+    const notified = filter.notified || '';
+    const sort = filter.sort || 'desc';
+    const after = filter.after || '';
+    const before = filter.before || '';
+
+    let aux = {};
+    if (account) {
+        aux = { account, ...aux };
+    }
+    if (limit) {
+        aux = { limit, ...aux };
+    }
+    if (skip) {
+        aux = { skip, ...aux };
+    }
+    if (notified) {
+        aux = { notified, ...aux };
+    }
+    if (sort) {
+        aux = { sort, ...aux };
+    }
+    if (after) {
+        aux = { after, ...aux };
+    }
+    if (before) {
+        aux = { before, ...aux };
+    }
+    if (filter.extras) {
+        aux = { 'act.name': '!onblock', ...aux, ...filter.extras };
+    }
+    aux = { page, ...aux };
+    const params: AxiosRequestConfig = aux as AxiosRequestConfig;
+
+    return await zjAxios.get<ZjResponse<Block>>('block_list/', {
+        params,
+    });
+};
 
 export const getBlock = async function (
     block?: string,
@@ -86,5 +130,6 @@ export const getBlock = async function (
 export const zjApi = {
     getTransactions,
     getTransaction,
+    getBlocks,
     getBlock,
 };

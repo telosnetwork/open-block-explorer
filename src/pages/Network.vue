@@ -6,6 +6,7 @@ import WorldMap from 'components/WorldMap.vue';
 import MapData from 'components/MapData.vue';
 import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
+import BlocksTable from 'components/zjcomponents/BlocksTable.vue';
 
 enum MapReveal {
     Reveal,
@@ -16,6 +17,7 @@ enum MapReveal {
 export default defineComponent({
     name: 'PageNetwork',
     components: {
+        BlocksTable,
         PriceChart,
         TransactionsTable,
         WorldMap,
@@ -133,6 +135,8 @@ export default defineComponent({
         </div>
         <PriceChart v-if='mapDisplay' class="price-box-position" :class="{'overlap-map' : mapDisplay && showMap}"/>
         <TransactionsTable/>
+        <BlocksTable/>
+
     </div>
 </div>
 </template>

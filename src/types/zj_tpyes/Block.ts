@@ -20,3 +20,15 @@ export interface Block {
     gas_used_sum:number;
     transactions:Transaction[];
 }
+
+export interface BlockFilter {
+    page?: number; // the page variable sustitutes the skip
+    skip?: number;
+    limit?: number;
+    account?: string;
+    notified?: string;
+    sort?: 'desc' | 'asc';
+    after?: string;
+    before?: string;
+    extras?: { [key: string]: string };
+}
