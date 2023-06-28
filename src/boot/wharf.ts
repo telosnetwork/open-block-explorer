@@ -5,7 +5,7 @@ import { BrowserLocalStorage, Session, SessionKit } from '@wharfkit/session';
 import { TransactPluginResourceProvider } from '@wharfkit/transact-plugin-resource-provider';
 import { WalletPluginAnchor } from '@wharfkit/wallet-plugin-anchor';
 import { WalletPluginCleos } from '@wharfkit/wallet-plugin-cleos';
-import WebUIRenderer from '@wharfkit/web-ui-renderer';
+import WebRenderer from '@wharfkit/web-renderer';
 
 const chain: Chain = getChain();
 
@@ -16,7 +16,7 @@ declare module '@vue/runtime-core' {
   }
 }
 
-export const ui = new WebUIRenderer();
+export const ui = new WebRenderer();
 
 export const kit = new SessionKit({
     appName: process.env.APP_NAME,
