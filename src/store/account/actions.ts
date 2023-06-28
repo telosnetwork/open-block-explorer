@@ -6,6 +6,7 @@ import { Action, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { getChain } from 'src/config/ConfigManager';
 import { Session } from '@wharfkit/session';
+import { formatCurrency } from 'src/utils/string-utils';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;

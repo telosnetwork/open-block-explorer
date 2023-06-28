@@ -1,7 +1,7 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 import { BootFileParams } from '@quasar/app-webpack';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
-import boot, { resetUalState } from 'src/boot/ual';
+import boot from 'src/boot/wharf';
 
 // auxiliar types
 interface ChainType {
@@ -96,7 +96,7 @@ const setChain = (chain: ChainType) => {
 describe('When booting ual', () => {
 
     beforeEach(() => {
-        resetUalState();
+        // resetUalState();
     });
 
     describe('using Telos chain', () => {

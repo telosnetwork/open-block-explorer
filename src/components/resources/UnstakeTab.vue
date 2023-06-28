@@ -149,30 +149,19 @@ export default defineComponent({
                 from: this.stakingAccount,
                 to: this.receiverAccount,
                 transfer: false,
-                unstake_cpu_quantity:
-          parseFloat(this.cpuTokens) > 0
-              ? `${parseFloat(this.cpuTokens).toFixed(4)} ${symbol}`
-              : `0.0000 ${symbol}`,
-                unstake_net_quantity:
-          parseFloat(this.netTokens) > 0
-              ? `${parseFloat(this.netTokens).toFixed(4)} ${symbol}`
-              : `0.0000 ${symbol}`,
-            } as StakeResourcesTransactionData;
-            try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                this.transactionId = (
-          await this.signTransaction({
-              account: 'eosio',
-              name: 'undelegatebw',
-              data,
-          })
-        ).transactionId as string;
-                this.$store.commit('account/setTransaction', this.transactionId);
-            } catch (e) {
-                this.transactionError = e;
-                this.$store.commit('account/setTransactionError', e);
+                cpu_weight:
+                    parseFloat(this.cpuTokens) > 0
+                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol, true)
+                        : `0.0000 ${symbol}`,
+                net_weight:
+                    parseFloat(this.netTokens) > 0
+                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol, true)
+                        : `0.0000 ${symbol}`,
+            });
+
+            if (localStorage.getItem('autoLogin') !== 'cleos') {
+                this.openTransaction = true;
             }
-            await this.loadAccountData();
         },
     },
 });

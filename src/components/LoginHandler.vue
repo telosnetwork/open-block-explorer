@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed } from 'vue';
+import ConfigManager from 'src/config/ConfigManager';
 import LoginHandlerDropdown from 'src/components/LoginHandlerDropdown.vue';
 import { useStore } from 'src/store';
 import { kit, ui } from 'boot/wharf';
@@ -18,9 +19,18 @@ export default defineComponent({
             ui.appendDialogElement();
             // Attempt to restore any existing sessions
             try {
-                const session = await kit.restore();
-                if (session) {
-                    await store.dispatch('account/login', session);
+                // This is only needed because the application state doesn't allow dynamic switching of chains
+                const sessions = await kit.getSessions();
+                const manager = ConfigManager.get();
+                // It'll restore the first matching account for the chain once switching chains
+                const matchingSession = sessions.find(session =>
+                    session.chain === manager.getCurrentChain().getChainId(),
+                );
+                if (matchingSession) {
+                    const session = await kit.restore(matchingSession);
+                    if (session) {
+                        await store.dispatch('account/login', session);
+                    }
                 }
             } catch (e) {
                 // console.log('error restoring session', e);

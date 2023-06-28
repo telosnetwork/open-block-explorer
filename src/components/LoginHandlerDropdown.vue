@@ -8,7 +8,6 @@ export default defineComponent({
     name: 'LoginHandlerDropdown',
     components: { WalletModal },
     setup() {
-        const authenticators = getAuthenticators();
         const store = useStore();
         const account = computed(() => store.state.account.accountName);
         const showModal = ref(false);
@@ -16,6 +15,7 @@ export default defineComponent({
         const onLogout = async (): Promise<void> => {
             try {
                 await kit.logout();
+                clearAccount();
             } catch (error) {
                 console.error('Authenticator logout error', error);
                 clearAccount();
