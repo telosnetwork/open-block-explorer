@@ -31,7 +31,6 @@ export default defineComponent({
 
         function setMetaData(): void {
             const chainName = ConfigManager.get().getCurrentChain().getName();
-            console.log(chainName);
             let link = document.querySelector('link[rel~="icon"]');
             (link as HTMLLinkElement).href = `chains/${chainName}/favicon.png`;
 
@@ -39,7 +38,6 @@ export default defineComponent({
         }
 
         watch(networkChain, () => {
-            console.log('updating chain');
             setTheme();
             setMetaData();
         });
