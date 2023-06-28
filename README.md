@@ -76,7 +76,7 @@ git clone https://github.com/telosnetwork/open-block-explorer
 ### Install the dependencies
 
 ```bash
-cd open-block-explorer && yarn
+cd zj-block-explorer && yarn
 ```
 
 ### Restore .env file, set default chain and optionally enable multiple chains

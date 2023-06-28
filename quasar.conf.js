@@ -231,7 +231,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'open-block-explorer'
+        appId: 'zj-block-explorer'
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
