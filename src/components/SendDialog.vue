@@ -1,3 +1,149 @@
+<template>
+
+<q-dialog
+    :persistent="true"
+    maximized
+    @show="setDefaults"
+    @hide="resetForm"
+>
+    <q-card class="sendCard">
+        <div class="row justify-center items-center full-height full-width">
+            <div class="absolute-top-right">
+                <q-btn
+                    v-close-popup
+                    size="20px"
+                    flat
+                    dense
+                    round
+                    icon="clear"
+                />
+            </div>
+            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 max-dialog-width">
+                <div class="row">
+                    <q-card-section>
+                        <img class="send-img q-pr-md" src="~assets/send.svg">
+                        <div class="text-h4 q-pb-md inline-block color-grey-3">Send Tokens</div>
+                    </q-card-section>
+                </div>
+                <div v-if="transactionForm" class="transaction-form text-grey-3 text-weight-light">
+                    <q-separator v-if="transactionForm" dark/>
+                    <q-card-section v-if="transactionForm">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row justify-between q-px-sm q-pb-sm q-gutter-x-sm">RECEIVING ACCOUNT</div>
+                                <q-input
+                                    v-model="receivingAccount"
+                                    class="full-width"
+                                    standout="standout"
+                                    dense
+                                    dark
+                                    :lazy-rules="true"
+                                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
+                                />
+                            </div>
+                        </div>
+                        <div class="row q-py-md">
+                            <div class="col-4">
+                                <div class="row justify-between q-px-sm q-pb-sm q-gutter-x-sm">TOKEN</div>
+                                <div class="row items-center no-wrap selector-container q-py-sm" @click="openCoinDialog = true">
+                                    <div class="col-8 text-subtitle-1 q-mx-sm subtitle">{{ sendToken?.symbol}}</div>
+                                    <div class="col-4">
+                                        <div class="row justify-end items-center arrowButton">
+                                            <q-icon class="fas fa-chevron-down q-pr-lg" size="17px"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-8 q-pl-md">
+                                <div class="row justify-between q-pb-sm q-gutter-x-sm">
+                                    <div>AMOUNT</div>
+                                    <q-space/>
+                                    <div class="row flex-center q-hoverable cursor-pointer" @click="setMaxValue">
+                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount ?? 0 } AVAILABLE` }}</div>
+                                        <q-icon class="q-ml-xs" name="info"/>
+                                        <q-tooltip>Click to fill full amount</q-tooltip>
+                                    </div>
+                                </div>
+                                <q-input
+                                    v-model="sendAmount"
+                                    class="full-width"
+                                    standout="bg-deep-purple-2 text-white"
+                                    placeholder="0"
+                                    :debounce="1000"
+                                    :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
+                                    type="text"
+                                    dense
+                                    dark
+                                    @blur="formatDec"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row justify-between q-px-sm q-pb-sm q-gutter-x-sm">OPTIONAL MEMO</div>
+                                <div class="row">
+                                    <q-input
+                                        v-model="memo"
+                                        class="full-width send-input"
+                                        standout="bg-deep-purple-2 text-white"
+                                        dark
+                                        type="textarea"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 q-pt-md">
+                                <div class="row justify-between q-px-sm q-pb-lg q-gutter-x-sm">Your wallet must be open to allow authorization of this transaction.</div>
+                                <q-btn
+                                    class="full-width button-accent"
+                                    label="Confirm"
+                                    flat
+                                    :disabled="!validated"
+                                    @click="sendTransaction"
+                                />
+                            </div>
+                        </div>
+                    </q-card-section>
+                </div>
+                <div v-else class="transaction-result">
+                    <q-card-section v-if="transactionId">
+                        <div class="row">
+                            <div class="col-12">
+                                <div>You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ receivingAccount }}.</div>
+                            </div>
+                            <div class="col-12">
+                                Click to view transaction:
+                                <a class="ellipsis-overflow text-blue" @click="navToTransaction">{{ transactionId }}</a>
+                            </div>
+                        </div>
+                    </q-card-section>
+                    <q-card-section v-else>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">Transaction Failed: {{ transactionError }}</div>
+                            </div>
+                        </div>
+                    </q-card-section>
+                    <div class="row">
+                        <div class="col-12 flex justify-end">
+                            <q-btn
+                                v-close-popup
+                                flat
+                                class="close-dialog"
+                                label="Close"
+                                @click="setDefaults"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <CoinSelectorDialog v-model="openCoinDialog" :updateSelectedCoin="updateSelectedCoin" :availableTokens="availableTokens"/>
+    </q-card>
+</q-dialog>
+</template>
+
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
@@ -159,152 +305,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<q-dialog
-    :persistent="true"
-    maximized
-    @show="setDefaults"
-    @hide="resetForm"
->
-    <q-card class="sendCard">
-        <div class="row justify-center items-center full-height full-width">
-            <div class="absolute-top-right">
-                <q-btn
-                    v-close-popup
-                    size="20px"
-                    flat
-                    dense
-                    round
-                    icon="clear"
-                />
-            </div>
-            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6 max-dialog-width">
-                <div class="row">
-                    <q-card-section>
-                        <img class="send-img q-pr-md" src="~assets/send.svg">
-                        <div class="text-h4 q-pb-md inline-block color-grey-3">Send Tokens</div>
-                    </q-card-section>
-                </div>
-                <div v-if="transactionForm" class="transaction-form text-grey-3 text-weight-light">
-                    <q-separator v-if="transactionForm" dark/>
-                    <q-card-section v-if="transactionForm">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="row justify-between q-px-sm q-pb-sm q-gutter-x-sm">RECEIVING ACCOUNT</div>
-                                <q-input
-                                    v-model="receivingAccount"
-                                    class="full-width"
-                                    standout="standout"
-                                    dense
-                                    dark
-                                    :lazy-rules="true"
-                                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
-                                />
-                            </div>
-                        </div>
-                        <div class="row q-py-md">
-                            <div class="col-4">
-                                <div class="row justify-between q-px-sm q-pb-sm q-gutter-x-sm">TOKEN</div>
-                                <div class="row items-center no-wrap selector-container q-py-sm" @click="openCoinDialog = true">
-                                    <div class="col-8 text-subtitle-1 q-mx-sm subtitle">{{ sendToken?.symbol}}</div>
-                                    <div class="col-4">
-                                        <div class="row justify-end items-center arrowButton">
-                                            <q-icon class="fas fa-chevron-down q-pr-lg" size="17px"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-8 q-pl-md">
-                                <div class="row justify-between q-pb-sm q-gutter-x-sm">
-                                    <div>AMOUNT</div>
-                                    <q-space/>
-                                    <div class="row flex-center q-hoverable cursor-pointer" @click="setMaxValue">
-                                        <div class="color-grey-3 text-weight-bold balance-amount">{{ `${sendToken?.amount ?? 0 } AVAILABLE` }}</div>
-                                        <q-icon class="q-ml-xs" name="info"/>
-                                        <q-tooltip>Click to fill full amount</q-tooltip>
-                                    </div>
-                                </div>
-                                <q-input
-                                    v-model="sendAmount"
-                                    class="full-width"
-                                    standout="bg-deep-purple-2 text-white"
-                                    placeholder="0"
-                                    :debounce="1000"
-                                    :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
-                                    type="text"
-                                    dense
-                                    dark
-                                    @blur="formatDec"
-                                />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="row justify-between q-px-sm q-pb-sm q-gutter-x-sm">OPTIONAL MEMO</div>
-                                <div class="row">
-                                    <q-input
-                                        v-model="memo"
-                                        class="full-width send-input"
-                                        standout="bg-deep-purple-2 text-white"
-                                        dark
-                                        type="textarea"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 q-pt-md">
-                                <div class="row justify-between q-px-sm q-pb-lg q-gutter-x-sm">Your wallet must be open to allow authorization of this transaction.</div>
-                                <q-btn
-                                    class="full-width button-accent"
-                                    label="Confirm"
-                                    flat
-                                    :disabled="!validated"
-                                    @click="sendTransaction"
-                                />
-                            </div>
-                        </div>
-                    </q-card-section>
-                </div>
-                <div v-else class="transaction-result">
-                    <q-card-section v-if="transactionId">
-                        <div class="row">
-                            <div class="col-12">
-                                <div>You successfully sent {{ sendAmount }} {{ sendToken?.symbol }} to {{ receivingAccount }}.</div>
-                            </div>
-                            <div class="col-12">
-                                Click to view transaction:
-                                <a class="ellipsis-overflow text-blue" @click="navToTransaction">{{ transactionId }}</a>
-                            </div>
-                        </div>
-                    </q-card-section>
-                    <q-card-section v-else>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="row">Transaction Failed: {{ transactionError }}</div>
-                            </div>
-                        </div>
-                    </q-card-section>
-                    <div class="row">
-                        <div class="col-12 flex justify-end">
-                            <q-btn
-                                v-close-popup
-                                flat
-                                class="close-dialog"
-                                label="Close"
-                                @click="setDefaults"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <CoinSelectorDialog v-model="openCoinDialog" :updateSelectedCoin="updateSelectedCoin" :availableTokens="availableTokens"/>
-    </q-card>
-</q-dialog>
-</template>
 
 <style lang="sass" scoped>
 .transaction-result

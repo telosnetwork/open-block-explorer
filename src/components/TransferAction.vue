@@ -1,3 +1,46 @@
+<template>
+
+<div v-if="!!fields" class="row q-col-gutter-md">
+    <div v-for="field in fields" :key="field.name" class="col-12 col-sm-6">
+        <AccountSearch
+            v-if="field.type === 'name'"
+            v-model="action.data[field.name]"
+            emitUpdateOnInput
+            outlined
+            :filled="false"
+            with-validation
+            remove-search-icon
+            bg-color="white"
+            lazy-rules
+            :label="field.name"
+        />
+        <q-input
+            v-else-if="field.name === 'quantity'"
+            v-model="action.data[field.name]"
+            :mask="mask"
+            :suffix="token"
+            fill-mask="0"
+            reverse-fill-mask
+            outlined
+            dense
+            hide-bottom-space
+            lazy-rules
+            :label="field.name"
+        />
+        <q-input
+            v-else
+            v-model="action.data[field.name]"
+            outlined
+            dense
+            hide-bottom-space
+            lazy-rules
+            :label="field.name"
+        />
+    </div>
+</div>
+
+</template>
+
 <script lang="ts">
 import {
     defineComponent,
@@ -89,46 +132,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div v-if="!!fields" class="row q-col-gutter-md">
-    <div v-for="field in fields" :key="field.name" class="col-12 col-sm-6">
-        <AccountSearch
-            v-if="field.type === 'name'"
-            v-model="action.data[field.name]"
-            emitUpdateOnInput
-            outlined
-            :filled="false"
-            with-validation
-            remove-search-icon
-            bg-color="white"
-            lazy-rules
-            :label="field.name"
-        />
-        <q-input
-            v-else-if="field.name === 'quantity'"
-            v-model="action.data[field.name]"
-            :mask="mask"
-            :suffix="token"
-            fill-mask="0"
-            reverse-fill-mask
-            outlined
-            dense
-            hide-bottom-space
-            lazy-rules
-            :label="field.name"
-        />
-        <q-input
-            v-else
-            v-model="action.data[field.name]"
-            outlined
-            dense
-            hide-bottom-space
-            lazy-rules
-            :label="field.name"
-        />
-    </div>
-</div>
-
-</template>

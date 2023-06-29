@@ -1,9 +1,3 @@
-<script lang="ts">
-export default {
-    name: 'AppFooter',
-};
-</script>
-
 <template>
 
 <div class="row footer-background justify-center text-center q-py-md">
@@ -19,6 +13,12 @@ export default {
 </div>
 
 </template>
+
+<script lang="ts">
+export default {
+    name: 'AppFooter',
+};
+</script>
 
 <style lang="sass" scoped>
 .router-link

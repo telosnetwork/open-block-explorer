@@ -1,3 +1,50 @@
+<template>
+
+<q-select
+    class="search-input"
+    borderless
+    dense
+    filled
+    use-input
+    hide-selected
+    fill-input
+    hide-bottom-space
+    placeholder="token"
+    :loading="isLoading"
+    :model-value="inputValue"
+    :options="options"
+    @input-value="(value) => inputValue = value"
+    @keyup.enter="handleSelected(inputValue)"
+>
+    <template #prepend>
+        <q-icon class="rotate-90" name="search" size="20px"/>
+    </template>
+    <template #no-option>
+        <q-item>
+            <q-item-section class="text-center">
+                <q-item-label v-if="isLoading">Searching...</q-item-label>
+                <q-item-label v-else>{{ inputValue ? 'Nothing found' : 'Search for token symbol or contract' }}</q-item-label>
+            </q-item-section>
+        </q-item>
+    </template>
+    <template #option="scope">
+        <q-item
+            v-bind="scope.itemProps"
+            exact="exact"
+            clickable="clickable"
+            @click="handleSelected(scope.opt)"
+        >
+            <q-item-section class="items-center" avatar>
+                <q-avatar size="24px"><img :src="scope.opt.logo ?? '~src/assets/token_placeholder.svg'"></q-avatar>
+            </q-item-section>
+            <q-item-section>
+                <q-item-label>{{ scope.opt.symbol }} ({{scope.opt.contract}})</q-item-label>
+            </q-item-section>
+        </q-item>
+    </template>
+</q-select>
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 import { api } from 'src/api';
@@ -81,50 +128,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<q-select
-    class="search-input"
-    borderless
-    dense
-    filled
-    use-input
-    hide-selected
-    fill-input
-    hide-bottom-space
-    placeholder="token"
-    :loading="isLoading"
-    :model-value="inputValue"
-    :options="options"
-    @input-value="(value) => inputValue = value"
-    @keyup.enter="handleSelected(inputValue)"
->
-    <template #prepend>
-        <q-icon class="rotate-90" name="search" size="20px"/>
-    </template>
-    <template #no-option>
-        <q-item>
-            <q-item-section class="text-center">
-                <q-item-label v-if="isLoading">Searching...</q-item-label>
-                <q-item-label v-else>{{ inputValue ? 'Nothing found' : 'Search for token symbol or contract' }}</q-item-label>
-            </q-item-section>
-        </q-item>
-    </template>
-    <template #option="scope">
-        <q-item
-            v-bind="scope.itemProps"
-            exact="exact"
-            clickable="clickable"
-            @click="handleSelected(scope.opt)"
-        >
-            <q-item-section class="items-center" avatar>
-                <q-avatar size="24px"><img :src="scope.opt.logo ?? '~src/assets/token_placeholder.svg'"></q-avatar>
-            </q-item-section>
-            <q-item-section>
-                <q-item-label>{{ scope.opt.symbol }} ({{scope.opt.contract}})</q-item-label>
-            </q-item-section>
-        </q-item>
-    </template>
-</q-select>
-</template>

@@ -1,3 +1,77 @@
+<template>
+
+<div class="staking-form">
+    <q-card-section>
+        <div class="row q-col-gutter-md">
+            <div class="col-12">
+                <div class="row">
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-9">TRANSFER CPU TO STAKING</div>
+                        <div class="col-3">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxCpuValue">
+                                <div class="text-weight-bold text-right balance-amount">{{cpuWeight}}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Click to fill full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        v-model="cpuTokens"
+                        class="full-width"
+                        dense
+                        dark
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0'
+                        type="text"
+                        :lazy-rules='true'
+                        :rules="[ val => val >= 0 && val <= cpuWeight.value  || 'Invalid amount.' ]"
+                        @blur='formatDec'
+                    />
+                    <div class="row"></div>
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-9">TRANSFER NET TO STAKING</div>
+                        <div class="col-3">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxNetValue">
+                                <div class="text-weight-bold text-right balance-amount" @click="setMaxNetValue">{{netWeight}}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Click to fill full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        v-model="netTokens"
+                        class="full-width"
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0'
+                        :lazy-rules='true'
+                        :rules="[ val =>  val >= 0 && val <= netWeight.value || 'Invalid amount.' ]"
+                        type="text"
+                        dense
+                        dark
+                        @blur='formatDec'
+                    />
+                </div>
+                <div class="row">
+                    <q-btn
+                        class="full-width button-accent"
+                        :label=" 'Stake ' + symbol"
+                        flat
+                        @click="stake"
+                    />
+                </div>
+            </div>
+        </div>
+    </q-card-section>
+    <ViewTransaction
+        v-model="openTransaction"
+        :transactionId="transactionId"
+        :transactionError="transactionError || ''"
+        message="transaction complete"
+    />
+</div>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
@@ -120,80 +194,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="staking-form">
-    <q-card-section>
-        <div class="row q-col-gutter-md">
-            <div class="col-12">
-                <div class="row">
-                    <div class="row q-pb-sm full-width">
-                        <div class="col-9">TRANSFER CPU TO STAKING</div>
-                        <div class="col-3">
-                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxCpuValue">
-                                <div class="text-weight-bold text-right balance-amount">{{cpuWeight}}</div>
-                                <q-icon class="q-ml-xs" name="info"/>
-                                <q-tooltip>Click to fill full amount</q-tooltip>
-                            </div>
-                        </div>
-                    </div>
-                    <q-input
-                        v-model="cpuTokens"
-                        class="full-width"
-                        dense
-                        dark
-                        standout="bg-deep-purple-2 text-white"
-                        placeholder='0'
-                        type="text"
-                        :lazy-rules='true'
-                        :rules="[ val => val >= 0 && val <= cpuWeight.value  || 'Invalid amount.' ]"
-                        @blur='formatDec'
-                    />
-                    <div class="row"></div>
-                    <div class="row q-pb-sm full-width">
-                        <div class="col-9">TRANSFER NET TO STAKING</div>
-                        <div class="col-3">
-                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxNetValue">
-                                <div class="text-weight-bold text-right balance-amount" @click="setMaxNetValue">{{netWeight}}</div>
-                                <q-icon class="q-ml-xs" name="info"/>
-                                <q-tooltip>Click to fill full amount</q-tooltip>
-                            </div>
-                        </div>
-                    </div>
-                    <q-input
-                        v-model="netTokens"
-                        class="full-width"
-                        standout="bg-deep-purple-2 text-white"
-                        placeholder='0'
-                        :lazy-rules='true'
-                        :rules="[ val =>  val >= 0 && val <= netWeight.value || 'Invalid amount.' ]"
-                        type="text"
-                        dense
-                        dark
-                        @blur='formatDec'
-                    />
-                </div>
-                <div class="row">
-                    <q-btn
-                        class="full-width button-accent"
-                        :label=" 'Stake ' + symbol"
-                        flat
-                        @click="stake"
-                    />
-                </div>
-            </div>
-        </div>
-    </q-card-section>
-    <ViewTransaction
-        v-model="openTransaction"
-        :transactionId="transactionId"
-        :transactionError="transactionError || ''"
-        message="transaction complete"
-    />
-</div>
-
-</template>
 
 <style lang="sass">
 .button-accent

@@ -1,3 +1,55 @@
+<template>
+<q-select
+    borderless
+    dense
+    filled
+    use-input
+    hide-selected
+    fill-input
+    hide-bottom-space
+    input-style="color:white"
+    color="white"
+    :loading="isLoading"
+    :model-value="inputValue"
+    :options="options"
+    :option-disable="(item) => item.isHeader"
+    class="search-input"
+    @input-value="(value) => inputValue = value"
+    @keyup.enter="handleGoTo"
+>
+    <template #prepend>
+        <q-icon
+            class="rotate-90"
+            name="search"
+            color="white"
+            size="20px"
+        />
+    </template>
+    <template #no-option>
+        <q-item>
+            <q-item-section class="text-center">
+                <q-item-label v-if="isLoading">Searching...</q-item-label>
+                <q-item-label v-else>{{ inputValue ? 'Nothing found' : 'Search by accounts, keys, proposals and transactions' }}</q-item-label>
+            </q-item-section>
+        </q-item>
+    </template>
+    <template #option="scope">
+        <q-item-label v-if="scope.opt.isHeader" header>{{ scope.opt.label }}</q-item-label>
+        <q-item
+            v-else
+            v-bind="scope.itemProps"
+            exact="exact"
+            clickable="clickable"
+            @click="handleGoTo(scope.opt.to)"
+        >
+            <q-item-section>
+                <q-item-label>{{ scope.opt.label }}</q-item-label>
+            </q-item-section>
+        </q-item>
+    </template>
+</q-select>
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -198,58 +250,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<q-select
-    borderless
-    dense
-    filled
-    use-input
-    hide-selected
-    fill-input
-    hide-bottom-space
-    input-style="color:white"
-    color="white"
-    :loading="isLoading"
-    :model-value="inputValue"
-    :options="options"
-    :option-disable="(item) => item.isHeader"
-    class="search-input"
-    @input-value="(value) => inputValue = value"
-    @keyup.enter="handleGoTo"
->
-    <template #prepend>
-        <q-icon
-            class="rotate-90"
-            name="search"
-            color="white"
-            size="20px"
-        />
-    </template>
-    <template #no-option>
-        <q-item>
-            <q-item-section class="text-center">
-                <q-item-label v-if="isLoading">Searching...</q-item-label>
-                <q-item-label v-else>{{ inputValue ? 'Nothing found' : 'Search by accounts, keys, proposals and transactions' }}</q-item-label>
-            </q-item-section>
-        </q-item>
-    </template>
-    <template #option="scope">
-        <q-item-label v-if="scope.opt.isHeader" header>{{ scope.opt.label }}</q-item-label>
-        <q-item
-            v-else
-            v-bind="scope.itemProps"
-            exact="exact"
-            clickable="clickable"
-            @click="handleGoTo(scope.opt.to)"
-        >
-            <q-item-section>
-                <q-item-label>{{ scope.opt.label }}</q-item-label>
-            </q-item-section>
-        </q-item>
-    </template>
-</q-select>
-</template>
 
 <style lang="sass">
 .search-input

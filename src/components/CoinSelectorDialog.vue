@@ -1,54 +1,3 @@
-<script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue';
-import { Token } from 'src/types';
-
-export default defineComponent({
-    name: 'CoinSelectorDialog',
-    props: {
-        availableTokens: {
-            required: true,
-            type: Array as PropType<Token[]>,
-        },
-        updateSelectedCoin: {
-            type: Function,
-            required: true,
-        },
-    },
-    setup(props) {
-        const search = ref('');
-        const filteredTokens = ref<Token[]>([]);
-
-        const filterTokens = () => {
-            if (search.value.length > 0) {
-                filterByText(tokensWithBalance());
-            } else {
-                filteredTokens.value = tokensWithBalance();
-            }
-        };
-
-        const filterByText = (tokens: Token[]) => {
-            filteredTokens.value = tokens.filter(token => (
-                token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
-                token.contract.toLowerCase().includes(search.value.toLowerCase())
-            ));
-        };
-
-        const tokensWithBalance = () => props.availableTokens.filter(token => token.amount > 0);
-
-        watch(search, () => {
-            void filterTokens();
-        });
-
-        return {
-            search,
-            filteredTokens,
-            filterTokens,
-            filterByText,
-        };
-    },
-});
-</script>
-
 <template>
 
 <q-dialog class="dialogContainer" @show="filterTokens">
@@ -102,6 +51,57 @@ export default defineComponent({
     </q-card>
 </q-dialog>
 </template>
+
+<script lang="ts">
+import { defineComponent, PropType, ref, watch } from 'vue';
+import { Token } from 'src/types';
+
+export default defineComponent({
+    name: 'CoinSelectorDialog',
+    props: {
+        availableTokens: {
+            required: true,
+            type: Array as PropType<Token[]>,
+        },
+        updateSelectedCoin: {
+            type: Function,
+            required: true,
+        },
+    },
+    setup(props) {
+        const search = ref('');
+        const filteredTokens = ref<Token[]>([]);
+
+        const filterTokens = () => {
+            if (search.value.length > 0) {
+                filterByText(tokensWithBalance());
+            } else {
+                filteredTokens.value = tokensWithBalance();
+            }
+        };
+
+        const filterByText = (tokens: Token[]) => {
+            filteredTokens.value = tokens.filter(token => (
+                token.symbol.toLowerCase().includes(search.value.toLowerCase()) ||
+                token.contract.toLowerCase().includes(search.value.toLowerCase())
+            ));
+        };
+
+        const tokensWithBalance = () => props.availableTokens.filter(token => token.amount > 0);
+
+        watch(search, () => {
+            void filterTokens();
+        });
+
+        return {
+            search,
+            filteredTokens,
+            filterTokens,
+            filterByText,
+        };
+    },
+});
+</script>
 
 <style lang="sass" scoped>
 .dialogCard

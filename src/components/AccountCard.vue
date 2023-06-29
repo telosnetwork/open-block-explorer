@@ -1,3 +1,194 @@
+<template>
+
+<div class="q-pa-md">
+    <q-card v-if="accountExists" class="account-card">
+        <q-card-section class="resources-container">
+            <div class="inline-section">
+                <div class="row justify-center full-height items-center">
+                    <div v-if="account !== system_account" class="col-6">
+                        <div class="text-title">{{ account }}</div>
+                    </div>
+                    <div v-else class="col-2">
+                        <div class="text-title">{{ account }}</div>
+                    </div>
+                    <div class="col-1">
+                        <q-btn
+                            class="float-right"
+                            flat
+                            round
+                            color="white"
+                            icon="content_copy"
+                            size="sm"
+                            @click="copy(account)"
+                        />
+                    </div>
+                </div>
+                <div
+                    v-if="creatingAccount && creatingAccount !== '__self__'"
+                    class="text-subtitle"
+                >
+                    created by
+                    <span>&nbsp;<a @click="loadCreatorAccount">{{ creatingAccount }}</a>&nbsp;</span>
+                    <div>
+                        <DateField :timestamp="createTime" showAge>&nbsp;</DateField>
+                        <q-tooltip>{{createTimeFormat}}</q-tooltip>
+                    </div><a class="q-ml-xs tx-link" @click="loadCreatorTransaction">
+                        <q-icon name="fas fa-link"/></a>
+                </div>
+                <div v-else class="text-subtitle">created<span>&nbsp;</span>
+                    <div>
+                        <DateField :timestamp="createTime" showAge>&nbsp;</DateField>
+                        <q-tooltip>{{createTimeFormat}}</q-tooltip>
+                    </div>
+                </div>
+                <q-space/>
+            </div>
+            <div v-if="account !== system_account" class="resources">
+                <PercentCircle
+                    :radius="radius"
+                    :fraction="cpu_used"
+                    :total="cpu_max"
+                    label="CPU"
+                    unit="s"
+                />
+                <PercentCircle
+                    :radius="radius"
+                    :fraction="net_used"
+                    :total="net_max"
+                    label="NET"
+                    unit="kb"
+                />
+                <PercentCircle
+                    :radius="radius"
+                    :fraction="ram_used"
+                    :total="ram_max"
+                    label="RAM"
+                    unit="kb"
+                />
+            </div>
+            <div v-else class="resources">
+                <div class="usage">RAM USED: {{ ram_used }} kb</div>
+            </div>
+        </q-card-section>
+        <q-card-section class="resources-container">
+            <div class="row justify-center q-gutter-sm">
+                <div class="col-3">
+                    <q-btn
+                        v-if='isAccount'
+                        :disable="tokensLoading || isLoading"
+                        :label='tokensLoading ? "Loading..." : "Send"'
+                        color='primary'
+                        class="full-width"
+                        @click="openSendDialog = true"
+                    />
+                </div>
+                <div class="col-3">
+                    <q-btn
+                        v-if="isAccount"
+                        :disable="tokensLoading || isLoading"
+                        :label='tokensLoading ? "Loading..." : "Resources"'
+                        class="full-width"
+                        color="primary"
+                        @click="openResourcesDialog = true"
+                    />
+                </div>
+                <div class="col-3">
+                    <q-btn
+                        v-if="isAccount"
+                        :disable="tokensLoading || isLoading"
+                        :label='tokensLoading ? "Loading..." : "Staking (REX)"'
+                        class="ellipsis full-width"
+                        color="primary"
+                        @click="openStakingDialog = true"
+                    />
+                </div>
+            </div>
+        </q-card-section>
+        <q-markup-table>
+            <thead>
+                <tr>
+                    <th class="text-left">BALANCE</th>
+                </tr>
+                <tbody class="table-body">
+                    <tr></tr>
+                    <tr>
+                        <td class="text-left total-label">TOTAL</td>
+                        <td v-if="isLoading" class="text-right total-amount total-loading-spinner">
+                            <q-spinner color="white" size="1.5em"/>
+                        </td>
+                        <td v-else class="text-right total-amount">{{ formatAsset(totalTokens) }}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td class="text-left"></td>
+                        <td v-show="!isLoading" class="text-right total-value">{{ totalValueString }}</td>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <td class="text-left">LIQUID (Telos native)</td>
+                        <td class="text-right">{{ formatAsset(liquidNative) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">REX staked (includes savings)</td>
+                        <td class="text-right">{{ formatAsset(rexStaked) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">REX liquid deposits</td>
+                        <td class="text-right">{{ formatAsset(rexDeposits) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">STAKED for CPU</td>
+                        <td class="text-right">{{ formatAsset(stakedCPU) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">STAKED for NET</td>
+                        <td class="text-right">{{ formatAsset(stakedNET) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">REFUNDING from staking</td>
+                        <td class="text-right">{{ formatAsset(stakedRefund) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">DELEGATED to others</td>
+                        <td class="text-right">{{ formatAsset(delegatedToOthers) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">DELEGATED by others</td>
+                        <td class="text-right">{{ formatAsset(delegatedByOthers) }}</td>
+                    </tr>
+                </tbody>
+            </thead>
+        </q-markup-table>
+        <div v-if="isAccount">
+            <SendDialog
+                v-if="openSendDialog"
+                v-model="openSendDialog"
+                :availableTokens="availableTokens"
+                @update-token-balances="updateTokenBalances"
+            />
+            <ResourcesDialog
+                v-if="openResourcesDialog"
+                v-model="openResourcesDialog"
+            />
+            <StakingDialog
+                v-model="openStakingDialog"
+                :availableTokens="availableTokens"
+            />
+        </div>
+    </q-card>
+    <q-card v-else class="account-card">
+        <q-card-section class="resources-container">
+            <div class="inline-section">
+                <div class="row justify-center full-height items-center">
+                    <div class="col-8"></div>
+                    <div class="text-title text-center">Sorry, the account {{ account }} could not be found.</div>
+                </div>
+            </div>
+        </q-card-section>
+    </q-card>
+</div>
+
+</template>
+
 <script lang="ts">
 import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
@@ -415,197 +606,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="q-pa-md">
-    <q-card v-if="accountExists" class="account-card">
-        <q-card-section class="resources-container">
-            <div class="inline-section">
-                <div class="row justify-center full-height items-center">
-                    <div v-if="account !== system_account" class="col-6">
-                        <div class="text-title">{{ account }}</div>
-                    </div>
-                    <div v-else class="col-2">
-                        <div class="text-title">{{ account }}</div>
-                    </div>
-                    <div class="col-1">
-                        <q-btn
-                            class="float-right"
-                            flat
-                            round
-                            color="white"
-                            icon="content_copy"
-                            size="sm"
-                            @click="copy(account)"
-                        />
-                    </div>
-                </div>
-                <div
-                    v-if="creatingAccount && creatingAccount !== '__self__'"
-                    class="text-subtitle"
-                >
-                    created by
-                    <span>&nbsp;<a @click="loadCreatorAccount">{{ creatingAccount }}</a>&nbsp;</span>
-                    <div>
-                        <DateField :timestamp="createTime" showAge>&nbsp;</DateField>
-                        <q-tooltip>{{createTimeFormat}}</q-tooltip>
-                    </div><a class="q-ml-xs tx-link" @click="loadCreatorTransaction">
-                        <q-icon name="fas fa-link"/></a>
-                </div>
-                <div v-else class="text-subtitle">created<span>&nbsp;</span>
-                    <div>
-                        <DateField :timestamp="createTime" showAge>&nbsp;</DateField>
-                        <q-tooltip>{{createTimeFormat}}</q-tooltip>
-                    </div>
-                </div>
-                <q-space/>
-            </div>
-            <div v-if="account !== system_account" class="resources">
-                <PercentCircle
-                    :radius="radius"
-                    :fraction="cpu_used"
-                    :total="cpu_max"
-                    label="CPU"
-                    unit="s"
-                />
-                <PercentCircle
-                    :radius="radius"
-                    :fraction="net_used"
-                    :total="net_max"
-                    label="NET"
-                    unit="kb"
-                />
-                <PercentCircle
-                    :radius="radius"
-                    :fraction="ram_used"
-                    :total="ram_max"
-                    label="RAM"
-                    unit="kb"
-                />
-            </div>
-            <div v-else class="resources">
-                <div class="usage">RAM USED: {{ ram_used }} kb</div>
-            </div>
-        </q-card-section>
-        <q-card-section class="resources-container">
-            <div class="row justify-center q-gutter-sm">
-                <div class="col-3">
-                    <q-btn
-                        v-if='isAccount'
-                        :disable="tokensLoading || isLoading"
-                        :label='tokensLoading ? "Loading..." : "Send"'
-                        color='primary'
-                        class="full-width"
-                        @click="openSendDialog = true"
-                    />
-                </div>
-                <div class="col-3">
-                    <q-btn
-                        v-if="isAccount"
-                        :disable="tokensLoading || isLoading"
-                        :label='tokensLoading ? "Loading..." : "Resources"'
-                        class="full-width"
-                        color="primary"
-                        @click="openResourcesDialog = true"
-                    />
-                </div>
-                <div class="col-3">
-                    <q-btn
-                        v-if="isAccount"
-                        :disable="tokensLoading || isLoading"
-                        :label='tokensLoading ? "Loading..." : "Staking (REX)"'
-                        class="ellipsis full-width"
-                        color="primary"
-                        @click="openStakingDialog = true"
-                    />
-                </div>
-            </div>
-        </q-card-section>
-        <q-markup-table>
-            <thead>
-                <tr>
-                    <th class="text-left">BALANCE</th>
-                </tr>
-                <tbody class="table-body">
-                    <tr></tr>
-                    <tr>
-                        <td class="text-left total-label">TOTAL</td>
-                        <td v-if="isLoading" class="text-right total-amount total-loading-spinner">
-                            <q-spinner color="white" size="1.5em"/>
-                        </td>
-                        <td v-else class="text-right total-amount">{{ formatAsset(totalTokens) }}</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td class="text-left"></td>
-                        <td v-show="!isLoading" class="text-right total-value">{{ totalValueString }}</td>
-                    </tr>
-                    <tr></tr>
-                    <tr>
-                        <td class="text-left">LIQUID (Telos native)</td>
-                        <td class="text-right">{{ formatAsset(liquidNative) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">REX staked (includes savings)</td>
-                        <td class="text-right">{{ formatAsset(rexStaked) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">REX liquid deposits</td>
-                        <td class="text-right">{{ formatAsset(rexDeposits) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">STAKED for CPU</td>
-                        <td class="text-right">{{ formatAsset(stakedCPU) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">STAKED for NET</td>
-                        <td class="text-right">{{ formatAsset(stakedNET) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">REFUNDING from staking</td>
-                        <td class="text-right">{{ formatAsset(stakedRefund) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">DELEGATED to others</td>
-                        <td class="text-right">{{ formatAsset(delegatedToOthers) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">DELEGATED by others</td>
-                        <td class="text-right">{{ formatAsset(delegatedByOthers) }}</td>
-                    </tr>
-                </tbody>
-            </thead>
-        </q-markup-table>
-        <div v-if="isAccount">
-            <SendDialog
-                v-if="openSendDialog"
-                v-model="openSendDialog"
-                :availableTokens="availableTokens"
-                @update-token-balances="updateTokenBalances"
-            />
-            <ResourcesDialog
-                v-if="openResourcesDialog"
-                v-model="openResourcesDialog"
-            />
-            <StakingDialog
-                v-model="openStakingDialog"
-                :availableTokens="availableTokens"
-            />
-        </div>
-    </q-card>
-    <q-card v-else class="account-card">
-        <q-card-section class="resources-container">
-            <div class="inline-section">
-                <div class="row justify-center full-height items-center">
-                    <div class="col-8"></div>
-                    <div class="text-title text-center">Sorry, the account {{ account }} could not be found.</div>
-                </div>
-            </div>
-        </q-card-section>
-    </q-card>
-</div>
-
-</template>
 
 <style lang="sass" scoped>
 $medium:750px

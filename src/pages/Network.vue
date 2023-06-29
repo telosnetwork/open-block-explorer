@@ -1,9 +1,23 @@
+
+<template>
+<div class="row">
+    <div class="col-12">
+        <div v-if="mapDisplay" class="row header-support justify-center render-container" :class="{'show-map' : true}">
+        </div>
+    </div>
+    <div class="container-max-width" :class="{'container-margin' : !showMap}">
+        <PriceChart v-if='mapDisplay' class="price-box-position" :class="{'overlap-map' : false}"/>
+        <TransactionsTable/>
+        <BlocksTable/>
+
+    </div>
+</div>
+</template>
+
 <script lang="ts">
-import { defineComponent, onMounted, onBeforeUnmount, ref, watch } from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import PriceChart from 'components/PriceChart.vue';
 import TransactionsTable from 'components/zjcomponents/TransactionsTable.vue';
-import WorldMap from 'components/WorldMap.vue';
-import MapData from 'components/MapData.vue';
 import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
 import BlocksTable from 'components/zjcomponents/BlocksTable.vue';
@@ -20,8 +34,6 @@ export default defineComponent({
         BlocksTable,
         PriceChart,
         TransactionsTable,
-        WorldMap,
-        MapData,
     },
     setup() {
         const store = useStore();
@@ -103,44 +115,6 @@ export default defineComponent({
 });
 </script>
 
-<template>
-<div class="row">
-    <div class="col-12">
-        <div v-if="mapDisplay" class="row header-support justify-center render-container" :class="{'show-map' : showMap}">
-            <div class="row full-width chevron-toggle hide" @click="toggleMap">
-                <div v-if="showMap" class="items-center arrow-button" >
-                    <q-icon class="fas fa-chevron-up q-pr-lg chevron" size="17px"/>
-                </div>
-                <div class="full-width text-center justify-center actor-font"> </div>
-            </div>
-            <div class="col-12">
-                <WorldMap/>
-            </div>
-        </div>
-    </div>
-    <div v-if="mapDisplay" class="row full-width chevron-toggle" @click="toggleMap">
-        <div class="full-width text-center justify-center actor-font">  </div>
-        <div v-if="!showMap" class="items-center arrow-button" >
-            <q-icon class="fas fa-chevron-down q-pr-lg chevron" size="17px" />
-        </div>
-        <div class="map-hint" :class="{'fade-in' : showMapHint, 'fade-out' : !showMapHint}">(click or scroll to view producer map)</div>
-
-    </div>
-    <div v-if="mapDisplay && showMap" class="col-12 map-data-position overlap-map">
-        <MapData :mapVisible="showMap" />
-    </div>
-    <div class="container-max-width" :class="{'container-margin' : !showMap}">
-        <div v-if="mapDisplay && !showMap" class="col-12 map-data-position">
-            <MapData :mapVisible="showMap" />
-        </div>
-        <PriceChart v-if='mapDisplay' class="price-box-position" :class="{'overlap-map' : mapDisplay && showMap}"/>
-        <TransactionsTable/>
-        <BlocksTable/>
-
-    </div>
-</div>
-</template>
-
 <style lang="scss">
 .arrow-button{
   position: absolute;
@@ -195,4 +169,12 @@ export default defineComponent({
     margin-top: -100px;
   }
 }
+</style>
+
+<style lang="sass" scoped>
+    .header-support
+        min-height: 200px
+        height: 10vh
+        width: 100%
+        background: var(--q-color-header-support-background)
 </style>

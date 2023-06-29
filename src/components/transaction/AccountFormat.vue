@@ -1,3 +1,7 @@
+<template>
+<a class="hover-dec" :href=" '/' + type + '/' + accAccount">{{type === 'transaction' || 'block' ? accAccount.slice(0, 8) : accAccount}}</a>
+</template>
+
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 
@@ -22,10 +26,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<a class="hover-dec" :href=" '/' + type + '/' + accAccount">{{type === 'transaction' || 'block' ? accAccount.slice(0, 8) : accAccount}}</a>
-</template>
 
 <style lang="sass" scoped>
 .hover-dec

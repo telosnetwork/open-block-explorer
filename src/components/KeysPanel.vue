@@ -1,3 +1,26 @@
+<template>
+
+<div class="row col-12 q-my-xs justify-center text-left container-max-width">
+    <div class="row col-11">
+        <div class="row col-12 q-mt-lg">
+            <div>
+                <p class="panel-title">Keys and Permissions</p>
+            </div>
+            <q-space/>
+        </div>
+        <q-separator class="row col-12 q-mt-md separator"/>
+        <div class="permissions-container col-12 q-py-lg">
+            <PermissionCard
+                v-if="permission"
+                class="permissions"
+                :permission="permission"
+                :depth="0"
+            />
+        </div>
+    </div>
+</div>
+
+</template>
 <script lang="ts">
 import { Permission, PermissionLinks } from 'src/types';
 import PermissionCard from 'components/PermissionCard.vue';
@@ -75,29 +98,6 @@ export default defineComponent({
     },
 });
 </script>
-<template>
-
-<div class="row col-12 q-my-xs justify-center text-left container-max-width">
-    <div class="row col-11">
-        <div class="row col-12 q-mt-lg">
-            <div>
-                <p class="panel-title">Keys and Permissions</p>
-            </div>
-            <q-space/>
-        </div>
-        <q-separator class="row col-12 q-mt-md separator"/>
-        <div class="permissions-container col-12 q-py-lg">
-            <PermissionCard
-                v-if="permission"
-                class="permissions"
-                :permission="permission"
-                :depth="0"
-            />
-        </div>
-    </div>
-</div>
-
-</template>
 <style lang="sass" scoped>
 .permissions-container
   overflow-x: auto

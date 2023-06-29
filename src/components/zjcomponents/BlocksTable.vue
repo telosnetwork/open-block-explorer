@@ -1,3 +1,363 @@
+<template>
+
+<div class="row col-12 q-mt-xs justify-center text-left trx-table container-max-width">
+    <div class="row trx-table--main-container">
+        <div class="row col-12 q-mt-lg">
+            <!-- Left column-->
+            <div class="col-auto q-mr-xl justify-start trx-table--topleft-col">
+                <div class="row flex-grow-1">
+                    <div class="col">
+                        <!-- -- Title ---->
+                        <p class="trx-table--title">{{ tableTitle }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <q-toggle
+                            v-model="showAge"
+                            left-label
+                            label="Show timestamp as relative"
+                        />
+                    </div>
+                </div>
+                <div v-if="toggleEnabled" class="row">
+                    <div class="col">
+                        <q-toggle
+                            v-model="enableLives"
+                            left-label
+                            label="Live transactions"
+                            :disable="paginationSettings.page !== 1"
+                        />
+                    </div>
+                </div>
+            </div>
+            <!-- Right column-->
+            <div v-if="filtersEnabled" class="col trx-table--topright-col">
+                <div class="row justify-end q-mb-xl">
+                    <!-- -- Filters    ---->
+                    <div class="col-auto row flex trx-table--filter-buttons">
+                        <q-btn
+                            v-if="filter !== ''"
+                            dense
+                            flat
+                            round
+                            icon="close"
+                            color="primary"
+                            @click="clearFilters"
+                        ><span class="q-pr-sm">clear filters</span></q-btn>
+                        <q-btn-dropdown
+                            v-if="showAccountFilter"
+                            ref="accounts_dropdown"
+                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
+                            no-caps
+                            :color="accountsDisplay === '' ? 'primary': 'secondary'"
+                            :label="accountsDisplay === '' ? 'Accounts' : accountsDisplay"
+                            @click="accountsModel = ''"
+                        >
+                            <div class="q-pa-md dropdown-filter">
+                                <div class="row">
+                                    <AccountSearch
+                                        v-model="accountsModel"
+                                        @update:model-value="toggleDropdown($refs.accounts_dropdown)"
+                                    />
+                                </div>
+                            </div>
+                        </q-btn-dropdown>
+                        <q-btn-dropdown
+                            ref="actions_dropdown"
+                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
+                            :color="actionsDisplay === '' ? 'primary': 'secondary'"
+                            :label="actionsDisplay === '' ? 'Actions' : actionsDisplay"
+                        >
+                            <div class="q-pa-md dropdown-filter">
+                                <div class="row">
+                                    <q-input
+                                        v-model="auxModel"
+                                        filled
+                                        dense
+                                        label="actions"
+                                        placeholder="transfer, sellrex, etc."
+                                        @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                                        @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                                    >
+                                        <template v-slot:prepend>
+                                            <q-icon class="cursor-pointer" name="search"/>
+                                        </template>
+                                        <template v-slot:append>
+                                            <q-btn
+                                                size="sm"
+                                                color="primary"
+                                                @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
+                                            >
+                                                OK
+                                            </q-btn>
+                                        </template>
+                                    </q-input>
+                                </div>
+                            </div>
+                        </q-btn-dropdown>
+                        <q-btn-dropdown
+                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
+                            :color="dateDisplay === '' ? 'primary': 'secondary'"
+                            :label="dateDisplay === '' ? 'Date' : dateDisplay"
+                        >
+                            <div class="q-pa-md dropdown-filter">
+                                <div class="row">
+                                    <q-input
+                                        v-model="fromDateModel"
+                                        filled
+                                        dense
+                                        label="From"
+                                    >
+                                        <template v-slot:prepend>
+                                            <q-icon class="cursor-pointer" name="event">
+                                                <q-popup-proxy
+                                                    cover=""
+                                                    transition-show="scale"
+                                                    transition-hide="scale"
+                                                >
+                                                    <q-date v-model="fromDateModel" mask="YYYY-MM-DD HH:mm">
+                                                        <div class="row items-center justify-end">
+                                                            <q-btn
+                                                                v-close-popup
+                                                                label="Close"
+                                                                color="primary"
+                                                                flat
+                                                            />
+                                                        </div>
+                                                    </q-date>
+                                                </q-popup-proxy>
+                                            </q-icon>
+                                        </template>
+                                        <template v-slot:append>
+                                            <q-icon class="cursor-pointer" name="access_time">
+                                                <q-popup-proxy
+                                                    cover="cover"
+                                                    transition-show="scale"
+                                                    transition-hide="scale"
+                                                >
+                                                    <q-time
+                                                        v-model="fromDateModel"
+                                                        mask="YYYY-MM-DD HH:mm"
+                                                        format24h
+                                                    >
+                                                        <div class="row items-center justify-end">
+                                                            <q-btn
+                                                                v-close-popup
+                                                                label="Close"
+                                                                color="primary"
+                                                                flat
+                                                            />
+                                                        </div>
+                                                    </q-time>
+                                                </q-popup-proxy>
+                                            </q-icon>
+                                        </template>
+                                    </q-input>
+                                </div>
+                                <div class="row justify-center full-width q-py-xs">
+                                    <q-icon name="arrow_downward"/>
+                                </div>
+                                <div class="row">
+                                    <q-input
+                                        v-model="toDateModel"
+                                        filled
+                                        dense
+                                        label="To"
+                                    >
+                                        <template v-slot:prepend>
+                                            <q-icon class="cursor-pointer" name="event">
+                                                <q-popup-proxy
+                                                    cover="cover"
+                                                    transition-show="scale"
+                                                    transition-hide="scale"
+                                                >
+                                                    <q-date v-model="toDateModel" mask="YYYY-MM-DD HH:mm">
+                                                        <div class="row items-center justify-end">
+                                                            <q-btn
+                                                                v-close-popup
+                                                                label="Close"
+                                                                color="primary"
+                                                                flat
+                                                            />
+                                                        </div>
+                                                    </q-date>
+                                                </q-popup-proxy>
+                                            </q-icon>
+                                        </template>
+                                        <template v-slot:append>
+                                            <q-icon class="cursor-pointer" name="access_time">
+                                                <q-popup-proxy
+                                                    cover=""
+                                                    transition-show="scale"
+                                                    transition-hide="scale"
+                                                >
+                                                    <q-time v-model="toDateModel" mask="YYYY-MM-DD HH:mm" format24h>
+                                                        <div class="row items-center justify-end">
+                                                            <q-btn
+                                                                v-close-popup
+                                                                label="Close"
+                                                                color="primary"
+                                                                flat
+                                                            />
+                                                        </div>
+                                                    </q-time>
+                                                </q-popup-proxy>
+                                            </q-icon>
+                                        </template>
+                                    </q-input>
+                                </div>
+                            </div>
+                        </q-btn-dropdown>
+                        <q-btn-dropdown
+                            v-if="showTokenFilter"
+                            ref="token_dropdown"
+                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
+                            :color="!tokenDisplay ? 'primary': 'secondary'"
+                            :label="!tokenDisplay ? 'Token' : tokenDisplay"
+                        >
+                            <div class="q-pa-md dropdown-filter">
+                                <div class="row">
+                                    <TokenSearch
+                                        v-model="tokenModel"
+                                        @update:model-value="toggleDropdown($refs.token_dropdown)"
+                                    />
+                                </div>
+                            </div>
+                        </q-btn-dropdown>
+                    </div>
+                </div>
+                <div v-if="showPaginationExtras" class="row justify-end">
+                    Viewing
+                    {{ paginationSettings.rowsPerPage > totalRows ? totalRows : paginationSettings.rowsPerPage }}
+                    of {{ totalRows === 10000 ? ' over ' : '' }} {{ totalRows.toLocaleString() }} total transactions
+                </div>
+            </div>
+        </div>
+        <q-separator class="row col-12 q-mt-md separator"/>
+        <div class="row col-12 table-container">
+            <q-table
+                ref="main_table"
+                v-model:pagination="paginationSettings"
+                class="q-mt-md row block-table--fixed-layout"
+                flat
+                table-header-class="table-header"
+                hide-pagination
+                :rows="filteredRows"
+                :columns="columns"
+                :row-key="row => row.name"
+                :bordered="false"
+                :square="true"
+                :loading="loading"
+                :rows-per-page-options="pageSizeOptions"
+                :dense="$q.screen.width < 1024"
+                @request="onPaginationChange"
+            >
+                <template v-slot:header="props">
+                    <q-tr :props="props">
+                        <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
+                    </q-tr>
+                </template>
+                <template v-slot:body="props">
+                    <q-tr :props="props">
+                        <q-td>
+                            <AccountFormat :account="props.row.hash" type="block"/>
+                        </q-td>
+                        <q-td>
+                            <DateField :timestamp="props.row.timestamp" :showAge="showAge"/>
+                        </q-td>
+                        <template v-for="col in props.cols">
+                            <q-td
+                                v-if="col.name != 'block' && col.name != 'timestamp'"
+                                :key="col.name"
+                                :props="props"
+                            >{{ props.row[col.name] }}</q-td>
+                        </template>
+
+                    </q-tr>
+                </template>
+            </q-table>
+        </div>
+        <div class="row col-12 items-center justify-end q-mt-md q-mb-sm">
+            <!-- records per page selector-->
+            <div class="col-auto">
+                <small>Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}</small>
+                <!-- dropdown button to select number of rows per page-->
+                <q-icon
+                    :name="showPagesSizes ? 'expand_more' : 'expand_less'"
+                    size="sm"
+                    @click="switchPageSelector"
+                >
+                    <q-popup-proxy ref="page_size_selector" transition-show="scale" transition-hide="scale">
+                        <q-list>
+                            <q-item v-for="size in pageSizeOptions" :key="size" class="cursor-pointer">
+                                <q-item-section @click="changePageSize(size); hidePopup($refs.page_size_selector)">
+                                    {{ size }}
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-popup-proxy>
+                </q-icon>
+            </div>
+            <q-space/>
+            <div class="col-auto">
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    :disable="paginationSettings.page === 1"
+                    @click="moveTablePage($refs.main_table, 'first')"
+                >
+                    First
+                </q-btn>
+
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    class="q-mx-sm"
+                    :disable="paginationSettings.page === 1"
+                    @click="moveTablePage($refs.main_table, 'prev')"
+                >
+                    <q-icon name="chevron_left" size="xs"/>
+                </q-btn>
+
+                <small>
+                    Page {{ paginationSettings.page }}
+                    {{
+                        (showPaginationExtras && enableLives === false) ? (lastPage === 0 ? ` of 1` : ` of ${lastPage}`) : ''
+                    }}
+                </small>
+
+                <q-btn
+                    size="sm"
+                    color="primary"
+                    outline
+                    class="q-mx-sm"
+                    :disable="paginationSettings.page === lastPage || totalRows < paginationSettings.rowsPerPage"
+                    @click="moveTablePage($refs.main_table, 'next')"
+                >
+                    <q-icon name="chevron_right" size="xs"/>
+                </q-btn>
+
+                <q-btn
+                    v-if="showPaginationExtras && enableLives === false"
+                    size="sm"
+                    color="primary"
+                    outline
+                    :disable="paginationSettings.page === lastPage || lastPage === 0"
+                    @click="moveTablePage($refs.main_table, 'last')"
+                >
+                    Last
+                </q-btn>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</template>
+
 <script lang="ts">
 import {
     PaginationSettings,
@@ -487,366 +847,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="row col-12 q-mt-xs justify-center text-left trx-table container-max-width">
-    <div class="row trx-table--main-container">
-        <div class="row col-12 q-mt-lg">
-            <!-- Left column-->
-            <div class="col-auto q-mr-xl justify-start trx-table--topleft-col">
-                <div class="row flex-grow-1">
-                    <div class="col">
-                        <!-- -- Title ---->
-                        <p class="trx-table--title">{{ tableTitle }}</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <q-toggle
-                            v-model="showAge"
-                            left-label
-                            label="Show timestamp as relative"
-                        />
-                    </div>
-                </div>
-                <div v-if="toggleEnabled" class="row">
-                    <div class="col">
-                        <q-toggle
-                            v-model="enableLives"
-                            left-label
-                            label="Live transactions"
-                            :disable="paginationSettings.page !== 1"
-                        />
-                    </div>
-                </div>
-            </div>
-            <!-- Right column-->
-            <div v-if="filtersEnabled" class="col trx-table--topright-col">
-                <div class="row justify-end q-mb-xl">
-                    <!-- -- Filters    ---->
-                    <div class="col-auto row flex trx-table--filter-buttons">
-                        <q-btn
-                            v-if="filter !== ''"
-                            dense
-                            flat
-                            round
-                            icon="close"
-                            color="primary"
-                            @click="clearFilters"
-                        ><span class="q-pr-sm">clear filters</span></q-btn>
-                        <q-btn-dropdown
-                            v-if="showAccountFilter"
-                            ref="accounts_dropdown"
-                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
-                            no-caps
-                            :color="accountsDisplay === '' ? 'primary': 'secondary'"
-                            :label="accountsDisplay === '' ? 'Accounts' : accountsDisplay"
-                            @click="accountsModel = ''"
-                        >
-                            <div class="q-pa-md dropdown-filter">
-                                <div class="row">
-                                    <AccountSearch
-                                        v-model="accountsModel"
-                                        @update:model-value="toggleDropdown($refs.accounts_dropdown)"
-                                    />
-                                </div>
-                            </div>
-                        </q-btn-dropdown>
-                        <q-btn-dropdown
-                            ref="actions_dropdown"
-                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
-                            :color="actionsDisplay === '' ? 'primary': 'secondary'"
-                            :label="actionsDisplay === '' ? 'Actions' : actionsDisplay"
-                        >
-                            <div class="q-pa-md dropdown-filter">
-                                <div class="row">
-                                    <q-input
-                                        v-model="auxModel"
-                                        filled
-                                        dense
-                                        label="actions"
-                                        placeholder="transfer, sellrex, etc."
-                                        @blur="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                                        @keyup.enter="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                                    >
-                                        <template v-slot:prepend>
-                                            <q-icon class="cursor-pointer" name="search"/>
-                                        </template>
-                                        <template v-slot:append>
-                                            <q-btn
-                                                size="sm"
-                                                color="primary"
-                                                @click="actionsModel = auxModel; toggleDropdown($refs.actions_dropdown)"
-                                            >
-                                                OK
-                                            </q-btn>
-                                        </template>
-                                    </q-input>
-                                </div>
-                            </div>
-                        </q-btn-dropdown>
-                        <q-btn-dropdown
-                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
-                            :color="dateDisplay === '' ? 'primary': 'secondary'"
-                            :label="dateDisplay === '' ? 'Date' : dateDisplay"
-                        >
-                            <div class="q-pa-md dropdown-filter">
-                                <div class="row">
-                                    <q-input
-                                        v-model="fromDateModel"
-                                        filled
-                                        dense
-                                        label="From"
-                                    >
-                                        <template v-slot:prepend>
-                                            <q-icon class="cursor-pointer" name="event">
-                                                <q-popup-proxy
-                                                    cover=""
-                                                    transition-show="scale"
-                                                    transition-hide="scale"
-                                                >
-                                                    <q-date v-model="fromDateModel" mask="YYYY-MM-DD HH:mm">
-                                                        <div class="row items-center justify-end">
-                                                            <q-btn
-                                                                v-close-popup
-                                                                label="Close"
-                                                                color="primary"
-                                                                flat
-                                                            />
-                                                        </div>
-                                                    </q-date>
-                                                </q-popup-proxy>
-                                            </q-icon>
-                                        </template>
-                                        <template v-slot:append>
-                                            <q-icon class="cursor-pointer" name="access_time">
-                                                <q-popup-proxy
-                                                    cover="cover"
-                                                    transition-show="scale"
-                                                    transition-hide="scale"
-                                                >
-                                                    <q-time
-                                                        v-model="fromDateModel"
-                                                        mask="YYYY-MM-DD HH:mm"
-                                                        format24h
-                                                    >
-                                                        <div class="row items-center justify-end">
-                                                            <q-btn
-                                                                v-close-popup
-                                                                label="Close"
-                                                                color="primary"
-                                                                flat
-                                                            />
-                                                        </div>
-                                                    </q-time>
-                                                </q-popup-proxy>
-                                            </q-icon>
-                                        </template>
-                                    </q-input>
-                                </div>
-                                <div class="row justify-center full-width q-py-xs">
-                                    <q-icon name="arrow_downward"/>
-                                </div>
-                                <div class="row">
-                                    <q-input
-                                        v-model="toDateModel"
-                                        filled
-                                        dense
-                                        label="To"
-                                    >
-                                        <template v-slot:prepend>
-                                            <q-icon class="cursor-pointer" name="event">
-                                                <q-popup-proxy
-                                                    cover="cover"
-                                                    transition-show="scale"
-                                                    transition-hide="scale"
-                                                >
-                                                    <q-date v-model="toDateModel" mask="YYYY-MM-DD HH:mm">
-                                                        <div class="row items-center justify-end">
-                                                            <q-btn
-                                                                v-close-popup
-                                                                label="Close"
-                                                                color="primary"
-                                                                flat
-                                                            />
-                                                        </div>
-                                                    </q-date>
-                                                </q-popup-proxy>
-                                            </q-icon>
-                                        </template>
-                                        <template v-slot:append>
-                                            <q-icon class="cursor-pointer" name="access_time">
-                                                <q-popup-proxy
-                                                    cover=""
-                                                    transition-show="scale"
-                                                    transition-hide="scale"
-                                                >
-                                                    <q-time v-model="toDateModel" mask="YYYY-MM-DD HH:mm" format24h>
-                                                        <div class="row items-center justify-end">
-                                                            <q-btn
-                                                                v-close-popup
-                                                                label="Close"
-                                                                color="primary"
-                                                                flat
-                                                            />
-                                                        </div>
-                                                    </q-time>
-                                                </q-popup-proxy>
-                                            </q-icon>
-                                        </template>
-                                    </q-input>
-                                </div>
-                            </div>
-                        </q-btn-dropdown>
-                        <q-btn-dropdown
-                            v-if="showTokenFilter"
-                            ref="token_dropdown"
-                            class="q-ml-xs q-mr-xs button-primary q-btn--no-text-transform"
-                            :color="!tokenDisplay ? 'primary': 'secondary'"
-                            :label="!tokenDisplay ? 'Token' : tokenDisplay"
-                        >
-                            <div class="q-pa-md dropdown-filter">
-                                <div class="row">
-                                    <TokenSearch
-                                        v-model="tokenModel"
-                                        @update:model-value="toggleDropdown($refs.token_dropdown)"
-                                    />
-                                </div>
-                            </div>
-                        </q-btn-dropdown>
-                    </div>
-                </div>
-                <div v-if="showPaginationExtras" class="row justify-end">
-                    Viewing
-                    {{ paginationSettings.rowsPerPage > totalRows ? totalRows : paginationSettings.rowsPerPage }}
-                    of {{ totalRows === 10000 ? ' over ' : '' }} {{ totalRows.toLocaleString() }} total transactions
-                </div>
-            </div>
-        </div>
-        <q-separator class="row col-12 q-mt-md separator"/>
-        <div class="row col-12 table-container">
-            <q-table
-                ref="main_table"
-                v-model:pagination="paginationSettings"
-                class="q-mt-md row block-table--fixed-layout"
-                flat
-                table-header-class="table-header"
-                hide-pagination
-                :rows="filteredRows"
-                :columns="columns"
-                :row-key="row => row.name"
-                :bordered="false"
-                :square="true"
-                :loading="loading"
-                :rows-per-page-options="pageSizeOptions"
-                :dense="$q.screen.width < 1024"
-                @request="onPaginationChange"
-            >
-                <template v-slot:header="props">
-                    <q-tr :props="props">
-                        <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
-                    </q-tr>
-                </template>
-                <template v-slot:body="props">
-                    <q-tr :props="props">
-                        <q-td>
-                            <AccountFormat :account="props.row.hash" type="block"/>
-                        </q-td>
-                        <q-td>
-                            <DateField :timestamp="props.row.timestamp" :showAge="showAge"/>
-                        </q-td>
-                        <template v-for="col in props.cols">
-                            <q-td
-                                v-if="col.name != 'block' && col.name != 'timestamp'"
-                                :key="col.name"
-                                :props="props"
-                            >{{ props.row[col.name] }}</q-td>
-                        </template>
-
-                    </q-tr>
-                </template>
-            </q-table>
-        </div>
-        <div class="row col-12 items-center justify-end q-mt-md q-mb-sm">
-            <!-- records per page selector-->
-            <div class="col-auto">
-                <small>Rows per page: &nbsp; {{ paginationSettings.rowsPerPage }}</small>
-                <!-- dropdown button to select number of rows per page-->
-                <q-icon
-                    :name="showPagesSizes ? 'expand_more' : 'expand_less'"
-                    size="sm"
-                    @click="switchPageSelector"
-                >
-                    <q-popup-proxy ref="page_size_selector" transition-show="scale" transition-hide="scale">
-                        <q-list>
-                            <q-item v-for="size in pageSizeOptions" :key="size" class="cursor-pointer">
-                                <q-item-section @click="changePageSize(size); hidePopup($refs.page_size_selector)">
-                                    {{ size }}
-                                </q-item-section>
-                            </q-item>
-                        </q-list>
-                    </q-popup-proxy>
-                </q-icon>
-            </div>
-            <q-space/>
-            <div class="col-auto">
-                <q-btn
-                    size="sm"
-                    color="primary"
-                    outline
-                    :disable="paginationSettings.page === 1"
-                    @click="moveTablePage($refs.main_table, 'first')"
-                >
-                    First
-                </q-btn>
-
-                <q-btn
-                    size="sm"
-                    color="primary"
-                    outline
-                    class="q-mx-sm"
-                    :disable="paginationSettings.page === 1"
-                    @click="moveTablePage($refs.main_table, 'prev')"
-                >
-                    <q-icon name="chevron_left" size="xs"/>
-                </q-btn>
-
-                <small>
-                    Page {{ paginationSettings.page }}
-                    {{
-                        (showPaginationExtras && enableLives === false) ? (lastPage === 0 ? ` of 1` : ` of ${lastPage}`) : ''
-                    }}
-                </small>
-
-                <q-btn
-                    size="sm"
-                    color="primary"
-                    outline
-                    class="q-mx-sm"
-                    :disable="paginationSettings.page === lastPage || totalRows < paginationSettings.rowsPerPage"
-                    @click="moveTablePage($refs.main_table, 'next')"
-                >
-                    <q-icon name="chevron_right" size="xs"/>
-                </q-btn>
-
-                <q-btn
-                    v-if="showPaginationExtras && enableLives === false"
-                    size="sm"
-                    color="primary"
-                    outline
-                    :disable="paginationSettings.page === lastPage || lastPage === 0"
-                    @click="moveTablePage($refs.main_table, 'last')"
-                >
-                    Last
-                </q-btn>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-</template>
 
 <style lang="sass">
 $medium: 920px

@@ -1,26 +1,3 @@
-<script lang="ts">
-import { defineComponent, computed } from 'vue';
-import { useStore } from 'src/store';
-import { Action } from 'src/types';
-import { getRexHistoryAsset, formatDate } from 'src/utils/string-utils';
-
-export default defineComponent({
-    name: 'HistoryTab',
-    components: {},
-    setup() {
-        const store = useStore();
-        const rexActions = computed((): Action[] => store.state.account.rexActions);
-
-        return {
-            store,
-            rexActions,
-            formatDate,
-            getRexHistoryAsset,
-        };
-    },
-});
-</script>
-
 <template>
 
 <div class="q-pt-lg">
@@ -53,6 +30,29 @@ export default defineComponent({
 </div>
 
 </template>
+
+<script lang="ts">
+import { defineComponent, computed } from 'vue';
+import { useStore } from 'src/store';
+import { Action } from 'src/types';
+import { getRexHistoryAsset, formatDate } from 'src/utils/string-utils';
+
+export default defineComponent({
+    name: 'HistoryTab',
+    components: {},
+    setup() {
+        const store = useStore();
+        const rexActions = computed((): Action[] => store.state.account.rexActions);
+
+        return {
+            store,
+            rexActions,
+            formatDate,
+            getRexHistoryAsset,
+        };
+    },
+});
+</script>
 
 <style lang="sass">
 .button-accent

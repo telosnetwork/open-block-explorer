@@ -1,16 +1,3 @@
-<script lang="ts">
-import AppFooter from 'components/Footer.vue';
-import AppHeader from 'components/Header.vue';
-
-export default {
-    name: 'MainLayout',
-    components: {
-        AppHeader,
-        AppFooter,
-    },
-};
-</script>
-
 <template>
 
 <q-layout view="lHh lpR lff">
@@ -25,6 +12,19 @@ export default {
     </q-footer>
 </q-layout>
 </template>
+
+<script lang="ts">
+import AppFooter from 'components/Footer.vue';
+import AppHeader from 'components/Header.vue';
+
+export default {
+    name: 'MainLayout',
+    components: {
+        AppHeader,
+        AppFooter,
+    },
+};
+</script>
 
 <style lang="sass" scoped>
 </style>

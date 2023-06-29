@@ -1,3 +1,98 @@
+<template>
+<q-card class="q-mt-md">
+    <q-expansion-item switch-toggle-side default-opened>
+        <template v-slot:header>
+            <div class="proposal-action__header full-width row items-center justify-between">
+                <div class="col-auto"><span class="text-h6 text-weight-regular">{{ action.account && action.name ? `${action.account} - ${action.name}` : 'Action' }}</span></div>
+                <div class="col-auto">
+                    <q-btn
+                        outline
+                        padding="sm md"
+                        color="white"
+                        text-color="primary"
+                        label="Remove"
+                        @click.stop="$emit('remove')"
+                    />
+                </div>
+            </div>
+        </template>
+        <div class="q-pa-md">
+            <div class="row q-col-gutter-md q-mb-md">
+                <div class="col-6">
+                    <q-input
+                        v-model="action.account"
+                        outlined
+                        dense
+                        hide-bottom-space
+                        lazy-rules
+                        label="account"
+                        :error="isAccountError"
+                        :loading="isAccountLoading"
+                        :rules="[value => !!value || 'Account is required']"
+                    />
+                </div>
+                <div v-if="actionOptions.length > 0" class="col-6">
+                    <q-select
+                        v-model="action.name"
+                        outlined
+                        dense
+                        hide-bottom-space
+                        bg-color="white"
+                        label="Action"
+                        :options="actionOptions"
+                        :rules="[value => !!value || 'Field is required']"
+                    >
+                        <template #no-option>
+                            <q-item>
+                                <q-item-section class="text-center">
+                                    <q-item-label>No option</q-item-label>
+                                </q-item-section>
+                            </q-item>
+                        </template>
+                    </q-select>
+                </div>
+            </div>
+            <TransferAction
+                v-if="action?.account === 'eosio.token' && action?.name === 'transfer'"
+                v-model="action"
+                :fields="fields"
+            />
+            <div v-else-if="!!fields" class="row q-col-gutter-md">
+                <div v-for="field in fields" :key="field.name" class="col-12 col-sm-4">
+                    <q-input
+                        v-model="action.data[field.name]"
+                        outlined
+                        dense
+                        hide-bottom-space
+                        lazy-rules
+                        :label="field.name"
+                    />
+                </div>
+            </div>
+            <div>
+                <p class="text-body1 q-my-md q-mb-none">Authorization</p>
+                <ProposalAuthorization
+                    v-for="(authorizationItem, authorizationIndex) in action.authorization"
+                    :key="authorizationIndex"
+                    v-model:actor="authorizationItem.actor"
+                    v-model:permission="authorizationItem.permission"
+                    :disabledRemoveButton="action.authorization.length === 1"
+                    @remove="action.authorization.splice(authorizationIndex, 1)"
+                />
+                <q-btn
+                    outline
+                    padding="sm md"
+                    color="white"
+                    text-color="primary"
+                    label="Add"
+                    @click.stop="action.authorization.push({ actor: '', permission: '' })"
+                />
+            </div>
+        </div>
+    </q-expansion-item>
+</q-card>
+</template>
+
 <script lang="ts">
 import {
     defineComponent,
@@ -149,101 +244,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<q-card class="q-mt-md">
-    <q-expansion-item switch-toggle-side default-opened>
-        <template v-slot:header>
-            <div class="proposal-action__header full-width row items-center justify-between">
-                <div class="col-auto"><span class="text-h6 text-weight-regular">{{ action.account && action.name ? `${action.account} - ${action.name}` : 'Action' }}</span></div>
-                <div class="col-auto">
-                    <q-btn
-                        outline
-                        padding="sm md"
-                        color="white"
-                        text-color="primary"
-                        label="Remove"
-                        @click.stop="$emit('remove')"
-                    />
-                </div>
-            </div>
-        </template>
-        <div class="q-pa-md">
-            <div class="row q-col-gutter-md q-mb-md">
-                <div class="col-6">
-                    <q-input
-                        v-model="action.account"
-                        outlined
-                        dense
-                        hide-bottom-space
-                        lazy-rules
-                        label="account"
-                        :error="isAccountError"
-                        :loading="isAccountLoading"
-                        :rules="[value => !!value || 'Account is required']"
-                    />
-                </div>
-                <div v-if="actionOptions.length > 0" class="col-6">
-                    <q-select
-                        v-model="action.name"
-                        outlined
-                        dense
-                        hide-bottom-space
-                        bg-color="white"
-                        label="Action"
-                        :options="actionOptions"
-                        :rules="[value => !!value || 'Field is required']"
-                    >
-                        <template #no-option>
-                            <q-item>
-                                <q-item-section class="text-center">
-                                    <q-item-label>No option</q-item-label>
-                                </q-item-section>
-                            </q-item>
-                        </template>
-                    </q-select>
-                </div>
-            </div>
-            <TransferAction
-                v-if="action?.account === 'eosio.token' && action?.name === 'transfer'"
-                v-model="action"
-                :fields="fields"
-            />
-            <div v-else-if="!!fields" class="row q-col-gutter-md">
-                <div v-for="field in fields" :key="field.name" class="col-12 col-sm-4">
-                    <q-input
-                        v-model="action.data[field.name]"
-                        outlined
-                        dense
-                        hide-bottom-space
-                        lazy-rules
-                        :label="field.name"
-                    />
-                </div>
-            </div>
-            <div>
-                <p class="text-body1 q-my-md q-mb-none">Authorization</p>
-                <ProposalAuthorization
-                    v-for="(authorizationItem, authorizationIndex) in action.authorization"
-                    :key="authorizationIndex"
-                    v-model:actor="authorizationItem.actor"
-                    v-model:permission="authorizationItem.permission"
-                    :disabledRemoveButton="action.authorization.length === 1"
-                    @remove="action.authorization.splice(authorizationIndex, 1)"
-                />
-                <q-btn
-                    outline
-                    padding="sm md"
-                    color="white"
-                    text-color="primary"
-                    label="Add"
-                    @click.stop="action.authorization.push({ actor: '', permission: '' })"
-                />
-            </div>
-        </div>
-    </q-expansion-item>
-</q-card>
-</template>
 
 <style lang="sass">
 .proposal-action

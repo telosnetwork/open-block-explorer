@@ -1,3 +1,21 @@
+<template>
+
+<div class="row col-12 q-mt-lg q-mb-xs q-px-xl justify-center text-left container-max-width">
+    <p class="panel-title">Children</p>
+    <q-space/>
+    <q-separator class="row col-12 q-mt-md separator"/>
+    <div class="col-12 q-py-lg row">
+        <div v-if="children.length == 0 ">No children found</div>
+        <div
+            v-for="child in children"
+            :key="child"
+            class="child"
+            v-html="child"
+        ></div>
+    </div>
+</div>
+
+</template>
 <script lang="ts">
 import { useQuasar } from 'quasar';
 import { api } from 'src/api';
@@ -45,24 +63,6 @@ export default defineComponent({
     },
 });
 </script>
-<template>
-
-<div class="row col-12 q-mt-lg q-mb-xs q-px-xl justify-center text-left container-max-width">
-    <p class="panel-title">Children</p>
-    <q-space/>
-    <q-separator class="row col-12 q-mt-md separator"/>
-    <div class="col-12 q-py-lg row">
-        <div v-if="children.length == 0 ">No children found</div>
-        <div
-            v-for="child in children"
-            :key="child"
-            class="child"
-            v-html="child"
-        ></div>
-    </div>
-</div>
-
-</template>
 
 <style lang="sass" scoped>
 .hover-dec

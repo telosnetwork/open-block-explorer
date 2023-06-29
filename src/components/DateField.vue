@@ -1,3 +1,9 @@
+<template>
+<div class="no-wrap">{{ friendlyDate }}
+    <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">{{ tooltipDate }}</q-tooltip>
+</div>
+</template>
+
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import * as moment from 'moment';
@@ -36,9 +42,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<div class="no-wrap">{{ friendlyDate }}
-    <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">{{ tooltipDate }}</q-tooltip>
-</div>
-</template>

@@ -1,3 +1,53 @@
+<template>
+
+<div class="container grey-3">
+    <div class="row full-width">
+        <div class="row full-width q-pt-md q-px-lg">
+            <div class="col-6 text-h6 text-bold">AVAILABLE BALANCE</div>
+            <div class="col-6 text-h6 text-right text-bold">{{ formatValue(accountTotal) }}</div>
+        </div>
+        <div class="row full-width q-py-md">
+            <hr>
+        </div>
+        <div class="row full-width q-pb-md">
+            <div class="col-xs-12 col-sm-6 q-px-lg q-pb-sm">
+                <div class="row">
+                    <div class="col-7 text-weight-light">CPU</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(currentCpu) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">NET</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(currentNet) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">AVAILABLE RAM</div>
+                    <div class="col-5 text-right text-bold">{{ramAvailable}} Bytes</div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 q-px-lg q-pb-sm">
+                <div class="row">
+                    <div class="col-7 text-weight-light">DELEGATED BY OTHERS</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedByOthers) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">DELEGATED TO OTHERS</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedToOthers) }}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">REFUNDING</div>
+                    <div class="col-5 text-right text-bold">{{ formatValue(totalRefund) }}</div>
+                </div>
+                <!--div class="row q-pt-sm">
+                    <div class="col-7 text-weight-light">RAM PRICE</div>
+                    <div class="col-5 text-right text-bold">{{ramPrice}} {{token.symbol}}/KB</div>
+                </div-->
+            </div>
+        </div>
+    </div>
+</div>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
@@ -92,56 +142,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="container grey-3">
-    <div class="row full-width">
-        <div class="row full-width q-pt-md q-px-lg">
-            <div class="col-6 text-h6 text-bold">AVAILABLE BALANCE</div>
-            <div class="col-6 text-h6 text-right text-bold">{{ formatValue(accountTotal) }}</div>
-        </div>
-        <div class="row full-width q-py-md">
-            <hr>
-        </div>
-        <div class="row full-width q-pb-md">
-            <div class="col-xs-12 col-sm-6 q-px-lg q-pb-sm">
-                <div class="row">
-                    <div class="col-7 text-weight-light">CPU</div>
-                    <div class="col-5 text-right text-bold">{{ formatValue(currentCpu) }}</div>
-                </div>
-                <div class="row q-pt-sm">
-                    <div class="col-7 text-weight-light">NET</div>
-                    <div class="col-5 text-right text-bold">{{ formatValue(currentNet) }}</div>
-                </div>
-                <div class="row q-pt-sm">
-                    <div class="col-7 text-weight-light">AVAILABLE RAM</div>
-                    <div class="col-5 text-right text-bold">{{ramAvailable}} Bytes</div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-6 q-px-lg q-pb-sm">
-                <div class="row">
-                    <div class="col-7 text-weight-light">DELEGATED BY OTHERS</div>
-                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedByOthers) }}</div>
-                </div>
-                <div class="row q-pt-sm">
-                    <div class="col-7 text-weight-light">DELEGATED TO OTHERS</div>
-                    <div class="col-5 text-right text-bold">{{ formatValue(delegatedToOthers) }}</div>
-                </div>
-                <div class="row q-pt-sm">
-                    <div class="col-7 text-weight-light">REFUNDING</div>
-                    <div class="col-5 text-right text-bold">{{ formatValue(totalRefund) }}</div>
-                </div>
-                <!--div class="row q-pt-sm">
-                    <div class="col-7 text-weight-light">RAM PRICE</div>
-                    <div class="col-5 text-right text-bold">{{ramPrice}} {{token.symbol}}/KB</div>
-                </div-->
-            </div>
-        </div>
-    </div>
-</div>
-
-</template>
 
 <style scoped lang="sass">
 .container

@@ -1,3 +1,100 @@
+<template>
+
+<div class="unstake-tab">
+    <q-card-section class="text-grey-3 text-weight-light">
+        <div class="row q-pb-md">
+            <div class="col-12">
+                <q-linear-progress v-if="isUpdating" color="primary" />
+                <q-select
+                    v-else
+                    v-model="selectModel"
+                    class="full-width unstake-tab__select"
+                    color="primary"
+                    :options="selectOptions"
+                    label="Delegated to"
+                    :rules="[val => !!val || 'Delegated to is required']"
+                />
+            </div>
+        </div>
+        <div class="row q-pb-md">
+            <div class="col-6">
+                <div class="row q-pb-sm">
+                    <div class="col-6">REMOVE CPU</div>
+                    <div class="col-6">
+                        <div class="color-grey-3 flex justify-end items-center" @click="cpuTokens = cpuStake.toString()">
+                            <span class="text-weight-bold balance-amount">{{ `${cpuStake} AVAILABLE` }}</span>
+                            <q-icon class="q-ml-xs" name="info"/>
+                            <q-tooltip>Click to fill full amount</q-tooltip>
+                        </div>
+                    </div>
+                </div>
+                <q-input
+                    v-model="cpuTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0"
+                    :lazy-rules="true"
+                    :rules="cpuInputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+            <div class="col-6 q-pl-md">
+                <div class="row q-pb-sm">
+                    <div class="col-6">REMOVE NET</div>
+                    <div class="col-6">
+                        <div class="color-grey-3 flex justify-end items-center" @click="netTokens = netStake.toString()">
+                            <span class="text-weight-bold balance-amount">{{ `${netStake} AVAILABLE` }}</span>
+                            <q-icon class="q-ml-xs" name="info"/>
+                            <q-tooltip>Click to fill full amount</q-tooltip>
+                        </div>
+                    </div>
+                </div>
+                <q-input
+                    v-model="netTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0"
+                    :lazy-rules="true"
+                    :rules="netInputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 q-pt-md">
+                <q-btn
+                    class="full-width button-accent"
+                    label="Confirm"
+                    flat
+                    :disable="ctaDisabled || isUnstaking"
+                    @click="sendTransaction"
+                >
+                    <q-spinner
+                        v-if="isUnstaking"
+                        size="20px"
+                        color="white"
+                        class="q-ml-sm"
+                    />
+                </q-btn>
+            </div>
+
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useAntelopeStore } from 'src/store/antelope.store';
@@ -166,103 +263,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="unstake-tab">
-    <q-card-section class="text-grey-3 text-weight-light">
-        <div class="row q-pb-md">
-            <div class="col-12">
-                <q-linear-progress v-if="isUpdating" color="primary" />
-                <q-select
-                    v-else
-                    v-model="selectModel"
-                    class="full-width unstake-tab__select"
-                    color="primary"
-                    :options="selectOptions"
-                    label="Delegated to"
-                    :rules="[val => !!val || 'Delegated to is required']"
-                />
-            </div>
-        </div>
-        <div class="row q-pb-md">
-            <div class="col-6">
-                <div class="row q-pb-sm">
-                    <div class="col-6">REMOVE CPU</div>
-                    <div class="col-6">
-                        <div class="color-grey-3 flex justify-end items-center" @click="cpuTokens = cpuStake.toString()">
-                            <span class="text-weight-bold balance-amount">{{ `${cpuStake} AVAILABLE` }}</span>
-                            <q-icon class="q-ml-xs" name="info"/>
-                            <q-tooltip>Click to fill full amount</q-tooltip>
-                        </div>
-                    </div>
-                </div>
-                <q-input
-                    v-model="cpuTokens"
-                    class="full-width"
-                    standout="bg-deep-purple-2 text-white"
-                    placeholder="0"
-                    :lazy-rules="true"
-                    :rules="cpuInputRules"
-                    type="text"
-                    dense
-                    dark
-                    @blur="formatDec"
-                />
-            </div>
-            <div class="col-6 q-pl-md">
-                <div class="row q-pb-sm">
-                    <div class="col-6">REMOVE NET</div>
-                    <div class="col-6">
-                        <div class="color-grey-3 flex justify-end items-center" @click="netTokens = netStake.toString()">
-                            <span class="text-weight-bold balance-amount">{{ `${netStake} AVAILABLE` }}</span>
-                            <q-icon class="q-ml-xs" name="info"/>
-                            <q-tooltip>Click to fill full amount</q-tooltip>
-                        </div>
-                    </div>
-                </div>
-                <q-input
-                    v-model="netTokens"
-                    class="full-width"
-                    standout="bg-deep-purple-2 text-white"
-                    placeholder="0"
-                    :lazy-rules="true"
-                    :rules="netInputRules"
-                    type="text"
-                    dense
-                    dark
-                    @blur="formatDec"
-                />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 q-pt-md">
-                <q-btn
-                    class="full-width button-accent"
-                    label="Confirm"
-                    flat
-                    :disable="ctaDisabled || isUnstaking"
-                    @click="sendTransaction"
-                >
-                    <q-spinner
-                        v-if="isUnstaking"
-                        size="20px"
-                        color="white"
-                        class="q-ml-sm"
-                    />
-                </q-btn>
-            </div>
-
-        </div>
-        <ViewTransaction
-            v-model="openTransaction"
-            :transactionId="transactionId"
-            :transactionError="transactionError || ''"
-            message="transaction complete"
-        />
-    </q-card-section>
-</div>
-</template>
 
 <style lang="sass">
 .button-accent

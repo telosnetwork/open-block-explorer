@@ -1,3 +1,29 @@
+<template>
+
+<div class="row q-pb-md">
+    <div class="col wrap"><a class="hover-dec" :href=" '/key/' + keyDisplay">{{`+${weight} &nbsp; &nbsp; ${keyDisplay}`}}</a>
+        <q-btn
+            class="rotate-315"
+            flat
+            round
+            color="black"
+            icon="vpn_key"
+            size="xs"
+            @click="toggleKey()"
+        >&nbsp;</q-btn>
+        <q-btn
+            flat
+            round
+            color="black"
+            icon="content_copy"
+            size="xs"
+            @click="copy(keyDisplay)"
+        />
+    </div>
+</div>
+
+</template>
+
 <script lang="ts">
 import { useQuasar } from 'quasar';
 import { computed, defineComponent, ref } from 'vue';
@@ -53,32 +79,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="row q-pb-md">
-    <div class="col wrap"><a class="hover-dec" :href=" '/key/' + keyDisplay">{{`+${weight} &nbsp; &nbsp; ${keyDisplay}`}}</a>
-        <q-btn
-            class="rotate-315"
-            flat
-            round
-            color="black"
-            icon="vpn_key"
-            size="xs"
-            @click="toggleKey()"
-        >&nbsp;</q-btn>
-        <q-btn
-            flat
-            round
-            color="black"
-            icon="content_copy"
-            size="xs"
-            @click="copy(keyDisplay)"
-        />
-    </div>
-</div>
-
-</template>
 
 <style lang="sass" scoped>
 .hover-dec

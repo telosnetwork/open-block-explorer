@@ -1,3 +1,83 @@
+<template>
+<q-table
+    v-model:pagination="pagination"
+    color="primary"
+    flat
+    :bordered="false"
+    :square="true"
+    :title="title"
+    table-header-class="text-grey-7"
+    :rows="rows"
+    :columns="columns"
+    row-key="proposalName"
+    :rows-per-page-options="[20,40,80,160]"
+    @request="onRequest"
+>
+    <template v-slot:top>
+        <div class="q-table__control full-width justify-between">
+            <div class="q-table__title" v-text="title"></div>
+            <div>
+                <q-btn-dropdown
+                    v-model="filterDropdown"
+                    outlined="outlined"
+                    flat
+                    :color="hasSomeFilterActive ? 'primary': ''"
+                    :label="hasSomeFilterActive ? '• Filter by': 'Filter by'"
+                >
+                    <div class="q-pt-md q-px-md">
+                        <div v-if="type === 'needsYourSignature'" class="q-pr-md q-pb-md">
+                            <q-toggle v-model="isSigned" label="Already signed"/>
+                        </div>
+                        <div v-if="type === 'allProposals'" class="q-pb-md"><span class="block q-mb-sm text-body3">Pending signature from</span>
+                            <q-select
+                                v-model="blockProducer"
+                                outlined
+                                dense
+                                hide-bottom-space
+                                hide-selected
+                                fill-input
+                                use-input
+                                clearable
+                                input-debounce="0"
+                                label="Block Producer"
+                                :options="optionsBlockProducers"
+                                @filter="onFilterBlockProducer"
+                            >
+                                <template v-slot:no-option>
+                                    <q-item>
+                                        <q-item-section>No results</q-item-section>
+                                    </q-item>
+                                </template>
+                            </q-select>
+                        </div>
+                        <div class="q-pr-md q-pb-md">
+                            <q-toggle v-model="isExecuted" label="Inactive proposals"/>
+                        </div>
+                    </div>
+                </q-btn-dropdown>
+            </div>
+        </div>
+    </template>
+    <template v-slot:no-data><span class="q-pa-md full-width text-center text-body2">
+        No proposals
+    </span></template>
+    <template v-slot:body="props">
+        <q-tr :props="props">
+            <q-td key="proposalName" :props="props">
+                <router-link class="text-primary cursor-pointer text-no-decoration" :to="'/proposal/' + props.row.proposalName">{{props.row.proposalName}}</router-link>
+            </q-td>
+            <q-td key="approvalStatus" :props="props"><span>{{ props.row.approvalStatus }}</span></q-td>
+            <q-td key="proposer" :props="props">
+                <router-link class="text-primary cursor-pointer text-no-decoration" :to="'/account/' + props.row.proposer">{{props.row.proposer}}</router-link>
+            </q-td>
+            <q-td key="executed" :props="props">
+                <q-badge :color="props.row.executed ? 'green' : 'orange'" :label="props.row.executed ? 'EXECUTED' : 'NOT EXECUTED'"/>
+            </q-td>
+        </q-tr>
+    </template>
+</q-table>
+</template>
+
 <script lang="ts">
 import {
     defineComponent,
@@ -195,83 +275,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<q-table
-    v-model:pagination="pagination"
-    color="primary"
-    flat
-    :bordered="false"
-    :square="true"
-    :title="title"
-    table-header-class="text-grey-7"
-    :rows="rows"
-    :columns="columns"
-    row-key="proposalName"
-    :rows-per-page-options="[20,40,80,160]"
-    @request="onRequest"
->
-    <template v-slot:top>
-        <div class="q-table__control full-width justify-between">
-            <div class="q-table__title" v-text="title"></div>
-            <div>
-                <q-btn-dropdown
-                    v-model="filterDropdown"
-                    outlined="outlined"
-                    flat
-                    :color="hasSomeFilterActive ? 'primary': ''"
-                    :label="hasSomeFilterActive ? '• Filter by': 'Filter by'"
-                >
-                    <div class="q-pt-md q-px-md">
-                        <div v-if="type === 'needsYourSignature'" class="q-pr-md q-pb-md">
-                            <q-toggle v-model="isSigned" label="Already signed"/>
-                        </div>
-                        <div v-if="type === 'allProposals'" class="q-pb-md"><span class="block q-mb-sm text-body3">Pending signature from</span>
-                            <q-select
-                                v-model="blockProducer"
-                                outlined
-                                dense
-                                hide-bottom-space
-                                hide-selected
-                                fill-input
-                                use-input
-                                clearable
-                                input-debounce="0"
-                                label="Block Producer"
-                                :options="optionsBlockProducers"
-                                @filter="onFilterBlockProducer"
-                            >
-                                <template v-slot:no-option>
-                                    <q-item>
-                                        <q-item-section>No results</q-item-section>
-                                    </q-item>
-                                </template>
-                            </q-select>
-                        </div>
-                        <div class="q-pr-md q-pb-md">
-                            <q-toggle v-model="isExecuted" label="Inactive proposals"/>
-                        </div>
-                    </div>
-                </q-btn-dropdown>
-            </div>
-        </div>
-    </template>
-    <template v-slot:no-data><span class="q-pa-md full-width text-center text-body2">
-        No proposals
-    </span></template>
-    <template v-slot:body="props">
-        <q-tr :props="props">
-            <q-td key="proposalName" :props="props">
-                <router-link class="text-primary cursor-pointer text-no-decoration" :to="'/proposal/' + props.row.proposalName">{{props.row.proposalName}}</router-link>
-            </q-td>
-            <q-td key="approvalStatus" :props="props"><span>{{ props.row.approvalStatus }}</span></q-td>
-            <q-td key="proposer" :props="props">
-                <router-link class="text-primary cursor-pointer text-no-decoration" :to="'/account/' + props.row.proposer">{{props.row.proposer}}</router-link>
-            </q-td>
-            <q-td key="executed" :props="props">
-                <q-badge :color="props.row.executed ? 'green' : 'orange'" :label="props.row.executed ? 'EXECUTED' : 'NOT EXECUTED'"/>
-            </q-td>
-        </q-tr>
-    </template>
-</q-table>
-</template>

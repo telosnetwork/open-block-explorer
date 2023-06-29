@@ -1,11 +1,3 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-    name: 'Error404Page',
-});
-</script>
-
 <template>
 <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
     <div>
@@ -23,3 +15,11 @@ export default defineComponent({
     </div>
 </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    name: 'Error404Page',
+});
+</script>

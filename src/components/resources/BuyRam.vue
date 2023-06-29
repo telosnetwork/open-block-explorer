@@ -1,3 +1,86 @@
+<template>
+
+<div class="staking-form">
+    <q-card-section class="text-grey-3">
+        <div class="row q-col-gutter-md">
+            <div class="text-weight-bold text-right text-grey-3">Buy in {{symbol}} or Bytes?</div>
+        </div>
+        <div class="row q-col-gutter-md q-pb-md">
+            <q-radio
+                v-model="buyOption"
+                dark
+                color="white"
+                :val="symbol"
+                :label="symbol"
+            />
+            <q-radio
+                v-model="buyOption"
+                dark
+                color="white"
+                val="Bytes"
+                label="Bytes"
+            />
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="row justify-between q-pb-sm">RAM Receiver:
+                    <q-space/>
+                    <div class="text-grey-3">Defaults to connected account</div>
+                </div>
+                <q-input
+                    v-model="receivingAccount"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    dense
+                    dark
+                    :lazy-rules="true"
+                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
+                />
+            </div>
+        </div>
+        <div class="row q-mb-md">
+            <div class="row q-pb-sm full-width">
+                <div class="col-6">{{ `Amount of RAM to buy in ` + buyOption}}</div>
+                <div class="col-6 text-right">
+                    <span class="text-weight-bold">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
+                </div>
+            </div>
+            <q-input
+                v-model="buyAmount"
+                class="full-width"
+                standout="bg-deep-purple-2 text-white"
+                placeholder="0"
+                :lazy-rules="true"
+                :rules="inputRules"
+                type="text"
+                dense
+                dark
+                @blur="formatDec"
+            />
+        </div>
+        <div class="row q-pb-sm">
+            <div class="text-weight-normal text-right text-grey-3">≈ {{buyPreview}}</div>
+        </div>
+        <div class="row">
+            <q-btn
+                class="full-width button-accent"
+                label="Buy"
+                flat
+                :disable="disableCta"
+                @click="buy"
+            />
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue';
 import { useStore } from 'src/store';
@@ -159,89 +242,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="staking-form">
-    <q-card-section class="text-grey-3">
-        <div class="row q-col-gutter-md">
-            <div class="text-weight-bold text-right text-grey-3">Buy in {{symbol}} or Bytes?</div>
-        </div>
-        <div class="row q-col-gutter-md q-pb-md">
-            <q-radio
-                v-model="buyOption"
-                dark
-                color="white"
-                :val="symbol"
-                :label="symbol"
-            />
-            <q-radio
-                v-model="buyOption"
-                dark
-                color="white"
-                val="Bytes"
-                label="Bytes"
-            />
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="row justify-between q-pb-sm">RAM Receiver:
-                    <q-space/>
-                    <div class="text-grey-3">Defaults to connected account</div>
-                </div>
-                <q-input
-                    v-model="receivingAccount"
-                    class="full-width"
-                    standout="bg-deep-purple-2 text-white"
-                    dense
-                    dark
-                    :lazy-rules="true"
-                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
-                />
-            </div>
-        </div>
-        <div class="row q-mb-md">
-            <div class="row q-pb-sm full-width">
-                <div class="col-6">{{ `Amount of RAM to buy in ` + buyOption}}</div>
-                <div class="col-6 text-right">
-                    <span class="text-weight-bold">{{ `${prettyBuyLimit()} AVAILABLE` }}</span>
-                </div>
-            </div>
-            <q-input
-                v-model="buyAmount"
-                class="full-width"
-                standout="bg-deep-purple-2 text-white"
-                placeholder="0"
-                :lazy-rules="true"
-                :rules="inputRules"
-                type="text"
-                dense
-                dark
-                @blur="formatDec"
-            />
-        </div>
-        <div class="row q-pb-sm">
-            <div class="text-weight-normal text-right text-grey-3">≈ {{buyPreview}}</div>
-        </div>
-        <div class="row">
-            <q-btn
-                class="full-width button-accent"
-                label="Buy"
-                flat
-                :disable="disableCta"
-                @click="buy"
-            />
-        </div>
-        <ViewTransaction
-            v-model="openTransaction"
-            :transactionId="transactionId"
-            :transactionError="transactionError || ''"
-            message="transaction complete"
-        />
-    </q-card-section>
-</div>
-
-</template>
 
 <style scoped lang="sass">
 .button-accent

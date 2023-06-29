@@ -1,3 +1,45 @@
+<template>
+<div v-if="permissionLocal">
+    <div class="children row" :class="permissionCardClass">
+        <div class="branch column" :class="`${depth > 0 ? '' : 'borderless'}`">
+            <div class="col" :class="branchTopClass"></div>
+            <div class="col" :class="branchBottomClass"></div>
+        </div>
+        <q-card class="permission-card col q-mt-md" flat>
+            <q-card-section horizontal>
+                <q-card-section class="permission-name-section row items-center justify-center">
+                    <div class="text-bold">{{`${permissionLocal.perm_name} (${permissionLocal.required_auth.threshold})`}}</div>
+                </q-card-section>
+                <q-card-section class="permission-key-section">
+                    <div v-for="k in permissionLocal.required_auth.keys" :key="k.key.toString()">
+                        <KeyToggle :weight="k.weight" :pubkey="k.key"/>
+                    </div>
+                    <div v-for="a in permissionLocal.required_auth.accounts" :key="`${a.permission.actor}-${a.permission.permission}`">
+                        <div><span>{{`+${a.weight} &nbsp; &nbsp; `}}</span><span class="text-bold" v-html="formatAccount(a.permission.actor?.toString(), 'account')"></span><span> @{{a.permission.permission}}</span></div>
+                    </div>
+                    <div v-for="w in permissionLocal.required_auth.waits" :key="`${w.wait_sec}-${w.weight}`">
+                        <div><span>{{`+${w.weight} &nbsp; &nbsp; `}}</span><span>{{ formatWait(w.wait_sec.value) }}</span></div>
+                    </div>
+                </q-card-section>
+                <q-card-section v-if="permissionLocal.permission_links.length > 0" class="permission-action-section">
+                    <div v-for="link in permissionLocal.permission_links" :key="link.action">{{link.code}}::{{link.action}}</div>
+                </q-card-section>
+            </q-card-section>
+        </q-card>
+    </div>
+    <div v-if="permission.children && permission.children.length">
+        <div v-for="(p, index) in permissionLocal.children" :key="p.perm_name.toString()">
+            <permission-card
+                class="permission-card-wrapper"
+                :permission="p"
+                :depth="depth + 1"
+                :isLast="index == permissionLocal.children.length - 1"
+            />
+        </div>
+    </div>
+</div>
+</template>
+
 <script lang="ts">
 import { defineComponent, PropType, computed, toRefs } from 'vue';
 import { Permission } from 'src/types';
@@ -57,48 +99,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<div v-if="permissionLocal">
-    <div class="children row" :class="permissionCardClass">
-        <div class="branch column" :class="`${depth > 0 ? '' : 'borderless'}`">
-            <div class="col" :class="branchTopClass"></div>
-            <div class="col" :class="branchBottomClass"></div>
-        </div>
-        <q-card class="permission-card col q-mt-md" flat>
-            <q-card-section horizontal>
-                <q-card-section class="permission-name-section row items-center justify-center">
-                    <div class="text-bold">{{`${permissionLocal.perm_name} (${permissionLocal.required_auth.threshold})`}}</div>
-                </q-card-section>
-                <q-card-section class="permission-key-section">
-                    <div v-for="k in permissionLocal.required_auth.keys" :key="k.key.toString()">
-                        <KeyToggle :weight="k.weight" :pubkey="k.key"/>
-                    </div>
-                    <div v-for="a in permissionLocal.required_auth.accounts" :key="`${a.permission.actor}-${a.permission.permission}`">
-                        <div><span>{{`+${a.weight} &nbsp; &nbsp; `}}</span><span class="text-bold" v-html="formatAccount(a.permission.actor?.toString(), 'account')"></span><span> @{{a.permission.permission}}</span></div>
-                    </div>
-                    <div v-for="w in permissionLocal.required_auth.waits" :key="`${w.wait_sec}-${w.weight}`">
-                        <div><span>{{`+${w.weight} &nbsp; &nbsp; `}}</span><span>{{ formatWait(w.wait_sec.value) }}</span></div>
-                    </div>
-                </q-card-section>
-                <q-card-section v-if="permissionLocal.permission_links.length > 0" class="permission-action-section">
-                    <div v-for="link in permissionLocal.permission_links" :key="link.action">{{link.code}}::{{link.action}}</div>
-                </q-card-section>
-            </q-card-section>
-        </q-card>
-    </div>
-    <div v-if="permission.children && permission.children.length">
-        <div v-for="(p, index) in permissionLocal.children" :key="p.perm_name.toString()">
-            <permission-card
-                class="permission-card-wrapper"
-                :permission="p"
-                :depth="depth + 1"
-                :isLast="index == permissionLocal.children.length - 1"
-            />
-        </div>
-    </div>
-</div>
-</template>
 
 <style lang="sass" scoped>
 .hover-dec

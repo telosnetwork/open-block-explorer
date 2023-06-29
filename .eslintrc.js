@@ -108,7 +108,7 @@ module.exports = {
             'multiline': 'below',
         }],
         'vue/component-tags-order': ['error', {
-            'order': ['script', 'template', 'style'],
+            'order': ['template','script', 'style'],
         }],
         'vue/html-self-closing': ['error', {
             'html': {

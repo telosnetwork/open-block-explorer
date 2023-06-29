@@ -1,36 +1,3 @@
-<script lang="ts">
-import { defineComponent, computed } from 'vue';
-
-export default defineComponent({
-    name: 'ProposalSuccess',
-    props: {
-        modelValue: {
-            type: Boolean,
-            default: false,
-        },
-        transactionId: {
-            type: String,
-        },
-        proposalName: {
-            type: String,
-        },
-    },
-    emits: ['update:modelValue'],
-    setup(props, context) {
-        const value = computed({
-            get: () => props.modelValue,
-            set: (value) => {
-                context.emit('update:modelValue', value);
-            },
-        });
-
-        return {
-            value,
-        };
-    },
-});
-</script>
-
 <template>
 <q-dialog v-model="value" maximized>
     <q-card class="header-support">
@@ -64,6 +31,39 @@ export default defineComponent({
     </q-card>
 </q-dialog>
 </template>
+
+<script lang="ts">
+import { defineComponent, computed } from 'vue';
+
+export default defineComponent({
+    name: 'ProposalSuccess',
+    props: {
+        modelValue: {
+            type: Boolean,
+            default: false,
+        },
+        transactionId: {
+            type: String,
+        },
+        proposalName: {
+            type: String,
+        },
+    },
+    emits: ['update:modelValue'],
+    setup(props, context) {
+        const value = computed({
+            get: () => props.modelValue,
+            set: (value) => {
+                context.emit('update:modelValue', value);
+            },
+        });
+
+        return {
+            value,
+        };
+    },
+});
+</script>
 <style lang="sass">
 .proposal-success
   &__section-wrapper

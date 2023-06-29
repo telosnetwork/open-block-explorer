@@ -1,3 +1,12 @@
+<template>
+<q-badge :color="typeColor">
+    {{typeDesc}}
+    <q-tooltip>
+        type:{{ type}}
+    </q-tooltip>
+</q-badge>
+</template>
+
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 
@@ -62,15 +71,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<q-badge :color="typeColor">
-    {{typeDesc}}
-    <q-tooltip>
-        type:{{ type}}
-    </q-tooltip>
-</q-badge>
-</template>
 
 <style scoped lang="sass">
 

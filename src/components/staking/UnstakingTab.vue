@@ -1,3 +1,53 @@
+<template>
+
+<div class="staking-form">
+    <q-card-section>
+        <div class="row q-col-gutter-md">
+            <div class="col-12">
+                <div class="row">
+                    <div class="row q-pb-sm full-width">
+                        <div class="col-8">{{ `MATURED ${symbol}` }}</div>
+                        <div class="col-4">
+                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxValue">
+                                <div class="text-weight-bold text-right balance-amount">{{ maxUnlend }} {{ symbol }}</div>
+                                <q-icon class="q-ml-xs" name="info"/>
+                                <q-tooltip>Click to fill full amount</q-tooltip>
+                            </div>
+                        </div>
+                    </div>
+                    <q-input
+                        ref="unstakeInput"
+                        v-model="unstakeTokens"
+                        standout="bg-deep-purple-2 text-white"
+                        placeholder='0'
+                        :lazy-rules='true'
+                        :rules="[ val => val >= 0  && val < assetToAmount(maturedRex)  || 'Invalid amount.' ]"
+                        type="text"
+                        dense
+                        dark
+                        @blur='formatDec'
+                    />
+                </div>
+                <div class="row">
+                    <q-btn
+                        class="full-width button-accent"
+                        :label="'Unstake ' + symbol"
+                        flat
+                        @click="unstake"
+                    />
+                </div>
+            </div>
+        </div>
+        <ViewTransaction
+            v-model="openTransaction"
+            :transactionId="transactionId"
+            :transactionError="transactionError || ''"
+            message="transaction complete"
+        />
+    </q-card-section>
+</div>
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
@@ -85,56 +135,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="staking-form">
-    <q-card-section>
-        <div class="row q-col-gutter-md">
-            <div class="col-12">
-                <div class="row">
-                    <div class="row q-pb-sm full-width">
-                        <div class="col-8">{{ `MATURED ${symbol}` }}</div>
-                        <div class="col-4">
-                            <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxValue">
-                                <div class="text-weight-bold text-right balance-amount">{{ maxUnlend }} {{ symbol }}</div>
-                                <q-icon class="q-ml-xs" name="info"/>
-                                <q-tooltip>Click to fill full amount</q-tooltip>
-                            </div>
-                        </div>
-                    </div>
-                    <q-input
-                        ref="unstakeInput"
-                        v-model="unstakeTokens"
-                        standout="bg-deep-purple-2 text-white"
-                        placeholder='0'
-                        :lazy-rules='true'
-                        :rules="[ val => val >= 0  && val < assetToAmount(maturedRex)  || 'Invalid amount.' ]"
-                        type="text"
-                        dense
-                        dark
-                        @blur='formatDec'
-                    />
-                </div>
-                <div class="row">
-                    <q-btn
-                        class="full-width button-accent"
-                        :label="'Unstake ' + symbol"
-                        flat
-                        @click="unstake"
-                    />
-                </div>
-            </div>
-        </div>
-        <ViewTransaction
-            v-model="openTransaction"
-            :transactionId="transactionId"
-            :transactionError="transactionError || ''"
-            message="transaction complete"
-        />
-    </q-card-section>
-</div>
-</template>
 
 <style scoped lang="sass">
 .button-accent

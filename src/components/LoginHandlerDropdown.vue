@@ -1,3 +1,33 @@
+<template>
+
+<q-btn-dropdown
+    class="connect-button"
+    color="primary"
+    :label="account"
+    :content-style="{ backgroundColor: '#172c6c' }"
+>
+    <q-card class="buttons-container">
+        <q-card-section>
+            <div class="row">
+                <div class="col-12"><a class="text-white hover-dec" :href=" '/account/' + account">{{account}}</a></div>
+            </div>
+        </q-card-section>
+        <q-separator dark/>
+        <q-card-section>
+            <div class="q-px-sm q-pb-sm">
+                <q-btn
+                    class="full-width"
+                    color="primary"
+                    label="Disconect"
+                    @click="onLogout"
+                />
+            </div>
+        </q-card-section>
+    </q-card>
+</q-btn-dropdown>
+<WalletModal v-model="showModal"/>
+
+</template>
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import WalletModal from 'src/components/WalletModal.vue';
@@ -45,36 +75,6 @@ export default defineComponent({
     },
 });
 </script>
-<template>
-
-<q-btn-dropdown
-    class="connect-button"
-    color="primary"
-    :label="account"
-    :content-style="{ backgroundColor: '#172c6c' }"
->
-    <q-card class="buttons-container">
-        <q-card-section>
-            <div class="row">
-                <div class="col-12"><a class="text-white hover-dec" :href=" '/account/' + account">{{account}}</a></div>
-            </div>
-        </q-card-section>
-        <q-separator dark/>
-        <q-card-section>
-            <div class="q-px-sm q-pb-sm">
-                <q-btn
-                    class="full-width"
-                    color="primary"
-                    label="Disconect"
-                    @click="onLogout"
-                />
-            </div>
-        </q-card-section>
-    </q-card>
-</q-btn-dropdown>
-<WalletModal v-model="showModal"/>
-
-</template>
 <style lang="sass" scoped>
 .q-menu
   background-color: blue

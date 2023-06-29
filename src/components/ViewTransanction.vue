@@ -1,3 +1,44 @@
+<template>
+<q-dialog>
+    <div class="Card">
+        <q-card-section v-if="Id">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="text-h6">{{msg}}</div>
+                    </div>
+                    <div class="row ellipsis-overflow q-pt-lg q-pl-md" @click="navToTransaction">{{ Id }}</div>
+                </div>
+            </div>
+        </q-card-section>
+        <q-card-section v-else>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">Transaction Failed: {{ transactionE }}</div>
+                </div>
+            </div>
+        </q-card-section>
+        <q-card-actions class="text-primary" align="right">
+            <q-btn
+                v-close-popup
+                flat
+                label="Close"
+                text-color="grey-3"
+                @click="reset"
+            />
+            <q-btn
+                v-if="Id"
+                flat
+                label="View transaction"
+                text-color="grey-3"
+                @click="navToTransaction"
+            />
+        </q-card-actions>
+    </div>
+</q-dialog>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'src/store';
@@ -41,47 +82,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<q-dialog>
-    <div class="Card">
-        <q-card-section v-if="Id">
-            <div class="row">
-                <div class="col-12">
-                    <div class="row">
-                        <div class="text-h6">{{msg}}</div>
-                    </div>
-                    <div class="row ellipsis-overflow q-pt-lg q-pl-md" @click="navToTransaction">{{ Id }}</div>
-                </div>
-            </div>
-        </q-card-section>
-        <q-card-section v-else>
-            <div class="row">
-                <div class="col-12">
-                    <div class="row">Transaction Failed: {{ transactionE }}</div>
-                </div>
-            </div>
-        </q-card-section>
-        <q-card-actions class="text-primary" align="right">
-            <q-btn
-                v-close-popup
-                flat
-                label="Close"
-                text-color="grey-3"
-                @click="reset"
-            />
-            <q-btn
-                v-if="Id"
-                flat
-                label="View transaction"
-                text-color="grey-3"
-                @click="navToTransaction"
-            />
-        </q-card-actions>
-    </div>
-</q-dialog>
-
-</template>
 
 <style lang="sass" scoped>
 

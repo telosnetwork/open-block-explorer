@@ -1,30 +1,3 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import StakingInfo from 'src/components/resources/ResourcesInfo.vue';
-import StakingTab from 'src/components/resources/StakeTab.vue';
-import UnstakingTab from 'src/components/resources/UnstakeTab.vue';
-import RefundTab from 'src/components/resources/RefundTab.vue';
-import BuyRam from 'src/components/resources/BuyRam.vue';
-import SellRam from 'src/components/resources/SellRam.vue';
-
-export default defineComponent({
-    name: 'ResourcesDialog',
-    components: {
-        StakingInfo,
-        StakingTab,
-        UnstakingTab,
-        RefundTab,
-        BuyRam,
-        SellRam,
-    },
-    setup() {
-        return {
-            tab: ref('stake'),
-        };
-    },
-});
-</script>
-
 <template>
 
 <q-dialog :persistent="true" maximized>
@@ -90,6 +63,33 @@ export default defineComponent({
 </q-dialog>
 
 </template>
+
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import StakingInfo from 'src/components/resources/ResourcesInfo.vue';
+import StakingTab from 'src/components/resources/StakeTab.vue';
+import UnstakingTab from 'src/components/resources/UnstakeTab.vue';
+import RefundTab from 'src/components/resources/RefundTab.vue';
+import BuyRam from 'src/components/resources/BuyRam.vue';
+import SellRam from 'src/components/resources/SellRam.vue';
+
+export default defineComponent({
+    name: 'ResourcesDialog',
+    components: {
+        StakingInfo,
+        StakingTab,
+        UnstakingTab,
+        RefundTab,
+        BuyRam,
+        SellRam,
+    },
+    setup() {
+        return {
+            tab: ref('stake'),
+        };
+    },
+});
+</script>
 
 <style lang="sass" scoped>
 

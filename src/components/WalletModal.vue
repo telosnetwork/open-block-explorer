@@ -1,3 +1,41 @@
+<template>
+<q-dialog ref="walletDialog" class="modal-container">
+    <div class="modal-header-container">
+        <q-icon name="add_circle_outline" color="white" :size="iconSize"/>
+        <h3 class="modal-header">Attach an account</h3>
+    </div>
+    <q-separator/>
+    <q-list>
+        <q-item
+            v-for="(wallet, idx) in $ual.getAuthenticators().availableAuthenticators"
+            :key="wallet.getStyle().text"
+            v-ripple
+            :style="{background: wallet.getStyle().background, color: wallet.getStyle().textColor}"
+        >
+            <q-item-section class="cursor-pointer" avatar @click="onLogin(idx)"><img :src="wallet.getStyle().icon" width="30"></q-item-section>
+            <q-item-section class="cursor-pointer" @click="onLogin(idx)">{{ wallet.getStyle().text }}</q-item-section>
+            <q-item-section class="flex" avatar>
+                <q-spinner v-if="loading === wallet.getStyle().text" :color="wallet.getStyle().textColor" size="2em"/>
+                <q-btn
+                    v-else
+                    :color="wallet.getStyle().textColor"
+                    icon="get_app"
+                    target="_blank"
+                    dense
+                    flat
+                    size="12px"
+                    @click="openUrl(wallet.getOnboardingLink())"
+                >
+                    <q-tooltip>Get app</q-tooltip>
+                </q-btn>
+            </q-item-section>
+        </q-item>
+        <q-item v-if="error" :active="!!error" active-class="bg-red-1 text-grey-8">
+            <q-item-section>{{ error }}</q-item-section>
+        </q-item>
+    </q-list>
+</q-dialog>
+</template>
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import { DialogChainObject } from 'quasar';
@@ -53,44 +91,6 @@ export default defineComponent({
     },
 });
 </script>
-<template>
-<q-dialog ref="walletDialog" class="modal-container">
-    <div class="modal-header-container">
-        <q-icon name="add_circle_outline" color="white" :size="iconSize"/>
-        <h3 class="modal-header">Attach an account</h3>
-    </div>
-    <q-separator/>
-    <q-list>
-        <q-item
-            v-for="(wallet, idx) in $ual.getAuthenticators().availableAuthenticators"
-            :key="wallet.getStyle().text"
-            v-ripple
-            :style="{background: wallet.getStyle().background, color: wallet.getStyle().textColor}"
-        >
-            <q-item-section class="cursor-pointer" avatar @click="onLogin(idx)"><img :src="wallet.getStyle().icon" width="30"></q-item-section>
-            <q-item-section class="cursor-pointer" @click="onLogin(idx)">{{ wallet.getStyle().text }}</q-item-section>
-            <q-item-section class="flex" avatar>
-                <q-spinner v-if="loading === wallet.getStyle().text" :color="wallet.getStyle().textColor" size="2em"/>
-                <q-btn
-                    v-else
-                    :color="wallet.getStyle().textColor"
-                    icon="get_app"
-                    target="_blank"
-                    dense
-                    flat
-                    size="12px"
-                    @click="openUrl(wallet.getOnboardingLink())"
-                >
-                    <q-tooltip>Get app</q-tooltip>
-                </q-btn>
-            </q-item-section>
-        </q-item>
-        <q-item v-if="error" :active="!!error" active-class="bg-red-1 text-grey-8">
-            <q-item-section>{{ error }}</q-item-section>
-        </q-item>
-    </q-list>
-</q-dialog>
-</template>
 
 <style lang="sass">
 .fixed-full

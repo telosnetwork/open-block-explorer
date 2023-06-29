@@ -1,3 +1,37 @@
+<template>
+<div class="row col-12">
+    <div class="column col-12 header-support">
+        <div class="row">
+            <AccountCard class="account-card" :account="account" :tokens="tokenList"/>
+        </div>
+        <q-tabs v-model="tab" class="account-view tabs" no-caps>
+            <q-tab name="transactions" label="Transactions"/>
+            <q-tab v-if="abi" name="contract" label="Contract"/>
+            <q-tab name="tokens" label="Tokens"/>
+            <q-tab name="keys" label="Keys"/>
+            <q-tab name="children" label="Children"/>
+        </q-tabs>
+    </div>
+    <q-tab-panels v-model="tab" class="col-12">
+        <q-tab-panel name="transactions">
+            <TransactionsTable :account="account" :showTransferLabel="true" :show-pagination-extras="true" />
+        </q-tab-panel>
+        <q-tab-panel v-if="abi" name="contract">
+            <ContractTabs/>
+        </q-tab-panel>
+        <q-tab-panel name="tokens">
+            <TokensPanel :account="account"/>
+        </q-tab-panel>
+        <q-tab-panel name="keys">
+            <KeysPanel :account="account"/>
+        </q-tab-panel>
+        <q-tab-panel name="children">
+            <ChildrenPanel :account="account"/>
+        </q-tab-panel>
+    </q-tab-panels>
+</div>
+</template>
+
 <script lang="ts">
 import { defineComponent, onMounted, ref, computed, watch } from 'vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
@@ -51,40 +85,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<div class="row col-12">
-    <div class="column col-12 header-support">
-        <div class="row">
-            <AccountCard class="account-card" :account="account" :tokens="tokenList"/>
-        </div>
-        <q-tabs v-model="tab" class="account-view tabs" no-caps>
-            <q-tab name="transactions" label="Transactions"/>
-            <q-tab v-if="abi" name="contract" label="Contract"/>
-            <q-tab name="tokens" label="Tokens"/>
-            <q-tab name="keys" label="Keys"/>
-            <q-tab name="children" label="Children"/>
-        </q-tabs>
-    </div>
-    <q-tab-panels v-model="tab" class="col-12">
-        <q-tab-panel name="transactions">
-            <TransactionsTable :account="account" :showTransferLabel="true" :show-pagination-extras="true" />
-        </q-tab-panel>
-        <q-tab-panel v-if="abi" name="contract">
-            <ContractTabs/>
-        </q-tab-panel>
-        <q-tab-panel name="tokens">
-            <TokensPanel :account="account"/>
-        </q-tab-panel>
-        <q-tab-panel name="keys">
-            <KeysPanel :account="account"/>
-        </q-tab-panel>
-        <q-tab-panel name="children">
-            <ChildrenPanel :account="account"/>
-        </q-tab-panel>
-    </q-tab-panels>
-</div>
-</template>
 
 <style lang="sass">
 .account-card

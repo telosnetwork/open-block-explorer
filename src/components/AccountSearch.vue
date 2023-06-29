@@ -1,3 +1,53 @@
+<template>
+
+<q-select
+    borderless
+    dense
+    filled
+    use-input
+    hide-selected
+    fill-input
+    hide-bottom-space
+    placeholder="name"
+    :loading="isLoading"
+    :model-value="inputValue"
+    :options="options"
+    :option-disable="(item) => item.isHeader"
+    :reactive-rules="withValidation"
+    :rules="withValidation ? [value => !!value || 'Field is required', (value) => isLoading || options.filter(o => o.label === value).length === 1 || 'Field invalid'] : []"
+    :error="withValidation && isError"
+    @input-value="(value) => inputValue = value"
+    @keyup.enter="handleSelected"
+>
+    <template v-if="!removeSearchIcon" #prepend>
+        <q-icon class="rotate-90" name="search" size="20px"/>
+    </template>
+    <template #no-option>
+        <q-item>
+            <q-item-section class="text-center">
+                <q-item-label v-if="isLoading">Searching...</q-item-label>
+                <q-item-label v-else>{{ inputValue ? 'Nothing found' : 'Search for an account name' }}</q-item-label>
+            </q-item-section>
+        </q-item>
+    </template>
+    <template #option="scope">
+        <q-item-label v-if="scope.opt.isHeader" header>{{ scope.opt.label }}</q-item-label>
+        <q-item
+            v-else
+            v-bind="scope.itemProps"
+            exact="exact"
+            clickable="clickable"
+            @click="handleSelected(scope.opt.to)"
+        >
+            <q-item-section>
+                <q-item-label>{{ scope.opt.label }}</q-item-label>
+            </q-item-section>
+        </q-item>
+    </template>
+</q-select>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, watch, onMounted } from 'vue';
 import { OptionsObj } from 'src/types';
@@ -172,53 +222,3 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<q-select
-    borderless
-    dense
-    filled
-    use-input
-    hide-selected
-    fill-input
-    hide-bottom-space
-    placeholder="name"
-    :loading="isLoading"
-    :model-value="inputValue"
-    :options="options"
-    :option-disable="(item) => item.isHeader"
-    :reactive-rules="withValidation"
-    :rules="withValidation ? [value => !!value || 'Field is required', (value) => isLoading || options.filter(o => o.label === value).length === 1 || 'Field invalid'] : []"
-    :error="withValidation && isError"
-    @input-value="(value) => inputValue = value"
-    @keyup.enter="handleSelected"
->
-    <template v-if="!removeSearchIcon" #prepend>
-        <q-icon class="rotate-90" name="search" size="20px"/>
-    </template>
-    <template #no-option>
-        <q-item>
-            <q-item-section class="text-center">
-                <q-item-label v-if="isLoading">Searching...</q-item-label>
-                <q-item-label v-else>{{ inputValue ? 'Nothing found' : 'Search for an account name' }}</q-item-label>
-            </q-item-section>
-        </q-item>
-    </template>
-    <template #option="scope">
-        <q-item-label v-if="scope.opt.isHeader" header>{{ scope.opt.label }}</q-item-label>
-        <q-item
-            v-else
-            v-bind="scope.itemProps"
-            exact="exact"
-            clickable="clickable"
-            @click="handleSelected(scope.opt.to)"
-        >
-            <q-item-section>
-                <q-item-label>{{ scope.opt.label }}</q-item-label>
-            </q-item-section>
-        </q-item>
-    </template>
-</q-select>
-
-</template>

@@ -1,3 +1,7 @@
+<template>
+<router-view />
+</template>
+
 <script lang="ts">
 import { setCssVar } from 'quasar';
 import ConfigManager from 'src/config/ConfigManager';
@@ -36,7 +40,3 @@ export default {
     name: 'App',
 };
 </script>
-
-<template>
-<router-view />
-</template>

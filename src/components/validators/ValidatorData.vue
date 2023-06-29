@@ -1,3 +1,104 @@
+<template>
+<div class="q-pa-md header-support">
+    <div class="row q-col-gutter-md q-pt-md container-max-width">
+        <div class="col-md-8 col-sm-12 col-xs-12">
+            <q-card class="full-height" >
+                <q-card-section>
+                    <div class="row q-pa-md text-h5 text-weight-light">Voting Statistics</div>
+                    <div class="row q-pa-md">
+                        <div class="col-12">
+                            <q-linear-progress
+                                class="gradient-color q-mt-sm"
+                                size="120px"
+                                rounded
+                                :value="votesProgress"
+                            />
+                        </div>
+                    </div>
+                    <div class="row q-pa-md">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-6 text-uppercase text-grey">Total votes</div>
+                                <div class="col-6">
+                                    <div class="float-right text-uppercase text-grey">Total Supply</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">{{ amount_voted.toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}</div>
+                                <div class="col-6">
+                                    <div class="float-right">{{ supply.toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </q-card-section>
+            </q-card>
+        </div>
+        <div v-if="accountValid" class="col-md-4 col-sm-12 col-xs-12">
+            <q-card>
+                <q-card-section>
+                    <div class="row full-width justify-center">
+                        <div class="text-h6 q-py-md text-weight-regular text-grey">Current Vote Weight</div>
+                        <q-icon
+                            class="info-icon"
+                            name="info"
+                            color="white"
+                            size="20px"
+                        >
+                            <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">Voting is inversley weighted and increases the more validators you vote for (up to 30).</q-tooltip>
+                        </q-icon>
+                    </div>
+                    <div class="row full-width justify-center text-h5">{{ balance }}</div>
+                    <div class="row full-width justify-center text-h6 q-py-md text-weight-regular text-grey">{{account}}</div>
+                </q-card-section>
+                <q-separator />
+                <q-card-section>
+                    <div class="row full-width justify-center subtitle2 q-py-md text-weight-regular text-grey q-pt-lg">SELECTED {{currentVote.length}} BLOCK PRODUCERS</div>
+                    <div class="row full-width justify-center">
+                        <q-btn
+                            class="full-width q-pa-sm"
+                            label="Vote for Block Producers"
+                            color="primary"
+                            @click="sendVoteTransaction"
+                        />
+                    </div>
+                </q-card-section>
+            </q-card>
+        </div>
+
+        <div v-else class="col-md-4 col-sm-12 col-xs-12">
+            <q-card class="full-height">
+                <q-card-section class="full-height">
+                    <div class="column justify-center full-height">
+                        <div class="row">
+                            <div class="col-12 subtitle2 q-pb-md text-weight-regular text-grey q-pt-lg text-center">SELECTED {{currentVote.length}} BLOCK PRODUCERS</div>
+                            <div class="col-12">
+                                <q-btn
+                                    class="full-width q-pa-sm"
+                                    label="Vote for Block Producers"
+                                    color="primary"
+                                    @click="sendVoteTransaction"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </q-card-section>
+            </q-card>
+        </div>
+    </div>
+</div>
+<div class="container-max-width">
+    <ValidatorDataTable ref="ValidatorDataTable" :top21pay24h="top21pay24h"/>
+    <ViewTransaction
+        v-model="openTransaction"
+        :transactionId="transactionId"
+        :transactionError="transactionError || ''"
+        message="transaction complete"
+    />
+</div>
+<WalletModal v-model="showWalletModal"/>
+</template>
+
 <script lang="ts">
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import ValidatorDataTable from 'src/components/validators/ValidatorDataTable.vue';
@@ -183,107 +284,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<div class="q-pa-md header-support">
-    <div class="row q-col-gutter-md q-pt-md container-max-width">
-        <div class="col-md-8 col-sm-12 col-xs-12">
-            <q-card class="full-height" >
-                <q-card-section>
-                    <div class="row q-pa-md text-h5 text-weight-light">Voting Statistics</div>
-                    <div class="row q-pa-md">
-                        <div class="col-12">
-                            <q-linear-progress
-                                class="gradient-color q-mt-sm"
-                                size="120px"
-                                rounded
-                                :value="votesProgress"
-                            />
-                        </div>
-                    </div>
-                    <div class="row q-pa-md">
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-6 text-uppercase text-grey">Total votes</div>
-                                <div class="col-6">
-                                    <div class="float-right text-uppercase text-grey">Total Supply</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">{{ amount_voted.toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}</div>
-                                <div class="col-6">
-                                    <div class="float-right">{{ supply.toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </q-card-section>
-            </q-card>
-        </div>
-        <div v-if="accountValid" class="col-md-4 col-sm-12 col-xs-12">
-            <q-card>
-                <q-card-section>
-                    <div class="row full-width justify-center">
-                        <div class="text-h6 q-py-md text-weight-regular text-grey">Current Vote Weight</div>
-                        <q-icon
-                            class="info-icon"
-                            name="info"
-                            color="white"
-                            size="20px"
-                        >
-                            <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">Voting is inversley weighted and increases the more validators you vote for (up to 30).</q-tooltip>
-                        </q-icon>
-                    </div>
-                    <div class="row full-width justify-center text-h5">{{ balance }}</div>
-                    <div class="row full-width justify-center text-h6 q-py-md text-weight-regular text-grey">{{account}}</div>
-                </q-card-section>
-                <q-separator />
-                <q-card-section>
-                    <div class="row full-width justify-center subtitle2 q-py-md text-weight-regular text-grey q-pt-lg">SELECTED {{currentVote.length}} BLOCK PRODUCERS</div>
-                    <div class="row full-width justify-center">
-                        <q-btn
-                            class="full-width q-pa-sm"
-                            label="Vote for Block Producers"
-                            color="primary"
-                            @click="sendVoteTransaction"
-                        />
-                    </div>
-                </q-card-section>
-            </q-card>
-        </div>
-
-        <div v-else class="col-md-4 col-sm-12 col-xs-12">
-            <q-card class="full-height">
-                <q-card-section class="full-height">
-                    <div class="column justify-center full-height">
-                        <div class="row">
-                            <div class="col-12 subtitle2 q-pb-md text-weight-regular text-grey q-pt-lg text-center">SELECTED {{currentVote.length}} BLOCK PRODUCERS</div>
-                            <div class="col-12">
-                                <q-btn
-                                    class="full-width q-pa-sm"
-                                    label="Vote for Block Producers"
-                                    color="primary"
-                                    @click="sendVoteTransaction"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </q-card-section>
-            </q-card>
-        </div>
-    </div>
-</div>
-<div class="container-max-width">
-    <ValidatorDataTable ref="ValidatorDataTable" :top21pay24h="top21pay24h"/>
-    <ViewTransaction
-        v-model="openTransaction"
-        :transactionId="transactionId"
-        :transactionError="transactionError || ''"
-        message="transaction complete"
-    />
-</div>
-<WalletModal v-model="showWalletModal"/>
-</template>
 
 <style lang="sass" scoped>
 .header-support

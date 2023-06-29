@@ -1,3 +1,22 @@
+<template>
+<div>
+    {{textDes}}
+    <q-tooltip v-if="longText">
+        {{ accText}}
+    </q-tooltip>
+    <q-btn
+        v-if="longText"
+        flat
+        round
+        color="black"
+        icon="content_copy"
+        size="sm"
+        @click="copy(accText)"
+    />
+</div>
+
+</template>
+
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import { copyToClipboard } from 'quasar';
@@ -42,25 +61,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<div>
-    {{textDes}}
-    <q-tooltip v-if="longText">
-        {{ accText}}
-    </q-tooltip>
-    <q-btn
-        v-if="longText"
-        flat
-        round
-        color="black"
-        icon="content_copy"
-        size="sm"
-        @click="copy(accText)"
-    />
-</div>
-
-</template>
 
 <style scoped lang="sass">
 

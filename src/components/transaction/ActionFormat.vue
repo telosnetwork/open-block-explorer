@@ -1,3 +1,13 @@
+<template>
+<div class="action-container">
+    <div class="action action-general">
+        <AccountFormat :account="tx.act.account" type="account"/><span class="inline">&nbsp; → &nbsp;</span><span>{{tx.act.name}}</span>
+    </div>
+    <div v-if="divContent" class="action action-transfer">{{ divContent }}</div>
+</div>
+
+</template>
+
 <script lang="ts">
 import {
     defineComponent,
@@ -56,16 +66,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<div class="action-container">
-    <div class="action action-general">
-        <AccountFormat :account="tx.act.account" type="account"/><span class="inline">&nbsp; → &nbsp;</span><span>{{tx.act.name}}</span>
-    </div>
-    <div v-if="divContent" class="action action-transfer">{{ divContent }}</div>
-</div>
-
-</template>
 
 <style lang="scss" >
 .action-container{

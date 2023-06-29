@@ -1,37 +1,3 @@
-<script lang="ts">
-import { defineComponent, computed } from 'vue';
-import { useQuasar } from 'quasar';
-import LoginHandler from 'components/LoginHandler.vue';
-import HeaderSearch from 'components/HeaderSearch.vue';
-import ChainsMenu from 'components/ChainsMenu.vue';
-import { getChain } from 'src/config/ConfigManager';
-import { useStore } from 'src/store';
-
-export default defineComponent({
-    name: 'AppHeader',
-    components: {
-        LoginHandler,
-        HeaderSearch,
-        ChainsMenu,
-    },
-    setup() {
-        const $q = useQuasar();
-        const chain = getChain();
-        const store = useStore();
-        const account = computed(() => store.state.account.accountName);
-        const isLarge = computed((): boolean => $q.screen.gt.sm);
-        const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
-
-        return {
-            account,
-            isLarge: isLarge,
-            chain,
-            showMultichainSelector,
-        };
-    },
-});
-</script>
-
 <template>
 <div class="header-background">
     <div class="row text-center q-pt-sm justify-between q-pt-md">
@@ -97,6 +63,40 @@ export default defineComponent({
     </div>
 </div>
 </template>
+
+<script lang="ts">
+import { defineComponent, computed } from 'vue';
+import { useQuasar } from 'quasar';
+import LoginHandler from 'components/LoginHandler.vue';
+import HeaderSearch from 'components/HeaderSearch.vue';
+import ChainsMenu from 'components/ChainsMenu.vue';
+import { getChain } from 'src/config/ConfigManager';
+import { useStore } from 'src/store';
+
+export default defineComponent({
+    name: 'AppHeader',
+    components: {
+        LoginHandler,
+        HeaderSearch,
+        ChainsMenu,
+    },
+    setup() {
+        const $q = useQuasar();
+        const chain = getChain();
+        const store = useStore();
+        const account = computed(() => store.state.account.accountName);
+        const isLarge = computed((): boolean => $q.screen.gt.sm);
+        const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
+
+        return {
+            account,
+            isLarge: isLarge,
+            chain,
+            showMultichainSelector,
+        };
+    },
+});
+</script>
 
 <style lang="sass" scoped>
 .q-tab

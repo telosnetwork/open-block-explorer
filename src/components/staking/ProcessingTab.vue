@@ -1,3 +1,27 @@
+<template>
+<div class="q-pt-lg">
+    <div class="container-refund q-pa-sm">
+        <div class="row full-width">
+            <div class="col-xs-12 col-sm-6">
+                <div class="row q-pa-sm">
+                    <div class="col-6">Staked TLOS maturing</div>
+                    <div class="col-6 text-right text-weight-bold">{{maturingRex}}</div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="row q-pa-sm">
+                    <div class="col-7">{{maturitiesCountdown()}}</div>
+                    <div class="col-5 text-right text-weight-bold">
+                        <q-linear-progress class="q-mt-sm" :value="refundProgress()" color="grey-3"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
@@ -77,30 +101,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<div class="q-pt-lg">
-    <div class="container-refund q-pa-sm">
-        <div class="row full-width">
-            <div class="col-xs-12 col-sm-6">
-                <div class="row q-pa-sm">
-                    <div class="col-6">Staked TLOS maturing</div>
-                    <div class="col-6 text-right text-weight-bold">{{maturingRex}}</div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-6">
-                <div class="row q-pa-sm">
-                    <div class="col-7">{{maturitiesCountdown()}}</div>
-                    <div class="col-5 text-right text-weight-bold">
-                        <q-linear-progress class="q-mt-sm" :value="refundProgress()" color="grey-3"/>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-</template>
 
 <style lang="sass">
 .button-accent

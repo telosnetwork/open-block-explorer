@@ -1,3 +1,90 @@
+<template>
+
+<div class="row full-width justify-center">
+    <div class="col-xs-12 col-md-8 col-lg-6">
+        <q-card class="info-card container-max-width" flat>
+            <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
+                <q-card-section class="q-pl-md">
+                    <div class="text-h4 text-bold">Transaction</div>
+                </q-card-section>
+                <q-card-section class="q-pt-none">
+                    <div class="row items-center">
+                        <div class="col-11 text-bold ellipsis">{{transaction}}</div>
+                        <div class="col-1">
+                            <q-btn
+                                class="float-right"
+                                flat
+                                round
+                                color="black"
+                                icon="content_copy"
+                                size="sm"
+                                @click="copy(transaction)"
+                            />
+                        </div>
+                    </div>
+                </q-card-section>
+                <q-card-section>
+                    <div class="text-grey-7">SUMMARY</div>
+                </q-card-section>
+                <q-separator class="card-separator" inset="inset"/>
+                <q-card-section>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="text-body1 text-weight-medium text-uppercase">Block Hash</div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 text-right text-bold">
+                            <AccountFormat :account="blockNum" type="block"/>
+                            <q-btn
+                                flat
+                                round
+                                color="black"
+                                icon="content_copy"
+                                size="sm"
+                                @click="copy(blockNum)"
+                            />
+                        </div>
+                    </div>
+                </q-card-section>
+                <q-separator class="card-separator" inset="inset"/>
+                <q-card-section>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="text-body1 text-weight-medium text-uppercase">Block time</div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 text-right text-bold">{{formatDate(timestamp)}}</div>
+                    </div>
+                </q-card-section>
+                <q-separator class="card-separator" inset="inset"/>
+                <q-card-section>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="text-body1 text-weight-medium text-uppercase">Type</div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 text-right text-bold">
+                            <TypeFormat :type="transactionData.type"/>
+                        </div>
+                    </div>
+                </q-card-section>
+                <div v-for="property in propertyOrder" :key="property">
+                    <q-separator class="card-separator" inset="inset"/>
+                    <q-card-section>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="text-body1 text-weight-medium text-uppercase">{{ property.toUpperCase() }}</div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 text-right text-bold">
+                                <TextFormat :text="transactionData[property]"/>
+                            </div>
+                        </div>
+                    </q-card-section>
+                </div>
+            </div>
+        </q-card>
+    </div>
+</div>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
@@ -87,92 +174,5 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="row full-width justify-center">
-    <div class="col-xs-12 col-md-8 col-lg-6">
-        <q-card class="info-card container-max-width" flat>
-            <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
-                <q-card-section class="q-pl-md">
-                    <div class="text-h4 text-bold">Transaction</div>
-                </q-card-section>
-                <q-card-section class="q-pt-none">
-                    <div class="row items-center">
-                        <div class="col-11 text-bold ellipsis">{{transaction}}</div>
-                        <div class="col-1">
-                            <q-btn
-                                class="float-right"
-                                flat
-                                round
-                                color="black"
-                                icon="content_copy"
-                                size="sm"
-                                @click="copy(transaction)"
-                            />
-                        </div>
-                    </div>
-                </q-card-section>
-                <q-card-section>
-                    <div class="text-grey-7">SUMMARY</div>
-                </q-card-section>
-                <q-separator class="card-separator" inset="inset"/>
-                <q-card-section>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="text-body1 text-weight-medium text-uppercase">Block Hash</div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 text-right text-bold">
-                            <AccountFormat :account="blockNum" type="block"/>
-                            <q-btn
-                                flat
-                                round
-                                color="black"
-                                icon="content_copy"
-                                size="sm"
-                                @click="copy(blockNum)"
-                            />
-                        </div>
-                    </div>
-                </q-card-section>
-                <q-separator class="card-separator" inset="inset"/>
-                <q-card-section>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="text-body1 text-weight-medium text-uppercase">Block time</div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 text-right text-bold">{{formatDate(timestamp)}}</div>
-                    </div>
-                </q-card-section>
-                <q-separator class="card-separator" inset="inset"/>
-                <q-card-section>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6">
-                            <div class="text-body1 text-weight-medium text-uppercase">Type</div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 text-right text-bold">
-                            <TypeFormat :type="transactionData.type"/>
-                        </div>
-                    </div>
-                </q-card-section>
-                <div v-for="property in propertyOrder" :key="property">
-                    <q-separator class="card-separator" inset="inset"/>
-                    <q-card-section>
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6">
-                                <div class="text-body1 text-weight-medium text-uppercase">{{ property.toUpperCase() }}</div>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 text-right text-bold">
-                                <TextFormat :text="transactionData[property]"/>
-                            </div>
-                        </div>
-                    </q-card-section>
-                </div>
-            </div>
-        </q-card>
-    </div>
-</div>
-
-</template>
 
 <style lang="sass"></style>

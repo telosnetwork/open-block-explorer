@@ -1,3 +1,90 @@
+<template>
+
+<div class="staking-form">
+    <q-card-section class="text-grey-3 text-weight-light">
+        <div class="row">
+            <div class="col-12">
+                <div class="row justify-between q-pb-sm">CPU/NET Receiver
+                    <q-space/>
+                    <div class="text-grey-3">Defaults to connected account</div>
+                </div>
+                <q-input
+                    v-model="stakingAccount"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    dense
+                    dark
+                    :lazy-rules="true"
+                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
+                />
+            </div>
+        </div>
+        <div class="row q-py-md">
+            <div class="col-6">
+                <div class="row q-pb-sm">
+                    <div class="col-6">ADD CPU</div>
+                    <div class="col-6 text-right">
+                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
+
+                    </div>
+                </div>
+                <q-input
+                    v-model="cpuTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0"
+                    :lazy-rules="true"
+                    :rules="inputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+            <div class="col-6 q-pl-md">
+                <div class="row q-pb-sm">
+                    <div class="col-6">ADD NET</div>
+                    <div class="col-6 text-right">
+                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
+                    </div>
+                </div>
+                <q-input
+                    v-model="netTokens"
+                    class="full-width"
+                    standout="bg-deep-purple-2 text-white"
+                    placeholder="0"
+                    :lazy-rules="true"
+                    :rules="inputRules"
+                    type="text"
+                    dense
+                    dark
+                    @blur="formatDec"
+                />
+            </div>
+        </div>
+        <div v-if="notEnoughTlosForTransaction" class="row text-red">Balance too low for transaction</div>
+        <div class="row">
+            <div class="col-12 q-pt-md">
+                <q-btn
+                    class="full-width button-accent"
+                    label="Confirm"
+                    flat
+                    :disable="disableCta"
+                    @click="sendTransaction"
+                />
+            </div>
+        </div>
+    </q-card-section>
+    <ViewTransaction
+        v-model="openTransaction"
+        :transactionId="transactionId"
+        :transactionError="transactionError || ''"
+        message="transaction complete"
+    />
+</div>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { mapActions } from 'vuex';
@@ -104,93 +191,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="staking-form">
-    <q-card-section class="text-grey-3 text-weight-light">
-        <div class="row">
-            <div class="col-12">
-                <div class="row justify-between q-pb-sm">CPU/NET Receiver
-                    <q-space/>
-                    <div class="text-grey-3">Defaults to connected account</div>
-                </div>
-                <q-input
-                    v-model="stakingAccount"
-                    class="full-width"
-                    standout="bg-deep-purple-2 text-white"
-                    dense
-                    dark
-                    :lazy-rules="true"
-                    :rules="[ val => isValidAccount(val) || 'Invalid account name.' ]"
-                />
-            </div>
-        </div>
-        <div class="row q-py-md">
-            <div class="col-6">
-                <div class="row q-pb-sm">
-                    <div class="col-6">ADD CPU</div>
-                    <div class="col-6 text-right">
-                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
-
-                    </div>
-                </div>
-                <q-input
-                    v-model="cpuTokens"
-                    class="full-width"
-                    standout="bg-deep-purple-2 text-white"
-                    placeholder="0"
-                    :lazy-rules="true"
-                    :rules="inputRules"
-                    type="text"
-                    dense
-                    dark
-                    @blur="formatDec"
-                />
-            </div>
-            <div class="col-6 q-pl-md">
-                <div class="row q-pb-sm">
-                    <div class="col-6">ADD NET</div>
-                    <div class="col-6 text-right">
-                        <span class="text-weight-bold">{{ `${accountTotalAsNumber} AVAILABLE` }}</span>
-                    </div>
-                </div>
-                <q-input
-                    v-model="netTokens"
-                    class="full-width"
-                    standout="bg-deep-purple-2 text-white"
-                    placeholder="0"
-                    :lazy-rules="true"
-                    :rules="inputRules"
-                    type="text"
-                    dense
-                    dark
-                    @blur="formatDec"
-                />
-            </div>
-        </div>
-        <div v-if="notEnoughTlosForTransaction" class="row text-red">Balance too low for transaction</div>
-        <div class="row">
-            <div class="col-12 q-pt-md">
-                <q-btn
-                    class="full-width button-accent"
-                    label="Confirm"
-                    flat
-                    :disable="disableCta"
-                    @click="sendTransaction"
-                />
-            </div>
-        </div>
-    </q-card-section>
-    <ViewTransaction
-        v-model="openTransaction"
-        :transactionId="transactionId"
-        :transactionError="transactionError || ''"
-        message="transaction complete"
-    />
-</div>
-
-</template>
 
 <style lang="sass">
 .button-accent

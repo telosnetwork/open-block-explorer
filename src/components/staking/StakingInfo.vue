@@ -1,3 +1,41 @@
+<template>
+
+<div class="container text-grey-3 text-weight-light">
+    <div class="row full-width">
+        <div class="row full-width q-pt-md q-px-lg">
+            <div class="col-6 text-h6 grey-3">LIQUID BALANCE</div>
+            <div class="col-6 text-h6 text-right grey-3">{{ liquidBalance }}</div>
+        </div>
+        <div class="row full-width q-py-md q-px-md">
+            <hr>
+        </div>
+        <div class="row full-width q-pb-lg">
+            <div class="col-xs-12 col-sm-6 q-px-lg">
+                <div class="row">
+                    <div class="col-7">{{ `TOTAL ${symbol} STAKED` }}</div>
+                    <div class="col-5 text-right text-weight-bold">{{coreRexBalance}}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7">SAVINGS</div>
+                    <div class="col-5 text-right text-weight-bold">{{rexSavings}}</div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 q-px-lg">
+                <div class="row">
+                    <div class="col-7">MATURED</div>
+                    <div class="col-5 text-right text-weight-bold">{{maturedRex}}</div>
+                </div>
+                <div class="row q-pt-sm">
+                    <div class="col-7">MATURING</div>
+                    <div class="col-5 text-right text-weight-bold">{{maturingRex}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</template>
+
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
@@ -40,44 +78,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-
-<div class="container text-grey-3 text-weight-light">
-    <div class="row full-width">
-        <div class="row full-width q-pt-md q-px-lg">
-            <div class="col-6 text-h6 grey-3">LIQUID BALANCE</div>
-            <div class="col-6 text-h6 text-right grey-3">{{ liquidBalance }}</div>
-        </div>
-        <div class="row full-width q-py-md q-px-md">
-            <hr>
-        </div>
-        <div class="row full-width q-pb-lg">
-            <div class="col-xs-12 col-sm-6 q-px-lg">
-                <div class="row">
-                    <div class="col-7">{{ `TOTAL ${symbol} STAKED` }}</div>
-                    <div class="col-5 text-right text-weight-bold">{{coreRexBalance}}</div>
-                </div>
-                <div class="row q-pt-sm">
-                    <div class="col-7">SAVINGS</div>
-                    <div class="col-5 text-right text-weight-bold">{{rexSavings}}</div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-6 q-px-lg">
-                <div class="row">
-                    <div class="col-7">MATURED</div>
-                    <div class="col-5 text-right text-weight-bold">{{maturedRex}}</div>
-                </div>
-                <div class="row q-pt-sm">
-                    <div class="col-7">MATURING</div>
-                    <div class="col-5 text-right text-weight-bold">{{maturingRex}}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-</template>
 
 <style lang="sass">
 .container

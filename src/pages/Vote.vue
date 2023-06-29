@@ -1,3 +1,6 @@
+<template>
+<ValidatorData />
+</template>
 <script lang="ts">
 import ValidatorData from 'src/components/validators/ValidatorData.vue';
 import { defineComponent, onMounted } from 'vue';
@@ -24,6 +27,3 @@ export default defineComponent({
     },
 });
 </script>
-<template>
-<ValidatorData />
-</template>

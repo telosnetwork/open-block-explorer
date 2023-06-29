@@ -1,3 +1,44 @@
+<template>
+<q-btn v-if="testnets.length > 0 || mainnets.length > 0" flat class="chain-button">
+    <q-icon :name="menuIcon" size="md" />
+    <q-menu v-model="menuOpened">
+        <q-list>
+            <div v-if="mainnets.length > 0" class="section-title">MAINNETS</div>
+            <q-item
+                v-for="(chain, index) in mainnets"
+                :key="`mainnet-${index}`"
+                v-ripple
+                :class="{ selected: isSelected(chain) }"
+                clickable
+                @click="chainSelected(chain)"
+            ><img class="sidebar-logo" :src="chain.getSmallLogoPath()">
+                <q-item-section>
+                    <div class="q-pl-md">{{ chain.getDisplay() }}</div>
+                </q-item-section>
+            </q-item>
+            <q-separator v-if="testnets.length > 0 && mainnets.length > 0" class="separator"/>
+            <div v-if="testnets.length > 0" class="section-title">TESTNETS</div>
+            <q-item
+                v-for="(chain, index) in testnets"
+                :key="`testnet-${index}`"
+                v-ripple
+                :class="{ selected: isSelected(chain) }"
+                clickable
+                @click="chainSelected(chain)"
+            >
+                <div class="testnet-logo-container">
+                    <img class="sidebar-logo sidebar-logo--testnet" :src="chain.getSmallLogoPath()">
+                    <div class="testnet-text">TESTNET</div>
+                </div>
+                <q-item-section>
+                    <div class="q-pl-md">{{ chain.getDisplay() }}</div>
+                </q-item-section>
+            </q-item>
+        </q-list>
+    </q-menu>
+</q-btn>
+</template>
+
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import ConfigManager from 'src/config/ConfigManager';
@@ -78,47 +119,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<q-btn v-if="testnets.length > 0 || mainnets.length > 0" flat class="chain-button">
-    <q-icon :name="menuIcon" size="md" />
-    <q-menu v-model="menuOpened">
-        <q-list>
-            <div v-if="mainnets.length > 0" class="section-title">MAINNETS</div>
-            <q-item
-                v-for="(chain, index) in mainnets"
-                :key="`mainnet-${index}`"
-                v-ripple
-                :class="{ selected: isSelected(chain) }"
-                clickable
-                @click="chainSelected(chain)"
-            ><img class="sidebar-logo" :src="chain.getSmallLogoPath()">
-                <q-item-section>
-                    <div class="q-pl-md">{{ chain.getDisplay() }}</div>
-                </q-item-section>
-            </q-item>
-            <q-separator v-if="testnets.length > 0 && mainnets.length > 0" class="separator"/>
-            <div v-if="testnets.length > 0" class="section-title">TESTNETS</div>
-            <q-item
-                v-for="(chain, index) in testnets"
-                :key="`testnet-${index}`"
-                v-ripple
-                :class="{ selected: isSelected(chain) }"
-                clickable
-                @click="chainSelected(chain)"
-            >
-                <div class="testnet-logo-container">
-                    <img class="sidebar-logo sidebar-logo--testnet" :src="chain.getSmallLogoPath()">
-                    <div class="testnet-text">TESTNET</div>
-                </div>
-                <q-item-section>
-                    <div class="q-pl-md">{{ chain.getDisplay() }}</div>
-                </q-item-section>
-            </q-item>
-        </q-list>
-    </q-menu>
-</q-btn>
-</template>
 
 <style lang="sass" scoped>
 .chain-button

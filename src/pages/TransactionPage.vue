@@ -1,49 +1,3 @@
-<script lang="ts">
-import { defineComponent, ref, onMounted, computed, watch } from 'vue';
-import TransactionsTable from 'src/components/TransactionsTable.vue';
-import TransactionCard from 'components/transaction/TransactionCard.vue';
-import TraceTree from 'components/transaction/TraceTree.vue';
-import JsonViewer from 'vue-json-viewer';
-import { useStore } from 'src/store';
-import { useRoute, useRouter } from 'vue-router';
-
-export default defineComponent({
-    name: 'TransactionPage',
-    setup() {
-        const store = useStore();
-        const route = useRoute();
-        const router = useRouter();
-        const tab = ref<string>((route.query['tab'] as string) || 'actions');
-        onMounted(() => {
-            store.commit('transaction/setTransactionId', route.params.transaction);
-            void store.dispatch('transaction/updateTransaction');
-        });
-        watch([tab], () => {
-            void router.push({
-                path: router.currentRoute.value.path,
-                query: {
-                    tab: tab.value,
-                },
-            });
-        });
-        return {
-            tab,
-            transaction: route.params.transaction,
-            actionCount: computed(() => store.state.transaction.actionCount),
-            jsonTransaction: computed(() => store.state.transaction.transaction),
-            found: computed(() => store.state.transaction.transactionFound),
-        };
-    },
-    components: {
-        TransactionsTable,
-        TransactionCard,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        JsonViewer,
-        TraceTree,
-    },
-});
-</script>
-
 <template>
 
 <div class="row">
@@ -124,6 +78,52 @@ export default defineComponent({
 </div>
 
 </template>
+
+<script lang="ts">
+import { defineComponent, ref, onMounted, computed, watch } from 'vue';
+import TransactionsTable from 'src/components/TransactionsTable.vue';
+import TransactionCard from 'components/transaction/TransactionCard.vue';
+import TraceTree from 'components/transaction/TraceTree.vue';
+import JsonViewer from 'vue-json-viewer';
+import { useStore } from 'src/store';
+import { useRoute, useRouter } from 'vue-router';
+
+export default defineComponent({
+    name: 'TransactionPage',
+    setup() {
+        const store = useStore();
+        const route = useRoute();
+        const router = useRouter();
+        const tab = ref<string>((route.query['tab'] as string) || 'actions');
+        onMounted(() => {
+            store.commit('transaction/setTransactionId', route.params.transaction);
+            void store.dispatch('transaction/updateTransaction');
+        });
+        watch([tab], () => {
+            void router.push({
+                path: router.currentRoute.value.path,
+                query: {
+                    tab: tab.value,
+                },
+            });
+        });
+        return {
+            tab,
+            transaction: route.params.transaction,
+            actionCount: computed(() => store.state.transaction.actionCount),
+            jsonTransaction: computed(() => store.state.transaction.transaction),
+            found: computed(() => store.state.transaction.transactionFound),
+        };
+    },
+    components: {
+        TransactionsTable,
+        TransactionCard,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        JsonViewer,
+        TraceTree,
+    },
+});
+</script>
 
 <style scoped lang="sass">
 .bg-blur

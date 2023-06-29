@@ -1,3 +1,32 @@
+<template>
+<div class="row full-width text-center justify-center actor-font" :class="{'text-grey-3' : mapVisible}">
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Head Block</div>
+            <div class="col-12 text-subtitle1 text-bold">{{HeadBlock}}</div>
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="hr-vertical"> </div>
+    </div>
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Producing</div>
+            <div class="col-12 text-subtitle1 text-bold">{{HeadBlockProducer}}</div>
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="hr-vertical"></div>
+    </div>
+    <div class="col-3">
+        <div class="row">
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Irreversible Block</div>
+            <div class="col-12 text-subtitle1 text-bold">{{lastIrreversibleBlock}}</div>
+        </div>
+    </div>
+</div>
+</template>
+
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'src/store';
@@ -28,35 +57,6 @@ export default defineComponent({
     },
 });
 </script>
-
-<template>
-<div class="row full-width text-center justify-center actor-font" :class="{'text-grey-3' : mapVisible}">
-    <div class="col-3">
-        <div class="row">
-            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Head Block</div>
-            <div class="col-12 text-subtitle1 text-bold">{{HeadBlock}}</div>
-        </div>
-    </div>
-    <div class="col-1">
-        <div class="hr-vertical"> </div>
-    </div>
-    <div class="col-3">
-        <div class="row">
-            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Producing</div>
-            <div class="col-12 text-subtitle1 text-bold">{{HeadBlockProducer}}</div>
-        </div>
-    </div>
-    <div class="col-1">
-        <div class="hr-vertical"></div>
-    </div>
-    <div class="col-3">
-        <div class="row">
-            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Irreversible Block</div>
-            <div class="col-12 text-subtitle1 text-bold">{{lastIrreversibleBlock}}</div>
-        </div>
-    </div>
-</div>
-</template>
 
 <style scoped lang="sass">
 .container

@@ -1,265 +1,6 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <!-- eslint-disable vue/no-static-inline-styles -->
 <!-- eslint-disable vue/no-static-inline-styles -->
-<script lang="ts">
-import { defineComponent, reactive, ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import moment from 'moment';
-import ProposalSuccess from 'components/ProposalSuccess.vue';
-import ProposalAuthorization from 'components/ProposalAuthorization.vue';
-import ProposalAction from 'components/ProposalAction.vue';
-import ProposalUploadCSV from 'components/ProposalUploadCSV.vue';
-import { Authorization, ProposalForm, Error } from 'src/types';
-import { api } from 'src/api';
-import { randomEosioName } from 'src/utils/handleEosioName';
-import { useQuasar } from 'quasar';
-import { useStore } from 'src/store';
-
-export default defineComponent({
-    name: 'ProposalNew',
-    components: {
-        ProposalSuccess,
-        ProposalAuthorization,
-        ProposalAction,
-        ProposalUploadCSV,
-    },
-    setup() {
-        const router = useRouter();
-        const store = useStore();
-        const $q = useQuasar();
-        const account = computed(() => store.state.account.accountName);
-        const isAuthenticated = computed(() => store.state.account.isAuthenticated);
-        const actionsTab = ref<'one' | 'batch'>('one');
-        const amountOfDaysToExpire = ref(7);
-        const blockProducers = ref<Authorization[]>([]);
-        const areBlockProducersApproving = ref(false);
-
-        const context_free_actions_input = ref('');
-        const transaction_extensions_input = ref('');
-
-
-        const success = reactive({
-            proposalName: '',
-            transactionId: '',
-            showModal: false,
-        });
-
-        const formData: ProposalForm = reactive({
-            proposer: '',
-            proposal_name: '',
-            requested: [
-                {
-                    actor: '',
-                    permission: '',
-                },
-            ],
-            trx: {
-                expiration: moment()
-                    .add(amountOfDaysToExpire.value, 'days')
-                    .format('YYYY-MM-DDTHH:mm:ss'),
-                ref_block_num: 0,
-                ref_block_prefix: 0,
-                max_net_usage_words: 0,
-                max_cpu_usage_ms: 0,
-                delay_sec: 0,
-                context_free_actions: [''],
-                transaction_extensions: [''],
-                actions: [],
-            },
-        });
-
-        onMounted(() => {
-            formData.proposal_name = randomEosioName();
-            formData.proposer = account.value;
-        });
-
-        onMounted(async () => {
-            if (!isAuthenticated.value) {
-                await router.push('/proposal');
-            }
-        });
-
-        onMounted(async () => {
-            const producers = await api.getProducers();
-            const producersAccount = [] as Authorization[];
-
-            for (let index = 0; index < producers.rows.length; index++) {
-                const item = producers.rows[index];
-                if (item.is_active === 1) {
-                    producersAccount.push({
-                        actor: item.owner,
-                        permission: 'active',
-                    });
-                }
-            }
-
-            blockProducers.value = producersAccount;
-        });
-
-        function handleError(message: string) {
-            $q.notify({
-                color: 'negative',
-                message,
-                actions: [
-                    {
-                        label: 'Dismiss',
-                        color: 'white',
-                    },
-                ],
-            });
-        }
-
-        async function onSubmit() {
-            const data = JSON.parse(JSON.stringify(formData)) as ProposalForm;
-
-            if (areBlockProducersApproving.value) {
-                data.requested = data.requested.concat(
-                    JSON.parse(JSON.stringify(blockProducers.value)),
-                );
-            }
-
-            if (data.requested.length === 0) {
-                handleError('At least one requested approval');
-                return;
-            }
-
-            if (data.trx.actions.length === 0) {
-                handleError('At least one action');
-                return;
-            }
-
-            data.trx.transaction_extensions = transaction_extensions_input.value
-                ? transaction_extensions_input.value.split(',')
-                : [];
-
-            data.trx.context_free_actions = context_free_actions_input.value
-                ? context_free_actions_input.value.split(',')
-                : [];
-
-            try {
-                for (let i = 0; i < data.trx.actions.length; i++) {
-                    const item = data.trx.actions[i] as {
-                        account: string;
-                        name: string;
-                        data: unknown;
-                    };
-
-                    const hexData = await api.serializeActionData(
-                        item.account,
-                        item.name,
-                        item.data,
-                    );
-
-                    data.trx.actions[i].data = hexData as { [key: string]: string | number; };
-                }
-
-                const transaction = await store.state.account.user.signTransaction(
-                    {
-                        actions: [
-                            {
-                                account: 'eosio.msig',
-                                name: 'propose',
-                                authorization: [
-                                    {
-                                        actor: account.value,
-                                        permission: 'active',
-                                    },
-                                ],
-                                data,
-                            },
-                        ],
-                    },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 30,
-                    },
-                );
-                if (store.state.account.autoLogin !== 'cleos') {
-                    success.showModal = true;
-                }
-
-                success.transactionId = transaction.transactionId;
-                success.proposalName = data.proposal_name;
-            } catch (e) {
-                const error = JSON.parse(JSON.stringify(e)) as Error;
-                handleError(
-                    error?.cause?.json?.error?.what || 'Unable to create a proposal',
-                );
-            }
-        }
-
-        function onAddAction() {
-            const length = formData.trx.actions.length;
-            formData.trx.actions.push({
-                renderKey: (formData.trx.actions[length-1]?.renderKey ?? 0) + 1,
-                account: '',
-                name: '',
-                authorization: [
-                    {
-                        actor: '',
-                        permission: '',
-                    },
-                ],
-                data: {},
-            });
-        }
-
-        function onAmountOfDaysToExpire(days: string | number) {
-            if (days) {
-                formData.trx.expiration = moment()
-                    .add(days, 'days')
-                    .format('YYYY-MM-DDTHH:mm:ss');
-            }
-        }
-
-        function onExpiration(value: string | number) {
-            if (value === null) {
-                amountOfDaysToExpire.value = 7;
-                onAmountOfDaysToExpire(7);
-                return;
-            }
-
-            const now = new Date().getTime();
-            const date = new Date(value).getTime();
-            if (!isNaN(date)) {
-                const diffTime = Math.abs(date - now);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                amountOfDaysToExpire.value = diffDays;
-            }
-        }
-
-        /* eslint-disable */
-        function onUploadCSV(actions: any) {
-            const length = formData.trx.actions.length;
-            let actionsWithRenderKey = actions.map((value: any, index: number) => ({
-                ...value, renderKey: (formData.trx.actions[length-1]?.renderKey ?? 0) + 1 + index
-            }));
-            formData.trx.actions = [
-                ...formData.trx.actions,
-                ...actionsWithRenderKey
-            ];
-        }
-        /* eslint-enable */
-
-        return {
-            onSubmit,
-            onAddAction,
-            amountOfDaysToExpire,
-            onAmountOfDaysToExpire,
-            onExpiration,
-            onUploadCSV,
-            formData,
-            areBlockProducersApproving,
-            blockProducers,
-            actionsTab,
-            success,
-            context_free_actions_input,
-            transaction_extensions_input,
-        };
-    },
-});
-</script>
-
 <template>
 
 <ProposalSuccess v-model="success.showModal" :transactionId="success.transactionId" :proposalName="success.proposalName"/>
@@ -538,6 +279,265 @@ export default defineComponent({
     </q-form>
 </q-page>
 </template>
+
+<script lang="ts">
+import { defineComponent, reactive, ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import moment from 'moment';
+import ProposalSuccess from 'components/ProposalSuccess.vue';
+import ProposalAuthorization from 'components/ProposalAuthorization.vue';
+import ProposalAction from 'components/ProposalAction.vue';
+import ProposalUploadCSV from 'components/ProposalUploadCSV.vue';
+import { Authorization, ProposalForm, Error } from 'src/types';
+import { api } from 'src/api';
+import { randomEosioName } from 'src/utils/handleEosioName';
+import { useQuasar } from 'quasar';
+import { useStore } from 'src/store';
+
+export default defineComponent({
+    name: 'ProposalNew',
+    components: {
+        ProposalSuccess,
+        ProposalAuthorization,
+        ProposalAction,
+        ProposalUploadCSV,
+    },
+    setup() {
+        const router = useRouter();
+        const store = useStore();
+        const $q = useQuasar();
+        const account = computed(() => store.state.account.accountName);
+        const isAuthenticated = computed(() => store.state.account.isAuthenticated);
+        const actionsTab = ref<'one' | 'batch'>('one');
+        const amountOfDaysToExpire = ref(7);
+        const blockProducers = ref<Authorization[]>([]);
+        const areBlockProducersApproving = ref(false);
+
+        const context_free_actions_input = ref('');
+        const transaction_extensions_input = ref('');
+
+
+        const success = reactive({
+            proposalName: '',
+            transactionId: '',
+            showModal: false,
+        });
+
+        const formData: ProposalForm = reactive({
+            proposer: '',
+            proposal_name: '',
+            requested: [
+                {
+                    actor: '',
+                    permission: '',
+                },
+            ],
+            trx: {
+                expiration: moment()
+                    .add(amountOfDaysToExpire.value, 'days')
+                    .format('YYYY-MM-DDTHH:mm:ss'),
+                ref_block_num: 0,
+                ref_block_prefix: 0,
+                max_net_usage_words: 0,
+                max_cpu_usage_ms: 0,
+                delay_sec: 0,
+                context_free_actions: [''],
+                transaction_extensions: [''],
+                actions: [],
+            },
+        });
+
+        onMounted(() => {
+            formData.proposal_name = randomEosioName();
+            formData.proposer = account.value;
+        });
+
+        onMounted(async () => {
+            if (!isAuthenticated.value) {
+                await router.push('/proposal');
+            }
+        });
+
+        onMounted(async () => {
+            const producers = await api.getProducers();
+            const producersAccount = [] as Authorization[];
+
+            for (let index = 0; index < producers.rows.length; index++) {
+                const item = producers.rows[index];
+                if (item.is_active === 1) {
+                    producersAccount.push({
+                        actor: item.owner,
+                        permission: 'active',
+                    });
+                }
+            }
+
+            blockProducers.value = producersAccount;
+        });
+
+        function handleError(message: string) {
+            $q.notify({
+                color: 'negative',
+                message,
+                actions: [
+                    {
+                        label: 'Dismiss',
+                        color: 'white',
+                    },
+                ],
+            });
+        }
+
+        async function onSubmit() {
+            const data = JSON.parse(JSON.stringify(formData)) as ProposalForm;
+
+            if (areBlockProducersApproving.value) {
+                data.requested = data.requested.concat(
+                    JSON.parse(JSON.stringify(blockProducers.value)),
+                );
+            }
+
+            if (data.requested.length === 0) {
+                handleError('At least one requested approval');
+                return;
+            }
+
+            if (data.trx.actions.length === 0) {
+                handleError('At least one action');
+                return;
+            }
+
+            data.trx.transaction_extensions = transaction_extensions_input.value
+                ? transaction_extensions_input.value.split(',')
+                : [];
+
+            data.trx.context_free_actions = context_free_actions_input.value
+                ? context_free_actions_input.value.split(',')
+                : [];
+
+            try {
+                for (let i = 0; i < data.trx.actions.length; i++) {
+                    const item = data.trx.actions[i] as {
+                        account: string;
+                        name: string;
+                        data: unknown;
+                    };
+
+                    const hexData = await api.serializeActionData(
+                        item.account,
+                        item.name,
+                        item.data,
+                    );
+
+                    data.trx.actions[i].data = hexData as { [key: string]: string | number; };
+                }
+
+                const transaction = await store.state.account.user.signTransaction(
+                    {
+                        actions: [
+                            {
+                                account: 'eosio.msig',
+                                name: 'propose',
+                                authorization: [
+                                    {
+                                        actor: account.value,
+                                        permission: 'active',
+                                    },
+                                ],
+                                data,
+                            },
+                        ],
+                    },
+                    {
+                        blocksBehind: 3,
+                        expireSeconds: 30,
+                    },
+                );
+                if (store.state.account.autoLogin !== 'cleos') {
+                    success.showModal = true;
+                }
+
+                success.transactionId = transaction.transactionId;
+                success.proposalName = data.proposal_name;
+            } catch (e) {
+                const error = JSON.parse(JSON.stringify(e)) as Error;
+                handleError(
+                    error?.cause?.json?.error?.what || 'Unable to create a proposal',
+                );
+            }
+        }
+
+        function onAddAction() {
+            const length = formData.trx.actions.length;
+            formData.trx.actions.push({
+                renderKey: (formData.trx.actions[length-1]?.renderKey ?? 0) + 1,
+                account: '',
+                name: '',
+                authorization: [
+                    {
+                        actor: '',
+                        permission: '',
+                    },
+                ],
+                data: {},
+            });
+        }
+
+        function onAmountOfDaysToExpire(days: string | number) {
+            if (days) {
+                formData.trx.expiration = moment()
+                    .add(days, 'days')
+                    .format('YYYY-MM-DDTHH:mm:ss');
+            }
+        }
+
+        function onExpiration(value: string | number) {
+            if (value === null) {
+                amountOfDaysToExpire.value = 7;
+                onAmountOfDaysToExpire(7);
+                return;
+            }
+
+            const now = new Date().getTime();
+            const date = new Date(value).getTime();
+            if (!isNaN(date)) {
+                const diffTime = Math.abs(date - now);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                amountOfDaysToExpire.value = diffDays;
+            }
+        }
+
+        /* eslint-disable */
+        function onUploadCSV(actions: any) {
+            const length = formData.trx.actions.length;
+            let actionsWithRenderKey = actions.map((value: any, index: number) => ({
+                ...value, renderKey: (formData.trx.actions[length-1]?.renderKey ?? 0) + 1 + index
+            }));
+            formData.trx.actions = [
+                ...formData.trx.actions,
+                ...actionsWithRenderKey
+            ];
+        }
+        /* eslint-enable */
+
+        return {
+            onSubmit,
+            onAddAction,
+            amountOfDaysToExpire,
+            onAmountOfDaysToExpire,
+            onExpiration,
+            onUploadCSV,
+            formData,
+            areBlockProducersApproving,
+            blockProducers,
+            actionsTab,
+            success,
+            context_free_actions_input,
+            transaction_extensions_input,
+        };
+    },
+});
+</script>
 
 <style lang="sass" >
 .proposal-success
