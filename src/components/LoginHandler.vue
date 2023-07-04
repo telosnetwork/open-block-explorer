@@ -18,10 +18,10 @@ export default defineComponent({
         const account = computed(() => store.state.account.accountName);
 
         onMounted(() => {
-            const storedAccount = localStorage.getItem('account');
+            const storedAccount = sessionStorage.getItem('account');
             if (storedAccount) {
                 void store.commit('account/setAccountName', storedAccount);
-                const ualName = localStorage.getItem('autoLogin');
+                const ualName = sessionStorage.getItem('autoLogin');
                 const ual: Authenticator = authenticators.find(
                     a => a.getName() === ualName,
                 );

@@ -1,9 +1,8 @@
 <script lang="ts">
 import AppFooter from 'components/Footer.vue';
 import AppHeader from 'components/Header.vue';
-
 import { setCssVar } from 'quasar';
-import ConfigManager from 'src/config/ConfigManager';
+import { getChain } from 'src/config/ConfigManager';
 import { themeProps } from 'src/types/Theme';
 import { DEFAULT_THEME } from 'src/config/BaseChain';
 import { defineComponent, onMounted, watch } from 'vue';
@@ -19,7 +18,7 @@ export default defineComponent({
         const networkChain = useRouteDataNetwork();
 
         function setTheme(): void {
-            const theme = ConfigManager.get().getCurrentChain().getTheme();
+            const theme = getChain().getTheme();
             for (let themeVar of themeProps) {
                 if (theme[themeVar]) {
                     setCssVar(themeVar, theme[themeVar]);
@@ -30,7 +29,7 @@ export default defineComponent({
         }
 
         function setMetaData(): void {
-            const chainName = ConfigManager.get().getCurrentChain().getName();
+            const chainName = getChain().getName();
             let link = document.querySelector('link[rel~="icon"]');
             (link as HTMLLinkElement).href = `chains/${chainName}/favicon.png`;
 

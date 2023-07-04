@@ -31,7 +31,7 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
 
     Router.beforeEach((to, from) => {
         const chains = configMgr.getAllChains();
-        const selectedChainOnStore = localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
+        const selectedChainOnStore = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
         if (!to.query.network) { // if doesn't have network param
             if (selectedChainOnStore) { // if has a chain selected on sotre
                 routeData.network = selectedChainOnStore;

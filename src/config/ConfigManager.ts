@@ -1,6 +1,5 @@
 import chainsConfig from 'src/config/configuredChains';
 import { Chain } from 'src/types/Chain';
-import { LocalStorage } from 'quasar';
 
 export function getChain(): Chain {
     return ConfigManager.get().getCurrentChain();
@@ -53,14 +52,14 @@ export default class ConfigManager {
     }
 
     private getSelectedChain(): string {
-        return LocalStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
+        return sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
     }
 
     public setCurrentChain(chain: Chain): boolean {
         if (!this.findChain(chain.getName())) {
             return false;
         }
-        localStorage.setItem(
+        sessionStorage.setItem(
             ConfigManager.CHAIN_LOCAL_STORAGE,
             chain.getName(),
         );
