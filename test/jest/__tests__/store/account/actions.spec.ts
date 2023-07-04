@@ -46,12 +46,12 @@ global.fetch = jest.fn((input: RequestInfo | URL) =>
     } as unknown as Response),
 );
 
-const localStorageMock = {
+const sessionStorageMock = {
     getItem: jest.fn(),
     setItem: jest.fn(),
     removeItem:jest.fn(),
 };
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
 
 
 const transactionHeaders = {
@@ -162,8 +162,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setUser', expect.any(FuelUserWrapper));
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', true);
             expect(commit).toHaveBeenCalledWith('setAccountName', 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
+            expect(sessionStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
+            expect(sessionStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
 
         });
 
@@ -183,8 +183,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setUser', expect.any(FuelUserWrapper));
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', true);
             expect(commit).toHaveBeenCalledWith('setAccountName', 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
+            expect(sessionStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
+            expect(sessionStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
         });
 
     });
@@ -199,8 +199,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setAccountName', '');
             expect(commit).toHaveBeenCalledWith('setUser', null);
 
-            expect(localStorageMock.removeItem).toHaveBeenCalledWith('account');
-            expect(localStorageMock.removeItem).toHaveBeenCalledWith('autoLogin');
+            expect(sessionStorageMock.removeItem).toHaveBeenCalledWith('account');
+            expect(sessionStorageMock.removeItem).toHaveBeenCalledWith('autoLogin');
         });
     });
 });

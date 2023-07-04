@@ -33,14 +33,14 @@ const TOKEN = {
     amount: 0,
     contract: 'eosio.token',
 } as Token;
-const HYPERION_ENDPOINT = 'https://jungle.eosusa.news';
+const HYPERION_ENDPOINT = 'https://jungle4.cryptolions.io';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = {
     protocol: 'https',
     host: 'jungle.eosusa.news',
     port: 443,
 };
-const API_ENDPOINT = 'https://example.com';
+const API_ENDPOINT = 'https://jungle4.cryptolions.io';
 const DISPLAY_MAP = true;
 const THEME = {
     primary: '#28417c',
