@@ -31,9 +31,7 @@ export default defineComponent({
         let currentData = ref<string | unknown>(null);
         const maxHeight = 57; // the maximum row height
         const switchHeight = 20;
-        const maxHeightStyle = computed(() =>
-            `calc(${maxHeight}px - ${switchHeight}px)`,
-        );
+        const maxHeightStyle = `calc(${maxHeight}px - ${switchHeight}px)`;
 
         function compareJsonObjects(obj1: unknown, obj2: unknown): boolean {
             if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
@@ -89,18 +87,6 @@ export default defineComponent({
             updateOverflowing();
         });
 
-        function isAccount(data: string): boolean {
-            const accountRegEx = [
-                'account',
-                'to',
-                'from',
-                'owner',
-                'account_name',
-                'voter',
-            ];
-            return accountRegEx.includes(data);
-        }
-
         function toggleOverflow() {
             showOverflow.value = !showOverflow.value;
         }
@@ -110,7 +96,6 @@ export default defineComponent({
             transferData,
             name: actionName,
             formatGeneralData,
-            isAccount,
             dataBox,
             isOverflowing,
             showOverflow,
@@ -124,7 +109,7 @@ export default defineComponent({
 <template>
 <div
     class="relative-position"
-    :class="{'overflow-hidden': !showOverflow, 'div-compressed': !showOverflow}"
+    :class="{'div-compressed': !showOverflow}"
 >
     <div v-if="actionName === 'transfer'" ref="dataBox" class="row">
         <div class="col-12">
