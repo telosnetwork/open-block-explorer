@@ -1,11 +1,13 @@
 <script lang="ts">
 import { defineComponent, computed, toRefs } from 'vue';
+import AccountFormat from 'src/components/transaction/AccountFormat.vue';
 
 export default defineComponent({
     name: 'PrettyPayload',
+    components: { AccountFormat },
     props: {
         depth: { type: Number, required: true },
-        payload: { type: Object, required: true },
+        payload: { type: Object, required: false },
     },
     setup(props) {
         const { depth, payload } = toRefs(props);
@@ -18,6 +20,18 @@ export default defineComponent({
             return undefined;
         });
 
+        function isAccount(data: string): boolean {
+            const accountRegEx = [
+                'account',
+                'to',
+                'from',
+                'owner',
+                'account_name',
+                'voter',
+            ];
+            return accountRegEx.includes(data);
+        }
+
         const classObject = computed(() => ({
             'payload': true,
             'payload__indent': depth.value > 0,
@@ -27,6 +41,7 @@ export default defineComponent({
             type,
             list,
             classObject,
+            isAccount,
         };
     },
 
@@ -63,7 +78,9 @@ export default defineComponent({
         />
     </template>
     <template v-else>
-        <span class="text-bold">{{ key }}:</span> {{ payload[key] }}
+        <span class="text-bold">{{ key }}:&nbsp;</span>
+        <AccountFormat v-if="isAccount(key)" :account="payload[key]" type="account">&nbsp;</AccountFormat>
+        <span v-else>{{ payload[key] }}</span>
     </template>
 </div>
 </template>
