@@ -15,7 +15,7 @@ export default defineComponent({
         const showModal = ref(false);
 
         const getAuthenticator = (): Authenticator => {
-            const wallet = localStorage.getItem('autoLogin');
+            const wallet = sessionStorage.getItem('autoLogin');
             const authenticator = authenticators.find(
                 auth => auth.getName() === wallet,
             );

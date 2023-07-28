@@ -61,7 +61,7 @@ export default defineComponent({
                 amount: toSavingAmount.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
                 openTransaction.value = true;
             }
         }
@@ -79,7 +79,7 @@ export default defineComponent({
                 amount: fromSavingAmount.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
                 openTransaction.value = true;
             }
         }

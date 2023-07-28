@@ -68,7 +68,7 @@ export default defineComponent({
                 netAmount: netTokens.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
                 openTransaction.value = true;
             }
         }
@@ -83,7 +83,7 @@ export default defineComponent({
                 netAmount: netWithdraw.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
                 openTransaction.value = true;
             }
         }

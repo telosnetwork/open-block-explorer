@@ -120,7 +120,7 @@ export default defineComponent({
             }
             await this.loadAccountData();
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
                 this.openTransaction = true;
             }
         },

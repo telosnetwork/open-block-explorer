@@ -28,11 +28,11 @@ export default defineComponent({
         }
 
         function isSelected(chain: Chain): boolean {
-            return localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
+            return sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
         }
 
         const logout = async (): Promise<void> => {
-            const wallet = localStorage.getItem('autoLogin');
+            const wallet = sessionStorage.getItem('autoLogin');
             const authenticator = getAuthenticators().find(
                 auth => auth.getName() === wallet,
             );
@@ -62,7 +62,7 @@ export default defineComponent({
         }
 
         onMounted(() => {
-            const currentChain = localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
+            const currentChain = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
             if (currentChain === null) {
                 const chains = configMgr.getMainnets();
                 const telos = chains.filter(chain => chain.getName() === 'telos')[0];

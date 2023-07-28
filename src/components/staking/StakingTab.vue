@@ -63,7 +63,7 @@ export default defineComponent({
                 amount: stakeTokens.value,
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
                 openTransaction.value = true;
             }
         }
