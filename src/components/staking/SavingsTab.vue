@@ -53,7 +53,7 @@ export default defineComponent({
             if (
                 toSavingAmount.value === '0' ||
                 toSavingAmount.value === '' ||
-                Number(toSavingAmount.value) >= eligibleStaked.value
+                Number(toSavingAmount.value) > eligibleStaked.value
             ) {
                 return;
             }
