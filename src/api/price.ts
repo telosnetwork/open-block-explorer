@@ -16,7 +16,7 @@ export const getCoingeckoPriceChartData = async (
     tokenId: string,
 ): Promise<PriceChartData> => {
     const exchangeStatsUrl = getCoingeckoExchangeStatsUrl(tokenId);
-    const priceHistoryUrl = `https://api.coingecko.com/api/v3/coins/${tokenId}/market_chart?vs_currency=USD&days=1&interval=hourly`;
+    const priceHistoryUrl = `https://api.coingecko.com/api/v3/coins/${tokenId}/market_chart?vs_currency=USD&days=1`;  // &interval=hourly` - restore if when enterprise plan enabled;
 
     const [priceStats, priceHistory]: [PriceStats, PriceHistory] =
     await Promise.all([
