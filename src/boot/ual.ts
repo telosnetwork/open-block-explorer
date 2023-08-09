@@ -21,8 +21,8 @@ declare module '@vue/runtime-core' {
 async function loginHandler() {
     let accountName = 'eosio';
     let permission = 'active';
-    if (sessionStorage.getItem('autoLogin') === 'cleos') {
-        accountName = sessionStorage.getItem('account');
+    if (localStorage.getItem('autoLogin_' + getChain().getChainId()) === 'cleos') {
+        accountName = localStorage.getItem('account_' + getChain().getChainId());
     } else {
         await new Promise((resolve) => {
             Dialog.create({

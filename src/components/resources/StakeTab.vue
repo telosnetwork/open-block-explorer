@@ -97,7 +97,7 @@ export default defineComponent({
                         : `0.0000 ${symbol}`,
             });
 
-            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
                 this.openTransaction = true;
             }
         },

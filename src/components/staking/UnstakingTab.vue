@@ -55,7 +55,7 @@ export default defineComponent({
                 amount: unstakeTokens.value,
             });
 
-            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }

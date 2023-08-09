@@ -2,8 +2,6 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
-import { useStore } from 'src/store';
-import { getAuthenticators } from 'src/boot/ual';
 import { useRoute, useRouter } from 'vue-router';
 
 const configMgr = ConfigManager.get();
@@ -12,10 +10,8 @@ export default defineComponent({
     name: 'ChainsMenu',
     setup() {
         const menuOpened = ref(false);
-        const store = useStore();
         const route = useRoute();
         const router = useRouter();
-        const account = computed(() => store.state.account);
 
         const menuIcon = computed(() => menuOpened.value ? 'expand_less' : 'expand_more');
         const mainnets = computed(() => sortChainsUsingName(configMgr.getMainnets()));
@@ -31,26 +27,9 @@ export default defineComponent({
             return sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
         }
 
-        const logout = async (): Promise<void> => {
-            const wallet = sessionStorage.getItem('autoLogin');
-            const authenticator = getAuthenticators().find(
-                auth => auth.getName() === wallet,
-            );
-            try {
-                authenticator && (await authenticator.logout());
-            } catch (error) {
-                console.error('Authenticator logout error', error);
-            }
-            void store.dispatch('account/logout');
-        };
-
         function chainSelected(chain: Chain) {
             if (isSelected(chain)) {
                 return;
-            }
-
-            if (account.value) {
-                void logout();
             }
 
             void router.push({

@@ -5,6 +5,7 @@ import WalletModal from 'src/components/WalletModal.vue';
 import { Authenticator } from 'universal-authenticator-library';
 import { useStore } from 'src/store';
 import { getAuthenticators } from 'src/boot/ual';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
     name: 'LoginHandler',
@@ -18,10 +19,11 @@ export default defineComponent({
         const account = computed(() => store.state.account.accountName);
 
         onMounted(() => {
-            const storedAccount = sessionStorage.getItem('account');
+            console.log(getChain().getChainId());
+            const storedAccount = localStorage.getItem('account_' + getChain().getChainId());
             if (storedAccount) {
                 void store.commit('account/setAccountName', storedAccount);
-                const ualName = sessionStorage.getItem('autoLogin');
+                const ualName = localStorage.getItem('autoLogin_' + getChain().getChainId());
                 const ual: Authenticator = authenticators.find(
                     a => a.getName() === ualName,
                 );

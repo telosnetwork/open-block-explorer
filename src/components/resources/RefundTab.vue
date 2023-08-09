@@ -6,6 +6,7 @@ import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
     name: 'RefundTab',
@@ -120,7 +121,7 @@ export default defineComponent({
             }
             await this.loadAccountData();
 
-            if (sessionStorage.getItem('autoLogin') !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
                 this.openTransaction = true;
             }
         },
