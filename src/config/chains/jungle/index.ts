@@ -41,7 +41,7 @@ const RPC_ENDPOINT = {
     port: 443,
 };
 const API_ENDPOINT = 'https://example.com';
-const DISPLAY_MAP = true;
+const DISPLAY_MAP = false;
 const THEME = {
     primary: '#28417c',
     secondary: '#000000', //disso
