@@ -25,7 +25,7 @@ export default {
     text-decoration: none
     color: #ffffff
 .footer-background
-    background: var(--q-primary-linear-gradient)
+    background: var(--q-color-footer-background)
     backdrop-filter: blur(14px)
 .no-dec
     text-decoration: none

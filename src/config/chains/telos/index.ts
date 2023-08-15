@@ -71,6 +71,7 @@ const THEME = {
     'color-header-border': '#8a65d41a',
     'color-header-support-background': 'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
     'color-graph-shadow': '#571aff28',
+    'color-footer-background': '#071A5F',
 };
 
 export default class Telos extends BaseChain {
