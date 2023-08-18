@@ -71,4 +71,7 @@ export const mutations: MutationTree<AccountStateInterface> = {
     setRexFund(state: AccountStateInterface, fund: number) {
         state.rexfund = fund;
     },
+    setChainId(state: AccountStateInterface, id: string) {
+        state.chainId = id;
+    },
 };

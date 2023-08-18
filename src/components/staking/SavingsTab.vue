@@ -4,6 +4,7 @@ import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
 import { assetToAmount, formatNumberWithCommas } from 'src/utils/string-utils';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
     name: 'SavingsTab',
@@ -61,7 +62,7 @@ export default defineComponent({
                 amount: toSavingAmount.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }
@@ -79,7 +80,7 @@ export default defineComponent({
                 amount: fromSavingAmount.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }
