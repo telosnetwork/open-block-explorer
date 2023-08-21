@@ -4,6 +4,7 @@ import WalletModal from 'src/components/WalletModal.vue';
 import { useStore } from 'src/store';
 import { getAuthenticators } from 'src/boot/ual';
 import { Authenticator } from 'universal-authenticator-library';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
     name: 'LoginHandlerDropdown',
@@ -15,7 +16,7 @@ export default defineComponent({
         const showModal = ref(false);
 
         const getAuthenticator = (): Authenticator => {
-            const wallet = localStorage.getItem('autoLogin');
+            const wallet = localStorage.getItem('autoLogin_' + getChain().getChainId());
             const authenticator = authenticators.find(
                 auth => auth.getName() === wallet,
             );

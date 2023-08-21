@@ -2,8 +2,7 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
-import { useStore } from 'src/store';
-import { getAuthenticators } from 'src/boot/ual';
+import { useRoute, useRouter } from 'vue-router';
 
 const configMgr = ConfigManager.get();
 
@@ -11,8 +10,8 @@ export default defineComponent({
     name: 'ChainsMenu',
     setup() {
         const menuOpened = ref(false);
-        const store = useStore();
-        const account = computed(() => store.state.account);
+        const route = useRoute();
+        const router = useRouter();
 
         const menuIcon = computed(() => menuOpened.value ? 'expand_less' : 'expand_more');
         const mainnets = computed(() => sortChainsUsingName(configMgr.getMainnets()));
@@ -25,41 +24,24 @@ export default defineComponent({
         }
 
         function isSelected(chain: Chain): boolean {
-            return localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
+            return sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
         }
-
-        const logout = async (): Promise<void> => {
-            const wallet = localStorage.getItem('autoLogin');
-            const authenticator = getAuthenticators().find(
-                auth => auth.getName() === wallet,
-            );
-            try {
-                authenticator && (await authenticator.logout());
-            } catch (error) {
-                console.error('Authenticator logout error', error);
-            }
-            void store.dispatch('account/logout');
-        };
 
         function chainSelected(chain: Chain) {
             if (isSelected(chain)) {
                 return;
             }
-            // TODO: maybe we can reload vue store and boot files instead of full reload?
-            localStorage.setItem(
-                ConfigManager.CHAIN_LOCAL_STORAGE,
-                chain.getName(),
-            );
 
-            if (account.value) {
-                void logout();
-            }
+            void router.push({
+                path: route.path,
+                query: { network: chain.getName() },
+            });
 
-            location.reload();
+            menuOpened.value = false;
         }
 
         onMounted(() => {
-            const currentChain = localStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
+            const currentChain = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
             if (currentChain === null) {
                 const chains = configMgr.getMainnets();
                 const telos = chains.filter(chain => chain.getName() === 'telos')[0];

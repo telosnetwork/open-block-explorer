@@ -52,6 +52,7 @@ const THEME = {
     'color-header-border': '#444',
     'color-header-support-background': '#000',
     'color-graph-shadow': '#3f65c228',
+    'color-footer-background': '#000000',
 };
 
 // create vars for map colors (border, backround, countries, popup, text, popup)

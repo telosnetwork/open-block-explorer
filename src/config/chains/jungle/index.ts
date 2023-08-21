@@ -33,14 +33,14 @@ const TOKEN = {
     amount: 0,
     contract: 'eosio.token',
 } as Token;
-const HYPERION_ENDPOINT = 'https://jungle.eosusa.news';
+const HYPERION_ENDPOINT = 'https://jungle4.cryptolions.io';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = {
     protocol: 'https',
     host: 'jungle.eosusa.news',
     port: 443,
 };
-const API_ENDPOINT = 'https://example.com';
+const API_ENDPOINT = 'https://jungle4.cryptolions.io';
 const DISPLAY_MAP = false;
 const THEME = {
     primary: '#28417c',
@@ -62,6 +62,7 @@ const THEME = {
     'color-header-border': '#444',
     'color-header-support-background': '#000',
     'color-graph-shadow': '#3f65c228',
+    'color-footer-background': '#000000',
 };
 
 export default class TelosTestnet extends BaseChain {
