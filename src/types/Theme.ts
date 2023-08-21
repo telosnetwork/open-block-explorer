@@ -19,6 +19,7 @@ export interface Theme {
   'color-header-border'?: string;
   'color-header-support-background'?: string;
   'color-graph-shadow'?: string;
+  'color-footer-background'?: string;
 }
 
 export const themeProps: (keyof Theme)[] = [
@@ -42,4 +43,5 @@ export const themeProps: (keyof Theme)[] = [
     'color-header-border',
     'color-header-support-background',
     'color-graph-shadow',
+    'color-footer-background',
 ];
