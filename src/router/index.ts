@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { StateInterface } from 'src/store';
 import routes from 'src/router/routes';
 import ConfigManager from 'src/config/ConfigManager';
-import { computed, reactive } from 'vue';
+import { ComputedRef, computed, reactive } from 'vue';
 
 const configMgr = ConfigManager.get();
 
@@ -67,6 +67,6 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     return Router;
 });
 
-export function useRouteDataNetwork() {
+export function useRouteDataNetwork(): ComputedRef<string> {
     return computed(() => routeData.network);
 }
