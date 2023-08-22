@@ -37,7 +37,6 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             commit('setAccountName', accountName);
             commit('setChainId', (authenticator as Authenticator).chains[0].chainId);
 
-            console.log(authenticator);
             localStorage.setItem(`account_${(authenticator as Authenticator).chains[0].chainId}`, accountName);
             localStorage.setItem(
                 `autoLogin_${(authenticator as Authenticator).chains[0].chainId}`,
