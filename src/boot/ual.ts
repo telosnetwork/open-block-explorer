@@ -6,6 +6,8 @@ import {
     User,
 } from 'universal-authenticator-library';
 import { Anchor } from 'ual-anchor';
+import { WebPopup } from 'oreid-webpopup';
+import { OreIdAuthenticator, AuthProvider } from 'ual-oreid';
 import { getChain } from 'src/config/ConfigManager';
 import { CleosAuthenticator } from '@telosnetwork/ual-cleos';
 import { Dialog, Notify, copyToClipboard } from 'quasar';
@@ -152,6 +154,15 @@ export const getAuthenticators = () => {
         // UAL is not looking at the chain when checking the localstorage for an already logged in account
         // A quick fix is to add the chain in appName until we move forward with WharfKit
         const mainChain = getMainChain();
+        authenticators.push(new OreIdAuthenticator(
+            [mainChain],
+            {
+                appId: '<ORE ID Application ID>',  // register at oreid.io/developer
+                plugins: { popup: WebPopup() },
+            },
+            AuthProvider.Google,
+        ),
+        );
         authenticators.push(new Anchor([mainChain], { appName: `${process.env.APP_NAME}_${mainChain.chainId}` })),
         authenticators.push(new CleosAuthenticator([mainChain], {
             appName: `${process.env.APP_NAME}_${mainChain.chainId}`,
