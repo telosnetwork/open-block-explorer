@@ -30,6 +30,7 @@ export const DEFAULT_THEME = {
     'color-header-border': '#777777',
     'color-header-support-background': 'linear-gradient(180deg, #4C4C4C 0%, #3B3B3B 147.34%)',
     'color-graph-shadow': '#3f65c228',
+    'color-footer-background': '#000000',
 };
 
 export default abstract class BaseChain implements Chain {
