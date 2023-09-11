@@ -32,35 +32,48 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     Router.beforeEach((to, from) => {
         const chains = configMgr.getAllChains();
         const selectedChainOnStore = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
-        if (!to.query.network) { // if doesn't have network param
-            if (selectedChainOnStore) { // if has a chain selected on sotre
-                routeData.network = selectedChainOnStore;
+
+        // TODO: fix router
+        console.log(to);
+        if (to.path === '/') {
+            console.log(to.query);
+            if (to.query.network) {
                 return ({
-                    ...to,
-                    query: {
-                        ...to.query,
-                        network: selectedChainOnStore,
-                    },
+                    path: 'network',
+                    query: to.query,
                 });
-            } else { // if doesn't have chain selected on store, attempt to get telos, if not find, get the first one
-                const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0];
+            }
+        } else {
+            if (!to.query.network) { // if doesn't have network param
+                if (selectedChainOnStore) { // if has a chain selected on sotre
+                    routeData.network = selectedChainOnStore;
+                    return ({
+                        ...to,
+                        query: {
+                            ...to.query,
+                            network: selectedChainOnStore,
+                        },
+                    });
+                } else { // if doesn't have chain selected on store, attempt to get telos, if not find, get the first one
+                    const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0];
+                    configMgr.setCurrentChain(chain);
+                    routeData.network = chain.getName();
+
+                    setTimeout(() => location.reload(), 500);
+                }
+            } else if (chains.filter(chain => chain.getName() === to.query.network).length === 0) { // check if the network is not part of the system
+                const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0]; // attempt to get telos network or the first one
                 configMgr.setCurrentChain(chain);
                 routeData.network = chain.getName();
 
                 setTimeout(() => location.reload(), 500);
+            } else if ((from.query.network && from.query.network !== to.query.network) || selectedChainOnStore !== to.query.network) { // if i'm changing from network
+                const chain = chains.filter(chain => chain.getName() === to.query.network)[0];
+                routeData.network = chain.getName();
+                configMgr.setCurrentChain(chain);
+
+                setTimeout(() => location.reload(), 500);
             }
-        } else if (chains.filter(chain => chain.getName() === to.query.network).length === 0) { // check if the network is not part of the system
-            const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0]; // attempt to get telos network or the first one
-            configMgr.setCurrentChain(chain);
-            routeData.network = chain.getName();
-
-            setTimeout(() => location.reload(), 500);
-        } else if ((from.query.network && from.query.network !== to.query.network) || selectedChainOnStore !== to.query.network) { // if i'm changing from network
-            const chain = chains.filter(chain => chain.getName() === to.query.network)[0];
-            routeData.network = chain.getName();
-            configMgr.setCurrentChain(chain);
-
-            setTimeout(() => location.reload(), 500);
         }
     });
 
