@@ -48,7 +48,7 @@ const FUEL_RPC_ENDPOINT = {
 };
 const API_ENDPOINT = 'https://mainnet.koy.network/v1';
 const S3_PRODUCER_BUCKET = '';
-const DISPLAY_MAP = true;
+const DISPLAY_MAP = false;
 const THEME = {
     primary: '#CE1C61',
     secondary: '#82103C',
@@ -68,7 +68,14 @@ const THEME = {
     'linear-gradient(90deg, #82103C 10%, #CBCAF5 75%)',
     'color-producer-card-background': '#f5f4fe',
     'color-select-box-background': '#e0dffb',
+    'color-separator-background': 'rgba(138, 101, 212, 0.1)',
+    'color-header-background': '#82103C',
+    'color-header-border': '#710e34',
+    'color-header-support-background': 'linear-gradient(180deg, #82103C 20%, #542030 85%)',
+    'color-graph-shadow': '#CE1C6128',
+    'color-footer-background': '#492030',
 };
+
 
 export default class Telos extends BaseChain {
     getName(): string {
@@ -116,7 +123,7 @@ export default class Telos extends BaseChain {
     }
 
     getLargeLogoPath(): string {
-        return 'chains/koyn/koyn_logo.svg';
+        return 'chains/koyn/koyn_logo.png';
     }
 
     getSmallLogoPath(): string {
