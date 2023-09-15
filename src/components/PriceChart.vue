@@ -56,10 +56,7 @@ export default defineComponent({
                         },
                         stops: [
                             // [0, '#571AFF'],
-                            [0, 'rgba(234 , 227 , 252 , 0.6)'],
-                            [1, 'rgba(87, 26, 255, 0.003)'],
-                            [2, 'rgba(87, 26, 255, 0.0001)'],
-                            [3, 'rgba(87, 26, 255, 0)'],
+                            [0, getCssVar('color-graph-shadow')],
                         ],
                     },
                     marker: {

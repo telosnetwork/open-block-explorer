@@ -1,21 +1,56 @@
 <script lang="ts">
 import AppFooter from 'components/Footer.vue';
 import AppHeader from 'components/Header.vue';
-import ChainsSidebar from 'components/ChainsSidebar.vue';
+import { setCssVar } from 'quasar';
+import { getChain } from 'src/config/ConfigManager';
+import { themeProps } from 'src/types/Theme';
+import { DEFAULT_THEME } from 'src/config/BaseChain';
+import { defineComponent, onMounted, watch } from 'vue';
+import { useRouteDataNetwork } from 'src/router';
 
-export default {
+export default defineComponent({
     name: 'MainLayout',
     components: {
         AppHeader,
         AppFooter,
-        ChainsSidebar,
     },
     setup() {
+        const networkChain = useRouteDataNetwork();
+
+        function setTheme(): void {
+            const theme = getChain().getTheme();
+            for (let themeVar of themeProps) {
+                if (theme[themeVar]) {
+                    setCssVar(themeVar, theme[themeVar]);
+                } else {
+                    setCssVar(themeVar, DEFAULT_THEME[themeVar]);
+                }
+            }
+        }
+
+        function setMetaData(): void {
+            const chainName = getChain().getName();
+            let link = document.querySelector('link[rel~="icon"]');
+            (link as HTMLLinkElement).href = `chains/${chainName}/favicon.png`;
+
+            document.title = chainName;
+        }
+
+        watch(networkChain, () => {
+            setTheme();
+            setMetaData();
+        });
+
+        onMounted(() => {
+            setTheme();
+            setMetaData();
+        });
+
         return {
-            showSidebar: () => process.env.SHOW_SIDEBAR === 'true',
+            networkChain,
         };
     },
-};
+});
 </script>
 
 <template>
@@ -23,9 +58,7 @@ export default {
 <q-layout view="lHh lpR lff">
     <q-header>
         <AppHeader/>
-        <q-separator class="separator"/>
     </q-header>
-    <ChainsSidebar v-if="showSidebar()"/>
     <q-page-container>
         <router-view/>
     </q-page-container>
@@ -36,9 +69,4 @@ export default {
 </template>
 
 <style lang="sass" scoped>
-.q-header
-  background-color: var(--q-secondary)
-.separator
-  height: 2px
-  min-height: 2px
 </style>

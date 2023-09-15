@@ -20,4 +20,5 @@ export interface Chain {
   getMapDisplay(): boolean;
   getTheme(): Theme;
   getFiltersSupported(prop: string): boolean;
+  isTestnet(): boolean;
 }

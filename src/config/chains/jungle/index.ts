@@ -1,13 +1,13 @@
 /*
 NETWORK_CHAIN_ID=
-NETWORK_HOST=testnet.telos.caleos.io
+NETWORK_HOST=testnet.telos.net
 NETWORK_PORT=443
 NETWORK_PROTOCOL=https
 NETWORK_EVM_RPC=https://testnet.telos.net/evm
-NETWORK_EVM_ENDPOINT=https://testnet.telos.caleos.io
+NETWORK_EVM_ENDPOINT=https://testnet.telos.net
 NETWORK_EVM_CONTRACT=eosio.evm
 NETWORK_EVM_CHAIN_ID=41
-HYPERION_ENDPOINT=https://testnet.telos.caleos.io
+HYPERION_ENDPOINT=https://testnet.telos.net
 TELOS_API_ENDPOINT=https://api-dev.telos.net/v1
 
 # TELOS_API_ENDPOINT=localhost:9999/v1
@@ -33,16 +33,37 @@ const TOKEN = {
     amount: 0,
     contract: 'eosio.token',
 } as Token;
-const HYPERION_ENDPOINT = 'https://jungle.eosusa.news';
+const HYPERION_ENDPOINT = 'https://jungle4.cryptolions.io';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = {
     protocol: 'https',
     host: 'jungle.eosusa.news',
     port: 443,
 };
-const API_ENDPOINT = 'https://example.com';
+const API_ENDPOINT = 'https://jungle4.cryptolions.io';
 const DISPLAY_MAP = true;
-const THEME = {};
+const THEME = {
+    primary: '#28417c',
+    secondary: '#000000', //disso
+    accent: '#9C27B0',
+    dark: '#1d1d1d',
+    positive: '#21BA45',
+    negative: '#ff0000',
+    info: '#31CCEC',
+    warning: '#F2C037',
+    'color-map': '#19284e', //disso
+    'color-primary-gradient': 'linear-gradient(90deg, #0c3964 0%, #1876d2 100%)',
+    'color-secondary-gradient':
+    'linear-gradient(180deg, #0c3964 0%, #1876d2 147.34%)',
+    'color-tertiary-gradient':
+    'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
+    'color-progress-gradient': '#28417c',
+    'color-header-background': '#000000',
+    'color-header-border': '#444',
+    'color-header-support-background': '#000',
+    'color-graph-shadow': '#3f65c228',
+    'color-footer-background': '#000000',
+};
 
 export default class TelosTestnet extends BaseChain {
     getName(): string {
@@ -109,6 +130,10 @@ export default class TelosTestnet extends BaseChain {
         if (prop === 'notified') {
             return false;
         }
+        return true;
+    }
+
+    isTestnet(): boolean {
         return true;
     }
 }

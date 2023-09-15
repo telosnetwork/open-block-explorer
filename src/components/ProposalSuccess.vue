@@ -33,7 +33,7 @@ export default defineComponent({
 
 <template>
 <q-dialog v-model="value" maximized>
-    <q-card class="gradient-box">
+    <q-card class="header-support">
         <q-card-section class="full-height row justify-center items-center">
             <div class="proposal-success__section-wrapper">
                 <header class="q-mb-lg">

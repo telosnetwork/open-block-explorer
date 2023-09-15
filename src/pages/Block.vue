@@ -60,7 +60,7 @@ export default defineComponent({
 <template>
 
 <div class="row">
-    <div class="col-12 gradient-box q-pb-lg">
+    <div class="col-12 header-support q-pb-lg">
         <BlockCard v-if="found" class="q-pa-lg" :block="block"/>
         <div v-else class="q-pa-lg">
             <div class="row full-width justify-center">

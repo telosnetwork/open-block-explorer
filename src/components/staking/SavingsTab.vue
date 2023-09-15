@@ -3,7 +3,8 @@ import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
-import { assetToAmount } from 'src/utils/string-utils';
+import { assetToAmount, formatNumberWithCommas } from 'src/utils/string-utils';
+import { getChain } from 'src/config/ConfigManager';
 
 export default defineComponent({
     name: 'SavingsTab',
@@ -53,7 +54,7 @@ export default defineComponent({
             if (
                 toSavingAmount.value === '0' ||
                 toSavingAmount.value === '' ||
-                Number(toSavingAmount.value) >= eligibleStaked.value
+                Number(toSavingAmount.value) > eligibleStaked.value
             ) {
                 return;
             }
@@ -61,7 +62,7 @@ export default defineComponent({
                 amount: toSavingAmount.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }
@@ -79,7 +80,7 @@ export default defineComponent({
                 amount: fromSavingAmount.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin') !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }
@@ -104,6 +105,7 @@ export default defineComponent({
             rexSavings,
             transactionId,
             transactionError,
+            formatNumberWithCommas,
             formatDec,
             moveToSavings,
             moveFromSavings,
@@ -126,7 +128,7 @@ export default defineComponent({
                         <div class="col-9">STAKE TO SAVINGS</div>
                         <div class="col-3">
                             <div class="row items-center justify-end q-hoverable cursor-pointer" @click="setMaxSavingsValue">
-                                <div class="text-weight-bold text-right balance-amount">{{ eligibleStaked }}</div>
+                                <div class="text-weight-bold text-right balance-amount">{{ formatNumberWithCommas(eligibleStaked) }}</div>
                                 <q-icon class="q-ml-xs" name="info"/>
                                 <q-tooltip>Any balance currently maturing will be moved first, click to stake full amount</q-tooltip>
                             </div>
