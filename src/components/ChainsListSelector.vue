@@ -13,6 +13,11 @@ export default defineComponent({
             type: Function,
             required: false,
         },
+        isChainSelected: {
+            type: Function,
+            required: false,
+            default: () => false,
+        },
     },
     setup(props) {
         const route = useRoute();
@@ -27,12 +32,8 @@ export default defineComponent({
             );
         }
 
-        function isSelected(chain: Chain): boolean {
-            return sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
-        }
-
         function chainSelected(chain: Chain) {
-            if (isSelected(chain)) {
+            if (props.isChainSelected(chain)) {
                 return;
             }
 
@@ -41,7 +42,7 @@ export default defineComponent({
                 query: { network: chain.getName() },
             });
 
-            props.onChainSelected();
+            props.onChainSelected(chain);
         }
 
         onMounted(() => {
@@ -57,7 +58,6 @@ export default defineComponent({
             mainnets,
             testnets,
             chainSelected,
-            isSelected,
         };
     },
 });
@@ -70,7 +70,7 @@ export default defineComponent({
         v-for="(chain, index) in mainnets"
         :key="`mainnet-${index}`"
         v-ripple
-        :class="{ selected: isSelected(chain) }"
+        :class="{ selected: isChainSelected(chain) }"
         clickable
         @click="chainSelected(chain)"
     ><img class="sidebar-logo" :src="chain.getSmallLogoPath()">
@@ -84,7 +84,7 @@ export default defineComponent({
         v-for="(chain, index) in testnets"
         :key="`testnet-${index}`"
         v-ripple
-        :class="{ selected: isSelected(chain) }"
+        :class="{ selected: isChainSelected(chain) }"
         clickable
         @click="chainSelected(chain)"
     >

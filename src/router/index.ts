@@ -32,17 +32,23 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     Router.beforeEach((to, from) => {
         const chains = configMgr.getAllChains();
         const selectedChainOnStore = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
+        const preferedChainName = configMgr.getPreferredChain();
 
-        // TODO: fix router
-        console.log(to);
-        if (to.path === '/') {
-            console.log(to.query);
-            if (to.query.network) {
+        if (to.path === '/') { // if attempting to go to home page
+            if (to.query.network) { // if there is network param, proceed to network with the param
                 return ({
                     path: 'network',
                     query: to.query,
                 });
+            } else if (preferedChainName) { // if there is no network param and local storage has preferred network selected
+                return ({
+                    path: 'network',
+                    query: {
+                        network: preferedChainName,
+                    },
+                });
             }
+            // else, will proceed to home page
         } else {
             if (!to.query.network) { // if doesn't have network param
                 if (selectedChainOnStore) { // if has a chain selected on sotre
