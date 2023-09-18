@@ -23,8 +23,15 @@ export default defineComponent({
 
 <template>
 <div class="row home-container">
-    <div class="col-12 col-sm-8 header-support home-banner">
-        Welcome to Open Block Explorer!
+    <div class="col-12 col-sm-8 q-pa-md header-support home-banner">
+        <img class="antelope-logo" src="icons/antelope-logo.png">
+        <h2>Open Block Explorer</h2>
+        <div class="chain-container">
+            <img class="chain-logo" src="chains/telos/telos_logo.svg">
+            <img class="chain-logo" src="chains/eos/eos.png">
+            <img class="chain-logo" src="chains/wax/logo_lg.png">
+            <img class="chain-logo" src="chains/ux/logo_sm.png">
+        </div>
     </div>
     <div class="col-12 col-sm-4">
         <ChainsListSelector :on-chain-selected="onChainSelected" />
@@ -43,6 +50,25 @@ export default defineComponent({
     background-size: cover
     display: flex
     align-items: center
-    justify-content: center
+    flex-direction: column
+    justify-content: space-around
     color: white
+    text-align: center
+    > h2
+        font-weight: 400
+
+.antelope-logo
+    max-height: 100px
+
+.chain-container
+    display: flex
+    gap: 20px
+    align-items: center
+    flex-wrap: wrap
+    justify-content: center
+
+.chain-logo
+    max-height: 50px
+    max-width: 100px
+
 </style>
