@@ -7,7 +7,7 @@ export function getChain(): Chain {
 
 export default class ConfigManager {
     public static CHAIN_LOCAL_STORAGE = 'selectedChainName';
-    public static PREFERRED_CHAIN_LOCAL_STORAGE = 'preferedChainName';
+    public static PREFERRED_CHAIN_LOCAL_STORAGE = 'preferredChainName';
     private static thisManager: ConfigManager;
     private testnets: Chain[];
     private mainnets: Chain[];
