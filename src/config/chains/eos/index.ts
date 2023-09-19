@@ -31,7 +31,7 @@ const FUEL_RPC_ENDPOINT = {
 };
 const API_ENDPOINT = 'https://example.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
-const DISPLAY_MAP = true;
+const DISPLAY_MAP = false;
 const THEME = {
     primary: '#28417c',
     secondary: '#000000', //disso
