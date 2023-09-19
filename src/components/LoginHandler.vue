@@ -19,7 +19,6 @@ export default defineComponent({
         const account = computed(() => store.state.account.accountName);
 
         onMounted(() => {
-            console.log(getChain().getChainId());
             const storedAccount = localStorage.getItem('account_' + getChain().getChainId());
             if (storedAccount) {
                 void store.commit('account/setAccountName', storedAccount);

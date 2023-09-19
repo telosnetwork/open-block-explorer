@@ -22,74 +22,6 @@ import { useStore } from 'src/store';
 import VectorImageLayer from 'ol/layer/VectorImage';
 import { getCssVar } from 'quasar';
 
-// Map core style
-const style = new Style({
-    image: new CircleStyle({
-        fill: new Fill({
-            color: '#FFFFFF'
-        }),
-        radius: 5
-    }),
-    fill: new Fill({
-        color: getCssVar('color-map')
-    }),
-    stroke: new Stroke({
-        color: getCssVar('color-map'),
-        width: 1
-    }),
-    zIndex: 50
-});
-
-// BP location feature style with zIndex biggetr that map
-const producerStyle = new Style({
-    image: new CircleStyle({
-        fill: new Fill({
-            color: '#8276d2'
-        }),
-        stroke: new Stroke({
-            color: '#63C9EF',
-            width: 3
-        }),
-        radius: 5
-    }),
-    zIndex: 51
-});
-
-const top21Style = new Style({
-    image: new CircleStyle({
-        fill: new Fill({
-            color: '#8276d2'
-        }),
-        stroke: new Stroke({
-            color: '#FFFFFF',
-            width: 3
-        }),
-        radius: 5
-    }),
-    zIndex: 51
-});
-
-// Map source uses vectorLayer with vector source
-const source = new VectorSource({
-    wrapX: false,
-    url: 'https://openlayers.org/data/vector/ecoregions.json',
-    format: new GeoJSON()
-});
-
-const vectorLayer = new VectorImageLayer({
-    imageRatio: 1,
-    source: source,
-    style: style
-});
-
-const vectorSource = new VectorSource({
-    wrapX: false
-});
-
-const vector = new VectorLayer({
-    source: vectorSource
-});
-
 export default defineComponent({
     name: 'WorldMap',
     components: {
@@ -141,6 +73,74 @@ export default defineComponent({
     },
     async mounted() {
         await this.updateBpList();
+
+        // ---- Map Styles ----
+        const style = new Style({
+            image: new CircleStyle({
+                fill: new Fill({
+                    color: '#FFFFFF'
+                }),
+                radius: 5
+            }),
+            fill: new Fill({
+                color: getCssVar('color-map')
+            }),
+            stroke: new Stroke({
+                color: getCssVar('color-map'),
+                width: 1
+            }),
+            zIndex: 50
+        });
+
+        // BP location feature style with zIndex biggetr that map
+        const producerStyle = new Style({
+            image: new CircleStyle({
+                fill: new Fill({
+                    color: '#8276d2'
+                }),
+                stroke: new Stroke({
+                    color: '#63C9EF',
+                    width: 3
+                }),
+                radius: 5
+            }),
+            zIndex: 51
+        });
+
+        const top21Style = new Style({
+            image: new CircleStyle({
+                fill: new Fill({
+                    color: '#8276d2'
+                }),
+                stroke: new Stroke({
+                    color: '#FFFFFF',
+                    width: 3
+                }),
+                radius: 5
+            }),
+            zIndex: 51
+        });
+
+        // Map source uses vectorLayer with vector source
+        const source = new VectorSource({
+            wrapX: false,
+            url: 'https://openlayers.org/data/vector/ecoregions.json',
+            format: new GeoJSON()
+        });
+
+        const vectorLayer = new VectorImageLayer({
+            imageRatio: 1,
+            source: source,
+            style: style
+        });
+
+        const vectorSource = new VectorSource({
+            wrapX: false
+        });
+
+        const vector = new VectorLayer({
+            source: vectorSource
+        });
 
         // ---- Overlay ----
         const container = this.$refs['popup'] as any;
