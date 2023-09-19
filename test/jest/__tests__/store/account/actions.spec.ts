@@ -98,7 +98,7 @@ describe('Store - Account Actions', () => {
         shouldRequestAccountName: jest.fn().mockResolvedValue(new Promise(resolve => resolve(requestName))),
         login: jest.fn().mockResolvedValue(new Promise(resolve => resolve(users))),
         getName: jest.fn().mockReturnValue('autoLogin'),
-        chains: [{chainId: "1" }]
+        chains: [{ chainId: '1' }],
     });
     let authenticator = newAuthenticatorMock();
 
@@ -117,7 +117,7 @@ describe('Store - Account Actions', () => {
             user: null,
             accountName: '',
             accountPermission: '',
-            chainId: "1",
+            chainId: '1',
         } as AccountStateInterface;
 
     });
