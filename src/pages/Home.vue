@@ -26,12 +26,6 @@ export default defineComponent({
     <div class="col-12 col-sm-8 q-pa-md header-support home-banner">
         <img class="antelope-logo" src="icons/antelope-logo.png">
         <h2>Open Block Explorer</h2>
-        <div class="chain-container">
-            <img class="chain-logo" src="chains/telos/telos_logo.svg">
-            <img class="chain-logo" src="chains/eos/eos.png">
-            <img class="chain-logo" src="chains/wax/logo_lg.png">
-            <img class="chain-logo" src="chains/ux/logo_sm.png">
-        </div>
     </div>
     <div class="col-12 col-sm-4">
         <ChainsListSelector :on-chain-selected="onChainSelected" />
@@ -51,7 +45,7 @@ export default defineComponent({
     display: flex
     align-items: center
     flex-direction: column
-    justify-content: space-around
+    justify-content: center
     color: white
     text-align: center
     > h2
@@ -59,16 +53,5 @@ export default defineComponent({
 
 .antelope-logo
     max-height: 100px
-
-.chain-container
-    display: flex
-    gap: 20px
-    align-items: center
-    flex-wrap: wrap
-    justify-content: center
-
-.chain-logo
-    max-height: 50px
-    max-width: 100px
 
 </style>
