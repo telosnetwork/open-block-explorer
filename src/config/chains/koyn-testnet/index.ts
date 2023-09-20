@@ -22,6 +22,7 @@ import {
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
+import { UiCustomization } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
   '2081223fcffc96ce2d22ab63df414d1d6bf2f64f2e2922d500808decacd8b8b';
@@ -136,6 +137,15 @@ export default class Telos extends BaseChain {
 
     getTheme(): Theme {
         return THEME;
+    }
+
+    getUiCustomization(): UiCustomization {
+        return {
+            footerLinks: [
+                { label: 'LEGAL', url: 'https://telos.net/legal' },
+                { label: 'PRIVACY', url: 'https://telos.net/privacy-policy' },
+            ],
+        };
     }
 
     getFiltersSupported(prop: string): boolean {
