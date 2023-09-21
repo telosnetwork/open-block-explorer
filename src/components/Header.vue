@@ -7,6 +7,7 @@ import ChainsMenu from 'components/ChainsMenu.vue';
 import ConfigManager, { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouteDataNetwork } from 'src/router';
+import { HeaderSettings } from 'src/types/UiCustomization';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -18,7 +19,7 @@ export default defineComponent({
     setup() {
         const $q = useQuasar();
         const store = useStore();
-        const headerSettings = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
+        const headerSettings = computed(() : HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
 
         const account = computed(() => store.state.account.accountName);
         const isLarge = computed((): boolean => $q.screen.gt.sm);

@@ -100,13 +100,7 @@ export default abstract class BaseChain implements Chain {
   abstract getTheme(): Theme;
 
   getUiCustomization(): UiCustomization {
-      return {
-          footerLinks: [
-              { label: 'LEGAL', url: 'https://telos.net/legal' },
-              { label: 'PRIVACY', url: 'https://telos.net/privacy-policy' },
-              { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
-          ],
-      };
+      return baseUiConfiguration;
   }
 
   abstract getFiltersSupported(prop: string): boolean;
