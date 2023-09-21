@@ -34,6 +34,39 @@ export const DEFAULT_THEME = {
     'color-footer-background': '#000000',
 };
 
+export const baseUiConfiguration: UiCustomization = {
+    footerLinks: [
+        { label: 'LEGAL', url: 'https://telos.net/legal' },
+        { label: 'PRIVACY', url: 'https://telos.net/privacy-policy' },
+        { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
+    ],
+    headerSettings: {
+        hideLoginHandler: false,
+
+        hideNetworkTab: false,
+        hideWalletTab: false,
+        hideVoteTab: false,
+        hideProposalTab: false,
+    },
+    accountPageSettings: {
+        hideCpuInfo: false,
+        hideNetInfo: false,
+        hideRamInfo: false,
+        hideRexInfo: false,
+        hideRefundingInfo: false,
+        hideDelegatedInfo: false,
+
+        hideResourcesControl: false,
+        hideRexControl: false,
+
+        hideTransactionTab: false,
+        hideTokensTab: false,
+        hideKeysTab: false,
+        hideChildrenTab: false,
+        hideContractsTab: false,
+    },
+};
+
 export default abstract class BaseChain implements Chain {
   protected name: string;
 
