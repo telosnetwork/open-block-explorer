@@ -2,7 +2,6 @@
 import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import { useAntelopeStore } from 'src/store/antelope.store';
-import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/resources/ResourcesDialog.vue';
 import StakingDialog from 'src/components/staking/StakingDialog.vue';
@@ -20,7 +19,6 @@ const chain = getChain();
 export default defineComponent({
     name: 'AccountCard',
     components: {
-        PercentCircle,
         SendDialog,
         ResourcesDialog,
         DateField,
@@ -462,30 +460,6 @@ export default defineComponent({
                 <q-space/>
             </div>
             <div v-if="account !== system_account" class="resources">
-                <PercentCircle
-                    :radius="radius"
-                    :fraction="cpu_used"
-                    :total="cpu_max"
-                    label="CPU"
-                    unit="s"
-                />
-                <PercentCircle
-                    :radius="radius"
-                    :fraction="net_used"
-                    :total="net_max"
-                    label="NET"
-                    unit="kb"
-                />
-                <PercentCircle
-                    :radius="radius"
-                    :fraction="ram_used"
-                    :total="ram_max"
-                    label="RAM"
-                    unit="kb"
-                />
-            </div>
-            <div v-else class="resources">
-                <div class="usage">RAM USED: {{ ram_used }} kb</div>
             </div>
         </q-card-section>
         <q-card-section class="resources-container">
@@ -542,36 +516,8 @@ export default defineComponent({
                     </tr>
                     <tr></tr>
                     <tr>
-                        <td class="text-left">LIQUID (Telos native)</td>
+                        <td class="text-left">LIQUID</td>
                         <td class="text-right">{{ formatAsset(liquidNative) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">REX staked (includes savings)</td>
-                        <td class="text-right">{{ formatAsset(rexStaked) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">REX liquid deposits</td>
-                        <td class="text-right">{{ formatAsset(rexDeposits) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">STAKED for CPU</td>
-                        <td class="text-right">{{ formatAsset(stakedCPU) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">STAKED for NET</td>
-                        <td class="text-right">{{ formatAsset(stakedNET) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">REFUNDING from staking</td>
-                        <td class="text-right">{{ formatAsset(stakedRefund) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">DELEGATED to others</td>
-                        <td class="text-right">{{ formatAsset(delegatedToOthers) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-left">DELEGATED by others</td>
-                        <td class="text-right">{{ formatAsset(delegatedByOthers) }}</td>
                     </tr>
                 </tbody>
             </thead>

@@ -9892,11 +9892,6 @@ querystring@0.2.0:
   resolved "https://registry.npmjs.org/querystring/-/querystring-0.2.0.tgz"
   integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
 
-querystringify@^2.1.1:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-2.2.0.tgz#3345941b4153cb9d082d8eee4cda2016a9aef7f6"
-  integrity sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==
-
 queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
@@ -11402,8 +11397,7 @@ tough-cookie@^4.0.0:
   dependencies:
     psl "^1.1.33"
     punycode "^2.1.1"
-    universalify "^0.2.0"
-    url-parse "^1.5.3"
+    universalify "^0.1.2"
 
 tr46@^2.1.0:
   version "2.1.0"
@@ -11695,14 +11689,6 @@ url-loader@4.1.1:
     loader-utils "^2.0.0"
     mime-types "^2.1.27"
     schema-utils "^3.0.0"
-
-url-parse@^1.5.3:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
-  integrity sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==
-  dependencies:
-    querystringify "^2.1.1"
-    requires-port "^1.0.0"
 
 url@^0.11.0:
   version "0.11.0"
