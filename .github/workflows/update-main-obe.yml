@@ -23,7 +23,6 @@ jobs:
         script: |
           cd open-block-explorer
           cp .env  ~/obe.env
-          git add *
           git pull --autostash
           cp ~/obe.env .env
           ./deploy-front.sh
