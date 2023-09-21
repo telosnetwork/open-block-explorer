@@ -123,7 +123,7 @@ export default class Telos extends BaseChain {
     }
 
     getLargeLogoPath(): string {
-        return 'chains/koyn/koyn_logo.png';
+        return 'chains/koyn/koyn_logo.svg';
     }
 
     getSmallLogoPath(): string {
