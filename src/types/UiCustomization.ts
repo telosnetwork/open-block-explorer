@@ -3,6 +3,15 @@ export interface FooterLink {
     url: string;
 }
 
+export interface HeaderSettings {
+    hideLoginHandler: boolean;
+
+    hideNetworkTab: boolean;
+    hideWalletTab: boolean;
+    hideVoteTab: boolean;
+    hideProposalTab: boolean;
+}
+
 export interface AccountPageSettings {
     hideCpuInfo: boolean;
     hideNetInfo: boolean;
@@ -23,5 +32,6 @@ export interface AccountPageSettings {
 
 export interface UiCustomization {
     footerLinks: FooterLink[];
+    headerSettings: HeaderSettings;
     accountPageSettings: AccountPageSettings;
 }

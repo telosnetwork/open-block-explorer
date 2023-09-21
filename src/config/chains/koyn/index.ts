@@ -145,6 +145,14 @@ export default class Telos extends BaseChain {
             footerLinks: [
                 { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
             ],
+            headerSettings: {
+                hideLoginHandler: true,
+
+                hideNetworkTab: true,
+                hideWalletTab: true,
+                hideVoteTab: true,
+                hideProposalTab: true,
+            },
             accountPageSettings: {
                 hideCpuInfo: true,
                 hideNetInfo: true,

@@ -40,6 +40,14 @@ export const baseUiConfiguration: UiCustomization = {
         { label: 'PRIVACY', url: 'https://telos.net/privacy-policy' },
         { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
     ],
+    headerSettings: {
+        hideLoginHandler: false,
+
+        hideNetworkTab: false,
+        hideWalletTab: false,
+        hideVoteTab: false,
+        hideProposalTab: false,
+    },
     accountPageSettings: {
         hideCpuInfo: false,
         hideNetInfo: false,
