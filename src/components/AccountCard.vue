@@ -546,7 +546,7 @@ export default defineComponent({
                     </tr>
                     <tr></tr>
                     <tr>
-                        <td class="text-left">LIQUID (Telos native)</td>
+                        <td class="text-left">LIQUID</td>
                         <td class="text-right">{{ formatAsset(liquidNative) }}</td>
                     </tr>
                     <!--
