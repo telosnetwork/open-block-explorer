@@ -22,6 +22,7 @@ import {
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
+import { UiCustomization } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
   '8a34ec7df1b8cd06ff4a8abbaa7cc50300823350cadc59ab296cb00d104d2b8f';
@@ -136,6 +137,14 @@ export default class Telos extends BaseChain {
 
     getTheme(): Theme {
         return THEME;
+    }
+
+    getUiCustomization(): UiCustomization {
+        return {
+            footerLinks: [
+                { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
+            ],
+        };
     }
 
     getFiltersSupported(prop: string): boolean {
