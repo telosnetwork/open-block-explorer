@@ -1,0 +1,29 @@
+name: dStor-node-api CI deploy to MAINNET
+
+# **What it does**: Deploys the API to the mainnet OBE when a release has been approved by two users and released.
+# **Why we have it**: Automatic updates to mainnet.
+# **Who does it impact**: All mainnet users and work will be affected by this update. The update has been shortened to minimize any downtime.
+
+on:
+  push:
+    branches: [ main, master ]
+jobs:
+
+  apply_to_MN:
+    runs-on: ubuntu-latest
+    steps:
+    - name: update remote repo
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.MNHOST }}
+        username: ${{ secrets.MNUSERNAME }}
+        password: ${{ secrets.MNPASSWORD }}
+        port: ${{ secrets.MNPORT }}
+        script_stop: true
+        script: |
+          cd open-block-explorer
+          cp .env  ~/obe.env
+          git add *
+          git pull --autostash
+          cp ~/obe.env .env
+          ./deploy-front.sh
