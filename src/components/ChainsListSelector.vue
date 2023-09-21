@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue';
+import { computed, defineComponent } from 'vue';
 import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
 import { useRoute, useRouter } from 'vue-router';
@@ -44,15 +44,6 @@ export default defineComponent({
 
             props.onChainSelected(chain);
         }
-
-        onMounted(() => {
-            const currentChain = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
-            if (currentChain === null) {
-                const chains = configMgr.getMainnets();
-                const telos = chains.filter(chain => chain.getName() === 'telos')[0];
-                chainSelected(telos);
-            }
-        });
 
         return {
             mainnets,

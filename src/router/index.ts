@@ -18,6 +18,13 @@ const configMgr = ConfigManager.get();
 
 const routeData = reactive({ network: '' });
 
+const updateSelectedChain = (chainName: string) => {
+    const chains = configMgr.getAllChains();
+    const chain = chains.filter(chain => chain.getName() === chainName)[0];
+    routeData.network = chain.getName();
+    configMgr.setCurrentChain(chain);
+};
+
 export default route<StateInterface>(function (/* { store, ssrContext } */) {
     const createHistory = createWebHistory;
     const Router = createRouter({
@@ -32,7 +39,7 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     Router.beforeEach((to, from) => {
         const chains = configMgr.getAllChains();
         const selectedChainOnStore = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
-        const preferedChainName = configMgr.getPreferredChain();
+        const preferredChainName = configMgr.getPreferredChain();
 
         if (to.path === '/') { // if attempting to go to home page
             if (to.query.network) { // if there is network param, proceed to network with the param
@@ -40,44 +47,49 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
                     path: 'network',
                     query: to.query,
                 });
-            } else if (preferedChainName) { // if there is no network param and local storage has preferred network selected
+            } else if (preferredChainName) { // if there is no network param and local storage has preferred network selected
+                updateSelectedChain(preferredChainName);
                 return ({
                     path: 'network',
                     query: {
-                        network: preferedChainName,
+                        network: preferredChainName,
                     },
                 });
             }
             // else, will proceed to home page
         } else {
             if (!to.query.network) { // if doesn't have network param
-                if (selectedChainOnStore) { // if has a chain selected on sotre
-                    routeData.network = selectedChainOnStore;
+                if (preferredChainName) { // if has a preferred chain selected on sotre
+                    updateSelectedChain(preferredChainName);
                     return ({
                         ...to,
                         query: {
                             ...to.query,
-                            network: selectedChainOnStore,
+                            network: preferredChainName,
                         },
                     });
-                } else { // if doesn't have chain selected on store, attempt to get telos, if not find, get the first one
-                    const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0];
-                    configMgr.setCurrentChain(chain);
-                    routeData.network = chain.getName();
-
-                    setTimeout(() => location.reload(), 500);
+                } else { // if doesn't have a preferred chain selected on store, go to home page (landing page)
+                    return ({
+                        path: '/',
+                    });
                 }
             } else if (chains.filter(chain => chain.getName() === to.query.network).length === 0) { // check if the network is not part of the system
-                const chain = chains.filter(chain => chain.getName() === 'telos')[0] ?? chains[0]; // attempt to get telos network or the first one
-                configMgr.setCurrentChain(chain);
-                routeData.network = chain.getName();
-
-                setTimeout(() => location.reload(), 500);
+                if (preferredChainName) { // if has a preferred chain selected on sotre
+                    updateSelectedChain(preferredChainName);
+                    return ({
+                        ...to,
+                        query: {
+                            ...to.query,
+                            network: preferredChainName,
+                        },
+                    });
+                } else { // if doesn't have a preferred chain selected on store, go to home page (landing page)
+                    return ({
+                        path: '/',
+                    });
+                }
             } else if ((from.query.network && from.query.network !== to.query.network) || selectedChainOnStore !== to.query.network) { // if i'm changing from network
-                const chain = chains.filter(chain => chain.getName() === to.query.network)[0];
-                routeData.network = chain.getName();
-                configMgr.setCurrentChain(chain);
-
+                updateSelectedChain(Array.isArray(to.query.network) ? to.query.network[0] : to.query.network);
                 setTimeout(() => location.reload(), 500);
             }
         }

@@ -1,8 +1,9 @@
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, onMounted, ref } from 'vue';
 import ChainsListSelector from 'src/components/ChainsListSelector.vue';
 import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
+import { useRoute, useRouter } from 'vue-router';
 
 const configMgr = ConfigManager.get();
 
@@ -13,6 +14,8 @@ export default defineComponent({
     },
     setup() {
         const menuOpened = ref(false);
+        const route = useRoute();
+        const router = useRouter();
 
         const menuIcon = computed(() => menuOpened.value ? 'expand_less' : 'expand_more');
         const hasChainsInstalled = computed(() => configMgr.getAllChains().length > 0);
@@ -24,6 +27,21 @@ export default defineComponent({
         function isChainSelected(chain: Chain): boolean {
             return sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
         }
+
+        onMounted(() => {
+            const currentChain = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
+            if (currentChain === null) {
+                const chains = configMgr.getMainnets();
+                const telos = chains.filter(chain => chain.getName() === 'telos')[0];
+
+                if(!isChainSelected(telos)) {
+                    void router.push({
+                        path: route.path,
+                        query: { network: telos.getName() },
+                    });
+                }
+            }
+        });
 
         return {
             menuOpened,
