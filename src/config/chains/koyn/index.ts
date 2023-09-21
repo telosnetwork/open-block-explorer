@@ -143,7 +143,7 @@ export default class Telos extends BaseChain {
         return {
             footerLinks: [
                 { label: 'LEGAL', url: 'https://telos.net/legal' },
-                { label: 'PRIVACY', url: 'https://telos.net/privacy-policy' },
+                { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
             ],
         };
     }
