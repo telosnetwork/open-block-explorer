@@ -13,7 +13,7 @@
 
  */
 
-import BaseChain from 'src/config/BaseChain';
+import BaseChain, { baseUiConfiguration } from 'src/config/BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import {
     getCoingeckoPriceChartData,
@@ -141,9 +141,27 @@ export default class Telos extends BaseChain {
 
     getUiCustomization(): UiCustomization {
         return {
+            ...baseUiConfiguration,
             footerLinks: [
                 { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
             ],
+            accountPageSettings: {
+                hideCpuInfo: true,
+                hideNetInfo: true,
+                hideRamInfo: true,
+                hideRexInfo: true,
+                hideRefundingInfo: true,
+                hideDelegatedInfo: true,
+
+                hideResourcesControl: true,
+                hideRexControl: true,
+
+                hideTransactionTab: false,
+                hideTokensTab: true,
+                hideKeysTab: false,
+                hideChildrenTab: false,
+                hideContractsTab: false,
+            },
         };
     }
 
