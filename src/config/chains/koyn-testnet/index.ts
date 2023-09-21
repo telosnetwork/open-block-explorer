@@ -142,7 +142,6 @@ export default class Telos extends BaseChain {
     getUiCustomization(): UiCustomization {
         return {
             footerLinks: [
-                { label: 'LEGAL', url: 'https://telos.net/legal' },
                 { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
             ],
         };
