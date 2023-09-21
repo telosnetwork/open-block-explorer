@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, computed, ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
-import LoginHandler from 'components/LoginHandler.vue';
+// import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
 import ChainsMenu from 'components/ChainsMenu.vue';
 import { getChain } from 'src/config/ConfigManager';
@@ -11,7 +11,7 @@ import { useRouteDataNetwork } from 'src/router';
 export default defineComponent({
     name: 'AppHeader',
     components: {
-        LoginHandler,
+        // LoginHandler,
         HeaderSearch,
         ChainsMenu,
     },
@@ -73,9 +73,10 @@ export default defineComponent({
                 </div>
             </div>
         </div>
-        <LoginHandler/>
+        <!-- <LoginHandler/> -->
     </div>
     <div class="row justify-center col-12 q-pt-sm">
+        <!--
         <q-tabs
             active-class="active-tab"
             indicator-color="white"
@@ -109,6 +110,7 @@ export default defineComponent({
                 to="/proposal"
             />
         </q-tabs>
+        -->
     </div>
 </div>
 </template>
