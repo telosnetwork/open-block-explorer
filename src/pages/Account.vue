@@ -14,6 +14,7 @@ export default defineComponent({
     name: 'AccountPage',
     components: {
         TransactionsTable,
+        // TokensPanel,
         KeysPanel,
         ChildrenPanel,
         AccountCard,
@@ -60,6 +61,7 @@ export default defineComponent({
         <q-tabs v-model="tab" class="account-view tabs" no-caps>
             <q-tab name="transactions" label="Transactions"/>
             <q-tab v-if="abi" name="contract" label="Contract"/>
+            <!-- <q-tab name="tokens" label="Tokens"/> -->
             <q-tab name="keys" label="Keys"/>
             <q-tab name="children" label="Children"/>
         </q-tabs>
@@ -71,6 +73,9 @@ export default defineComponent({
         <q-tab-panel v-if="abi" name="contract">
             <ContractTabs/>
         </q-tab-panel>
+        <!-- <q-tab-panel name="tokens">
+            <TokensPanel :account="account"/>
+        </q-tab-panel> -->
         <q-tab-panel name="keys">
             <KeysPanel :account="account"/>
         </q-tab-panel>
