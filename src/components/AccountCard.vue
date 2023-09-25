@@ -140,9 +140,13 @@ export default defineComponent({
         };
 
         const loadBalances = async () => {
-            const total  = await getRexBalance();
-            rexDeposits.value = await getRexFund();
-            rexStaked.value = total;
+            try {
+                const total  = await getRexBalance();
+                rexDeposits.value = await getRexFund();
+                rexStaked.value = total;
+            } catch (e) {
+                $q.notify('REX information not available!');
+            }
         };
 
         const loadResources = () => {
@@ -462,7 +466,7 @@ export default defineComponent({
                 <q-space/>
             </div>
             <div v-if="account !== system_account" class="resources">
-               <!--
+                <!--
                 <PercentCircle
                     :radius="radius"
                     :fraction="cpu_used"
