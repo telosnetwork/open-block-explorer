@@ -67,7 +67,7 @@ const THEME = {
     'color-graph-shadow': '#CE1C6128',
     'color-footer-background': '#492030',
 };
-export default class Telos extends BaseChain {
+export default class KoynTestnet extends BaseChain {
     getName(): string {
         return NAME;
     }

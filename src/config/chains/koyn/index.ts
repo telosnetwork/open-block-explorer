@@ -67,7 +67,7 @@ const THEME = {
     'color-graph-shadow': '#CE1C6128',
     'color-footer-background': '#492030',
 };
-export default class KOYN extends BaseChain {
+export default class Koyn extends BaseChain {
     getName(): string {
         return NAME;
     }

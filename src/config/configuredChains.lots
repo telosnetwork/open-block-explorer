@@ -2,7 +2,6 @@ import EOS from 'src/config/chains/eos';
 import Telos from 'src/config/chains/telos';
 import UX from 'src/config/chains/ux';
 import Wax from 'src/config/chains/wax';
-import KOYN from 'src/config/chains/koyn';
 
 import Koyn from 'src/config/chains/koyn';
 import KoynTestnet from 'src/config/chains/koyn-testnet';
@@ -12,8 +11,8 @@ import KoynTestnet from 'src/config/chains/koyn-testnet';
 import { ChainsConfig } from 'src/types/ChainsConfig';
 
 const chains: ChainsConfig = {
-    mainnets: [new EOS('eos'), new Telos('telos'), new UX('ux'), new Wax('wax'), new KOYN('koyn')],
-    testnets: [new Jungle('jungle'), new TelosTestnet('telos-testnet'), new KOYNTestnet('koyn-testnet')],
+    mainnets: [new EOS('eos'), new Koyn('koyn'), new Telos('telos'), new UX('ux'), new Wax('wax')],
+    testnets: [new KoynTestnet('koyn-testnet'), new Jungle('jungle'), new TelosTestnet('telos-testnet')],
 };
 
 export default chains;
