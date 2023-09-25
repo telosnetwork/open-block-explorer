@@ -145,7 +145,8 @@ export default defineComponent({
                 rexDeposits.value = await getRexFund();
                 rexStaked.value = total;
             } catch (e) {
-                $q.notify('REX information not available!');
+                // Koy will not use REX
+                // $q.notify('REX information not available!');
             }
         };
 
