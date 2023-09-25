@@ -143,9 +143,14 @@ export default defineComponent({
         };
 
         const loadBalances = async () => {
-            const total  = await getRexBalance();
-            rexDeposits.value = await getRexFund();
-            rexStaked.value = total;
+            try {
+                const total  = await getRexBalance();
+                rexDeposits.value = await getRexFund();
+                rexStaked.value = total;
+            } catch (e) {
+                // Koy will not use REX
+                // $q.notify('REX information not available!');
+            }
         };
 
         const loadResources = () => {

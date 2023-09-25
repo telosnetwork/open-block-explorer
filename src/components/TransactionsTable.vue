@@ -74,7 +74,7 @@ export default defineComponent({
         const route = useRoute();
         const router = useRouter();
         const pagination = computed(
-            () => (route.query['page'] as string) || '1,10',
+            () => (route.query['page'] as string) || '1,20',
         );
         const pageSizeOptions = [10, 20, 50, 100, 200];
         const { account, actions } = toRefs(props);
