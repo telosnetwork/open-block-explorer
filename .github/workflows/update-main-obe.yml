@@ -25,4 +25,5 @@ jobs:
           cp .env  ~/obe.env
           git pull --autostash
           cp ~/obe.env .env
-          ./deploy-front.sh
+          rm -rf dist/spa/*
+          yarn quasar build
