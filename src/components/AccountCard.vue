@@ -2,7 +2,7 @@
 import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import { useAntelopeStore } from 'src/store/antelope.store';
-// import PercentCircle from 'src/components/PercentCircle.vue';
+import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/resources/ResourcesDialog.vue';
 import StakingDialog from 'src/components/staking/StakingDialog.vue';
@@ -15,12 +15,13 @@ import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
+import ConfigManager from 'src/config/ConfigManager';
 
 const chain = getChain();
 export default defineComponent({
     name: 'AccountCard',
     components: {
-        // PercentCircle,
+        PercentCircle,
         SendDialog,
         ResourcesDialog,
         DateField,
@@ -36,6 +37,8 @@ export default defineComponent({
         const $q = useQuasar();
         const router = useRouter();
         const store = useAntelopeStore();
+
+        const accountPageSettings = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
 
         const createTime = ref<string>('2019-01-01T00:00:00.000');
         const createTransaction = ref<string>('');
@@ -370,6 +373,7 @@ export default defineComponent({
         );
 
         return {
+            accountPageSettings,
             MICRO_UNIT,
             KILO_UNIT,
             stakedCPU,
@@ -467,8 +471,8 @@ export default defineComponent({
                 <q-space/>
             </div>
             <div v-if="account !== system_account" class="resources">
-                <!--
                 <PercentCircle
+                    v-if="!accountPageSettings.hideCpuInfo"
                     :radius="radius"
                     :fraction="cpu_used"
                     :total="cpu_max"
@@ -476,6 +480,7 @@ export default defineComponent({
                     unit="s"
                 />
                 <PercentCircle
+                    v-if="!accountPageSettings.hideNetInfo"
                     :radius="radius"
                     :fraction="net_used"
                     :total="net_max"
@@ -483,35 +488,31 @@ export default defineComponent({
                     unit="kb"
                 />
                 <PercentCircle
+                    v-if="!accountPageSettings.hideRamInfo"
                     :radius="radius"
                     :fraction="ram_used"
                     :total="ram_max"
                     label="RAM"
                     unit="kb"
                 />
-                -->
             </div>
-            <!--
-            <div v-else class="resources">
+            <div v-else-if="!accountPageSettings.hideRamInfo" class="resources">
                 <div class="usage">RAM USED: {{ ram_used }} kb</div>
             </div>
-            -->
         </q-card-section>
         <q-card-section class="resources-container">
             <div class="row justify-center q-gutter-sm">
-                <div class="col-3">
+                <div v-if="isAccount" class="col-3">
                     <q-btn
-                        v-if='isAccount'
                         :disable="tokensLoading || isLoading"
-                        :label='tokensLoading ? "Loading..." : "Send"'
-                        color='primary'
+                        :label="tokensLoading ? 'Loading...' : 'Send'"
+                        color="primary"
                         class="full-width"
                         @click="openSendDialog = true"
                     />
                 </div>
-                <div class="col-3">
+                <div v-if="isAccount && !accountPageSettings.hideResourcesControl" class="col-3">
                     <q-btn
-                        v-if="isAccount"
                         :disable="tokensLoading || isLoading"
                         :label='tokensLoading ? "Loading..." : "Resources"'
                         class="full-width"
@@ -519,9 +520,8 @@ export default defineComponent({
                         @click="openResourcesDialog = true"
                     />
                 </div>
-                <div class="col-3">
+                <div v-if="isAccount && !accountPageSettings.hideRexControl" class="col-3">
                     <q-btn
-                        v-if="isAccount"
                         :disable="tokensLoading || isLoading"
                         :label='tokensLoading ? "Loading..." : "Staking (REX)"'
                         class="ellipsis full-width"
@@ -554,36 +554,34 @@ export default defineComponent({
                         <td class="text-left">LIQUID</td>
                         <td class="text-right">{{ formatAsset(liquidNative) }}</td>
                     </tr>
-                    <!--
-                    <tr>
+                    <tr v-if="!accountPageSettings.hideRexInfo">
                         <td class="text-left">REX staked (includes savings)</td>
                         <td class="text-right">{{ formatAsset(rexStaked) }}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="!accountPageSettings.hideRexInfo">
                         <td class="text-left">REX liquid deposits</td>
                         <td class="text-right">{{ formatAsset(rexDeposits) }}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="!accountPageSettings.hideCpuInfo">
                         <td class="text-left">STAKED for CPU</td>
                         <td class="text-right">{{ formatAsset(stakedCPU) }}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="!accountPageSettings.hideNetInfo">
                         <td class="text-left">STAKED for NET</td>
                         <td class="text-right">{{ formatAsset(stakedNET) }}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="!accountPageSettings.hideRefundingInfo">
                         <td class="text-left">REFUNDING from staking</td>
                         <td class="text-right">{{ formatAsset(stakedRefund) }}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="!accountPageSettings.hideDelegatedInfo">
                         <td class="text-left">DELEGATED to others</td>
                         <td class="text-right">{{ formatAsset(delegatedToOthers) }}</td>
                     </tr>
-                    <tr>
+                    <tr v-if="!accountPageSettings.hideDelegatedInfo">
                         <td class="text-left">DELEGATED by others</td>
                         <td class="text-right">{{ formatAsset(delegatedByOthers) }}</td>
                     </tr>
-                    -->
                 </tbody>
             </thead>
         </q-markup-table>

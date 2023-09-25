@@ -11,12 +11,14 @@
 # HYPERION_ENDPOINT=https://telos.caleos.io
 # TELOS_API_ENDPOINT=https://api.telos.net/v1
  */
-import BaseChain from 'src/config/BaseChain';
+
+import BaseChain, { baseUiConfiguration } from 'src/config/BaseChain';
 import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { getEmptyPriceChartData } from 'src/api/price';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
+import { UiCustomization } from 'src/types/UiCustomization';
 const CHAIN_ID =
   '8a34ec7df1b8cd06ff4a8abbaa7cc50300823350cadc59ab296cb00d104d2b8f';
 const NAME = 'koyn';
@@ -113,6 +115,41 @@ export default class Koyn extends BaseChain {
     getTheme(): Theme {
         return THEME;
     }
+
+    getUiCustomization(): UiCustomization {
+        return {
+            ...baseUiConfiguration,
+            footerLinks: [
+                { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
+            ],
+            headerSettings: {
+                hideLoginHandler: true,
+
+                hideNetworkTab: true,
+                hideWalletTab: true,
+                hideVoteTab: true,
+                hideProposalTab: true,
+            },
+            accountPageSettings: {
+                hideCpuInfo: true,
+                hideNetInfo: true,
+                hideRamInfo: true,
+                hideRexInfo: true,
+                hideRefundingInfo: true,
+                hideDelegatedInfo: true,
+
+                hideResourcesControl: true,
+                hideRexControl: true,
+
+                hideTransactionTab: false,
+                hideTokensTab: true,
+                hideKeysTab: false,
+                hideChildrenTab: false,
+                hideContractsTab: false,
+            },
+        };
+    }
+
     getFiltersSupported(prop: string): boolean {
         if (prop === 'notified') {
             return true;
