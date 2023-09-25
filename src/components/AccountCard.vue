@@ -358,10 +358,7 @@ export default defineComponent({
         };
 
         onMounted(async () => {
-            try{
-                usdPrice.value = await chain.getUsdPrice();
-            } catch (e) {
-            }
+            usdPrice.value = await chain.getUsdPrice();
             console.log('mounted');
             await loadAccountData();
             await store.dispatch('account/updateRexData', {
