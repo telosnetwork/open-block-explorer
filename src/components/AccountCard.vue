@@ -154,42 +154,45 @@ export default defineComponent({
         };
 
         const loadResources = () => {
-            ram_used.value = fixDec(
-                Number(accountData.value.ram_usage) / KILO_UNIT.value,
-            );
-
-            if (props.account !== system_account.value) {
-                ram_max.value = fixDec(
-                    Number(accountData.value.ram_quota) / KILO_UNIT.value,
-                );
-                cpu_used.value = fixDec(
-                    Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value,
-                );
-                cpu_max.value = fixDec(
-                    Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value,
-                );
-                net_used.value = fixDec(
-                    Number(accountData.value.net_limit.used) / KILO_UNIT.value,
-                );
-                net_max.value = fixDec(
-                    Number(accountData.value.net_limit.max) / KILO_UNIT.value,
+            try {
+                ram_used.value = fixDec(
+                    Number(accountData.value.ram_usage) / KILO_UNIT.value,
                 );
 
-                stakedResources.value =
-                    Number(accountData.value.total_resources.cpu_weight.value) +
-                    Number(accountData.value.total_resources.net_weight.value);
+                if (props.account !== system_account.value) {
+                    ram_max.value = fixDec(
+                        Number(accountData.value.ram_quota) / KILO_UNIT.value,
+                    );
+                    cpu_used.value = fixDec(
+                        Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value,
+                    );
+                    cpu_max.value = fixDec(
+                        Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value,
+                    );
+                    net_used.value = fixDec(
+                        Number(accountData.value.net_limit.used) / KILO_UNIT.value,
+                    );
+                    net_max.value = fixDec(
+                        Number(accountData.value.net_limit.max) / KILO_UNIT.value,
+                    );
 
-                stakedCPU.value = Number(
-                    accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
-                );
+                    stakedResources.value =
+                        Number(accountData.value.total_resources.cpu_weight.value) +
+                        Number(accountData.value.total_resources.net_weight.value);
 
-                stakedNET.value = Number(
-                    accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
-                );
+                    stakedCPU.value = Number(
+                        accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
+                    );
 
-                delegatedByOthers.value = Math.abs(
-                    stakedResources.value - stakedNET.value - stakedCPU.value,
-                );
+                    stakedNET.value = Number(
+                        accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
+                    );
+
+                    delegatedByOthers.value = Math.abs(
+                        stakedResources.value - stakedNET.value - stakedCPU.value,
+                    );
+                }
+            } catch (e) {
             }
         };
 
