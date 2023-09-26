@@ -128,7 +128,6 @@ export default defineComponent({
         const loadAccountData = async (): Promise<void> => {
             try {
                 isLoading.value = true;
-                console.log('lala');
                 accountData.value = await api.getAccount(props.account);
                 await loadAccountCreatorInfo();
                 await loadBalances();
@@ -137,7 +136,6 @@ export default defineComponent({
                 await updateTokenBalances();
                 await updateResources({ account: props.account, force: true });
             } catch (e) {
-                console.log(e);
                 $q.notify(`account ${props.account} not found!`);
                 accountExists.value = false;
                 return;
@@ -200,7 +198,6 @@ export default defineComponent({
 
         const setTotalBalance = () => {
             totalTokens.value = liquidNative.value + rex.value + staked.value + delegatedToOthers.value;
-            console.log('hello');
             isLoading.value = false;
         };
 
@@ -359,7 +356,6 @@ export default defineComponent({
 
         onMounted(async () => {
             usdPrice.value = await chain.getUsdPrice();
-            console.log('mounted');
             await loadAccountData();
             await store.dispatch('account/updateRexData', {
                 account: props.account,
