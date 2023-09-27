@@ -10,6 +10,7 @@ import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
+import { AccountPageSettings } from 'src/types/UiCustomization';
 
 export default defineComponent({
     name: 'AccountPage',
@@ -25,7 +26,7 @@ export default defineComponent({
         const store = useStore();
         const route = useRoute();
         const router = useRouter();
-        const accountPageSettings = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
+        const accountPageSettings = computed((): AccountPageSettings => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
 
         const tab = ref<string>((route.query['tab'] as string) || 'transactions');
         const account = computed(() => (route.params.account as string) || '');
