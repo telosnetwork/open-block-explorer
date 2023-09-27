@@ -87,7 +87,7 @@ export default defineComponent({
                 class="deactive"
                 name="network"
                 label="Network"
-                to="/"
+                to="/network"
             />
             <q-route-tab
                 v-if="account"

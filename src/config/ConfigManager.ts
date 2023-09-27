@@ -7,6 +7,7 @@ export function getChain(): Chain {
 
 export default class ConfigManager {
     public static CHAIN_LOCAL_STORAGE = 'selectedChainName';
+    public static PREFERRED_CHAIN_LOCAL_STORAGE = 'preferredChainName';
     private static thisManager: ConfigManager;
     private testnets: Chain[];
     private mainnets: Chain[];
@@ -64,6 +65,21 @@ export default class ConfigManager {
             chain.getName(),
         );
         this.currentChain = chain;
+        return true;
+    }
+
+    public getPreferredChain(): string {
+        return localStorage.getItem(ConfigManager.PREFERRED_CHAIN_LOCAL_STORAGE);
+    }
+
+    public setPreferredChain(chain: Chain): boolean {
+        if (!this.findChain(chain.getName())) {
+            return false;
+        }
+        localStorage.setItem(
+            ConfigManager.PREFERRED_CHAIN_LOCAL_STORAGE,
+            chain.getName(),
+        );
         return true;
     }
 
