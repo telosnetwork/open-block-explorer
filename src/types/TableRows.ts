@@ -16,6 +16,21 @@ export interface RexbalRows {
   rows: Rexbal[];
 }
 
+export interface Stakedbal {
+  account: string;
+  receiver_account: string;
+  balance: string;
+  unstaked_balance: string;
+  stake_time: string;
+  last_unstake_time: string;
+  staker_group: number;
+  last_claim_date: string;
+}
+
+export interface StakedbalRows {
+  rows: Stakedbal[];
+}
+
 export interface GenericTable {
   rows: unknown[];
 }
