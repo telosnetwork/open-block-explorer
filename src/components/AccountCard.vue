@@ -16,6 +16,7 @@ import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
 import ConfigManager from 'src/config/ConfigManager';
+import { AccountPageSettings } from 'src/types/UiCustomization';
 
 const chain = getChain();
 export default defineComponent({
@@ -38,7 +39,7 @@ export default defineComponent({
         const router = useRouter();
         const store = useAntelopeStore();
 
-        const accountPageSettings = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
+        const accountPageSettings = computed((): AccountPageSettings => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
 
         const createTime = ref<string>('2019-01-01T00:00:00.000');
         const createTransaction = ref<string>('');
