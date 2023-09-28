@@ -137,7 +137,7 @@ export default defineComponent({
             rowsNumber: 10000,
         });
 
-        const enableLiveTransactions = ref<boolean>(true);
+        const enableLiveTransactions = ref<boolean>(props.toggleEnabled);
         const currentFirstAction = ref<number>(0);
 
         // actions filter
