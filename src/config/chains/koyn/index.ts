@@ -27,7 +27,7 @@ const TOKEN = {
     symbol: 'KOYN',
     precision: 4,
     amount: 0,
-    contract: 'eosio.token',
+    contract: 'koyn.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://hyperion.koy.network';
 const RPC_ENDPOINT = {
@@ -41,7 +41,7 @@ const FUEL_RPC_ENDPOINT = {
     port: 443,
 };
 const API_ENDPOINT = 'https://mainnet.koy.network/v1';
-const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
+const S3_PRODUCER_BUCKET = '';
 const DISPLAY_MAP = false;
 const THEME = {
     primary: '#CE1C61',

@@ -35,7 +35,7 @@ const mockChain: ChainType = {
     rpcEndpoint: { protocol: 'https', host: 'rpcEndpoint', port: 443 },
     hyperionEndpoint: 'HyperionEndpoint',
     fuelRPCEndpoint: { protocol: 'https', host: 'fuelRPCEndpoint', port: 443 },
-    symbol: 'TLOS',
+    symbol: 'KOYN',
 };
 
 installQuasarPlugin();
@@ -52,12 +52,12 @@ jest.mock('@telosnetwork/ual-cleos', () => ({
     CleosAuthenticator: jest.fn().mockImplementation(() => ({})),
 }));
 
-const TelosChain = {
-    chainId: 'TelosChain.chainId',
-    rpcEndpoint: { protocol: 'https', host: 'teloschain.host', port: 443 },
-    hyperionEndpoint: 'https://teloschain.hyperion.endpoint',
-    fuelRPCEndpoint: { protocol: 'https', host: 'teloschain.fuel.host', port: 443 },
-    symbol: 'TLOS',
+const KoyChain = {
+    chainId: 'KoyChain.chainId',
+    rpcEndpoint: { protocol: 'https', host: 'koychain.host', port: 443 },
+    hyperionEndpoint: 'https://koychain.hyperion.endpoint',
+    fuelRPCEndpoint: { protocol: 'https', host: 'koychain.fuel.host', port: 443 },
+    symbol: 'KOYN',
 };
 
 const TestnetChain = {
@@ -65,7 +65,7 @@ const TestnetChain = {
     rpcEndpoint: { protocol: 'https', host: 'testnet.host', port: 443 },
     hyperionEndpoint: 'https://testnet.hyperion.endpoint',
     fuelRPCEndpoint: { protocol: 'https', host: 'testnet.fuel.host', port: 443 },
-    symbol: 'TLOS',
+    symbol: 'KOYN',
 };
 
 // mocking internal implementations
@@ -99,24 +99,24 @@ describe('When booting ual', () => {
         resetUalState();
     });
 
-    describe('using Telos chain', () => {
-        it('should set the $ual properties pointing to Telos network', () => {
-            setChain(TelosChain);
+    describe('using Koy chain', () => {
+        it('should set the $ual properties pointing to Koy network', () => {
+            setChain(KoyChain);
             void updateWrapper();
             expect(wrapper.app.config.globalProperties.$ual).toBeDefined();
 
             // assert that wrapper.app.config.globalProperties.$ual.chains is an array of length 1
             expect(wrapper.app.config.globalProperties.$ual.chains).toHaveLength(1);
 
-            // assert the chain is TelosChain
+            // assert the chain is KoyChain
             const chain:ChainType = wrapper.app.config.globalProperties.$ual.chains[0];
-            expect(chain.chainId).toEqual(TelosChain.chainId);
+            expect(chain.chainId).toEqual(KoyChain.chainId);
 
             expect(chain.rpcEndpoints).toHaveLength(1);
 
-            expect(chain.rpcEndpoints[0].protocol).toEqual(TelosChain.rpcEndpoint.protocol);
-            expect(chain.rpcEndpoints[0].host).toEqual(TelosChain.rpcEndpoint.host);
-            expect(chain.rpcEndpoints[0].port).toEqual(TelosChain.rpcEndpoint.port);
+            expect(chain.rpcEndpoints[0].protocol).toEqual(KoyChain.rpcEndpoint.protocol);
+            expect(chain.rpcEndpoints[0].host).toEqual(KoyChain.rpcEndpoint.host);
+            expect(chain.rpcEndpoints[0].port).toEqual(KoyChain.rpcEndpoint.port);
         });
     });
 

@@ -4,40 +4,26 @@ import { FuelUserWrapper } from 'src/api/fuel';
 global.fetch = jest.fn((input: RequestInfo | URL) =>
     Promise.resolve({
         text: () => {
-            if (input.toString() === 'https://raw.githubusercontent.com/telosnetwork/token-list/main/telosmain.json') {
+            if (input.toString() === 'https://raw.githubusercontent.com/KoyNetwork/token-list/main/koynmain.json') {
                 return `{
                     "tokens": [
                         {
-                            "name": "Telos",
-                            "logo_sm": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png",
-                            "logo_lg": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png",
-                            "symbol": "TLOS",
-                            "account": "eosio.token"
-                        },
-                        {
-                            "name": "pTokens BTC",
-                            "logo_sm": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/pbtc.png",
-                            "logo_lg": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/pbtc-lg.png",
-                            "symbol": "PBTC",
-                            "account": "btc.ptokens"
+                            "name": "KOY Network",
+                            "logo_sm": "https://raw.githubusercontent.com/KoyNetwork/token-list/master/logos/koyn.png",
+                            "logo_lg": "https://raw.githubusercontent.com/KoyNetwork/token-list/master/logos/koyn.png",
+                            "symbol": "KOYN",
+                            "account": "koyn.token"
                         }
                     ]
                 }`;
             } else {
                 return `[
                     {
-                      "name": "Telos",
-                      "symbol": "TLOS",
-                      "contract": "eosio.token",
+                      "name": "KOY Network",
+                      "symbol": KOYN,
+                      "contract": "koyn.token",
                       "precision": 4,
-                      "logo": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png"
-                    },
-                    {
-                      "name": "Qubicles",
-                      "symbol": "QBE",
-                      "contract": "qubicletoken",
-                      "precision": 4,
-                      "logo": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/qbe.png"
+                      "logo": "https://raw.githubusercontent.com/KoyNetwork/token-list/master/logos/koyn.png"
                     }
                 ]
                 `;
@@ -46,12 +32,12 @@ global.fetch = jest.fn((input: RequestInfo | URL) =>
     } as unknown as Response),
 );
 
-const sessionStorageMock = {
+const localStorageMock = {
     getItem: jest.fn(),
     setItem: jest.fn(),
     removeItem:jest.fn(),
 };
-Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 
 const transactionHeaders = {
@@ -162,8 +148,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setUser', expect.any(FuelUserWrapper));
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', true);
             expect(commit).toHaveBeenCalledWith('setAccountName', 'john.doe');
-            expect(sessionStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
-            expect(sessionStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
 
         });
 
@@ -183,8 +169,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setUser', expect.any(FuelUserWrapper));
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', true);
             expect(commit).toHaveBeenCalledWith('setAccountName', 'john.doe');
-            expect(sessionStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
-            expect(sessionStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
         });
 
     });
@@ -199,8 +185,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setAccountName', '');
             expect(commit).toHaveBeenCalledWith('setUser', null);
 
-            expect(sessionStorageMock.removeItem).toHaveBeenCalledWith('account');
-            expect(sessionStorageMock.removeItem).toHaveBeenCalledWith('autoLogin');
+            expect(localStorageMock.removeItem).toHaveBeenCalledWith('account');
+            expect(localStorageMock.removeItem).toHaveBeenCalledWith('autoLogin');
         });
     });
 });
