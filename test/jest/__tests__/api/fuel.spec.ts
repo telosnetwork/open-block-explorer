@@ -112,9 +112,9 @@ global.fetch = jest.fn(() =>
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
         getChainId: () => 'chainId',
-        getName: () => 'telos',
-        getSymbol: () => 'TLOS',
-        getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
+        getName: () => 'Koyn',
+        getSymbol: () => 'KOYN',
+        getSystemToken: () => ({ symbol: 'KOYN', contract: 'koyn.token', precision: 4 }),
         getRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
         getHyperionEndpoint: () => '',
         getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
@@ -173,7 +173,7 @@ const originalAction = {
     data: {
         from: signer.actor,
         to: 'caleosblocks',
-        quantity: '0.0001 TLOS',
+        quantity: '0.0001 KOYN',
         memo: '',
     } as unknown,
 };
@@ -288,10 +288,10 @@ describe('FuelUserWrapper (Greymass Fuel)', () => {
 
                     // check if the fee is being displayed correctly
                     createDialog.mockImplementationOnce((options: QDialogOptions) => {
-                        expect(options.message.indexOf(' TLOS')).toBeGreaterThan(0);
+                        expect(options.message.indexOf(' KOYN ')).toBeGreaterThan(0);
                         const fees = json.data.fee;
                         const feesFromMessage = options.message
-                            .match(/<b>(\d+\.\d+\sTLOS)<\/b>/g)[0]
+                            .match(/<b>(\d+\.\d+\sKOYN)<\/b>/g)[0]
                             .replace(/<\/?b>/g, '');
                         expect(feesFromMessage).toEqual(fees);
                         return {

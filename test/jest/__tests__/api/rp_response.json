@@ -21,11 +21,11 @@
         "message": "Fee required to complete transaction.",
         "data": {
             "costs": {
-                "cpu": "0.0009 TLOS",
-                "net": "0.0001 TLOS",
-                "ram": "0.0397 TLOS"
+                "cpu": "0.0009 KOYN",
+                "net": "0.0001 KOYN",
+                "ram": "0.0397 KOYN"
             },
-            "fee": "0.0407 TLOS",
+            "fee": "0.0407 KOYN",
             "ref": "unittest",
             "request": [
                 "transaction",
@@ -61,7 +61,7 @@
                             "data": {
                                 "from": "actor.stub",
                                 "to": "fuel.gm",
-                                "quantity": "0.0407 TLOS",
+                                "quantity": "0.0407 KOYN",
                                 "memo": "Fuel Transaction Fee | ref=unittest"
                             }
                         },
@@ -77,7 +77,7 @@
                             "data": {
                                 "payer": "greymassfuel",
                                 "receiver": "actor.stub",
-                                "quant": "0.0397 TLOS"
+                                "quant": "0.0397 KOYN"
                             }
                         },
                         {
@@ -92,7 +92,7 @@
                             "data": {
                                 "from": "actor.stub",
                                 "to": "caleosblocks",
-                                "quantity": "0.0001 TLOS",
+                                "quantity": "0.0001 KOYN",
                                 "memo": ""
                             }
                         }

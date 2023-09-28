@@ -27,7 +27,7 @@ const TOKEN = {
     symbol: 'KOYN',
     precision: 4,
     amount: 0,
-    contract: 'eosio.token',
+    contract: 'koyn.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://hyptest.koy.network';
 const RPC_ENDPOINT = {
@@ -44,30 +44,30 @@ const API_ENDPOINT = 'https://testnet.koyn.goodblock.io/v1';
 const S3_PRODUCER_BUCKET = '';
 const DISPLAY_MAP = false;
 const THEME = {
-    primary: '#CE1C61',
-    secondary: '#82103C',
-    accent: '#EE05F2',
-    dark: '#1D1D1D',
+    primary: '#006600',
+    secondary: '#006600',
+    accent: '#BB0000',
+    dark: '#000000',
     positive: '#21BA45',
-    negative: '#FF0000',
-    info: '#90B862',
-    warning: '#FFBB69',
-    'color-map': '#CE1C61',
-    'color-primary-gradient': 'linear-gradient(90deg, #82103C 65%, #492030 100%)',
+    negative: '#ff0000',
+    info: '#31CCEC',
+    warning: '#F2C037',
+    'color-map': '#115820',
+    'color-primary-gradient': 'linear-gradient(90deg, #006600 0%, #1AFF37 100%)',
     'color-secondary-gradient':
-    'linear-gradient(180deg, #82103C 20%, #5492030 85%)',
+    'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
     'color-tertiary-gradient':
-    'linear-gradient(90deg, #82103C 35%, #82103C 65%)',
+    'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
     'color-progress-gradient':
-    'linear-gradient(90deg, #82103C 10%, #CBCAF5 75%)',
-    'color-producer-card-background': '#F5F4FE',
-    'color-select-box-background': '#E0DFFB',
+    'linear-gradient(90deg, #571AFF 0%, #A088F9 48.44%, #CBCAF5 100%)',
+    'color-producer-card-background': '#f5f4fe',
+    'color-select-box-background': '#DFFBE4',
     'color-separator-background': 'rgba(138, 101, 212, 0.1)',
-    'color-header-background': '#82103C',
-    'color-header-border': '#710E34',
-    'color-header-support-background': 'linear-gradient(180deg, #82103C 20%, #542030 85%)',
+    'color-header-background': '#006600',
+    'color-header-border': '#006600',
+    'color-header-support-background': 'linear-gradient(180deg, #006600 0%, #1AFF37 100%)',
     'color-graph-shadow': '#CE1C6128',
-    'color-footer-background': '#492030',
+    'color-footer-background': '#006600',
 };
 export default class KoynTestnet extends BaseChain {
     getName(): string {

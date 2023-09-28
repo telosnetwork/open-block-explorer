@@ -5,32 +5,11 @@ import { AxiosInstance, AxiosInterceptorManager, AxiosRequestConfig, AxiosRespon
 
 const tokenList:Token[] = [
     {
-        'name': 'Telos',
-        'symbol': 'TLOS',
-        'contract': 'eosio.token',
+        'name': 'Koyn',
+        'symbol': 'KOYN',
+        'contract': 'koyn.token',
         'precision': 4,
-        'logo': 'https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png',
-    },
-    {
-        'name': 'Qubicles',
-        'symbol': 'QBE',
-        'contract': 'qubicletoken',
-        'precision': 4,
-        'logo': 'https://raw.githubusercontent.com/Viterbo/token-list/master/logos/qbe.png',
-    },
-    {
-        'name': 'Beatitude',
-        'symbol': 'HEART',
-        'contract': 'revelation21',
-        'precision': 4,
-        'logo': 'https://raw.githubusercontent.com/Viterbo/token-list/master/logos/beatitude.png',
-    },
-    {
-        'name': 'Cards & Tokens',
-        'symbol': 'CNT',
-        'contract': 'vapaeetokens',
-        'precision': 4,
-        'logo': 'https://raw.githubusercontent.com/Viterbo/token-list/master/logos/cnt.png',
+        'logo': 'https://raw.githubusercontent.com/KoyNetwork/token-list/master/logos/koyn.png',
     },
 ];
 
@@ -38,47 +17,11 @@ const userTokens = {
     account: 'someaccount',
     tokens: [
         {
-            symbol: 'SQRL',
+            symbol: 'KOYN',
             precision: 4,
             amount: 308099.4234,
-            contract: 'sqrlwalletio',
-        },
-        {
-            symbol: 'KANDA',
-            precision: 8,
-            amount: 188906.66275791,
-            contract: 'telokandaone',
-        },
-        {
-            symbol: 'KOIN',
-            precision: 4,
-            amount: 9000,
-            contract: 'koin4kontrak',
-        },
-        {
-            symbol: 'SAND',
-            precision: 8,
-            amount: 2070.71906416,
-            contract: 'sandiegocoin',
-        },
-        {
-            symbol: 'CNT',
-            precision: 4,
-            amount: 3000,
-            contract: 'vapaeetokens',
-        },
-        {
-            symbol: 'TLSDRIC',
-            precision: 8,
-            amount: 617.35404469,
-            contract: 'dricrly.tbn',
-        },
-        {
-            symbol: 'OLIVE',
-            precision: 4,
-            amount: 174,
-            contract: 'oliveaccount',
-        },
+            contract: 'token.koyn',
+        }
     ],
 };
 
@@ -93,8 +36,8 @@ global.fetch = jest.fn(() =>
 // mocking internal chain implementation
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
-        getName: () => 'telos',
-        getSymbol: () => 'TLOS',
+        getName: () => 'Koyn',
+        getSymbol: () => 'KOYN',
         getHyperionEndpoint: () => '',
         getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
     }),

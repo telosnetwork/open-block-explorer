@@ -4,40 +4,26 @@ import { ref } from 'vue';
 global.fetch = jest.fn((input: RequestInfo | URL) =>
     Promise.resolve({
         text: () => {
-            if (input.toString() === 'https://raw.githubusercontent.com/telosnetwork/token-list/main/telosmain.json') {
+            if (input.toString() === 'https://raw.githubusercontent.com/KoyNetwork/token-list/main/koynmain.json') {
                 return `{
                     "tokens": [
                         {
-                            "name": "Telos",
-                            "logo_sm": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png",
-                            "logo_lg": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png",
-                            "symbol": "TLOS",
+                            "name": "Koy Network",
+                            "logo_sm": "https://raw.githubusercontent.com/KoyNetwork/token-list/master/logos/telos.png",
+                            "logo_lg": "https://raw.githubusercontent.com/KoyNetwork/token-list/master/logos/telos.png",
+                            "symbol": "KOYN",
                             "account": "eosio.token"
-                        },
-                        {
-                            "name": "pTokens BTC",
-                            "logo_sm": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/pbtc.png",
-                            "logo_lg": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/pbtc-lg.png",
-                            "symbol": "PBTC",
-                            "account": "btc.ptokens"
                         }
                     ]
                 }`;
             } else {
                 return `[
                     {
-                      "name": "Telos",
-                      "symbol": "TLOS",
-                      "contract": "eosio.token",
+                      "name": "Koy Network",
+                      "symbol": "KOYN",
+                      "contract": "koyn.token",
                       "precision": 4,
-                      "logo": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png"
-                    },
-                    {
-                      "name": "Qubicles",
-                      "symbol": "QBE",
-                      "contract": "qubicletoken",
-                      "precision": 4,
-                      "logo": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/qbe.png"
+                      "logo": "https://raw.githubusercontent.com/KoyNetwork/token-list/master/logos/koyn.png"
                     }
                 ]
                 `;
@@ -90,8 +76,8 @@ jest.mock('@greymass/eosio', () => ({
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
         getChainId: () => 'chainId',
-        getSymbol: () => 'TLOS',
-        getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
+        getSymbol: () => 'KOYN',
+        getSystemToken: () => ({ symbol: 'KOYN', contract: 'eosio.token', precision: 4 }),
         getRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
         getHyperionEndpoint: () => '',
         getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
@@ -129,8 +115,8 @@ describe('Store - Resources Actions', () => {
             delbandResponse.rows.push({
                 from: accountName,
                 to: account,
-                net_weight: '1.0000 TLOS',
-                cpu_weight: '1.0000 TLOS',
+                net_weight: '1.0000 KOYN',
+                cpu_weight: '1.0000 KOYN',
             });
         });
     };
@@ -276,14 +262,14 @@ describe('Store - Resources Actions', () => {
             expect(commit).toHaveBeenCalledWith('setDelegatedFromOthers', {
                 from: 'not-available',
                 to: anotheraccount,
-                net_weight: '0.0000 TLOS',
-                cpu_weight: '0.0000 TLOS',
+                net_weight: '0.0000 KOYN',
+                cpu_weight: '0.0000 KOYN',
             });
             expect(commit).toHaveBeenCalledWith('setSelfStaked', {
                 from: anotheraccount,
                 to: anotheraccount,
-                net_weight: '1.0000 TLOS',
-                cpu_weight: '1.0000 TLOS',
+                net_weight: '1.0000 KOYN',
+                cpu_weight: '1.0000 KOYN',
             });
 
             // Verify the loading state

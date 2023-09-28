@@ -112,10 +112,10 @@ describe('string-utils utility functions', () => {
             const input = '1.0000';
 
             expect(formatCurrency(input, 2, 'USD')).toBe('1.00 USD');
-            expect(formatCurrency(input, 4, 'TLOS')).toBe('1.0000 TLOS');
+            expect(formatCurrency(input, 4, 'KOYN')).toBe('1.0000 KOYN');
 
             expect(formatCurrency(0, 2, 'USD')).toBe('0 USD');
-            expect(formatCurrency(0, 4, 'TLOS')).toBe('0 TLOS');
+            expect(formatCurrency(0, 4, 'KOYN')).toBe('0 KOYN');
         });
 
         it('should pretty print when skipPrettyPrinting is true', () => {
@@ -123,14 +123,14 @@ describe('string-utils utility functions', () => {
             expect(formatCurrency('0.0000', 2, null, true)).toBe('0.00');
             expect(formatCurrency('0.0000', 4, null, true)).toBe('0.0000');
             expect(formatCurrency('0.0000', 2, 'USD', true)).toBe('0.00 USD');
-            expect(formatCurrency('0.0000', 4, 'TLOS', true)).toBe('0.0000 TLOS');
+            expect(formatCurrency('0.0000', 4, 'KOYN', true)).toBe('0.0000 KOYN');
             expect(formatCurrency('0', 2, null, true)).toBe('0.00');
             expect(formatCurrency('0', 4, null, true)).toBe('0.0000');
             expect(formatCurrency('0', 2, 'USD', true)).toBe('0.00 USD');
-            expect(formatCurrency('0', 4, 'TLOS', true)).toBe('0.0000 TLOS');
+            expect(formatCurrency('0', 4, 'KOYN', true)).toBe('0.0000 KOYN');
 
             // commification should be skipped
-            expect(formatCurrency('1000', 4, 'TLOS', true)).toBe('1000.0000 TLOS');
+            expect(formatCurrency('1000', 4, 'KOYN', true)).toBe('1000.0000 KOYN');
         });
 
         it('should throw an error when supplied an invalid amount', () => {
@@ -209,7 +209,7 @@ describe('string-utils utility functions', () => {
     describe('getRexHistoryAsset', () => {
         it('returns rex asset string if exists', () => {
             const testData = {
-                rex: '4 TLOS',
+                rex: '4 KOYN',
             };
             expect(getRexHistoryAsset(testData)).toBe(testData.rex);
         });
@@ -217,12 +217,12 @@ describe('string-utils utility functions', () => {
             const testData = {
                 amount: 1.2345,
             };
-            const expectedResult = '1.2345 TLOS';
+            const expectedResult = '1.2345 KOYN';
             expect(getRexHistoryAsset(testData)).toBe(expectedResult);
         });
         it('returns amount asset string if it is not of type number', () => {
             const testData = {
-                amount: '3 TLOS',
+                amount: '3 KOYN',
             };
             expect(getRexHistoryAsset(testData)).toBe(testData.amount);
         });
