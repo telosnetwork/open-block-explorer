@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, ref, watch } from 'vue';
+import { defineComponent, computed, ref, watch, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
@@ -22,14 +22,19 @@ export default defineComponent({
         const headerSettings = computed((): HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
 
         const account = computed(() => store.state.account.accountName);
-        const isLarge = computed((): boolean => $q.screen.gt.sm);
+        const isLarge = computed((): boolean => $q.screen.gt.md);
         const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
+        const headBlock = computed((): number => store.state.chain.head_block_num);
 
         const isTestnet = ref(getChain().isTestnet());
         const smallLogoPath = ref(getChain().getSmallLogoPath());
         const largeLogoPath = ref(getChain().getLargeLogoPath());
 
         const network = useRouteDataNetwork();
+
+        onMounted(() => {
+            void store.dispatch('chain/updateBlockData');
+        });
 
         watch(network, () => {
             smallLogoPath.value = getChain().getSmallLogoPath();
@@ -42,6 +47,7 @@ export default defineComponent({
             account,
             isLarge: isLarge,
             showMultichainSelector,
+            headBlock,
             smallLogoPath,
             largeLogoPath,
             isTestnet,
@@ -53,8 +59,8 @@ export default defineComponent({
 <template>
 <div class="header-background">
     <div class="row text-center q-pt-sm justify-between q-pt-md">
-        <div class="logo-container col-xs-3 col-sm-2 col-md-2 col-lg-2">
-            <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
+        <div class="col-xs-5 col-sm-5 col-md-3 col-lg-3">
+            <div class="logo-container q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
                 <div class="logo-header-container">
                     <div class="logo-chain-selector-container">
                         <a class="float-left" href="/">
@@ -65,9 +71,13 @@ export default defineComponent({
                     </div>
                     <div v-if="isTestnet" class="testnet-text">TESTNET</div>
                 </div>
+                <div>
+                    <div class="col-12 text-caption text-uppercase text-bold">Head Block</div>
+                    <div class="col-12 text-caption text-bold">{{headBlock}}</div>
+                </div>
             </div>
         </div>
-        <div class="col-xs-4 col-sm-6 col-md-4 col-lg-6">
+        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-6">
             <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
                 <div class="row justify-center full-width">
                     <div class="col-12">
@@ -123,6 +133,9 @@ export default defineComponent({
 .q-tab
     text-transform: unset
     font-size: 18px
+
+.logo-container
+    display: flex
 
 .logo-header-container
     position: relative

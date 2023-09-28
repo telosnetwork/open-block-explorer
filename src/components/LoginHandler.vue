@@ -44,7 +44,7 @@ export default defineComponent({
 </script>
 
 <template>
-<div class="col-xs-5 col-sm-3 col-md-2 col-lg-2">
+<div class="col-xs-3 col-sm-3 col-md-2 col-lg-2">
     <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
         <LoginHandlerDropdown v-if="account"/>
         <q-btn
@@ -59,9 +59,15 @@ export default defineComponent({
 </template>
 
 <style scoped lang="sass">
+$small:600px
+
 .btn-login
-  width: 60%
-  min-width: 120px
-  max-width: 140px
-  height: 40px
+    width: 60%
+    min-width: 120px
+    max-width: 140px
+    height: 40px
+    @media screen and (max-width: $small)
+        max-width: 100%
+        min-width: unset
+        width: auto
 </style>
