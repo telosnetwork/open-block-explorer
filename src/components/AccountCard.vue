@@ -17,6 +17,7 @@ import { API, UInt64 } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
 import ConfigManager from 'src/config/ConfigManager';
 import { AccountPageSettings } from 'src/types/UiCustomization';
+import { StakedbalRows } from 'src/types/TableRows';
 
 const chain = getChain();
 export default defineComponent({
@@ -74,6 +75,9 @@ export default defineComponent({
         const ram_max = ref(0);
         const radius = ref(44);
         const stakedResources = ref(0);
+
+        const stakedBal = ref(0);
+        const unstakedBal = ref(0);
 
         const accountExists = ref<boolean>(true);
         const openSendDialog = ref<boolean>(false);
@@ -133,10 +137,12 @@ export default defineComponent({
                 await loadAccountCreatorInfo();
                 await loadBalances();
                 loadResources();
+                await loadStakedBalance();
                 setTotalBalance();
                 await updateTokenBalances();
                 await updateResources({ account: props.account, force: true });
             } catch (e) {
+                console.error(e);
                 $q.notify(`account ${props.account} not found!`);
                 accountExists.value = false;
                 return;
@@ -198,7 +204,7 @@ export default defineComponent({
         };
 
         const setTotalBalance = () => {
-            totalTokens.value = liquidNative.value + rex.value + staked.value + delegatedToOthers.value;
+            totalTokens.value = liquidNative.value + rex.value + staked.value + delegatedToOthers.value + stakedBal.value + unstakedBal.value;
             isLoading.value = false;
         };
 
@@ -288,6 +294,27 @@ export default defineComponent({
 
             const total = totalRex > 0 ? tlosRexRatio * totalRexBalance : 0.0;
             return total;
+        };
+
+        const loadStakedBalance = async () => {
+            try {
+                const paramsStakedBal = {
+                    code: 'launch.stake',
+                    scope: 'launch.stake',
+                    table: 'stakes',
+                    lower_bound: props.account as unknown as TableIndexType,
+                    upper_bound: props.account as unknown as TableIndexType,
+                } as GetTableRowsParams;
+
+                const stakedBalRow = ((await api.getTableRows(paramsStakedBal)) as StakedbalRows)
+                    .rows[0];
+
+                stakedBal.value = Number(stakedBalRow.balance.split(' ')[0]);
+                unstakedBal.value = Number(stakedBalRow.unstaked_balance.split(' ')[0]);
+            } catch (e) {
+                stakedBal.value = 0;
+                unstakedBal.value = 0;
+            }
         };
 
         const fixDec = (val: number): number => parseFloat(val.toFixed(3));
@@ -388,6 +415,8 @@ export default defineComponent({
             net_max,
             ram_used,
             ram_max,
+            stakedBal,
+            unstakedBal,
             creatingAccount,
             isLoading,
             tokensLoading,
@@ -585,6 +614,14 @@ export default defineComponent({
                     <tr v-if="!accountPageSettings.hideDelegatedInfo">
                         <td class="text-left">DELEGATED by others</td>
                         <td class="text-right">{{ formatAsset(delegatedByOthers) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">STAKED</td>
+                        <td class="text-right">{{ formatAsset(stakedBal) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">UNSTAKED</td>
+                        <td class="text-right">{{ formatAsset(unstakedBal) }}</td>
                     </tr>
                 </tbody>
             </thead>
