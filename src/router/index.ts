@@ -47,6 +47,13 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
                     path: 'network',
                     query: to.query,
                 });
+            } else if (selectedChainOnStore) { // if there is no network param and local storage has current network
+                return ({
+                    path: 'network',
+                    query: {
+                        network: selectedChainOnStore,
+                    },
+                });
             } else if (preferredChainName) { // if there is no network param and local storage has preferred network selected
                 updateSelectedChain(preferredChainName);
                 return ({
@@ -59,7 +66,15 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
             // else, will proceed to home page
         } else {
             if (!to.query.network) { // if doesn't have network param
-                if (preferredChainName) { // if has a preferred chain selected on sotre
+                if (selectedChainOnStore) {
+                    return ({
+                        ...to,
+                        query: {
+                            ...to.query,
+                            network: selectedChainOnStore,
+                        },
+                    });
+                } else if (preferredChainName) { // if has a preferred chain selected on sotre
                     updateSelectedChain(preferredChainName);
                     return ({
                         ...to,
