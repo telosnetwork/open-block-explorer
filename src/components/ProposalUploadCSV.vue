@@ -2,6 +2,7 @@
 import { defineComponent, ref } from 'vue';
 import csvToJson from 'csvtojson';
 import { useQuasar } from 'quasar';
+import { useAntelopeStore } from 'src/store/antelope.store';
 
 export default defineComponent({
     name: 'ProposalUploadCSV',
@@ -49,7 +50,7 @@ export default defineComponent({
                     authorization: [
                         {
                             actor: item.from.toLowerCase(),
-                            permission: 'active'
+                            permission: useAntelopeStore().state.account.accountPermission,
                         }
                     ],
                     data: {

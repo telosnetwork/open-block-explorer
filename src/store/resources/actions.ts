@@ -150,7 +150,7 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
                     authorization: [
                         {
                             actor: from,
-                            permission: 'active',
+                            permission: this.state.account.accountPermission,
                         },
                     ],
                     data: {
