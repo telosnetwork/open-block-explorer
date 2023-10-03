@@ -9,7 +9,7 @@ on:
     branches: [ stage, stagenet ]
 jobs:
 
-  apply_to_MN:
+  apply_to_Stagenet:
     runs-on: ubuntu-latest
     steps:
     - name: update remote repo
