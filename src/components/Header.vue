@@ -4,9 +4,10 @@ import { useQuasar } from 'quasar';
 import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
 import ChainsMenu from 'components/ChainsMenu.vue';
-import { getChain } from 'src/config/ConfigManager';
+import ConfigManager, { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
 import { useRouteDataNetwork } from 'src/router';
+import { HeaderSettings } from 'src/types/UiCustomization';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -18,6 +19,7 @@ export default defineComponent({
     setup() {
         const $q = useQuasar();
         const store = useStore();
+        const headerSettings = computed(() : HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
 
         const account = computed(() => store.state.account.accountName);
         const isLarge = computed((): boolean => $q.screen.gt.sm);
@@ -36,6 +38,7 @@ export default defineComponent({
         });
 
         return {
+            headerSettings,
             account,
             isLarge: isLarge,
             showMultichainSelector,
@@ -73,7 +76,7 @@ export default defineComponent({
                 </div>
             </div>
         </div>
-        <LoginHandler/>
+        <LoginHandler v-if="!headerSettings.hideLoginHandler"/>
     </div>
     <div class="row justify-center col-12 q-pt-sm">
         <q-tabs
@@ -84,25 +87,28 @@ export default defineComponent({
             color="white"
         >
             <q-route-tab
+                v-if="!headerSettings.hideNetworkTab"
                 class="deactive"
                 name="network"
                 label="Network"
                 to="/network"
             />
             <q-route-tab
-                v-if="account"
+                v-if="!headerSettings.hideWalletTab && account"
                 class="deactive"
                 name="wallet"
                 label="Wallet"
                 :to="'/account/' + account"
             />
             <q-route-tab
+                v-if="!headerSettings.hideVoteTab"
                 class="deactive"
                 name="vote"
                 label="Vote"
                 to="/vote"
             />
             <q-route-tab
+                v-if="!headerSettings.hideProposalTab"
                 class="deactive"
                 name="proposal"
                 label="Proposal"
