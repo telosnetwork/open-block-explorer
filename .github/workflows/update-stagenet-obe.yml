@@ -15,10 +15,10 @@ jobs:
     - name: update remote repo
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.STHOST }}
-        username: ${{ secrets.STUSERNAME }}
-        password: ${{ secrets.STPASSWORD }}
-        port: ${{ secrets.STPORT }}
+        host: ${{ secrets.SHHOST }}
+        username: ${{ secrets.SHUSERNAME }}
+        password: ${{ secrets.SHPASSWORD }}
+        port: ${{ secrets.SHPORT }}
         script_stop: true
         script: |
           cd open-block-explorer
