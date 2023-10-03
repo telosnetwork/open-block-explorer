@@ -29,7 +29,7 @@ export default defineComponent({
         const transferData = computed(() => actionData.value as TransferData);
         const clientHeight = computed(() => dataBox.value?.clientHeight ?? 0);
         let currentData = ref<string | unknown>(null);
-        const maxHeight = 77; // the maximum row height
+        const maxHeight = 65; // the maximum row height
         const switchHeight = 20;
         const maxHeightStyle = `calc(${maxHeight}px - ${switchHeight}px)`;
 
