@@ -53,7 +53,7 @@ const THEME = {
     info: '#31CCEC',
     warning: '#F2C037',
     'color-map': '#115820',
-    'color-primary-gradient': 'linear-gradient(90deg, #006600 0%, #1AFF37 100%)',
+    'color-primary-gradient': 'linear-gradient(90deg, #006600 0%, #2eb840 100%)',
     'color-secondary-gradient':
     'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
     'color-tertiary-gradient':
@@ -65,7 +65,7 @@ const THEME = {
     'color-separator-background': 'rgba(138, 101, 212, 0.1)',
     'color-header-background': '#006600',
     'color-header-border': '#006600',
-    'color-header-support-background': 'linear-gradient(180deg, #006600 0%, #1AFF37 100%)',
+    'color-header-support-background': 'linear-gradient(180deg, #006600 0%, #2eb840 100%)',
     'color-graph-shadow': '#CE1C6128',
     'color-footer-background': '#006600',
 };
