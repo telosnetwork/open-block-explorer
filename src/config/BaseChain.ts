@@ -3,6 +3,7 @@ import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
+import { UiCustomization } from 'src/types/UiCustomization';
 
 export const DEFAULT_THEME = {
     primary: '#11589e',
@@ -31,6 +32,39 @@ export const DEFAULT_THEME = {
     'color-header-support-background': 'linear-gradient(180deg, #4C4C4C 0%, #3B3B3B 147.34%)',
     'color-graph-shadow': '#3f65c228',
     'color-footer-background': '#000000',
+};
+
+export const baseUiConfiguration: UiCustomization = {
+    footerLinks: [
+        { label: 'LEGAL', url: 'https://telos.net/legal' },
+        { label: 'PRIVACY', url: 'https://telos.net/privacy-policy' },
+        { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
+    ],
+    headerSettings: {
+        hideLoginHandler: false,
+
+        hideNetworkTab: false,
+        hideWalletTab: false,
+        hideVoteTab: false,
+        hideProposalTab: false,
+    },
+    accountPageSettings: {
+        hideCpuInfo: false,
+        hideNetInfo: false,
+        hideRamInfo: false,
+        hideRexInfo: false,
+        hideRefundingInfo: false,
+        hideDelegatedInfo: false,
+
+        hideResourcesControl: false,
+        hideRexControl: false,
+
+        hideTransactionTab: false,
+        hideTokensTab: false,
+        hideKeysTab: false,
+        hideChildrenTab: false,
+        hideContractsTab: false,
+    },
 };
 
 export default abstract class BaseChain implements Chain {
@@ -64,6 +98,11 @@ export default abstract class BaseChain implements Chain {
   abstract getUsdPrice(): Promise<number>;
   abstract getMapDisplay(): boolean;
   abstract getTheme(): Theme;
+
+  getUiCustomization(): UiCustomization {
+      return baseUiConfiguration;
+  }
+
   abstract getFiltersSupported(prop: string): boolean;
 
   isTestnet(): boolean {

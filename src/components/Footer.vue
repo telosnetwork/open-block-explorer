@@ -1,20 +1,24 @@
 <script lang="ts">
+import ConfigManager from 'src/config/ConfigManager';
+import { computed } from 'vue';
+
 export default {
     name: 'AppFooter',
+    setup() {
+        const footerLinks = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().footerLinks);
+
+        return {
+            footerLinks,
+        };
+    },
 };
 </script>
 
 <template>
 
 <div class="row footer-background justify-center text-center q-py-md">
-    <div class="col-lg-1 col-md-2 col-sm-2 col-xs-4 q-pa-md">
-        <a class="no-dec" href="https://telos.net/legal">LEGAL</a>
-    </div>
-    <div class="col-lg-1 col-md-2 col-sm-2 col-xs-4 q-pa-md">
-        <a class="no-dec" href="https://telos.net/privacy-policy">PRIVACY</a>
-    </div>
-    <div class="col-lg-1 col-md-2 col-sm-2 col-xs-4 q-pa-md">
-        <a class="no-dec" href="https://github.com/telosnetwork/open-block-explorer">REPOSITORY</a>
+    <div v-for="footerLink in footerLinks" :key="footerLink.label" class="col-lg-1 col-md-2 col-sm-2 col-xs-4 q-pa-md">
+        <a class="no-dec" :href="footerLink.url">{{footerLink.label}}</a>
     </div>
 </div>
 
