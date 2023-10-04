@@ -18,7 +18,7 @@ export default class ConfigManager {
     }
 
     private init(): void {
-        const showMultichainSelector = process.env.SHOW_MULTICHAIN_SELECTOR;
+        const showMultichainSelector = process.env.SHOW_MULTICHAIN_SELECTOR === 'true';
         const configuredChain = process.env.CHAIN_NAME;
         this.testnets = chainsConfig.testnets;
         this.mainnets = chainsConfig.mainnets;
