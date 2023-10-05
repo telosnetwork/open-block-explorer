@@ -44,14 +44,6 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
 
         if(isMultichain) {
             if (to.path === '/') { // if attempting to go to home page
-                if (process.env.SHOW_MULTICHAIN_SELECTOR !== 'true') {
-                    return({
-                        path: 'network',
-                        query: {
-                            network: process.env.CHAIN_NAME,
-                        },
-                    });
-                }
                 if (to.query.network) { // if there is network param, proceed to network with the param
                     return ({
                         path: 'network',
