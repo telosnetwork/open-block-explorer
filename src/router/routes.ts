@@ -1,10 +1,19 @@
 import { RouteRecordRaw } from 'vue-router';
 
+const isMultichain = process.env.SHOW_MULTICHAIN_SELECTOR === 'true';
+
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
         name: 'home',
         component: () => import('pages/Home.vue'),
+        beforeEnter:(to, from, next) => {
+            if (!isMultichain) {
+                next('/network');
+            } else {
+                next();
+            }
+        },
     },
     {
         path: '/account/:account',
