@@ -65,7 +65,7 @@ export default defineComponent({
                 <q-btn
                     class="full-width"
                     color="primary"
-                    label="Disconect"
+                    label="Disconnect"
                     @click="onLogout"
                 />
             </div>
