@@ -13,6 +13,7 @@ export default defineComponent({
         const authenticators = getAuthenticators();
         const store = useStore();
         const account = computed(() => store.state.account.accountName);
+        const avatar = computed(() => store.state.account.avatar);
         const showModal = ref(false);
 
         const getAuthenticator = (): Authenticator => {
@@ -42,43 +43,48 @@ export default defineComponent({
             showModal,
             disconnectLabel: 'Disconnect',
             onLogout,
+            avatar,
         };
     },
 });
 </script>
 <template>
 
-<q-btn-dropdown
-    class="connect-button"
-    color="primary"
-    :label="account"
-    :content-style="{ backgroundColor: '#172c6c' }"
->
-    <q-card class="buttons-container">
-        <q-card-section>
-            <div class="row">
-                <div class="col-12"><a class="text-white hover-dec" :href=" '/account/' + account">{{account}}</a></div>
-            </div>
-        </q-card-section>
-        <q-separator dark/>
-        <q-card-section>
-            <div class="q-px-sm q-pb-sm">
-                <q-btn
-                    class="full-width"
-                    color="primary"
-                    label="Disconect"
-                    @click="onLogout"
-                />
-            </div>
-        </q-card-section>
-    </q-card>
-</q-btn-dropdown>
-<WalletModal v-model="showModal"/>
-
+<div class="connect-button-container">
+    <q-avatar class="profile-avatar" size="32px">
+        <img :src="avatar">
+    </q-avatar>
+    <q-btn-dropdown
+        class="connect-button"
+        :label="account"
+        :rounded="true"
+        :outline="true"
+        icon="profile"
+    >
+        <q-card class="buttons-container">
+            <q-card-section>
+                <div class="row">
+                    <div class="col-12"><a class="text-white hover-dec" :href=" '/account/' + account">{{account}}</a></div>
+                </div>
+            </q-card-section>
+            <q-separator dark/>
+            <q-card-section>
+                <div class="q-px-sm q-pb-sm">
+                    <q-btn
+                        class="full-width"
+                        color="primary"
+                        label="Disconect"
+                        @click="onLogout"
+                    />
+                </div>
+            </q-card-section>
+        </q-card>
+    </q-btn-dropdown>
+    <WalletModal v-model="showModal"/>
+</div>
 </template>
 <style lang="sass" scoped>
 .q-menu
-  background-color: blue
   min-width: unset
 .q-list
   width: 12rem
@@ -88,9 +94,21 @@ export default defineComponent({
 .connect-button
   width: fit-content
   height: 40px
+  width: 180px
   text-transform: lowercase
 .buttons-container
   width: 220px
   max-width: 80vw
   background: var(--q-color-dropdown-card)
+.profile-avatar
+    position: absolute
+    top: 50%
+    transform: translateY(-50%)
+    left: 4px
+    z-index: 10
+    img
+        object-fit: cover
+.connect-button-container
+    position: relative
+    width: 180px // Makes container width fixed
 </style>

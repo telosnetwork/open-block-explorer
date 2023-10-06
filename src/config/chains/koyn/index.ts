@@ -68,6 +68,7 @@ const THEME = {
     'color-header-support-background': 'linear-gradient(180deg, #82103C 20%, #542030 85%)',
     'color-graph-shadow': '#CE1C6128',
     'color-footer-background': '#492030',
+    'color-dropdown-card': '#492030',
 };
 export default class Koyn extends BaseChain {
     getName(): string {
@@ -123,7 +124,7 @@ export default class Koyn extends BaseChain {
                 { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
             ],
             headerSettings: {
-                hideLoginHandler: true,
+                hideLoginHandler: false,
 
                 hideNetworkTab: true,
                 hideWalletTab: true,
