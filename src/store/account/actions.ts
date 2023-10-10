@@ -35,21 +35,22 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
             commit('setUser', account);
             commit('setIsAuthenticated', true);
             commit('setAccountName', accountName);
+            commit('setChainId', (authenticator as Authenticator).chains[0].chainId);
 
-            localStorage.setItem('account', accountName);
+            localStorage.setItem(`account_${(authenticator as Authenticator).chains[0].chainId}`, accountName);
             localStorage.setItem(
-                'autoLogin',
+                `autoLogin_${(authenticator as Authenticator).chains[0].chainId}`,
                 (authenticator as Authenticator).getName(),
             );
         }
     },
-    logout({ commit }) {
+    logout({ commit, state }) {
         commit('setIsAuthenticated', false);
         commit('setAccountName', '');
         commit('setUser', null);
 
-        localStorage.removeItem('account');
-        localStorage.removeItem('autoLogin');
+        localStorage.removeItem(`account_${state.chainId}`);
+        localStorage.removeItem(`autoLogin_${state.chainId}`);
     },
     async loadAccountData({ commit, state }) {
         try {

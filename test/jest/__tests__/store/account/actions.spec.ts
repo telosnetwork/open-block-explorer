@@ -88,16 +88,23 @@ jest.mock('@greymass/eosio', () => ({
 import { actions } from 'src/store/account/actions';
 import { User } from 'universal-authenticator-library';
 
+const chainIdMock = 'chainIdMock';
+
 describe('Store - Account Actions', () => {
     let commit: jest.Mock;
     let state: AccountStateInterface;
     let users: User[] = [];
 
+
+    // commit('setChainId', (authenticator as Authenticator).chains[0].chainId);
     const newAuthenticatorMock = (requestName = false) => ({
         init: jest.fn(),
         shouldRequestAccountName: jest.fn().mockResolvedValue(new Promise(resolve => resolve(requestName))),
         login: jest.fn().mockResolvedValue(new Promise(resolve => resolve(users))),
         getName: jest.fn().mockReturnValue('autoLogin'),
+        chains: [{
+            chainId: chainIdMock,
+        }],
     });
     let authenticator = newAuthenticatorMock();
 
@@ -116,6 +123,7 @@ describe('Store - Account Actions', () => {
             user: null,
             accountName: '',
             accountPermission: '',
+            chainId: chainIdMock,
         } as AccountStateInterface;
 
     });
@@ -162,8 +170,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setUser', expect.any(FuelUserWrapper));
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', true);
             expect(commit).toHaveBeenCalledWith('setAccountName', 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('account_' + chainIdMock, 'john.doe');
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin_' + chainIdMock, 'autoLogin');
 
         });
 
@@ -183,8 +191,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setUser', expect.any(FuelUserWrapper));
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', true);
             expect(commit).toHaveBeenCalledWith('setAccountName', 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('account', 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin', 'autoLogin');
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('account_' + chainIdMock, 'john.doe');
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin_' + chainIdMock, 'autoLogin');
         });
 
     });
@@ -199,8 +207,8 @@ describe('Store - Account Actions', () => {
             expect(commit).toHaveBeenCalledWith('setAccountName', '');
             expect(commit).toHaveBeenCalledWith('setUser', null);
 
-            expect(localStorageMock.removeItem).toHaveBeenCalledWith('account');
-            expect(localStorageMock.removeItem).toHaveBeenCalledWith('autoLogin');
+            expect(localStorageMock.removeItem).toHaveBeenCalledWith('account_' + chainIdMock);
+            expect(localStorageMock.removeItem).toHaveBeenCalledWith('autoLogin_' + chainIdMock);
         });
     });
 });

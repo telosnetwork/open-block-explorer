@@ -1,6 +1,6 @@
 {
   "name": "open-block-explorer",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "..",
   "productName": "Telos Block Explorer",
   "author": "DonaldPeat <don@caleos.io>",
@@ -9,8 +9,8 @@
     "dev": "quasar dev",
     "build": "quasar clean && quasar build",
     "lint": "eslint --ext .js,.ts,.vue ./",
-    "test": "jest --coverage",
-    "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@greymass/eosio": "^0.6.8",

@@ -1,11 +1,13 @@
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
 import ChainsMenu from 'components/ChainsMenu.vue';
-import { getChain } from 'src/config/ConfigManager';
+import ConfigManager, { getChain } from 'src/config/ConfigManager';
 import { useStore } from 'src/store';
+import { useRouteDataNetwork } from 'src/router';
+import { HeaderSettings } from 'src/types/UiCustomization';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -16,17 +18,33 @@ export default defineComponent({
     },
     setup() {
         const $q = useQuasar();
-        const chain = getChain();
         const store = useStore();
+        const headerSettings = computed(() : HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
+
         const account = computed(() => store.state.account.accountName);
         const isLarge = computed((): boolean => $q.screen.gt.sm);
         const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
 
+        const isTestnet = ref(getChain().isTestnet());
+        const smallLogoPath = ref(getChain().getSmallLogoPath());
+        const largeLogoPath = ref(getChain().getLargeLogoPath());
+
+        const network = useRouteDataNetwork();
+
+        watch(network, () => {
+            smallLogoPath.value = getChain().getSmallLogoPath();
+            largeLogoPath.value = getChain().getLargeLogoPath();
+            isTestnet.value = getChain().isTestnet();
+        });
+
         return {
+            headerSettings,
             account,
             isLarge: isLarge,
-            chain,
             showMultichainSelector,
+            smallLogoPath,
+            largeLogoPath,
+            isTestnet,
         };
     },
 });
@@ -40,12 +58,12 @@ export default defineComponent({
                 <div class="logo-header-container">
                     <div class="logo-chain-selector-container">
                         <a class="float-left" href="/">
-                            <img v-if="isLarge" class="logo" :src="chain.getLargeLogoPath()">
-                            <img v-else class="logo-token" :src="chain.getSmallLogoPath()">
+                            <img v-if="isLarge" class="logo" :src="largeLogoPath">
+                            <img v-else class="logo-token" :src="smallLogoPath">
                         </a>
                         <ChainsMenu v-if="showMultichainSelector"/>
                     </div>
-                    <div v-if="chain.isTestnet()" class="testnet-text">TESTNET</div>
+                    <div v-if="isTestnet" class="testnet-text">TESTNET</div>
                 </div>
             </div>
         </div>
@@ -58,7 +76,7 @@ export default defineComponent({
                 </div>
             </div>
         </div>
-        <LoginHandler/>
+        <LoginHandler v-if="!headerSettings.hideLoginHandler"/>
     </div>
     <div class="row justify-center col-12 q-pt-sm">
         <q-tabs
@@ -69,25 +87,28 @@ export default defineComponent({
             color="white"
         >
             <q-route-tab
+                v-if="!headerSettings.hideNetworkTab"
                 class="deactive"
                 name="network"
                 label="Network"
-                to="/"
+                to="/network"
             />
             <q-route-tab
-                v-if="account"
+                v-if="!headerSettings.hideWalletTab && account"
                 class="deactive"
                 name="wallet"
                 label="Wallet"
                 :to="'/account/' + account"
             />
             <q-route-tab
+                v-if="!headerSettings.hideVoteTab"
                 class="deactive"
                 name="vote"
                 label="Vote"
                 to="/vote"
             />
             <q-route-tab
+                v-if="!headerSettings.hideProposalTab"
                 class="deactive"
                 name="proposal"
                 label="Proposal"

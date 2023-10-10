@@ -9,6 +9,7 @@ import ContractTabs from 'components/contract/ContractTabs.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
+import ConfigManager from 'src/config/ConfigManager';
 
 export default defineComponent({
     name: 'AccountPage',
@@ -24,6 +25,8 @@ export default defineComponent({
         const store = useStore();
         const route = useRoute();
         const router = useRouter();
+        const accountPageSettings = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
+
         const tab = ref<string>((route.query['tab'] as string) || 'transactions');
         const account = computed(() => (route.params.account as string) || '');
         const abi = computed(() => store.state.account.abi.abi);
@@ -47,6 +50,7 @@ export default defineComponent({
             account,
             abi,
             tokenList,
+            accountPageSettings,
         };
     },
 });
@@ -59,27 +63,27 @@ export default defineComponent({
             <AccountCard class="account-card" :account="account" :tokens="tokenList"/>
         </div>
         <q-tabs v-model="tab" class="account-view tabs" no-caps>
-            <q-tab name="transactions" label="Transactions"/>
-            <q-tab v-if="abi" name="contract" label="Contract"/>
-            <q-tab name="tokens" label="Tokens"/>
-            <q-tab name="keys" label="Keys"/>
-            <q-tab name="children" label="Children"/>
+            <q-tab v-if="!accountPageSettings.hideTransactionTab" name="transactions" label="Transactions"/>
+            <q-tab v-if="!accountPageSettings.hideContractsTab && abi" name="contract" label="Contract"/>
+            <q-tab v-if="!accountPageSettings.hideTokensTab" name="tokens" label="Tokens"/>
+            <q-tab v-if="!accountPageSettings.hideKeysTab" name="keys" label="Keys"/>
+            <q-tab v-if="!accountPageSettings.hideChildrenTab" name="children" label="Children"/>
         </q-tabs>
     </div>
     <q-tab-panels v-model="tab" class="col-12">
-        <q-tab-panel name="transactions">
+        <q-tab-panel v-if="!accountPageSettings.hideTransactionTab" name="transactions">
             <TransactionsTable :account="account" :showTransferLabel="true" :show-pagination-extras="true" />
         </q-tab-panel>
-        <q-tab-panel v-if="abi" name="contract">
+        <q-tab-panel v-if="!accountPageSettings.hideContractsTab && abi" name="contract">
             <ContractTabs/>
         </q-tab-panel>
-        <q-tab-panel name="tokens">
+        <q-tab-panel v-if="!accountPageSettings.hideTokensTab" name="tokens">
             <TokensPanel :account="account"/>
         </q-tab-panel>
-        <q-tab-panel name="keys">
+        <q-tab-panel v-if="!accountPageSettings.hideKeysTab" name="keys">
             <KeysPanel :account="account"/>
         </q-tab-panel>
-        <q-tab-panel name="children">
+        <q-tab-panel v-if="!accountPageSettings.hideChildrenTab" name="children">
             <ChildrenPanel :account="account"/>
         </q-tab-panel>
     </q-tab-panels>
