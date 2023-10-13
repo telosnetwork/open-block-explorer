@@ -50,6 +50,10 @@ export default defineComponent({
         const none = ref<UInt64>(UInt64.from(0));
         const MICRO_UNIT = ref<number>(Math.pow(10, -6));
         const KILO_UNIT = ref<number>(Math.pow(10, 3));
+        const MEGA_UNIT = ref<number>(Math.pow(10, 6));
+        const GIGA_UNIT = ref<number>(Math.pow(10, 9));
+        const netUnit = ref<string>('kb');
+        const ramUnit = ref<string>('kb');
         const resources = ref<number>(0);
         const delegatedByOthers = ref<number>(0.0);
         const delegatedToOthers = computed(
@@ -152,14 +156,48 @@ export default defineComponent({
             }
         };
 
-        const loadResources = () => {
-            ram_used.value = fixDec(
-                Number(accountData.value.ram_usage) / KILO_UNIT.value,
-            );
+        const determineUnit = (size: number) => {
+            if (size > GIGA_UNIT.value) {
+                return {
+                    unit: 'gb',
+                    denominator: GIGA_UNIT.value,
+                };
+            }
+            if (size > MEGA_UNIT.value) {
+                return {
+                    unit: 'mb',
+                    denominator: MEGA_UNIT.value,
+                };
+            }
+            return {
+                unit: 'kb',
+                denominator: KILO_UNIT.value,
+            };
+        };
 
+        const loadResources = () => {
+            let ramDenominator;
             if (props.account !== system_account.value) {
+                // display max resource unit value for readability
+                const ramMaxNumber = Number(accountData.value.ram_quota);
+                const ramUnitResult = determineUnit(ramMaxNumber);
+                ramDenominator = ramUnitResult.denominator;
+                ramUnit.value = ramUnitResult.unit;
+                // get displayed number value
                 ram_max.value = fixDec(
-                    Number(accountData.value.ram_quota) / KILO_UNIT.value,
+                    ramMaxNumber / ramDenominator,
+                );
+                // get units
+                const netUsedNumber = Number(accountData.value.net_limit.used);
+                const netMaxNumber = Number(accountData.value.net_limit.max);
+                const netUnitResult = determineUnit(netMaxNumber);
+                const netDenominator = netUnitResult.denominator;
+                netUnit.value = netUnitResult.unit;
+                net_used.value = fixDec(
+                    netUsedNumber / netDenominator,
+                );
+                net_max.value = fixDec(
+                    netMaxNumber / netDenominator,
                 );
                 cpu_used.value = fixDec(
                     Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value,
@@ -167,13 +205,6 @@ export default defineComponent({
                 cpu_max.value = fixDec(
                     Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value,
                 );
-                net_used.value = fixDec(
-                    Number(accountData.value.net_limit.used) / KILO_UNIT.value,
-                );
-                net_max.value = fixDec(
-                    Number(accountData.value.net_limit.max) / KILO_UNIT.value,
-                );
-
                 stakedResources.value =
                     Number(accountData.value.total_resources.cpu_weight.value) +
                     Number(accountData.value.total_resources.net_weight.value);
@@ -190,6 +221,16 @@ export default defineComponent({
                     stakedResources.value - stakedNET.value - stakedCPU.value,
                 );
             }
+            const ramUsedNumber = Number(accountData.value.ram_usage);
+            // only change denominator and units if wasn't already set
+            if (!ramDenominator) {
+                const ramUnitResult = determineUnit(ramUsedNumber);
+                ramDenominator = ramUnitResult.denominator;
+                ramUnit.value = ramUnitResult.unit;
+            }
+            ram_used.value = fixDec(
+                ramUsedNumber / ramDenominator,
+            );
         };
 
         const setTotalBalance = () => {
@@ -373,8 +414,8 @@ export default defineComponent({
 
         return {
             accountPageSettings,
-            MICRO_UNIT,
-            KILO_UNIT,
+            netUnit,
+            ramUnit,
             stakedCPU,
             stakedNET,
             cpu_used,
@@ -484,7 +525,7 @@ export default defineComponent({
                     :fraction="net_used"
                     :total="net_max"
                     label="NET"
-                    unit="kb"
+                    :unit="netUnit"
                 />
                 <PercentCircle
                     v-if="!accountPageSettings.hideRamInfo"
@@ -492,11 +533,11 @@ export default defineComponent({
                     :fraction="ram_used"
                     :total="ram_max"
                     label="RAM"
-                    unit="kb"
+                    :unit="ramUnit"
                 />
             </div>
             <div v-else-if="!accountPageSettings.hideRamInfo" class="resources">
-                <div class="usage">RAM USED: {{ ram_used }} kb</div>
+                <div class="usage">RAM USED: {{ ram_used }} {{ ramUnit }}</div>
             </div>
         </q-card-section>
         <q-card-section class="resources-container">
