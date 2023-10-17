@@ -29,7 +29,7 @@ export default defineComponent({
         const transferData = computed(() => actionData.value as TransferData);
         const clientHeight = computed(() => dataBox.value?.clientHeight ?? 0);
         let currentData = ref<string | unknown>(null);
-        const maxHeight = 77; // the maximum row height
+        const maxHeight = 90; // the maximum row height
         const switchHeight = 20;
         const maxHeightStyle = `calc(${maxHeight}px - ${switchHeight}px)`;
 
@@ -111,19 +111,24 @@ export default defineComponent({
     class="relative-position"
     :class="{'div-compressed': !showOverflow}"
 >
-    <div v-if="actionName === 'transfer'" ref="dataBox" class="row">
-        <div class="col-12">
+    <div v-if="actionName === 'transfer'" ref="dataBox" class="column full-height">
+        <div class="items-center row q-gutter-sm">
             <span class="text-bold">
-                <AccountFormat :account="transferData.from" type="account"/></span><span class="text-bold">&nbsp; → &nbsp;
-                <AccountFormat :account="transferData.to" type="account">&nbsp;</AccountFormat></span><span class="text-bold">{{ ' ' + transferData.quantity }}</span>
+                <AccountFormat :account="transferData.from" type="account"/>
+            </span>
+            <span class="q-ma-0"> &nbsp; → &nbsp; </span>
+            <span class="text-bold">
+                <AccountFormat :account="transferData.to" type="account">&nbsp;</AccountFormat>
+            </span>
+            <span class="text-bold">{{ ' ' + transferData.quantity }}</span>
         </div>
-        <div class="col-12">
+        <div class="row ">
             <div class="text-weight-bold">
                 memo:&nbsp;<span v-if="transferData.memo" class="text-weight-regular">{{ transferData.memo }}</span><span v-else class="text-weight-regular">n/a</span>
             </div>
         </div>
     </div>
-    <div v-else ref="dataBox" class="row">
+    <div v-else ref="dataBox" class="col-12">
         <PrettyPayload :depth="0" :payload="formatGeneralData(actionData)"/>
     </div>
     <q-btn
@@ -150,12 +155,6 @@ export default defineComponent({
     left: 0
   &--use-color
     background: linear-gradient(0deg, #f3effbff 0%, #f3effbaa 40%, #f3effb77 80%, #f3effb33 100%)
-
-.row
-  display: flex
-  flex-direction: column
-  gap: 5px
-  word-break: break-all
 
 .div-compressed
     max-height: v-bind(maxHeightStyle)

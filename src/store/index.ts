@@ -16,6 +16,8 @@ import { transaction } from 'src/store/transaction';
 import { TransactionStateInterface } from 'src/store/transaction/state';
 import { resources } from 'src/store/resources';
 import { ResourcesStateInterface } from 'src/store/resources/state';
+import { profiles } from 'src/store/profiles';
+import { ProfilesStateInterface } from 'src/store/profiles/state';
 
 /*
  * If not building with SSR mode, you can
@@ -33,6 +35,7 @@ export interface StateInterface {
     account: AccountStateInterface;
     transaction: TransactionStateInterface;
     resources: ResourcesStateInterface;
+    profiles: ProfilesStateInterface;
 }
 
 // provide typings for `this.$store`
@@ -54,6 +57,7 @@ export default store(function () {
             account,
             transaction,
             resources,
+            profiles,
         },
 
         // enable strict mode (adds overhead!)

@@ -124,7 +124,7 @@ export default class Koyn extends BaseChain {
                 { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
             ],
             headerSettings: {
-                hideLoginHandler: false,
+                hideLoginHandler: true,
 
                 hideNetworkTab: true,
                 hideWalletTab: true,

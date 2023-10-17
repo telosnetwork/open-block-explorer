@@ -13,6 +13,8 @@
     "test:coverage": "quasar serve test/jest/coverage/lcov-report/ --port 8788"
   },
   "dependencies": {
+    "@dicebear/collection": "^7.0.1",
+    "@dicebear/core": "^7.0.1",
     "@greymass/eosio": "^0.6.8",
     "@quasar/extras": "^1.13.4",
     "@telosnetwork/ual-cleos": "^1.13.1",

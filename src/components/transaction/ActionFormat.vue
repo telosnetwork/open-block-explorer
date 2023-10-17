@@ -59,7 +59,7 @@ export default defineComponent({
 
 <template>
 <div class="action-container">
-    <div class="action action-general">
+    <div class="items-center q-pa-xs action action-general row">
         <AccountFormat :account="tx.act.account" type="account"/><span class="inline">&nbsp; → &nbsp;</span><span>{{tx.act.name}}</span>
     </div>
     <div v-if="divContent" class="action action-transfer">{{ divContent }}</div>
@@ -76,8 +76,6 @@ export default defineComponent({
 }
 
 .action{
-  padding: 0 0.5rem;
-
   &.action-transfer{
     background: rgba(196, 196, 196, 0.3);
     font-weight: bold;

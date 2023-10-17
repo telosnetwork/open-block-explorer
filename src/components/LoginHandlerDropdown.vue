@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useStore } from 'src/store';
 import { getAuthenticators } from 'src/boot/ual';
@@ -13,7 +13,7 @@ export default defineComponent({
         const authenticators = getAuthenticators();
         const store = useStore();
         const account = computed(() => store.state.account.accountName);
-        const avatar = computed(() => store.state.account.avatar);
+        const avatar = computed(() => store.state.profiles.profiles.get(account.value)?.avatar);
         const showModal = ref(false);
 
         const getAuthenticator = (): Authenticator => {
@@ -38,6 +38,13 @@ export default defineComponent({
         const clearAccount = (): void => {
             void store.dispatch('account/logout');
         };
+
+        onMounted(async () => {
+            if (!avatar.value) {
+                await store.dispatch('profiles/fetchProfileByAccount', account.value);
+            }
+        });
+
         return {
             account,
             showModal,
@@ -52,7 +59,7 @@ export default defineComponent({
 
 <div class="connect-button-container">
     <q-avatar class="profile-avatar" size="32px">
-        <img :src="avatar">
+        <svg v-html="avatar" />
     </q-avatar>
     <q-btn-dropdown
         class="connect-button"
@@ -106,8 +113,10 @@ export default defineComponent({
     transform: translateY(-50%)
     left: 4px
     z-index: 10
-    img
+    svg
         object-fit: cover
+        height: 100%
+        width: 100%
 .connect-button-container
     position: relative
     width: 180px // Makes container width fixed
