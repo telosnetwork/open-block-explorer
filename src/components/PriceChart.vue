@@ -101,7 +101,7 @@ export default defineComponent({
             chartOptions.value.series[0].data = data.prices;
         };
         const formatPercentage = (val: number): string => `${val.toFixed(2)} %`;
-        const formatCurrencyValue = (val: number): string => val < ONE_MILLION
+        const formatCurrencyValue = (val: number): string => val < 1 ? `$${val.toFixed(3)}` : val < ONE_MILLION
             ? `$${val.toFixed(2)}`
             : val < ONE_BILLION
                 ? `$${(val / ONE_MILLION).toFixed(2)}M`
