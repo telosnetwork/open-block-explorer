@@ -2,6 +2,7 @@
 import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import { useAntelopeStore } from 'src/store/antelope.store';
+import { useStore } from 'src/store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/resources/ResourcesDialog.vue';
@@ -38,7 +39,8 @@ export default defineComponent({
     setup(props) {
         const $q = useQuasar();
         const router = useRouter();
-        const store = useAntelopeStore();
+        const antelopeStore = useAntelopeStore();
+        const store = useStore();
 
         const accountPageSettings = computed((): AccountPageSettings => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
 
@@ -55,7 +57,7 @@ export default defineComponent({
         const resources = ref<number>(0);
         const delegatedByOthers = ref<number>(0.0);
         const delegatedToOthers = computed(
-            (): number => store.resources.getDelegatedToOthersAggregated(),
+            (): number => antelopeStore.resources.getDelegatedToOthersAggregated(),
         );
         const rexStaked = ref<number>(0);
         const rexProfits = ref<number>(0);
@@ -93,9 +95,10 @@ export default defineComponent({
             (accountData.value?.refund_request?.net_amount.value ?? 0),
         );
 
+
         const staked = computed((): number => stakedRefund.value + stakedNET.value + stakedCPU.value);
 
-        const token = computed((): Token => store.state.chain.token);
+        const token = computed((): Token => antelopeStore.state.chain.token);
 
         const liquidNative = computed((): number => accountData.value?.core_liquid_balance?.value
             ? accountData.value.core_liquid_balance.value
@@ -120,14 +123,17 @@ export default defineComponent({
             return result;
         });
 
-        const isAccount = computed((): boolean => store.state.account.accountName === props.account);
+        const isAccount = computed((): boolean => antelopeStore.state.account.accountName === props.account);
 
         const createTimeFormat = computed((): string =>
             date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A'),
         );
 
+        let profile = computed(() => store.state.profiles.profiles.get(props.account));
+
+
         const setToken = (value: Token) => {
-            void store.commit('chain/setToken', value);
+            void antelopeStore.commit('chain/setToken', value);
         };
 
         const loadAccountData = async (): Promise<void> => {
@@ -135,6 +141,7 @@ export default defineComponent({
                 isLoading.value = true;
                 accountData.value = await api.getAccount(props.account);
                 await loadAccountCreatorInfo();
+                await loadProfile();
                 await loadBalances();
                 loadResources();
                 await loadStakedBalance();
@@ -146,6 +153,12 @@ export default defineComponent({
                 $q.notify(`account ${props.account} not found!`);
                 accountExists.value = false;
                 return;
+            }
+        };
+
+        const loadProfile = async () => {
+            if (!profile.value) {
+                await store.dispatch('profiles/fetchProfileByAccount', props.account);
             }
         };
 
@@ -230,7 +243,7 @@ export default defineComponent({
         };
 
         const updateResources = (payload: {account:string, force: boolean}) =>
-            store.resources.updateResources(payload);
+            antelopeStore.resources.updateResources(payload);
 
         const getRexFund = async () => {
             const paramsrexfund = {
@@ -385,11 +398,11 @@ export default defineComponent({
         onMounted(async () => {
             usdPrice.value = await chain.getUsdPrice();
             await loadAccountData();
-            await store.dispatch('account/updateRexData', {
+            await antelopeStore.dispatch('account/updateRexData', {
                 account: props.account,
             });
             loadSystemToken();
-            void store.dispatch('chain/updateRamPrice');
+            void antelopeStore.dispatch('chain/updateRamPrice');
         });
 
         watch(
@@ -397,7 +410,7 @@ export default defineComponent({
             async () => {
                 resetBalances();
                 await loadAccountData();
-                await store.dispatch('account/updateRexData', {
+                await antelopeStore.dispatch('account/updateRexData', {
                     account: props.account,
                 });
             },
@@ -453,6 +466,7 @@ export default defineComponent({
             copy,
             formatAsset,
             updateTokenBalances,
+            profile,
         };
     },
 });
@@ -464,41 +478,39 @@ export default defineComponent({
     <q-card v-if="accountExists" class="account-card">
         <q-card-section class="resources-container">
             <div class="inline-section">
-                <div class="row justify-center full-height items-center">
-                    <div v-if="account !== system_account" class="col-6">
-                        <div class="text-title">{{ account }}</div>
-                    </div>
-                    <div v-else class="col-2">
-                        <div class="text-title">{{ account }}</div>
-                    </div>
-                    <div class="col-1">
-                        <q-btn
-                            class="float-right"
-                            flat
-                            round
-                            color="white"
-                            icon="content_copy"
-                            size="sm"
-                            @click="copy(account)"
-                        />
-                    </div>
-                </div>
-                <div
-                    v-if="creatingAccount && creatingAccount !== '__self__'"
-                    class="text-subtitle"
-                >
-                    created by
-                    <span>&nbsp;<a @click="loadCreatorAccount">{{ creatingAccount }}</a>&nbsp;</span>
-                    <div>
-                        <DateField :timestamp="createTime" showAge>&nbsp;</DateField>
-                        <q-tooltip>{{createTimeFormat}}</q-tooltip>
-                    </div><a class="q-ml-xs tx-link" @click="loadCreatorTransaction">
-                        <q-icon name="fas fa-link"/></a>
-                </div>
-                <div v-else class="text-subtitle">created<span>&nbsp;</span>
-                    <div>
-                        <DateField :timestamp="createTime" showAge>&nbsp;</DateField>
-                        <q-tooltip>{{createTimeFormat}}</q-tooltip>
+                <div class="items-center justify-center row full-height q-gutter-sm">
+                    <svg v-if="profile?.avatar" class="avatar-image" v-html="profile.avatar" />
+                    <div class="justify-center column">
+                        <div class="items-center row">
+                            <div class="text-title">{{ account }}</div>
+                            <q-btn
+                                class="float-right"
+                                flat
+                                round
+                                color="white"
+                                icon="content_copy"
+                                size="sm"
+                                @click="copy(account)"
+                            />
+                        </div>
+                        <div
+                            v-if="creatingAccount && creatingAccount !== '__self__'"
+                            class="text-subtitle"
+                        >
+                            created by
+                            <span>&nbsp;<a @click="loadCreatorAccount">{{ creatingAccount }}</a>&nbsp;</span>
+                            <div>
+                                <DateField :timestamp="createTime" showAge>&nbsp;</DateField>
+                                <q-tooltip>{{createTimeFormat}}</q-tooltip>
+                            </div><a class="q-ml-xs tx-link" @click="loadCreatorTransaction">
+                                <q-icon name="fas fa-link"/></a>
+                        </div>
+                        <div v-else class="text-subtitle">created<span>&nbsp;</span>
+                            <div>
+                                <DateField :timestamp="createTime" showAge>&nbsp;</DateField>
+                                <q-tooltip>{{createTimeFormat}}</q-tooltip>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <q-space/>
@@ -534,7 +546,7 @@ export default defineComponent({
             </div>
         </q-card-section>
         <q-card-section class="resources-container">
-            <div class="row justify-center q-gutter-sm">
+            <div class="justify-center row q-gutter-sm">
                 <div v-if="isAccount" class="col-3">
                     <q-btn
                         :disable="tokensLoading || isLoading"
@@ -646,9 +658,9 @@ export default defineComponent({
     <q-card v-else class="account-card">
         <q-card-section class="resources-container">
             <div class="inline-section">
-                <div class="row justify-center full-height items-center">
+                <div class="items-center justify-center row full-height">
                     <div class="col-8"></div>
-                    <div class="text-title text-center">Sorry, the account {{ account }} could not be found.</div>
+                    <div class="text-center text-title">Sorry, the account {{ account }} could not be found.</div>
                 </div>
             </div>
         </q-card-section>
@@ -670,6 +682,12 @@ $medium:750px
   font-size: 36px
   max-width: 100%
   background: unset
+
+  .avatar-image
+    height: 150px
+    width: 150px
+    object-fit: cover
+    border-radius: 50%
 
   .q-table tbody td
     font-size: 12px

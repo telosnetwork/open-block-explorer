@@ -20,6 +20,7 @@ export interface Theme {
   'color-header-support-background'?: string;
   'color-graph-shadow'?: string;
   'color-footer-background'?: string;
+  'color-dropdown-card'?: string;
 }
 
 export const themeProps: (keyof Theme)[] = [
@@ -44,4 +45,5 @@ export const themeProps: (keyof Theme)[] = [
     'color-header-support-background',
     'color-graph-shadow',
     'color-footer-background',
+    'color-dropdown-card',
 ];
