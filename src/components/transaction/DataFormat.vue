@@ -29,7 +29,7 @@ export default defineComponent({
         const transferData = computed(() => actionData.value as TransferData);
         const clientHeight = computed(() => dataBox.value?.clientHeight ?? 0);
         let currentData = ref<string | unknown>(null);
-        const maxHeight = 98; // the maximum row height
+        const maxHeight = 130; // the maximum row height
         const switchHeight = 20;
         const maxHeightStyle = `calc(${maxHeight}px - ${switchHeight}px)`;
 
@@ -108,10 +108,10 @@ export default defineComponent({
 
 <template>
 <div
-    class="relative-position"
+    class="relative-position overflow-hidden"
     :class="{'div-compressed': !showOverflow}"
 >
-    <div v-if="actionName === 'transfer'" ref="dataBox" class="row">
+    <div v-if="actionName === 'transfer'" ref="dataBox" class="row transfer-data">
         <div class="col-12">
             <span class="text-bold">
                 <AccountFormat :account="transferData.from" type="account"/></span><span class="text-bold">&nbsp; → &nbsp;
@@ -156,6 +156,9 @@ export default defineComponent({
   flex-direction: column
   gap: 5px
   word-break: break-all
+
+.transfer-data
+  text-wrap: wrap
 
 .div-compressed
     max-height: v-bind(maxHeightStyle)
