@@ -680,7 +680,7 @@ $medium:750px
 
   .q-table__card
     background: unset
-    color: rgba(255, 255, 255, 0.5)
+    color: rgba(255, 255, 255, 0.8)
 
   .q-table--horizontal-separator
     thead th
