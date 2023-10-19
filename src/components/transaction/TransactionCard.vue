@@ -107,7 +107,7 @@ export default defineComponent({
                         <div class="col-xs-12 col-sm-6">
                             <div class="text-body1 text-weight-medium text-uppercase">Block time</div>
                         </div>
-                        <div class="col-xs-12 col-sm-6 text-right text-bold">{{formatDate(timestamp)}}</div>
+                        <div class="col-xs-12 col-sm-6 text-right text-bold">{{formatDate(`${timestamp}Z`)}}</div>
                     </div>
                 </q-card-section>
                 <q-separator class="card-separator" inset="inset"/>
