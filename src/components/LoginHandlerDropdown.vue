@@ -59,7 +59,7 @@ export default defineComponent({
             <a class="text-white" :href=" '/account/' + account">
                 <div class="row">
                     <div class="col-12">
-                        Account
+                        View my account
                     </div>
                 </div>
             </a>
