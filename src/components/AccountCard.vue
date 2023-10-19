@@ -412,6 +412,13 @@ export default defineComponent({
             },
         );
 
+        watch(
+            () => store.resources.getDelegatedToOthersAggregated(),
+            () => {
+                setTotalBalance();
+            },
+        );
+
         return {
             accountPageSettings,
             netUnit,
