@@ -55,10 +55,14 @@ export default defineComponent({
     :content-style="{ backgroundColor: '#172c6c' }"
 >
     <q-card class="buttons-container">
-        <q-card-section>
-            <div class="row">
-                <div class="col-12"><a class="text-white hover-dec" :href=" '/account/' + account">{{account}}</a></div>
-            </div>
+        <q-card-section class="account-link">
+            <a class="text-white" :href=" '/account/' + account">
+                <div class="row">
+                    <div class="col-12">
+                        Account
+                    </div>
+                </div>
+            </a>
         </q-card-section>
         <q-separator dark/>
         <q-card-section>
@@ -89,6 +93,14 @@ export default defineComponent({
   width: fit-content
   height: 40px
   text-transform: lowercase
+
+.account-link
+  &:hover
+    cursor: pointer
+    transition: background-color .3s
+    background-color: color-mix(in oklab, var(--q-secondary) 88%, white 12%)
+  a
+    text-decoration: none
 .buttons-container
   width: 220px
   max-width: 80vw
