@@ -101,6 +101,9 @@ export default defineComponent({
     background-color: color-mix(in oklab, var(--q-secondary) 88%, white 12%)
   a
     text-decoration: none
+    div
+        width: fit-content
+        margin-left: .5rem
 .buttons-container
   width: 220px
   max-width: 80vw
