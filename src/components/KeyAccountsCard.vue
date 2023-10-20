@@ -72,13 +72,13 @@ export default defineComponent({
                     <div class="row">
                         <div class="col-auto q-gutter-sm"><img class="logo-token" :src="tokenLogo"></div>
                         <div class="col-auto"></div>
-                        <div class="text-h6 q-pl-sm">TELOS Accounts</div>
+                        <div class="text-h6 q-pl-sm">Accounts</div>
                     </div>
                 </q-card-section>
                 <q-separator inset="inset"/>
                 <q-card-section>
                     <div class="row q-pb-md">
-                        <div class="text-weight-medium">Key:</div>
+                        <div class="text-weight-medium">Key</div>
                         <div class="q-pl-sm">
                             <q-btn
                                 class="rotate-315"
