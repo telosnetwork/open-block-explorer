@@ -103,7 +103,7 @@ export default defineComponent({
     text-decoration: none
     div
         width: fit-content
-        margin-left: .5rem
+        margin-left: .25rem
 .buttons-container
   width: 220px
   max-width: 80vw
