@@ -22,6 +22,7 @@ import { PriceChartData } from 'src/types/PriceChartData';
 import { getEmptyPriceChartData } from 'src/api/price';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
+import { FooterLink } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
   '73e4385a2708e6d7048834fbc1079f2fabb17b3c125b146af438971e90716c4d';
@@ -135,5 +136,13 @@ export default class TelosTestnet extends BaseChain {
 
     isTestnet(): boolean {
         return true;
+    }
+
+    getFooterLinks(): FooterLink[] {
+        return [
+            { label: 'TERMS', url: 'https://eosnetwork.com/terms-of-use/' },
+            { label: 'PRIVACY', url: 'https://eosnetwork.com/privacy-policy/' },
+            { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
+        ];
     }
 }

@@ -2,7 +2,7 @@ import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types/Actions';
-import { UiCustomization } from 'src/types/UiCustomization';
+import { FooterLink, UiCustomization } from 'src/types/UiCustomization';
 
 export interface Chain {
   getName(): string;
@@ -23,4 +23,5 @@ export interface Chain {
   getUiCustomization(): UiCustomization;
   getFiltersSupported(prop: string): boolean;
   isTestnet(): boolean;
+  getFooterLinks(): FooterLink[];
 }

@@ -7,6 +7,7 @@ import {
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
+import { FooterLink } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
   '1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4';
@@ -95,5 +96,13 @@ export default class EOS extends BaseChain {
             return false;
         }
         return true;
+    }
+
+    getFooterLinks(): FooterLink[] {
+        return [
+            { label: 'TERMS', url: 'https://www.wax.io/terms-of-service' },
+            { label: 'PRIVACY', url: 'https://www.wax.io/privacy-policy' },
+            { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
+        ];
     }
 }

@@ -5,7 +5,7 @@ import { computed } from 'vue';
 export default {
     name: 'AppFooter',
     setup() {
-        const footerLinks = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().footerLinks);
+        const footerLinks = computed(() => ConfigManager.get().getCurrentChain().getFooterLinks());
 
         return {
             footerLinks,
