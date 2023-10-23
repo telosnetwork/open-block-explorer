@@ -3,7 +3,7 @@ import { RpcEndpoint } from 'universal-authenticator-library';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
-import { UiCustomization } from 'src/types/UiCustomization';
+import { FooterLink, UiCustomization } from 'src/types/UiCustomization';
 
 export const DEFAULT_THEME = {
     primary: '#11589e',
@@ -35,11 +35,6 @@ export const DEFAULT_THEME = {
 };
 
 export const baseUiConfiguration: UiCustomization = {
-    footerLinks: [
-        { label: 'LEGAL', url: 'https://telos.net/legal' },
-        { label: 'PRIVACY', url: 'https://telos.net/privacy-policy' },
-        { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
-    ],
     headerSettings: {
         hideLoginHandler: false,
 
@@ -98,6 +93,7 @@ export default abstract class BaseChain implements Chain {
   abstract getUsdPrice(): Promise<number>;
   abstract getMapDisplay(): boolean;
   abstract getTheme(): Theme;
+  abstract getFooterLinks(): FooterLink[];
 
   getUiCustomization(): UiCustomization {
       return baseUiConfiguration;

@@ -31,7 +31,6 @@ export interface AccountPageSettings {
 }
 
 export interface UiCustomization {
-    footerLinks: FooterLink[];
     headerSettings: HeaderSettings;
     accountPageSettings: AccountPageSettings;
 }

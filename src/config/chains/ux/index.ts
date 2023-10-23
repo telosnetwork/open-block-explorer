@@ -4,6 +4,7 @@ import { getEmptyPriceChartData } from 'src/api/price';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
+import { FooterLink } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
   '8fc6dce7942189f842170de953932b1f66693ad3788f766e777b6f9d22335c02';
@@ -92,5 +93,13 @@ export default class UX extends BaseChain {
             return false;
         }
         return true;
+    }
+
+    getFooterLinks(): FooterLink[] {
+        return [
+            { label: 'TERMS', url: 'https://uxnetwork.io/static/Terms.pdf' },
+            { label: 'PRIVACY', url: 'https://uxnetwork.io/static/PP.pdf' },
+            { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
+        ];
     }
 }
