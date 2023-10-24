@@ -3,6 +3,7 @@
 
 a
     cursor: pointer
+    color: var(--q-primary)
 
 .actor-font
     font-family: 'Actor'
@@ -39,7 +40,32 @@ body
     min-height: 350px
     height: 70vh
     width: 100%
-    background: var(--q-color-header-support-background)
+
+.background-2
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    position: absolute
+    background: #EE05F2
+    opacity: 0.15
+    filter: blur(125px)
+    z-index: -1
+
+.background-1
+    top: 0
+    right: 0
+    bottom: 0
+    left: 0
+    position: absolute
+    background: linear-gradient(132.08deg, rgba(255, 255, 255, 0.325) 0%, rgba(255, 255, 255, 0.1235) 52.08%, rgba(255, 255, 255, 0) 100%)
+    opacity: 0.75
+    backdrop-filter: blur(10px)
+    /* Note: backdrop-filter has minimal browser support */
+    z-index: -1
+
+.background-3
+    opacity: 1
 
 .gradient-color
     .q-linear-progress__model--determinate
@@ -114,12 +140,11 @@ q-card-section.section--light-bg
 .text-no-decoration
     text-decoration: none
 
-.trx-table
+.trx-table 
     margin-top: 1rem
     margin-bottom: 1rem
     padding-bottom: .5rem
-    background-color:#ffffff
-    background: #FFFFFF
+    background-color: var(--q-dark)
     box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
     border-radius: 10px
 
@@ -132,3 +157,9 @@ q-card-section.section--light-bg
         max-width: calc(100% - 4px)
     .account-view .q-tab
         padding: unset
+
+.q-field--dark .q-field__control:before
+    background-color: var(--q-dark)
+
+.q-field--outlined .q-field__control
+    border-radius: 0px

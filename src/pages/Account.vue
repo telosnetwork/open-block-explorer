@@ -93,13 +93,16 @@ export default defineComponent({
 
 <style lang="sass">
 .account-card
-  width: 550px
-  border-radius: .5rem
-  margin-top: 1rem
-  margin-left: auto
-  margin-right: auto
-  margin-bottom: 2rem
-  box-shadow: none
+    width: 550px
+    border-radius: .5rem
+    margin-top: 1rem
+    margin-left: auto
+    margin-right: auto
+    margin-bottom: 2rem
+    box-shadow: none
 .tabs
-  color: white
+    color: white
+
+.q-tab-panels--dark
+    background: unset
 </style>

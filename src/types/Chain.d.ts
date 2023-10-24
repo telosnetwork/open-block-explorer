@@ -20,6 +20,7 @@ export interface Chain {
   getUsdPrice(): Promise<number>;
   getMapDisplay(): boolean;
   getTheme(): Theme;
+  useDarkMode(): boolean;
   getUiCustomization(): UiCustomization;
   getFiltersSupported(prop: string): boolean;
   isTestnet(): boolean;

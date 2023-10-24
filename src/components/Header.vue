@@ -183,9 +183,6 @@ export default defineComponent({
   font-size: 18px
 
 .header-background
-  border-bottom: 2px solid var(--q-color-header-border)
-  background: var(--q-color-header-background)
   min-height: 90px // minimal height to show testnet label
-
 
 </style>

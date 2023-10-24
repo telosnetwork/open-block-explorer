@@ -47,7 +47,7 @@ const THEME = {
     primary: '#CE1C61',
     secondary: '#82103C',
     accent: '#EE05F2',
-    dark: '#1D1D1D',
+    dark: '#131313',
     positive: '#21BA45',
     negative: '#FF0000',
     info: '#90B862',
@@ -117,6 +117,10 @@ export default class Koyn extends BaseChain {
         return THEME;
     }
 
+    useDarkMode(): boolean {
+        return true;
+    }
+
     getUiCustomization(): UiCustomization {
         return {
             ...baseUiConfiguration,
@@ -124,7 +128,7 @@ export default class Koyn extends BaseChain {
                 { label: 'PRIVACY', url: 'https://koy.network/privacy-policy' },
             ],
             headerSettings: {
-                hideLoginHandler: true,
+                hideLoginHandler: false,
 
                 hideNetworkTab: true,
                 hideWalletTab: true,

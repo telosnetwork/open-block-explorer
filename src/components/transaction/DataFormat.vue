@@ -144,17 +144,14 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .q-btn
-  &--floating
-    // gradient background from bottom 100% opaque to top 0% opaque
-    background: rgb(255,255,255)
-    background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.6) 80%, rgba(255,255,255,0.3) 100%)
-    // make the button to float on top of the content
-    position: absolute
-    bottom: 0
-    right: 0
-    left: 0
-  &--use-color
-    background: linear-gradient(0deg, #f3effbff 0%, #f3effbaa 40%, #f3effb77 80%, #f3effb33 100%)
+    color: var(--q-primary)
+    &--floating
+        position: absolute
+        bottom: 0
+        right: 0
+        left: 0
+    &--use-color
+        background: linear-gradient(0deg, #f3effbff 0%, #f3effbaa 40%, #f3effb77 80%, #f3effb33 100%)
 
 .div-compressed
     max-height: v-bind(maxHeightStyle)

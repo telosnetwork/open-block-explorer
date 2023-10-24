@@ -99,6 +99,10 @@ export default abstract class BaseChain implements Chain {
   abstract getMapDisplay(): boolean;
   abstract getTheme(): Theme;
 
+  useDarkMode(): boolean {
+      return false;
+  }
+
   getUiCustomization(): UiCustomization {
       return baseUiConfiguration;
   }
