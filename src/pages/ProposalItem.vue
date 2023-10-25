@@ -521,6 +521,7 @@ export default defineComponent({
             <JsonViewer
                 :value="multsigTransactionItem"
                 :expand-depth="5"
+                theme="dark-mode-json-theme"
                 preview-mode="preview-mode"
                 boxed="boxed"
                 copyable="copyable"

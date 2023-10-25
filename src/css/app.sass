@@ -14,6 +14,59 @@ body
 
 .bg-dropdown-dark
     background: var(--q-color-dropdown-card)
+.dark-mode-json-theme
+    background: #131313
+    color: #FFF
+    white-space: nowrap
+    font-size: 14px
+    font-family: Consolas, Menlo, Courier, monospace
+
+    .jv-ellipsis
+        color: #999
+        background-color: #131313
+        display: inline-block
+        line-height: 0.9
+        font-size: 0.9em
+        padding: 0px 4px 2px 4px
+        border-radius: 3px
+        vertical-align: 2px
+        cursor: pointer
+        user-select: none
+
+
+    .jv-button
+        color: #49b3ff
+    .jv-key
+        color: #fff
+    .jv-item
+        &.jv-array
+            color: #fff
+        &.jv-boolean
+            color: #fc1e70
+        &.jv-function
+            color: #067bca
+        &.jv-number
+            color: #fc1e70
+        &.jv-number-float
+            color: #fc1e70
+        &.jv-number-integer
+            color: #fc1e70
+        &.jv-object
+            color: #ff
+        &.jv-undefined
+            color: #e08331
+        &.jv-string
+            color: #42b983
+            word-break: break-word
+            white-space: normal
+    .jv-code
+        .jv-toggle
+            &:before
+                padding: 0px 2px
+                border-radius: 2px
+        &:hover
+            &:before
+            background: #131313
 
 .button-primary
     background: var(--q-primary)
@@ -69,8 +122,6 @@ body
         background: var(--q-color-progress-gradient)
 
 .info-card
-    background-color: white
-    background: white
     box-shadow: 0px 9px 14px var(--q-color-seperator-background), 0px 1px 4px var(--q-color-card-shadow)
     border-radius: 10px
 
@@ -99,12 +150,6 @@ body
 .price-box-position
     margin-top: 1rem
     z-index: 1
-
-q-card.card--light-bg
-    background: #f4f0fb
-
-q-card-section.section--light-bg
-    background: #eae2f7
 
 .q-btn
     text-transform: capitalize
