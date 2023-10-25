@@ -53,6 +53,8 @@ const THEME = {
     info: '#90B862',
     warning: '#FFBB69',
     'color-map': '#CE1C61',
+    'color-background': '#EE05F226',
+    'color-background-gradient': 'linear-gradient(132.08deg, rgba(255, 255, 255, 0.325) 0%, rgba(255, 255, 255, 0.1235) 52.08%, rgba(255, 255, 255, 0) 100%)',
     'color-primary-gradient': 'linear-gradient(90deg, #82103C 65%, #492030 100%)',
     'color-secondary-gradient':
     'linear-gradient(180deg, #82103C 20%, #5492030 85%)',
@@ -67,7 +69,7 @@ const THEME = {
     'color-header-border': '#710E34',
     'color-header-support-background': 'linear-gradient(180deg, #82103C 20%, #542030 85%)',
     'color-graph-shadow': '#CE1C6128',
-    'color-footer-background': '#492030',
+    'color-footer-background': '#90B862',
     'color-dropdown-card': '#492030',
 };
 export default class Koyn extends BaseChain {

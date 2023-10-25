@@ -8,6 +8,8 @@ export interface Theme {
   info?: string;
   warning?: string;
   'color-map'?: string;
+  'color-background'?: string;
+  'color-background-gradient'?: string;
   'color-primary-gradient'?: string;
   'color-secondary-gradient'?: string;
   'color-tertiary-gradient'?: string;
@@ -33,6 +35,8 @@ export const themeProps: (keyof Theme)[] = [
     'info',
     'warning',
     'color-map',
+    'color-background',
+    'color-background-gradient',
     'color-primary-gradient',
     'color-secondary-gradient',
     'color-tertiary-gradient',

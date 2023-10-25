@@ -47,8 +47,8 @@ body
     bottom: 0
     left: 0
     position: absolute
-    background: #EE05F2
-    opacity: 0.15
+    background-color: var(--q-color-background)
+    opacity: 1
     filter: blur(125px)
     z-index: -1
 
@@ -58,14 +58,11 @@ body
     bottom: 0
     left: 0
     position: absolute
-    background: linear-gradient(132.08deg, rgba(255, 255, 255, 0.325) 0%, rgba(255, 255, 255, 0.1235) 52.08%, rgba(255, 255, 255, 0) 100%)
+    background: var(--q-color-background-gradient)
     opacity: 0.75
     backdrop-filter: blur(10px)
     /* Note: backdrop-filter has minimal browser support */
     z-index: -1
-
-.background-3
-    opacity: 1
 
 .gradient-color
     .q-linear-progress__model--determinate
@@ -140,7 +137,7 @@ q-card-section.section--light-bg
 .text-no-decoration
     text-decoration: none
 
-.trx-table 
+.trx-table
     margin-top: 1rem
     margin-bottom: 1rem
     padding-bottom: .5rem
