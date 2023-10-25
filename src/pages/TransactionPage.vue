@@ -112,6 +112,7 @@ export default defineComponent({
                     <JsonViewer
                         :value="jsonTransaction"
                         :expand-depth="5"
+                        theme="dark-mode-json-theme"
                         preview-mode="preview-mode"
                         boxed="boxed"
                         copyable="copyable"

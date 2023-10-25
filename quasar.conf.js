@@ -103,7 +103,8 @@ module.exports = configure(function (ctx) {
         },
         screen: {
           bodyClasses: true
-        }
+        },
+        dark: true
       },
       cssAddon: true,
 

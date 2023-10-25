@@ -88,7 +88,6 @@ export default defineComponent({
                     dense
                     :options="actions"
                     color="primary"
-                    class="bg-white"
                 />
             </div>
             <div class="col-xs-4 col-sm-2 q-pl-md">
@@ -112,7 +111,6 @@ export default defineComponent({
                     outlined
                     dense
                     :placeholder="field.type"
-                    class="bg-white"
                     @blur="formatMemo"
                 />
             </div>
@@ -122,7 +120,6 @@ export default defineComponent({
                     v-model="actor"
                     outlined
                     dense
-                    class="bg-white"
                 />
             </div>
             <div class="col-xs-6 col-sm-3">
@@ -131,7 +128,6 @@ export default defineComponent({
                     v-model="permission"
                     outlined
                     dense
-                    class="bg-white"
                 />
             </div>
         </div>

@@ -60,11 +60,12 @@ export default defineComponent({
                 <ContractActions/>
             </q-tab-panel>
             <q-tab-panel name="abi">
-                <q-card flat class="card--light-bg">
+                <q-card flat class="card--dark-bg">
                     <q-card-section>
                         <JsonViewer
                             :value="abi"
                             :expand-depth="5"
+                            theme="dark-mode-json-theme"
                             preview-mode="preview-mode"
                             boxed="boxed"
                             copyable="copyable"

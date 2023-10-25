@@ -222,7 +222,7 @@ export default defineComponent({
         <q-icon
             class="rotate-90"
             name="search"
-            color="white"
+            color="grey-6"
             size="20px"
         />
     </template>
@@ -253,9 +253,9 @@ export default defineComponent({
 
 <style lang="sass">
 .search-input
-  background: rgba(255, 255, 255, 0.15)
+  background: #2B2B2BCC
   border-radius: 4px
 
 .search-input .q-select__dropdown-icon
-  color: white
+  color: #767676
 </style>
