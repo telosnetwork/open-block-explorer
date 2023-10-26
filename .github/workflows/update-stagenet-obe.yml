@@ -26,5 +26,5 @@ jobs:
           git pull --autostash
           cp ~/obe.env .env
           rm -rf dist/spa/*
-          yarn install
+          yarn install --ignore-engines
           yarn build
