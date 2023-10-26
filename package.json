@@ -42,7 +42,7 @@
     "@quasar/app-webpack": "^3.5.3",
     "@quasar/quasar-app-extension-testing-unit-jest": "^3.0.0-alpha.10",
     "@types/jest": "^27.4.0",
-    "@types/node": "^12.20.21",
+    "@types/node": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "4.5.0",
     "@typescript-eslint/parser": "4.5.0",
     "dotenv": "^14.3.0",
@@ -64,7 +64,7 @@
     "last 5 Opera versions"
   ],
   "engines": {
-    "node": ">= 12.22.1",
+    "node": ">= 16.0.0",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
   }
