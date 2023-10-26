@@ -27,4 +27,4 @@ jobs:
           cp ~/obe.env .env
           rm -rf dist/spa/*
           yarn install
-          yarn quasar build
+          yarn build
