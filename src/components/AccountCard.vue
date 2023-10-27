@@ -687,7 +687,7 @@ $medium:750px
     height: 150px
     width: 150px
     object-fit: cover
-    border-radius: 50%
+    border-radius: 30%
 
   .q-table tbody td
     font-size: 12px
