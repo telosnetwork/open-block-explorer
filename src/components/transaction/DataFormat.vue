@@ -29,8 +29,8 @@ export default defineComponent({
         const transferData = computed(() => actionData.value as TransferData);
         const clientHeight = computed(() => dataBox.value?.clientHeight ?? 0);
         let currentData = ref<string | unknown>(null);
-        const maxHeight = 130; // the maximum row height
-        const switchHeight = 20;
+        const maxHeight = 110; // the maximum row height
+        const switchHeight = 40;
         const maxHeightStyle = `calc(${maxHeight}px - ${switchHeight}px)`;
 
         function compareJsonObjects(obj1: unknown, obj2: unknown): boolean {
@@ -156,6 +156,10 @@ export default defineComponent({
   flex-direction: column
   gap: 5px
   word-break: break-all
+  min-height: 70px
+
+.transfer-data
+  text-wrap: wrap
 
 .transfer-data
   text-wrap: wrap
