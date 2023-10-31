@@ -46,6 +46,7 @@ module.exports = {
         // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-file
         // required to lint *.vue files
         'vue',
+        'unused-imports',
     ],
 
     globals: {
@@ -145,5 +146,16 @@ module.exports = {
         'vue/component-options-name-casing': ['error', 'PascalCase'],
         'vue/component-definition-name-casing': ['error', 'PascalCase'],
         'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+        'no-unused-vars': 'off',
+        'unused-imports/no-unused-imports': 'error',
+        'unused-imports/no-unused-vars': [
+            'warn',
+            {
+                'vars': 'all',
+                'varsIgnorePattern': '^_',
+                'args': 'after-used',
+                'argsIgnorePattern': '^_'
+            }
+        ],
     }
 }

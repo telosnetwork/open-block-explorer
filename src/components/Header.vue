@@ -5,9 +5,10 @@ import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
 import ChainsMenu from 'components/ChainsMenu.vue';
 import ConfigManager, { getChain } from 'src/config/ConfigManager';
-import { useStore } from 'src/store';
 import { useRouteDataNetwork } from 'src/router';
 import { HeaderSettings } from 'src/types/UiCustomization';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -18,12 +19,14 @@ export default defineComponent({
     },
     setup() {
         const $q = useQuasar();
-        const store = useStore();
-        const headerSettings = computed(() : HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
+        const headerSettings = computed((): HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
 
-        const account = computed(() => store.state.account.accountName);
-        const isLarge = computed((): boolean => $q.screen.gt.sm);
+        const account = computed(() => accountStore.accountName);
+        const isLarge = computed((): boolean => $q.screen.gt.md);
         const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
+        const headBlock = computed((): number => store.state.chain.head_block_num);
 
         const isTestnet = ref(getChain().isTestnet());
         const smallLogoPath = ref(getChain().getSmallLogoPath());

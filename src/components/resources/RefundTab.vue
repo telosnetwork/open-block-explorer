@@ -1,12 +1,13 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'RefundTab',
@@ -14,20 +15,21 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>('');
         const total = ref<string>('0');
         const progress = ref<number>(0.2);
-        const refundRequest = computed((): API.v1.AccountRefundRequest => accountData.value?.refund_request);
+        const refundRequest = computed(() => accountData.value?.refund_request);
         const cpuAmount = computed(
             (): number => refundRequest.value?.cpu_amount.value,
         );
         const netAmount = computed(
             (): number => refundRequest.value?.net_amount.value,
         );
-        const token = computed((): Token => store.state.chain.token);
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const token = computed((): Token => chainStore.token);
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const totalRefund = computed((): string => {
             const totalRefund = refundRequest.value
                 ? formatCurrency((refundRequest.value.cpu_amount.value + refundRequest.value.net_amount.value), 4)
@@ -67,7 +69,7 @@ export default defineComponent({
                 259200 -
                 Math.round(new Date(new Date().toISOString()).getTime() / 1000);
             if (diff > 0) {
-                var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
+                const days = component(diff, 24 * 60 * 60), // calculate days from timestamp
                     hours = component(diff, 60 * 60) % 24; // hours
                 return `${days} days, ${hours} hours remaining`;
             } else {
@@ -80,7 +82,7 @@ export default defineComponent({
         }
 
         return {
-            store,
+            accountStore,
             openTransaction,
             stakingAccount,
             total,
@@ -117,7 +119,7 @@ export default defineComponent({
                 ).transactionId as string;
             } catch (e) {
                 this.transactionError = e;
-                this.$store.commit('account/setTransactionError', e);
+                this.accountStore.setTransactionError(e);
             }
             await this.loadAccountData();
 
@@ -128,9 +130,9 @@ export default defineComponent({
         async loadAccountData(): Promise<void> {
             try {
                 const data = await this.$api.getAccount(
-                    this.store.state.account.abi.account_name,
+                    this.accountStore.abi.account_name,
                 );
-                this.$store.commit('account/setAccountData', data);
+                this.accountStore.setAccountData(data);
             } catch (e) {
                 return;
             }

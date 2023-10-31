@@ -4,8 +4,8 @@ import PriceChart from 'components/PriceChart.vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 import WorldMap from 'components/WorldMap.vue';
 import MapData from 'components/MapData.vue';
-import { useStore } from 'src/store';
 import ConfigManager from 'src/config/ConfigManager';
+import { useChainStore } from 'src/stores/chain';
 
 enum MapReveal {
     Reveal,
@@ -22,7 +22,7 @@ export default defineComponent({
         MapData,
     },
     setup() {
-        const store = useStore();
+        const chainStore = useChainStore();
         const mapDisplay = ConfigManager.get().getCurrentChain().getMapDisplay();
         const showMap = ref(false);
         const showMapHint = ref(false);
@@ -82,7 +82,7 @@ export default defineComponent({
                 window.addEventListener('wheel', eventTimeout, false);
                 window.addEventListener('keyup', keyUpTimeout, false);
                 window.setInterval(() => {
-                    void store.dispatch('chain/updateBlockData');
+                    void chainStore.updateBlockData();
                 }, 2000);
             }
         });

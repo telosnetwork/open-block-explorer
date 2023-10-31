@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue';
-import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API, UInt64 } from '@greymass/eosio';
+import { useAccountStore } from 'src/stores/account';
 
 const chain = getChain();
 
@@ -14,15 +14,15 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
         let openTransaction = ref<boolean>(false);
         const buyAmount = ref<string>('');
         const symbol = ref<string>(chain.getSystemToken().symbol);
         const buyOptions = [symbol.value, 'Bytes'];
         const buyOption = ref<string>(buyOptions[0]);
-        const receivingAccount = ref<string>(store.state.account.accountName);
+        const receivingAccount = ref<string>(accountStore.accountName);
         const transactionId = computed(
-            (): string => store.state.account.TransactionId,
+            (): string => accountStore.TransactionId,
         );
         const buyPreview = computed(() => {
             if (buyOption.value === buyOptions[0]) {
@@ -42,13 +42,13 @@ export default defineComponent({
             }
         });
         const transactionError = computed(
-            () => store.state.account.TransactionError,
+            () => accountStore.TransactionError,
         );
         const ramPrice = computed((): string => store.state?.chain.ram_price);
         const ramAvailable = computed(() =>
             UInt64.sub(
-                store.state.account.data.ram_quota,
-                store.state.account.data.ram_usage,
+                accountStore.data.ram_quota,
+                accountStore.data.ram_usage,
             ),
         );
         const accountData = computed((): API.v1.AccountObject => store.state?.account.data);

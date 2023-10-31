@@ -1,4 +1,4 @@
-import { DelegatedResources, ResourcesStateInterface } from 'src/store/resources/state';
+import { DelegatedResources, ResourcesStateInterface } from 'src/stores/resources';
 import { ref } from 'vue';
 
 global.fetch = jest.fn((input: RequestInfo | URL) =>
@@ -109,8 +109,8 @@ jest.mock('src/api', () => ({
     api: { getTableRows },
 }));
 
-import { actions } from 'src/store/resources/actions';
-import { StateInterface } from 'src/store';
+import { actions } from 'src/stores/resources/actions';
+import { StateInterface } from 'src/stores';
 
 import { GetTableRowsParams } from 'src/types';
 import { API } from '@greymass/eosio';
