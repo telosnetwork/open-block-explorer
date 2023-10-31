@@ -1,11 +1,12 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import { useAntelopeStore } from 'src/store/antelope.store';
+import { computed, defineComponent, ref } from 'vue';
 import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { DelegatedResources } from 'src/store/resources/state';
-import { formatCurrency, assetToAmount } from 'src/utils/string-utils';
+import { DelegatedResources, useResourceStore } from 'src/stores/resources';
+import { assetToAmount, formatCurrency } from 'src/utils/string-utils';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -16,10 +17,12 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useAntelopeStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
+        const resourceStore = useResourceStore();
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>(
-            store.state.account.accountName.toLowerCase() || '',
+            accountStore.accountName.toLowerCase() || '',
         );
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
@@ -29,8 +32,8 @@ export default defineComponent({
                 cpuTokens.value = Number(cpuTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
-                        maximumFractionDigits: store.state.chain.token.precision,
-                        minimumFractionDigits: store.state.chain.token.precision,
+                        maximumFractionDigits: chainStore.token.precision,
+                        minimumFractionDigits: chainStore.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
             }
@@ -38,30 +41,27 @@ export default defineComponent({
                 netTokens.value = Number(netTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
-                        maximumFractionDigits: store.state.chain.token.precision,
-                        minimumFractionDigits: store.state.chain.token.precision,
+                        maximumFractionDigits: chainStore.token.precision,
+                        minimumFractionDigits: chainStore.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
             }
         }
 
-        const delegatedList = computed(() => store.resources.getDelegatedToOthers());
-        const isUpdating = computed(() => store.resources.isLoading('updateResources'));
-        const isUnstaking = computed(() => store.resources.isLoading('undelegateResources'));
-        const loading = computed(() => store.resources.getLoading());
+        const delegatedList = computed(() => resourceStore.getDelegatedToOthers);
+        const isUpdating = computed(() => resourceStore.isLoading('updateResources'));
+        const isUnstaking = computed(() => resourceStore.isLoading('undelegateResources'));
+        const loading = computed(() => resourceStore.loading);
         const selectModel = ref<{label:string, value:DelegatedResources}>({ label: '', value: null });
         const receiverAccount = computed((): string => selectModel.value?.value?.to);
 
-        const selectOptions = computed(() => {
-            const options = delegatedList.value?.map(item => ({
-                label: item.to,
-                value: item,
-            })) ?? [];
-            return options;
-        });
+        const selectOptions = computed(() => delegatedList.value?.map(item => ({
+            label: item.to,
+            value: item,
+        })) ?? []);
 
-        void store.resources.updateResources({}).then(() => {
-            const selfStaked = store.resources.getSelfStaked();
+        void resourceStore.updateResources({}).then(() => {
+            const selfStaked = resourceStore.selfStaked;
             if (selfStaked) {
                 selectModel.value = {
                     label: (selfStaked?.to ?? 'unknown'),

@@ -1,26 +1,26 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { copyToClipboard } from 'quasar';
-import { useStore } from 'src/store';
 import {  formatDate } from 'src/utils/string-utils';
 import AccountFormat from 'src/components/transaction/AccountFormat.vue';
+import { useTransactionStore } from 'src/stores/transaction';
 
 export default defineComponent({
     name: 'TransactionCard',
     components: { AccountFormat },
     setup() {
-        const store = useStore();
+        const transactionStore = useTransactionStore();
         return {
-            transaction: computed(() => store.state.transaction.transactionId),
-            transactionData: computed(() => store.state.transaction.transaction),
-            blockNum: computed(() => store.state.transaction.blockNum.toString()),
-            timestamp: computed(() => store.state.transaction.timestamp),
-            executed: computed(() => store.state.transaction.executed),
-            irreversable: computed(() => store.state.transaction.irreversable),
-            cpuUsage: computed(() => store.state.transaction.cpuUsage),
-            netUsage: computed(() => store.state.transaction.netUsage),
+            transaction: computed(() => transactionStore.transactionId),
+            transactionData: computed(() => transactionStore.transaction),
+            blockNum: computed(() => transactionStore.blockNum.toString()),
+            timestamp: computed(() => transactionStore.timestamp),
+            executed: computed(() => transactionStore.executed),
+            irreversable: computed(() => transactionStore.irreversable),
+            cpuUsage: computed(() => transactionStore.cpuUsage),
+            netUsage: computed(() => transactionStore.netUsage),
             actionsTraces: ref<string>(''),
-            actionNum: computed(() => store.state.transaction.actionCount),
+            actionNum: computed(() => transactionStore.actionCount),
         };
     },
     methods: {

@@ -21,7 +21,7 @@ export interface GetActionsResponse {
     },
 }
 
-export interface Action {
+export interface Action<T = unknown> {
   '@timestamp': string;
   account_ram_deltas: AccountRamDelta[];
   act: Account;
@@ -42,11 +42,7 @@ export interface Action {
     actor: string;
     permission: string;
   }[];
-  data: {
-    executer: string;
-    proposal_name: string;
-    proposer: string;
-  };
+  data: T;
   name: string;
 }
 

@@ -1,20 +1,22 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { mapActions } from 'vuex';
 import { API } from '@greymass/eosio';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'ProcessingTab',
     components: {
     },
     setup() {
-        const store = useStore();
+        const chainStore = useChainStore();
+        const accountStore = useAccountStore();
         const progress = ref<number>(0.2);
-        const token = computed((): Token => store.state.chain.token);
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
-        const maturingRex = computed(() => store.state?.account.maturingRex);
+        const token = computed((): Token => chainStore.token);
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
+        const maturingRex = computed(() => accountStore.maturingRex);
 
         function refundProgress(): number {
             if (maturingRex.value === '0') {
@@ -48,7 +50,7 @@ export default defineComponent({
                     ).getTime() / 1000,
                 ) - Math.round(new Date(new Date().toISOString()).getTime() / 1000);
             if (diff > 0) {
-                var days = component(diff, 24 * 60 * 60), // calculate days from timestamp
+                const days = component(diff, 24 * 60 * 60), // calculate days from timestamp
                     hours = component(diff, 60 * 60) % 24; // hours
                 // minutes = component(diff, 60) % 60, // minutes
                 // seconds = component(diff, 1) % 60;// seconds
@@ -63,7 +65,6 @@ export default defineComponent({
         }
 
         return {
-            store,
             accountData,
             token,
             progress,

@@ -1,11 +1,12 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { assetToAmount } from 'src/utils/string-utils';
-import { useAntelopeStore } from 'src/store/antelope.store';
+import { useAccountStore } from 'src/stores/account';
+import { useResourceStore } from 'src/stores/resources';
+import { useChainStore } from 'src/stores/chain';
 
 const chain = getChain();
 const symbol = chain.getSystemToken().symbol;
@@ -16,11 +17,13 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useAntelopeStore();
+        const accountStore = useAccountStore();
+        const resourceStore = useResourceStore();
+        const chainStore = useChainStore();
         const openTransaction = ref<boolean>(false);
-        const stakingAccount = ref<string>(store.state.account.accountName || '');
+        const stakingAccount = ref<string>(accountStore.accountName || '');
         const accountTotal = computed((): string =>
-            (store.state.account.data.core_liquid_balance ?? 0).toString(),
+            (accountStore.data.core_liquid_balance ?? 0).toString(),
         );
         const accountTotalAsNumber = computed(() => assetToAmount(accountTotal.value));
         const cpuTokens = ref<string>('0');
@@ -31,8 +34,8 @@ export default defineComponent({
                 cpuTokens.value = Number(cpuTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
-                        maximumFractionDigits: store.state.chain.token.precision,
-                        minimumFractionDigits: store.state.chain.token.precision,
+                        maximumFractionDigits: chainStore.token.precision,
+                        minimumFractionDigits: chainStore.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
             }
@@ -40,8 +43,8 @@ export default defineComponent({
                 netTokens.value = Number(netTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
-                        maximumFractionDigits: store.state.chain.token.precision,
-                        minimumFractionDigits: store.state.chain.token.precision,
+                        maximumFractionDigits: chainStore.token.precision,
+                        minimumFractionDigits: chainStore.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
             }
@@ -52,12 +55,13 @@ export default defineComponent({
             stakingAccount,
             cpuTokens,
             netTokens,
-            ...mapActions({ delegateResources: 'resources/delegateResources' }),
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
             accountTotalAsNumber,
             isValidAccount,
+            resourceStore,
+            accountStore,
         };
     },
     computed: {
@@ -83,8 +87,8 @@ export default defineComponent({
                 this.$q.notify('Enter valid value for CPU or NET to stake');
                 return;
             }
-            await this.delegateResources({
-                from: this.$store.state.account.accountName,
+            await this.resourceStore.delegateResources({
+                from: this.accountStore.accountName,
                 to: this.stakingAccount.toLowerCase().trim(),
                 transfer: false,
                 cpu_weight:

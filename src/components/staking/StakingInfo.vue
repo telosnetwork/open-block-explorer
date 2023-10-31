@@ -1,30 +1,31 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 import { Token } from 'src/types';
+import { useChainStore } from 'src/stores/chain';
+import { useAccountStore } from 'src/stores/account';
 
 const chain = getChain();
 
 export default defineComponent({
     name: 'StakingInfo',
     setup() {
-        const store = useStore();
+        const chainStore = useChainStore();
+        const accountStore = useAccountStore();
         const symbol = ref<string>(chain.getSystemToken().symbol);
         const stakingAccount = ref<string>('');
         const total = ref<string>('0');
-        const token = computed((): Token => store.state.chain.token);
-        const accountData = computed((): API.v1.AccountObject => store.state.account.data);
+        const token = computed((): Token => chainStore.token);
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const liquidBalance = computed(() => accountData.value.core_liquid_balance);
         const rexInfo = computed(() => accountData.value.rex_info);
-        const coreRexBalance = computed(() => store.state?.account.coreRexBalance);
-        const maturingRex = computed(() => store.state?.account.maturingRex);
-        const maturedRex = computed(() => store.state?.account.maturedRex);
-        const rexSavings = computed(() => store.state?.account.savingsRex);
+        const coreRexBalance = computed(() => accountStore.coreRexBalance);
+        const maturingRex = computed(() => accountStore.maturingRex);
+        const maturedRex = computed(() => accountStore.maturedRex);
+        const rexSavings = computed(() => accountStore.savingsRex);
 
         return {
-            store,
             symbol,
             stakingAccount,
             total,

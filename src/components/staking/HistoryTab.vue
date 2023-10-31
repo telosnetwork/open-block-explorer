@@ -1,18 +1,18 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import { useStore } from 'src/store';
 import { Action } from 'src/types';
 import { getRexHistoryAsset, formatDate } from 'src/utils/string-utils';
+import { useAccountStore } from 'src/stores/account';
 
 export default defineComponent({
     name: 'HistoryTab',
     components: {},
     setup() {
-        const store = useStore();
-        const rexActions = computed((): Action[] => store.state.account.rexActions);
+        const accountStore = useAccountStore();
+        const rexActions = computed((): Action[] => accountStore.rexActions);
 
         return {
-            store,
+            accountStore,
             rexActions,
             formatDate,
             getRexHistoryAsset,

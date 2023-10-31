@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 import { assetToAmount } from 'src/utils/string-utils';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 const chain = getChain();
 
@@ -14,20 +15,17 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         let openTransaction = ref<boolean>(false);
         const stakeTokens = ref<string>('');
         const symbol = ref<string>(chain.getSystemToken().symbol);
-        const transactionId = computed(
-            (): string => store.state.account.TransactionId,
-        );
-        const transactionError = computed(
-            () => store.state.account.TransactionError,
-        );
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
-        const rexInfo = computed(() => store.state.account.data.rex_info);
-        const rexbal = computed(() => store.state.account.rexbal);
-        const maturedRex = computed(() => store.state.account.maturedRex);
+        const transactionId = computed((): string => accountStore.TransactionId);
+        const transactionError = computed(() => accountStore.TransactionError);
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
+        const rexInfo = computed(() => accountStore.data.rex_info);
+        const rexbal = computed(() => accountStore.rexbal);
+        const maturedRex = computed(() => accountStore.maturedRex);
         const liquidBalance = computed(
             () => accountData.value?.core_liquid_balance.value,
         );
@@ -38,7 +36,7 @@ export default defineComponent({
         ]);
 
         function formatDec() {
-            const precision = store.state.chain.token.precision;
+            const precision = chainStore.token.precision;
             if (stakeTokens.value !== '') {
                 stakeTokens.value = Number(stakeTokens.value)
                     .toLocaleString('en-US', {
@@ -51,7 +49,7 @@ export default defineComponent({
         }
 
         async function stake() {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             if (
                 stakeTokens.value === '0' ||
                 Number(stakeTokens.value) >=
@@ -59,7 +57,7 @@ export default defineComponent({
             ) {
                 return;
             }
-            await store.dispatch('account/stakeRex', {
+            await accountStore.stakeRex({
                 amount: stakeTokens.value,
             });
 

@@ -1,24 +1,29 @@
 <script lang="ts">
 import ValidatorData from 'src/components/validators/ValidatorData.vue';
 import { defineComponent, onMounted } from 'vue';
-import { useStore } from 'src/store';
 import { api } from 'src/api';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 export default defineComponent({
     name: 'VotePage',
     components: { ValidatorData },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
+
         onMounted(async () => {
             if (
-                !store.state.account.data.voter_info &&
-                store.state.account.accountName
+                !accountStore.data.voter_info &&
+                accountStore.accountName
             ) {
-                const data = await api.getAccount(store.state.account.accountName);
-                store.commit('account/setAccountData', data);
+                const data = await api.getAccount(accountStore.accountName);
+                accountStore.setAccountData(data);
             }
-            await store.dispatch('chain/updateBpList');
+
+            await chainStore.updateBpList();
+
             window.setInterval(() => {
-                void store.dispatch('chain/updateBlockData');
+                void chainStore.updateBlockData();
             }, 2000);
         });
     },

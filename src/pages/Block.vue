@@ -3,7 +3,7 @@ import { defineComponent, ref, onMounted, watch } from 'vue';
 import TransactionTable from 'src/components/TransactionsTable.vue';
 import BlockCard from 'components/BlockCard.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { api } from 'src/api/index';
+import { api } from 'src/api';
 import { Action, Block } from 'src/types';
 
 export default defineComponent({
@@ -32,7 +32,7 @@ export default defineComponent({
                 }));
                 actions.value = actions.value.concat(act);
             });
-            found.value = block.value ? true : false;
+            found.value = !!block.value;
         });
         watch([tab], () => {
             void router.push({

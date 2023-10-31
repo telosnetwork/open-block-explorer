@@ -13,7 +13,7 @@ import { Authorization, ProposalForm, Error } from 'src/types';
 import { api } from 'src/api';
 import { randomEosioName } from 'src/utils/handleEosioName';
 import { useQuasar } from 'quasar';
-import { useStore } from 'src/store';
+import { useAccountStore } from 'src/stores/account';
 
 export default defineComponent({
     name: 'ProposalNew',
@@ -25,10 +25,10 @@ export default defineComponent({
     },
     setup() {
         const router = useRouter();
-        const store = useStore();
+        const accountStore = useAccountStore();
         const $q = useQuasar();
-        const account = computed(() => store.state.account.accountName);
-        const isAuthenticated = computed(() => store.state.account.isAuthenticated);
+        const account = computed(() => accountStore.accountName);
+        const isAuthenticated = computed(() => accountStore.isAuthenticated);
         const actionsTab = ref<'one' | 'batch'>('one');
         const amountOfDaysToExpire = ref(7);
         const blockProducers = ref<Authorization[]>([]);
@@ -153,7 +153,7 @@ export default defineComponent({
                     data.trx.actions[i].data = hexData as { [key: string]: string | number; };
                 }
 
-                const transaction = await store.state.account.user.signTransaction(
+                const transaction = await accountStore.user.signTransaction(
                     {
                         actions: [
                             {
@@ -174,7 +174,7 @@ export default defineComponent({
                         expireSeconds: 30,
                     },
                 );
-                if (store.state.account.autoLogin !== 'cleos') {
+                if (accountStore.autoLogin !== 'cleos') {
                     success.showModal = true;
                 }
 

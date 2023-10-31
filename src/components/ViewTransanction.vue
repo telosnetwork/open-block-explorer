@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
+import { useAccountStore } from 'src/stores/account';
 
 export default defineComponent({
     name: 'ViewTransaction',
@@ -12,14 +12,14 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const store = useStore();
+        const accountStore = useAccountStore();
         const router = useRouter();
         const msg = computed((): string => props.message);
-        const Id = computed(() => store.state.account.TransactionId);
-        const transactionE = computed(() => store.state.account.TransactionError);
+        const Id = computed(() => accountStore.TransactionId);
+        const transactionE = computed(() => accountStore.TransactionError);
 
         const reset = () => {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
         };
 
         const navToTransaction = async () => {
@@ -28,7 +28,7 @@ export default defineComponent({
                 params: { transaction: Id.value },
             });
             router.go(0);
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
         };
 
         return {

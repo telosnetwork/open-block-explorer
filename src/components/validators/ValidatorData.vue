@@ -2,13 +2,14 @@
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
 import ValidatorDataTable from 'src/components/validators/ValidatorDataTable.vue';
 import { api } from 'src/api';
-import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { Name } from '@greymass/eosio';
 import { formatCurrency, assetToAmount } from 'src/utils/string-utils';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 const chain = getChain();
 
@@ -20,22 +21,23 @@ export default defineComponent({
         WalletModal,
     },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         const symbol = chain.getSystemToken().symbol;
-        const account = computed(() => store.state.account.accountName);
+        const account = computed(() => accountStore.accountName);
         const balance = computed(
             () => formatCurrency(lastWeight.value, 2, symbol),
         );
         const activecount = computed(() => {
-            if (store.state.chain.producers.length > 42) {
+            if (chainStore.producers.length > 42) {
                 return 42;
             } else {
-                return store.state.chain.producers.length;
+                return chainStore.producers.length;
             }
         });
         const lastUpdated = ref<string>('');
         const producerVotes = ref<Name[]>([]);
-        const currentVote = computed(() => store.state.account.vote);
+        const currentVote = computed(() => accountStore.vote);
         const showCpu = ref<boolean>(false);
         const voteChanged = ref<boolean>(false);
         const resetFlag = ref<boolean>(false);
@@ -43,8 +45,8 @@ export default defineComponent({
         const lastStaked = ref<number>(0);
         const stakedAmount = ref<number>(0);
         const accountValid = computed(() => account.value && account.value !== '');
-        const transactionId = ref<string>(store.state.account.TransactionId);
-        const transactionError = ref<unknown>(store.state.account.TransactionError);
+        const transactionId = ref<string>(accountStore.TransactionId);
+        const transactionError = ref<unknown>(accountStore.TransactionError);
         const openTransaction = ref<boolean>(false);
         const showWalletModal = ref<boolean>(false);
         const payrate = ref(0);
@@ -137,7 +139,7 @@ export default defineComponent({
         }
         async function sendVoteTransaction() {
             if (accountValid.value) {
-                await store.dispatch('account/sendVoteTransaction');
+                await accountStore.sendVoteTransaction();
                 openTransaction.value = true;
                 await getVoteWeight();
             } else {

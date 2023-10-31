@@ -1,16 +1,18 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import { Action, TreeNode } from 'src/types';
 import ActionFormat from 'src/components/transaction/ActionFormat.vue';
 import DataFormat from 'src/components/transaction/DataFormat.vue';
+import { useAccountStore } from 'src/stores/account';
+import { useTransactionStore } from 'src/stores/transaction';
 
 export default defineComponent({
     name: 'TraceTree',
     components: { ActionFormat, DataFormat },
     setup() {
-        const store = useStore();
-        const account = computed((): string => store.state.account.accountName);
+        const accountStore = useAccountStore();
+        const transactionStore = useTransactionStore();
+        const account = computed(() => accountStore.accountName);
         function getTree(actions: Action[]): TreeNode[] {
             let array = [] as TreeNode[];
             for (let action of actions) {
@@ -49,17 +51,17 @@ export default defineComponent({
         }
 
         return {
-            transaction: computed(() => store.state.transaction.transactionId),
-            transactionData: computed(() => store.state.transaction.transaction),
-            blockNum: computed(() => store.state.transaction.blockNum),
-            timestamp: computed(() => store.state.transaction.timestamp),
-            executed: computed(() => store.state.transaction.executed),
-            irreversable: computed(() => store.state.transaction.irreversable),
-            cpuUsage: computed(() => store.state.transaction.cpuUsage),
-            netUsage: computed(() => store.state.transaction.netUsage),
+            transaction: computed(() => transactionStore.transactionId),
+            transactionData: computed(() => transactionStore.transaction),
+            blockNum: computed(() => transactionStore.blockNum),
+            timestamp: computed(() => transactionStore.timestamp),
+            executed: computed(() => transactionStore.executed),
+            irreversable: computed(() => transactionStore.irreversable),
+            cpuUsage: computed(() => transactionStore.cpuUsage),
+            netUsage: computed(() => transactionStore.netUsage),
             actionsTraces: ref<string>(''),
-            actionNum: computed(() => store.state.transaction.actionCount),
-            actions: computed(() => store.state.transaction.actions),
+            actionNum: computed(() => transactionStore.actionCount),
+            actions: computed(() => transactionStore.actions),
             getTree,
             account,
         };

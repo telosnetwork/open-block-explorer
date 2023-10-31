@@ -8,9 +8,9 @@ import { api } from 'src/api';
 import { RequestedApprovals, Error, Proposal } from 'src/types';
 import sha256 from 'fast-sha256';
 import { ABI, ABIDef, Action, Serializer, Transaction } from '@greymass/eosio';
-import { useStore } from 'src/store';
 import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
 import { sleep } from 'src/utils/sleep';
+import { useAccountStore } from 'src/stores/account';
 
 export default defineComponent({
     name: 'ProposalItem',
@@ -21,11 +21,11 @@ export default defineComponent({
         const route = useRoute();
         const router = useRouter();
         const $q = useQuasar();
-        const store = useStore();
+        const accountStore = useAccountStore();
 
         const { proposalName } = route.params;
-        const account = computed(() => store.state.account.accountName);
-        const isAuthenticated = computed(() => store.state.account.isAuthenticated);
+        const account = computed(() => accountStore.accountName);
+        const isAuthenticated = computed(() => accountStore.isAuthenticated);
         const isLoading = ref(true);
 
         const proposer = ref('');
@@ -318,7 +318,7 @@ export default defineComponent({
             name: 'approve' | 'unapprove' | 'cancel' | 'exec';
             data: unknown;
         }) {
-            const response = await store.state.account.user.signTransaction(
+            const response = await accountStore.user.signTransaction(
                 {
                     actions: [
                         {

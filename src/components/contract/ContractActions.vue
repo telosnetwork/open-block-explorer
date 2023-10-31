@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from 'vue';
-import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
+import { useAccountStore } from 'src/stores/account';
 
 export default defineComponent({
     name: 'ContractActions',
@@ -9,23 +9,23 @@ export default defineComponent({
     setup() {
         const memo = ref<Record<string, unknown>>({});
         const permission = ref<string>('');
-        const store = useStore();
+        const accountStore = useAccountStore();
         const actor = ref('');
         const openTransaction = ref<boolean>(false);
-        const transactionId = ref<string>(store.state.account.TransactionId);
-        const transactionError = ref<unknown>(store.state.account.TransactionError);
+        const transactionId = ref<string>(accountStore.TransactionId);
+        const transactionError = ref<unknown>(accountStore.TransactionError);
         const actions = computed(() =>
-            store.state.account.abi.abi.actions.map(a => a.name),
+            accountStore.abi.abi.actions.map(a => a.name),
         );
         const action = ref<string>(actions.value[0]);
         const fields = computed(
             () =>
-                store.state.account.abi.abi.structs.find(s => s.name === action.value)
+                accountStore.abi.abi.structs.find(s => s.name === action.value)
                     .fields,
         );
 
         async function signAction() {
-            await store.dispatch('account/sendAction', {
+            await accountStore.sendAction({
                 name: action.value,
                 actor: actor.value,
                 permission: permission.value,
@@ -38,24 +38,18 @@ export default defineComponent({
             for (let key in memo.value) {
                 const field = fields.value.find(val => val.name === key);
                 if (field.type === 'bool') {
-                    if (
-                        memo.value[key] === 'true' ||
+                    memo.value[key] = memo.value[key] === 'true' ||
                         memo.value[key] === '1' ||
                         memo.value[key] === 'True' ||
                         memo.value[key] === 'T' ||
-                        memo.value[key] === 't'
-                    ) {
-                        memo.value[key] = true;
-                    } else {
-                        memo.value[key] = false;
-                    }
+                        memo.value[key] === 't';
                 }
             }
         }
 
         onMounted(async () => {
-            actor.value = await store.state.account.user.getAccountName();
-            permission.value = store.state.account.accountPermission;
+            actor.value = await accountStore.user.getAccountName();
+            permission.value = accountStore.accountPermission;
         });
 
         return {

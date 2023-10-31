@@ -1,7 +1,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from 'vue';
 import { Token } from 'src/types';
-import { mapActions, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import StakingInfo from 'src/components/staking/StakingInfo.vue';
 import StakeFromResources from 'src/components/staking/StakeFromResources.vue';
 import ProcessingTab from 'src/components/staking/ProcessingTab.vue';
@@ -10,9 +10,10 @@ import UnstakingTab from 'src/components/staking/UnstakingTab.vue';
 import HistoryTab from 'src/components/staking/HistoryTab.vue';
 import SavingsTab from 'src/components/staking/SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { useStore } from 'src/store';
 import { API } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
+import { useChainStore } from 'src/stores/chain';
+import { useAccountStore } from 'src/stores/account';
 
 const symbol = getChain().getSystemToken().symbol;
 
@@ -46,16 +47,17 @@ export default defineComponent({
         },
     },
     setup() {
-        const store = useStore();
-        const rexfund = computed(() => store.state.account.rexfund || 0);
-        const symbol = computed(() => store.state.chain.token.symbol);
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
+        const rexfund = computed(() => accountStore.rexfund || 0);
+        const symbol = computed(() => chainStore.token.symbol);
         const transactionId = ref<string>(null);
         const transactionError = ref<string>(null);
 
         const withdrawRexFund = async () => {
-            await store.dispatch('account/unstakeRexFund', { amount: rexfund.value });
-            void store.dispatch('account/updateRexData', {
-                account: store.state.account.accountName,
+            await accountStore.unstakeRexFund({ amount: rexfund.value });
+            void accountStore.updateRexData({
+                account: accountStore.accountName,
             });
         };
 
@@ -73,7 +75,7 @@ export default defineComponent({
             transactionId,
             withdrawRexFund,
             prettyRexFund,
-            ...mapActions({ sendAction: 'account/sendAction' }),
+            accountStore,
         };
     },
     computed: {
@@ -92,14 +94,13 @@ export default defineComponent({
                 memo: this.memo,
             };
             try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 this.transactionId = (
-                    await this.sendAction({
+                    await this.accountStore.sendAction({
                         account: actionAccount,
                         data,
                         name: 'transfer',
                     })
-                ).transactionId as string;
+                ).transactionId;
             } catch (e) {
                 this.transactionError = e as string;
             }
@@ -123,7 +124,7 @@ export default defineComponent({
             let data: API.v1.AccountObject;
             try {
                 data = await this.$api.getAccount(this.account);
-                this.$store.commit('account/setAccountData', data);
+                this.accountStore.setAccountData(data);
             } catch (e) {
                 return;
             }

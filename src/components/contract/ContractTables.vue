@@ -1,23 +1,23 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from 'vue';
-import { useStore } from 'src/store';
 import { api } from 'src/api/index';
 import { GetTableRowsParams, GenericTable } from 'src/types';
 import { TableIndexType } from 'src/types/Api';
 import { PaginationSettings } from 'src/types';
+import { useAccountStore } from 'src/stores/account';
 /* eslint-disable */
 export default defineComponent({
     name: 'ContractTables',
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
         const options = computed(() =>
-            store.state.account.abi.abi.tables.map((table) => {
+            accountStore.abi.abi.tables.map((table: {name: string}) => {
                 return table.name;
             })
         );
-        const account = computed(() => store.state.account.abi.account_name);
+        const account = computed(() => accountStore.abi.account_name);
         const table = ref(options.value[0]);
-        const scope = ref<string>(store.state.account.abi.account_name);
+        const scope = ref<string>(accountStore.abi.account_name);
         const lower = ref<string>(null);
         const upper = ref<string>(null);
         const limit = ref<string>('20');
@@ -73,7 +73,7 @@ export default defineComponent({
         }
 
         function formatData(data: any): any {
-            var dict: any = {};
+            const dict: any = {};
             for (let key in data) {
                 if (data[key] instanceof Object) {
                     dict[key] = JSON.stringify(data[key]);

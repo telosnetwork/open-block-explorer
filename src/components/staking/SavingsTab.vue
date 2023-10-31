@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
 import { assetToAmount, formatNumberWithCommas } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'SavingsTab',
@@ -12,29 +13,30 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         const openTransaction = ref<boolean>(false);
         const stakingAccount = computed(
-            (): string => store.state.account.accountName,
+            (): string => accountStore.accountName,
         );
         const toSavingAmount = ref<string>('');
         const fromSavingAmount = ref<string>('');
-        const transactionId = ref<string>(store.state.account.TransactionId);
-        const transactionError = ref<unknown>(store.state.account.TransactionError);
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const transactionId = ref<string>(accountStore.TransactionId);
+        const transactionError = ref<unknown>(accountStore.TransactionError);
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const eligibleStaked = computed(() => (
-            assetToAmount(store.state?.account.maturedRex) +
-            assetToAmount(store.state?.account.maturingRex)
+            assetToAmount(accountStore.maturedRex) +
+            assetToAmount(accountStore.maturingRex)
         ));
-        const rexSavings = computed(() => store.state?.account.savingsRex);
+        const rexSavings = computed(() => accountStore.savingsRex);
 
         function formatDec() {
             if (toSavingAmount.value !== '') {
                 toSavingAmount.value = Number(toSavingAmount.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
-                        maximumFractionDigits: store.state.chain.token.precision,
-                        minimumFractionDigits: store.state.chain.token.precision,
+                        maximumFractionDigits: chainStore.token.precision,
+                        minimumFractionDigits: chainStore.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
             }
@@ -42,15 +44,15 @@ export default defineComponent({
                 fromSavingAmount.value = Number(fromSavingAmount.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
-                        maximumFractionDigits: store.state.chain.token.precision,
-                        minimumFractionDigits: store.state.chain.token.precision,
+                        maximumFractionDigits: chainStore.token.precision,
+                        minimumFractionDigits: chainStore.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
             }
         }
 
         async function moveToSavings() {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             if (
                 toSavingAmount.value === '0' ||
                 toSavingAmount.value === '' ||
@@ -58,7 +60,7 @@ export default defineComponent({
             ) {
                 return;
             }
-            await store.dispatch('account/moveToSavings', {
+            await accountStore.moveToSavings({
                 amount: toSavingAmount.value || '0',
             });
 
@@ -68,7 +70,7 @@ export default defineComponent({
         }
 
         async function moveFromSavings() {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             if (
                 fromSavingAmount.value === '0' ||
                 fromSavingAmount.value === '' ||
@@ -76,7 +78,7 @@ export default defineComponent({
             ) {
                 return;
             }
-            await store.dispatch('account/moveFromSavings', {
+            await accountStore.moveFromSavings({
                 amount: fromSavingAmount.value || '0',
             });
 

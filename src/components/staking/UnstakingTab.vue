@@ -1,11 +1,12 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 import { assetToAmount } from 'src/utils/string-utils';
 import { QInput } from 'quasar';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 const chain = getChain();
 
@@ -15,25 +16,26 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         let openTransaction = ref<boolean>(false);
         const unstakeTokens = ref<string>('');
         const symbol = ref<string>(chain.getSystemToken().symbol);
         const unstakeInput = ref<QInput>(null);
         const transactionId = computed(
-            (): string => store.state.account.TransactionId,
+            (): string => accountStore.TransactionId,
         );
         const transactionError = computed(
-            () => store.state.account.TransactionError,
+            () => accountStore.TransactionError,
         );
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
-        const rexInfo = computed(() => store.state.account.data.rex_info);
-        const rexbal = computed(() => store.state.account.rexbal);
-        const maturedRex = computed(() => store.state?.account.maturedRex);
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
+        const rexInfo = computed(() => accountStore.data.rex_info);
+        const rexbal = computed(() => accountStore.rexbal);
+        const maturedRex = computed(() => accountStore.maturedRex);
         const maxUnlend = computed(() => assetToAmount(maturedRex.value) - .0001);
 
         function formatDec() {
-            const precision = store.state.chain.token.precision;
+            const precision = chainStore.token.precision;
             if (unstakeTokens.value !== '') {
                 unstakeTokens.value = Number(unstakeTokens.value)
                     .toLocaleString('en-US', {
@@ -46,12 +48,12 @@ export default defineComponent({
         }
 
         async function unstake() {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
             if ((unstakeInput.value as any).hasError) {
                 return;
             }
-            await store.dispatch('account/unstakeRex', {
+            await accountStore.unstakeRex({
                 amount: unstakeTokens.value,
             });
 

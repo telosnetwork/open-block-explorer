@@ -4,19 +4,19 @@ import TransactionsTable from 'src/components/TransactionsTable.vue';
 import TransactionCard from 'components/transaction/TransactionCard.vue';
 import TraceTree from 'components/transaction/TraceTree.vue';
 import JsonViewer from 'vue-json-viewer';
-import { useStore } from 'src/store';
 import { useRoute, useRouter } from 'vue-router';
+import { useTransactionStore } from 'src/stores/transaction';
 
 export default defineComponent({
     name: 'TransactionPage',
     setup() {
-        const store = useStore();
+        const transactionStore = useTransactionStore();
         const route = useRoute();
         const router = useRouter();
         const tab = ref<string>((route.query['tab'] as string) || 'actions');
         onMounted(() => {
-            store.commit('transaction/setTransactionId', route.params.transaction);
-            void store.dispatch('transaction/updateTransaction');
+            transactionStore.setTransactionId(route.params.transaction as string);
+            void transactionStore.updateTransaction();
         });
         watch([tab], () => {
             void router.push({
@@ -29,9 +29,9 @@ export default defineComponent({
         return {
             tab,
             transaction: route.params.transaction,
-            actionCount: computed(() => store.state.transaction.actionCount),
-            jsonTransaction: computed(() => store.state.transaction.transaction),
-            found: computed(() => store.state.transaction.transactionFound),
+            actionCount: computed(() => transactionStore.actionCount),
+            jsonTransaction: computed(() => transactionStore.transaction),
+            found: computed(() => transactionStore.transactionFound),
         };
     },
     components: {
