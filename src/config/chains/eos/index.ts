@@ -7,6 +7,7 @@ import {
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { Token } from 'src/types';
+import { FooterLink } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
   'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906';
@@ -123,5 +124,13 @@ export default class EOS extends BaseChain {
             return false;
         }
         return true;
+    }
+
+    getFooterLinks(): FooterLink[] {
+        return [
+            { label: 'TERMS', url: 'https://eosnetwork.com/terms-of-use/' },
+            { label: 'PRIVACY', url: 'https://eosnetwork.com/privacy-policy/' },
+            { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
+        ];
     }
 }

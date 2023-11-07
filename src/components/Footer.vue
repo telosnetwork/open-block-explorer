@@ -5,7 +5,7 @@ import { computed } from 'vue';
 export default {
     name: 'AppFooter',
     setup() {
-        const footerLinks = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().footerLinks);
+        const footerLinks = computed(() => ConfigManager.get().getCurrentChain().getFooterLinks());
 
         return {
             footerLinks,
@@ -18,7 +18,7 @@ export default {
 
 <div class="row footer-background justify-center text-center q-py-md">
     <div v-for="footerLink in footerLinks" :key="footerLink.label" class="col-lg-1 col-md-2 col-sm-2 col-xs-4 q-pa-md">
-        <a class="no-dec" :href="footerLink.url">{{footerLink.label}}</a>
+        <a class="no-dec" :href="footerLink.url" target="_blank">{{footerLink.label}}</a>
     </div>
 </div>
 

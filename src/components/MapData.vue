@@ -34,7 +34,7 @@ export default defineComponent({
     <div class="col-3">
         <div class="row">
             <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Head Block</div>
-            <div class="col-12 text-subtitle1 text-bold">{{HeadBlock}}</div>
+            <div class="col-12 text-subtitle1 text-bold">{{HeadBlock.toLocaleString()}}</div>
         </div>
     </div>
     <div class="col-1">
@@ -52,7 +52,7 @@ export default defineComponent({
     <div class="col-3">
         <div class="row">
             <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Irreversible Block</div>
-            <div class="col-12 text-subtitle1 text-bold">{{lastIrreversibleBlock}}</div>
+            <div class="col-12 text-subtitle1 text-bold">{{lastIrreversibleBlock.toLocaleString()}}</div>
         </div>
     </div>
 </div>
