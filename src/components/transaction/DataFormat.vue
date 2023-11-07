@@ -161,9 +161,6 @@ export default defineComponent({
 .transfer-data
   text-wrap: wrap
 
-.transfer-data
-  text-wrap: wrap
-
 .div-compressed
     max-height: v-bind(maxHeightStyle)
 
