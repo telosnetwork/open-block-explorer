@@ -37,11 +37,16 @@ export default defineComponent({
             'payload__indent': depth.value > 0,
         }));
 
+        function isArrayOfStringsOrNumbers(value: unknown): value is string[] | number[] {
+            return Array.isArray(value) && value.every(item => typeof item === 'string' || typeof item === 'number');
+        }
+
         return {
             type,
             list,
             classObject,
             isAccount,
+            isArrayOfStringsOrNumbers,
         };
     },
 
@@ -56,7 +61,7 @@ export default defineComponent({
 >
     <template v-if="Array.isArray(payload[key])">
         <span class="text-bold">{{ key }}:</span>
-        <span v-if="payload[key].length === 0">{{` [ ]`}}</span>
+        <span v-if="isArrayOfStringsOrNumbers(payload[key])">{{[...payload[key]]}}</span>
         <ul v-else class="payload__list">
             <li
                 v-for="(item, index) in payload[key]"
