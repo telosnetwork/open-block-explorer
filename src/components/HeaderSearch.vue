@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { OptionsObj } from 'src/types';
+import { OptionsObj, TableByScope } from 'src/types';
 import { api } from 'src/api';
 import { isValidTransactionHex } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
@@ -48,21 +48,21 @@ export default defineComponent({
                 };
                 const accounts = await api.getTableByScope(request);
 
+                // because the get table by scope for userres does not include eosio system or null accounts
+                if (value.includes('eosio')) {
+                    accounts.push(...[{
+                        payer: 'eosio',
+                    } as TableByScope, {
+                        payer: 'eosio.null',
+                    } as TableByScope]);
+                }
+
                 if (accounts.length > 0) {
                     results.push({
                         label: 'Accounts',
                         to: '',
                         isHeader: true,
                     });
-
-                    // because the get table by scope for userres does not include eosio account
-                    if ('eosio'.includes(value)) {
-                        results.push({
-                            label: 'eosio',
-                            to: '/account/eosio',
-                            isHeader: false,
-                        });
-                    }
 
                     accounts.forEach((user) => {
                         if (user.payer.includes(value)) {
