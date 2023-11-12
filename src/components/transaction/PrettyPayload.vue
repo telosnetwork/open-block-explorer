@@ -61,7 +61,7 @@ export default defineComponent({
 >
     <template v-if="Array.isArray(payload[key])">
         <span class="text-bold">{{ key }}:</span>
-        <span v-if="isArrayOfStringsOrNumbers(payload[key])">{{[...payload[key]]}}</span>
+        <span v-if="isArrayOfStringsOrNumbers(payload[key])">{{ payload[key].length === 0 ? ` [ ]` : [...payload[key]]}}</span>
         <ul v-else class="payload__list">
             <li
                 v-for="(item, index) in payload[key]"
