@@ -6,6 +6,7 @@ import KeysPanel from 'components/KeysPanel.vue';
 import ChildrenPanel from 'components/ChildrenPanel.vue';
 import AccountCard from 'components/AccountCard.vue';
 import ContractTabs from 'components/contract/ContractTabs.vue';
+import BpVotes from 'components/BpVotes.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
@@ -20,6 +21,7 @@ export default defineComponent({
         ChildrenPanel,
         AccountCard,
         ContractTabs,
+        BpVotes,
     },
     setup() {
         const store = useStore();
@@ -67,6 +69,7 @@ export default defineComponent({
             <q-tab v-if="!accountPageSettings.hideContractsTab && abi" name="contract" label="Contract"/>
             <q-tab v-if="!accountPageSettings.hideTokensTab" name="tokens" label="Tokens"/>
             <q-tab v-if="!accountPageSettings.hideKeysTab" name="keys" label="Keys"/>
+            <q-tab name="votes" label="Votes"/>
             <q-tab v-if="!accountPageSettings.hideChildrenTab" name="children" label="Children"/>
         </q-tabs>
     </div>
@@ -82,6 +85,9 @@ export default defineComponent({
         </q-tab-panel>
         <q-tab-panel v-if="!accountPageSettings.hideKeysTab" name="keys">
             <KeysPanel :account="account"/>
+        </q-tab-panel>
+        <q-tab-panel name="votes">
+            <BpVotes :account="account"/>
         </q-tab-panel>
         <q-tab-panel v-if="!accountPageSettings.hideChildrenTab" name="children">
             <ChildrenPanel :account="account"/>
