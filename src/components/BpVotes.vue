@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, onMounted } from 'vue';
+import { ref, defineProps, onBeforeMount } from 'vue';
 import { getHyperionAccountData } from 'src/api/hyperion';
 
 const  props = defineProps({
@@ -10,7 +10,7 @@ const  props = defineProps({
 });
 
 const bpVotes = ref([]);
-onMounted(async () => {
+onBeforeMount(async () => {
     try {
         const {
             account: {
