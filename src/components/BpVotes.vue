@@ -1,27 +1,27 @@
-<script>
+<script setup lang="ts">
+import { ref, defineProps, onMounted } from 'vue';
 import { getHyperionAccountData } from 'src/api/hyperion';
 
-export default {
-    props: {
-        account: {
-            type: String,
-            required: true,
-        },
+const  props = defineProps({
+    account: {
+        type: String,
+        required: true,
     },
-    data() {
-        return {
-            bpVotes: [],
-        };
-    },
-    async mounted() {
+});
+
+const bpVotes = ref([]);
+onMounted(async () => {
+    try {
         const {
             account: {
                 voter_info: { producers },
             },
-        } = await getHyperionAccountData(this.account);
-        this.bpVotes = producers;
-    },
-};
+        } = await getHyperionAccountData(props.account);
+        bpVotes.value = producers;
+    } catch(e) {
+        console.error(e);
+    }
+});
 </script>
 
 <template>
@@ -68,7 +68,6 @@ export default {
     }
 
     .vote-fraction-wrap {
-        // color: var(--q-primary);
         display: flex;
         justify-content: center;
         align-items: center;
