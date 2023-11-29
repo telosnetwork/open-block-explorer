@@ -1,5 +1,11 @@
-import { DelegatedResources, ResourcesStateInterface } from 'src/stores/resources';
-import { ref } from 'vue';
+import { DelegatedResources, ResourcesStateInterface, useResourceStore } from 'src/stores/resources';
+import { ref, createApp } from 'vue';
+import { StateInterface } from 'src/stores';
+
+import { GetTableRowsParams } from 'src/types';
+import { API } from '@greymass/eosio';
+import { createPinia, setActivePinia } from 'pinia';
+
 
 global.fetch = jest.fn((input: RequestInfo | URL) =>
     Promise.resolve({
@@ -51,6 +57,7 @@ const localStorageMock = {
     setItem: jest.fn(),
     removeItem:jest.fn(),
 };
+
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 
@@ -64,6 +71,9 @@ const transactionHeaders = {
     ref_block_prefix: 0,
     transaction_extensions: [] as never[],
 };
+
+// pinia required
+const app = createApp({});
 
 jest.mock('@greymass/eosio', () => ({
     // mocking static functions from
@@ -99,29 +109,36 @@ jest.mock('src/config/ConfigManager', () => ({
 }));
 
 const delbandResponse: {rows: DelegatedResources[]} = { rows: [] };
-const getTableRows = jest.fn().mockImplementation((s: GetTableRowsParams) => {
-    if (s.table === 'delband' && s.code === 'eosio') {
-        return Promise.resolve(delbandResponse);
-    }
-});
+// const getTableRows = jest.fn().mockImplementation((s: GetTableRowsParams) => {
+//     if (s.table === 'delband' && s.code === 'eosio') {
+//         return Promise.resolve(delbandResponse);
+//     }
+// });
 
 jest.mock('src/api', () => ({
-    api: { getTableRows },
+    api: { getTableRows: jest.fn().mockImplementation((s: GetTableRowsParams) => {
+        if (s.table === 'delband' && s.code === 'eosio') {
+            return Promise.resolve(delbandResponse);
+        }
+    })},
 }));
 
-import { actions } from 'src/stores/resources/actions';
-import { StateInterface } from 'src/stores';
-
-import { GetTableRowsParams } from 'src/types';
-import { API } from '@greymass/eosio';
 
 describe('Store - Resources Actions', () => {
-    let commit: jest.Mock;
-    let dispatch: jest.Mock;
+    let setLoading: jest.SpyInstance;
+    let setCurrentAccount: jest.SpyInstance;
+    let setDelegatedToOthers: jest.SpyInstance;
+    let setDelegatedToOthersAggregated: jest.SpyInstance;
+    let unsetLoading: jest.SpyInstance;
     let state: ResourcesStateInterface;
     let rootState: StateInterface;
     const accountName = 'accountName'; // logged account
     let data: unknown = {};
+    const pinia = createPinia();
+    app.use(pinia);
+    setActivePinia(pinia);
+    const resourceStore = useResourceStore();
+
 
     const setDelbandResponse = (accountList: string[]) => {
         delbandResponse.rows = [];
@@ -136,8 +153,12 @@ describe('Store - Resources Actions', () => {
     };
 
     beforeEach(() => {
-        commit = jest.fn();
-        dispatch = jest.fn();
+        setLoading = jest.spyOn(resourceStore, 'setLoading');
+        setCurrentAccount = jest.spyOn(resourceStore, 'setCurrentAccount');
+        setDelegatedToOthers = jest.spyOn(resourceStore, 'setDelegatedToOthers');
+        setDelegatedToOthersAggregated = jest.spyOn(resourceStore, 'setDelegatedToOthersAggregated');
+        unsetLoading = jest.spyOn(resourceStore, 'unsetLoading');
+
         getTableRows.mockClear();
 
         state = {
@@ -160,18 +181,15 @@ describe('Store - Resources Actions', () => {
 
     describe('updateDelegatedToOthers()', () => {
 
-        test('when executed it always brings up to 200 resoults for the given account', async () => {
+        test('when executed it always brings up to 200 results for the given account', async () => {
             data = ref(null);
             setDelbandResponse([accountName]);
 
             // call the action login
-            await (actions as { updateDelegatedToOthers: (a:unknown, b:string) => Promise<void> }).updateDelegatedToOthers(
-                { commit, dispatch, state, rootState },
-                accountName,
-            );
+            await resourceStore.updateDelegatedToOthers(accountName);
 
             // Verify the loading state
-            expect(commit).toHaveBeenCalledWith('setLoading', 'updateDelegatedToOthers');
+            expect(setLoading).toHaveBeenCalledWith('updateDelegatedToOthers');
 
             // Verify the api call to get the delegated resources
             const paramsdelband = {
@@ -180,14 +198,15 @@ describe('Store - Resources Actions', () => {
                 scope: accountName,
                 table: 'delband',
             } as GetTableRowsParams;
-            expect(getTableRows).toHaveBeenCalledWith(paramsdelband);
+
+            expect(api.getTableRows).toHaveBeenCalledWith(paramsdelband);
 
             // Verify the final commits
-            expect(commit).toHaveBeenCalledWith('setCurrentAccount', accountName);
-            expect(commit).toHaveBeenCalledWith('setDelegatedToOthers', delbandResponse.rows);
+            expect(setCurrentAccount).toHaveBeenCalledWith(accountName);
+            expect(setCurrentAccount).toHaveBeenCalledWith(delbandResponse.rows);
 
             // Verify the loading state
-            expect(commit).toHaveBeenCalledWith('unsetLoading', 'updateDelegatedToOthers');
+            expect(unsetLoading).toHaveBeenCalledWith('updateDelegatedToOthers');
 
         });
     });
@@ -195,10 +214,11 @@ describe('Store - Resources Actions', () => {
     describe('updateResources()', () => {
 
         test('when we don\'t have account data', async () => {
+            const resourceStore = useResourceStore();
             data = ref(null);
 
             // call the action login
-            await (actions as { updateResources: (a:unknown, b:boolean) => Promise<void> }).updateResources(
+            await (resourceStore as { updateResources: (a:unknown, b:boolean) => Promise<void> }).updateResources(
                 { commit, dispatch, state, rootState },
                 false,
             );
@@ -220,10 +240,11 @@ describe('Store - Resources Actions', () => {
         });
 
         test('when we have account data', async () => {
+            const resourceStore = useResourceStore();
             data = ref({});
 
             // call the action login
-            await (actions as { updateResources: (a:unknown, b:boolean) => Promise<void> }).updateResources(
+            await (resourceStore as { updateResources: (a:unknown, b:boolean) => Promise<void> }).updateResources(
                 { commit, dispatch, state, rootState },
                 false,
             );
@@ -249,6 +270,8 @@ describe('Store - Resources Actions', () => {
     describe('updateSelfStaked()', () => {
 
         test('when current account is not the given account', async () => {
+            const resourceStore = useResourceStore();
+
             const anotheraccount = 'anotheraccount';
             rootState.account.data = {
                 self_delegated_bandwidth: {
@@ -261,7 +284,7 @@ describe('Store - Resources Actions', () => {
             setDelbandResponse([accountName]);
 
             // call the action login
-            await (actions as { updateSelfStaked: (a:unknown, b:string) => Promise<void> }).updateSelfStaked(
+            await (resourceStore as { updateSelfStaked: (a:unknown, b:string) => Promise<void> }).updateSelfStaked(
                 { commit, dispatch, state, rootState },
                 anotheraccount,
             );

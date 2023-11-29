@@ -26,7 +26,6 @@ export default defineComponent({
         const account = computed(() => accountStore.accountName);
         const isLarge = computed((): boolean => $q.screen.gt.md);
         const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
-        const headBlock = computed((): number => store.state.chain.head_block_num);
 
         const isTestnet = ref(getChain().isTestnet());
         const smallLogoPath = ref(getChain().getSmallLogoPath());
