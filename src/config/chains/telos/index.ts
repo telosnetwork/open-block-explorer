@@ -121,7 +121,7 @@ export default class Telos extends BaseChain {
     }
 
     getLargeLogoPath(): string {
-        return 'chains/telos/telos_logo.svg';
+        return 'chains/telos/telos_logo.png';
     }
 
     getSmallLogoPath(): string {
