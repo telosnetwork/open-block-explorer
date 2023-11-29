@@ -85,7 +85,7 @@ jest.mock('@greymass/eosio', () => ({
     })),
 }));
 
-import { User } from 'universal-authenticator-library';
+import { Authenticator, User } from 'universal-authenticator-library';
 import { createPinia, setActivePinia } from 'pinia';
 import { useAccountStore } from 'src/stores/account';
 
@@ -96,8 +96,6 @@ describe('Store - Account Actions', () => {
     let state: AccountStateInterface;
     let users: User[] = [];
 
-
-    // commit('setChainId', (authenticator as Authenticator).chains[0].chainId);
     const newAuthenticatorMock = (requestName = false) => ({
         init: jest.fn(),
         shouldRequestAccountName: jest.fn().mockResolvedValue(new Promise(resolve => resolve(requestName))),
@@ -106,7 +104,8 @@ describe('Store - Account Actions', () => {
         chains: [{
             chainId: chainIdMock,
         }],
-    });
+    } as unknown as Authenticator);
+
     let authenticator = newAuthenticatorMock();
 
 
@@ -118,11 +117,7 @@ describe('Store - Account Actions', () => {
             accountPermission: '',
         } as AccountStateInterface;
 
-        setActivePinia(createPinia({
-            initialState: {
-                account: state,
-            },
-        }));
+        setActivePinia(createPinia());
 
         users = [{
             name: 'John Doe',
@@ -138,7 +133,6 @@ describe('Store - Account Actions', () => {
     describe('login()', () => {
         test('when not account provided it should should request account', async () => {
             const accountStore = useAccountStore();
-
             authenticator = newAuthenticatorMock(true);
 
             // call the action login
@@ -156,11 +150,13 @@ describe('Store - Account Actions', () => {
         });
 
         test('when not account provided but not needed', async () => {
+            const accountStore = useAccountStore();
+
             const requestAccountSpy = jest.spyOn(authenticator, 'shouldRequestAccountName');
             requestAccountSpy.mockResolvedValue(false);
 
             // call the action login
-            await (actions as { login: (a:unknown, b:unknown) => Promise<void> }).login(
+            await (accountStore as { login: (a:unknown, b:unknown) => Promise<void> }).login(
                 { commit, state },
                 { account: null, authenticator },
             );
@@ -184,8 +180,10 @@ describe('Store - Account Actions', () => {
         });
 
         test('when account provided - Normal case', async () => {
+            const accountStore = useAccountStore();
+
             // call the action login
-            await (actions as { login: (a:unknown, b:unknown) => Promise<void> }).login(
+            await (accountStore as { login: (a:unknown, b:unknown) => Promise<void> }).login(
                 { commit, state },
                 { account: 'john.doe', authenticator },
             );
@@ -207,8 +205,9 @@ describe('Store - Account Actions', () => {
 
     describe('logout()', () => {
         test('normal case', async () => {
+            const accountStore = useAccountStore();
             // call the action logout
-            await (actions as { logout: (a:unknown) => Promise<void> }).logout({ commit, state });
+            await (accountStore as { logout: (a:unknown) => void }).logout({ commit, state });
 
             // Verify that the action called the commit mutation 'setIsAuthenticated' with the value false
             expect(commit).toHaveBeenCalledWith('setIsAuthenticated', false);

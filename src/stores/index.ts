@@ -1,17 +1,11 @@
 import { store } from 'quasar/wrappers';
-import {
-    createStore,
-} from 'vuex';
 
-import { contract } from 'src/stores/contract';
+
+
 import { ContractStateInterface } from 'src/stores/contract/state';
-import { chain } from 'src/stores/chain';
 import { ChainStateInterface } from 'src/stores/chain/state';
-import { account } from 'src/stores/account';
 import { AccountStateInterface } from 'src/stores/account/state';
-import { transaction } from 'src/stores/transaction';
 import { TransactionStateInterface } from 'src/stores/transaction/state';
-import { resources } from 'src/stores/resources';
 import { ResourcesStateInterface } from 'src/stores/resources/state';
 import { createPinia } from 'pinia';
 
@@ -33,6 +27,4 @@ export interface StateInterface {
     resources: ResourcesStateInterface;
 }
 
-export default store(() => {
-    return createPinia();
-});
+export default store(() => createPinia());
