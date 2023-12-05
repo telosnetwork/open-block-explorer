@@ -38,6 +38,10 @@ export default defineComponent({
             await store.dispatch('account/updateABI', route.params.account);
         });
 
+        watch([account], async () => {
+            await store.dispatch('account/updateABI', route.params.account);
+        });
+
         watch([tab], () => {
             void router.push({
                 path: router.currentRoute.value.path,
