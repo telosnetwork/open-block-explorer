@@ -10,7 +10,7 @@ import sha256 from 'fast-sha256';
 import { ABI, ABIDef, Action, Serializer, Transaction } from '@greymass/eosio';
 import { useStore } from 'src/store';
 import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
-import { sleep } from 'src/utils/sleep';
+import { sleep } from 'src/utils/time';
 
 export default defineComponent({
     name: 'ProposalItem',
