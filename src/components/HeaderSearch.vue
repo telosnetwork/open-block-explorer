@@ -5,6 +5,7 @@ import { OptionsObj, TableByScope } from 'src/types';
 import { api } from 'src/api';
 import { isValidTransactionHex } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
+import { debounce } from 'src/utils/string-utils';
 
 export default defineComponent({
     name: 'HeaderSearch',
@@ -16,7 +17,8 @@ export default defineComponent({
         const options = ref<OptionsObj[]>([]);
         const isLoading = ref(false);
 
-        watch(inputValue, async () => {
+        const fetchData = async () => {
+            console.log('watching input value change');
             if (inputValue.value === '') {
                 options.value = [];
                 return;
@@ -34,7 +36,11 @@ export default defineComponent({
             });
 
             isLoading.value = false;
-        });
+        };
+
+        const onInput = debounce(fetchData, 400);
+
+        watch(inputValue, onInput);
 
         async function searchAccounts(value: string): Promise<OptionsObj[]> {
             try {
