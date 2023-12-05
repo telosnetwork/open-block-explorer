@@ -110,3 +110,19 @@ export function getRexHistoryAsset(data: RexHistory): string {
         return data.amount;
     }
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const debounce = <T extends (...args: any[]) => ReturnType<T>>(
+    callback: T,
+    timeout: number,
+): ((...args: Parameters<T>) => void) => {
+    console.log('debouncing');
+    let timer: ReturnType<typeof setTimeout>;
+
+    return (...args: Parameters<T>) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            callback(...args);
+        }, timeout);
+    };
+};
