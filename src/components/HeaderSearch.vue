@@ -57,9 +57,10 @@ export default defineComponent({
                     } as TableByScope]);
                 }
 
+                let label = 'Accounts';
                 if (accounts.length > 0) {
                     results.push({
-                        label: 'Accounts',
+                        label: label,
                         to: '',
                         isHeader: true,
                     });
@@ -71,6 +72,18 @@ export default defineComponent({
                                 to: `/account/${user.payer}`,
                                 isHeader: false,
                             });
+                        }
+                    });
+                    type Result = { label: string, to: string, isHeader: boolean }
+                    results.sort((a: Result, b: Result) => {
+                        if (a.label === label) {
+                            return -1;
+                        }
+                        if (a.label === value) {
+                            if (b.label === label) {
+                                return 1;
+                            }
+                            return -1;
                         }
                     });
                 }
