@@ -18,7 +18,6 @@ export default defineComponent({
         const isLoading = ref(false);
 
         const fetchData = async () => {
-            console.log('watching input value change');
             if (inputValue.value === '') {
                 options.value = [];
                 return;
