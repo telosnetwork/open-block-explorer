@@ -5,7 +5,7 @@ import { OptionsObj, TableByScope } from 'src/types';
 import { api } from 'src/api';
 import { isValidTransactionHex } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
-import { debounce } from 'src/utils/string-utils';
+import { debounce } from 'src/utils/time';
 
 export default defineComponent({
     name: 'HeaderSearch',
