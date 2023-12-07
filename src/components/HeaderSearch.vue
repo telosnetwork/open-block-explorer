@@ -50,7 +50,7 @@ export default defineComponent({
 
                 // because the get table by scope for userres does not include eosio system or null accounts
                 if (value.includes('eosio')) {
-                    accounts.push(...[{
+                    accounts.unshift(...[{
                         payer: 'eosio',
                     } as TableByScope, {
                         payer: 'eosio.null',
