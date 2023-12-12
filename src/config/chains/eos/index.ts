@@ -19,10 +19,10 @@ const TOKEN = {
     amount: 0,
     contract: 'eosio.token',
 } as Token;
-const HYPERION_ENDPOINT = 'https://eos.hyperion.eosrio.io';
+const HYPERION_ENDPOINT = 'https://eos.eosusa.io';
 const RPC_ENDPOINT = {
     protocol: 'https',
-    host: 'eos.hyperion.eosrio.io',
+    host: 'eos.eosusa.io',
     port: 443,
 };
 const FUEL_RPC_ENDPOINT = {
@@ -30,7 +30,7 @@ const FUEL_RPC_ENDPOINT = {
     host: 'eos.greymass.com',
     port: 443,
 };
-const API_ENDPOINT = 'https://example.com';
+const API_ENDPOINT = 'https://eos.greymass.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = false;
 const THEME = {
