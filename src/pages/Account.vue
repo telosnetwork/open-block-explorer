@@ -42,6 +42,17 @@ export default defineComponent({
             await store.dispatch('account/updateABI', route.params.account);
         });
 
+        const onChangeTab = async (newTab: string) => {
+            await router.push({
+                // taking care to preserve the current #hash anchor and the current query parameters
+                hash: window.location.hash,
+                query: {
+                    ...route.query,
+                    tab:newTab,
+                },
+            });
+        };
+
         watch([tab], () => {
             void router.push({
                 path: router.currentRoute.value.path,
@@ -52,6 +63,7 @@ export default defineComponent({
         });
 
         return {
+            onChangeTab,
             tab,
             account,
             abi,
@@ -68,7 +80,12 @@ export default defineComponent({
         <div class="row">
             <AccountCard class="account-card" :account="account" :tokens="tokenList"/>
         </div>
-        <q-tabs v-model="tab" class="account-view tabs" no-caps>
+        <q-tabs
+            v-model="tab"
+            class="account-view tabs"
+            no-caps
+            @update:model-value="onChangeTab"
+        >
             <q-tab v-if="!accountPageSettings.hideTransactionTab" name="transactions" label="Transactions"/>
             <q-tab v-if="!accountPageSettings.hideContractsTab && abi" name="contract" label="Contract"/>
             <q-tab v-if="!accountPageSettings.hideTokensTab" name="tokens" label="Tokens"/>
