@@ -44,7 +44,7 @@ export default defineComponent({
         const fractionUnits = computed(
             () => `${fraction.value}${unit.value}/${total.value}${unit.value}`,
         );
-        const available = computed(() => (total.value - fraction.value).toFixed(3));
+        const available = computed(() => Math.abs(total.value - fraction.value).toFixed(3));
         const dashArray = computed(() => {
             if (Number.isNaN(formatResourcePercent.value)) {
                 return '0';

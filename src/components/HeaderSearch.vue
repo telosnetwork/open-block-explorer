@@ -37,7 +37,7 @@ export default defineComponent({
             isLoading.value = false;
         };
 
-        const onInput = debounce(fetchData, 100);
+        const onInput = debounce(fetchData, 200);
 
         watch(inputValue, onInput);
 
@@ -53,13 +53,11 @@ export default defineComponent({
                 };
                 const accounts = await api.getTableByScope(request);
 
-                // because the get table by scope for userres does not include eosio system or null accounts
+                // get table by scope for userres does not include system account
                 if (value.includes('eosio')) {
-                    accounts.unshift(...[{
+                    accounts.unshift({
                         payer: 'eosio',
-                    } as TableByScope, {
-                        payer: 'eosio.null',
-                    } as TableByScope]);
+                    } as TableByScope);
                 }
 
                 if (accounts.length > 0) {

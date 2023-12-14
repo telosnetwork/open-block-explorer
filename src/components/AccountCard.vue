@@ -44,7 +44,6 @@ export default defineComponent({
         const createTransaction = ref<string>('');
         const creatingAccount = ref('');
         const system_account = ref('eosio');
-        const system_null = ref('eosio.null');
 
         const isLoading = ref<boolean>(true);
         const tokensLoading = ref<boolean>(true);
@@ -178,7 +177,7 @@ export default defineComponent({
 
         const loadResources = () => {
             let ramDenominator;
-            if (props.account !== system_account.value && props.account !== system_null.value) {
+            if (props.account !== system_account.value) {
                 // display max resource unit value for readability
                 const ramMaxNumber = Number(accountData.value.ram_quota);
                 const ramUnitResult = determineUnit(ramMaxNumber);
@@ -327,7 +326,7 @@ export default defineComponent({
             return total;
         };
 
-        const fixDec = (val: number): number => parseFloat(val.toFixed(3));
+        const fixDec = (val: number): number => Math.abs(parseFloat(val.toFixed(3)));
 
         const loadSystemToken = (): void => {
             if (token.value.symbol === '') {
@@ -445,7 +444,6 @@ export default defineComponent({
             rexDeposits,
             none,
             system_account,
-            system_null,
             radius,
             availableTokens,
             createTime,
@@ -519,7 +517,7 @@ export default defineComponent({
                 </div>
                 <q-space/>
             </div>
-            <div v-if="account !== system_account && account !== system_null" class="resources">
+            <div v-if="account !== system_account" class="resources">
                 <PercentCircle
                     v-if="!accountPageSettings.hideCpuInfo"
                     :radius="radius"
