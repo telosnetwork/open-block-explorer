@@ -37,7 +37,7 @@ export default defineComponent({
             isLoading.value = false;
         };
 
-        const onInput = debounce(fetchData, 100);
+        const onInput = debounce(fetchData, 200);
 
         watch(inputValue, onInput);
 
