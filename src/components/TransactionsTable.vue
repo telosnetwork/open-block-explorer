@@ -30,6 +30,20 @@ const chain: Chain = getChain();
 
 const TWO_SECONDS = 2000;
 
+const pageSizeOptions = [10, 20, 50, 100, 200];
+
+const getStoredRowSetting = () => {
+    const savedRowsPerPage = localStorage.getItem('txRowsPerPage');
+    let rowsPerPageNum = parseInt(savedRowsPerPage);
+    // if saved value was NOT integer (valid)
+    if (isNaN(rowsPerPageNum)) {
+        // then use a valid value and replace invalid value in localStorage
+        rowsPerPageNum = pageSizeOptions[0];
+        localStorage.setItem('txRowsPerPage', rowsPerPageNum.toString());
+    }
+    return rowsPerPageNum;
+};
+
 export default defineComponent({
     name: 'TransactionsTable',
     components: {
@@ -73,10 +87,6 @@ export default defineComponent({
     setup(props) {
         const route = useRoute();
         const router = useRouter();
-        const pagination = computed(
-            () => (route.query['page'] as string) || '1,10',
-        );
-        const pageSizeOptions = [10, 20, 50, 100, 200];
         const { account, actions } = toRefs(props);
         const columns = [
             {
@@ -123,17 +133,22 @@ export default defineComponent({
             paginationSettings.value.rowsPerPage = size;
             paginationSettings.value.page = 1;
             await onPaginationChange({ pagination: paginationSettings.value });
+            localStorage.setItem('txRowsPerPage', size.toString());
         };
         const changePagination = async (page: number, size: number) => {
             paginationSettings.value.page = page;
             paginationSettings.value.rowsPerPage = size;
             await onPaginationChange({ pagination: paginationSettings.value });
         };
+
+        const pagination = computed(
+            () => (route.query['page'] as string) || `1,${getStoredRowSetting()}`,
+        );
         const paginationSettings = ref<PaginationSettings>({
             sortBy: 'timestamp',
             descending: true,
             page: 1,
-            rowsPerPage: pageSizeOptions[0],
+            rowsPerPage: getStoredRowSetting(),
             rowsNumber: 10000,
         });
 
@@ -454,7 +469,7 @@ export default defineComponent({
             async () => {
                 let pageValue = pagination.value;
                 let page = 1;
-                let size = pageSizeOptions[0];
+                let size = getStoredRowSetting();
 
                 // we also allow to pass a single number as the page number
                 if (typeof pageValue === 'number') {
