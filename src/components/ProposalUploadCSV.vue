@@ -10,6 +10,7 @@ export default defineComponent({
     setup(_, context) {
         const $q = useQuasar();
         const file = ref<File | null>(null);
+        const permission = useAntelopeStore().state.account.accountPermission;
 
         function handleError(message: string) {
             $q.notify({
@@ -50,7 +51,7 @@ export default defineComponent({
                     authorization: [
                         {
                             actor: item.from.toLowerCase(),
-                            permission: useAntelopeStore().state.account.accountPermission,
+                            permission
                         }
                     ],
                     data: {

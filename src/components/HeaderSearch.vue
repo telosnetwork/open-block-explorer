@@ -6,6 +6,7 @@ import { api } from 'src/api';
 import { isValidTransactionHex } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
 import { systemAccounts } from 'src/utils/systemAccount';
+import { debounce } from 'src/utils/time';
 
 export default defineComponent({
     name: 'HeaderSearch',
@@ -17,7 +18,7 @@ export default defineComponent({
         const options = ref<OptionsObj[]>([]);
         const isLoading = ref(false);
 
-        watch(inputValue, async () => {
+        const fetchData = async () => {
             if (inputValue.value === '') {
                 options.value = [];
                 return;
@@ -35,7 +36,11 @@ export default defineComponent({
             });
 
             isLoading.value = false;
-        });
+        };
+
+        const onInput = debounce(fetchData, 200);
+
+        watch(inputValue, onInput);
 
         async function searchAccounts(value: string): Promise<OptionsObj[]> {
             try {
@@ -49,7 +54,7 @@ export default defineComponent({
                 };
                 const accounts = await api.getTableByScope(request);
 
-                // because the get table by scope for userres does not include eosio system or null accounts
+                // get table by scope for userres does not include system account
                 if (value.includes('eosio')) {
                     for (const systemAccount of systemAccounts){
                         accounts.push(

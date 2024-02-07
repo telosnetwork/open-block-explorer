@@ -91,7 +91,7 @@ export default defineComponent({
                 };
                 const accounts = await api.getTableByScope(request);
 
-                // because the get table by scope for userres does not include eosio system or null accounts
+                // get table by scope for userres does not include system account
                 if (value.includes('eosio')) {
                     for (const systemAccount of systemAccounts){
                         accounts.push(

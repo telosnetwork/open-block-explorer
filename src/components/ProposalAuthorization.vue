@@ -103,7 +103,7 @@ export default defineComponent({
                 });
 
                 if (accounts.length > 0) {
-                    // because the get table by scope for userres does not include eosio account
+                    // get table by scope for userres does not include system account
                     if ('eosio'.includes(value)) {
                         actorsOptions.value.push('eosio');
                     }

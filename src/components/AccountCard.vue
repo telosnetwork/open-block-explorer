@@ -325,7 +325,7 @@ export default defineComponent({
             return total;
         };
 
-        const fixDec = (val: number): number => parseFloat(val.toFixed(3));
+        const fixDec = (val: number): number => Math.abs(parseFloat(val.toFixed(3)));
 
         const loadSystemToken = (): void => {
             if (token.value.symbol === '') {

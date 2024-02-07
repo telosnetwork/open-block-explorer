@@ -22,7 +22,7 @@ const RPC_ENDPOINT = {
     host: 'ux.eosusa.io',
     port: 443,
 };
-const API_ENDPOINT = 'https://example.com';
+const API_ENDPOINT = 'https://ux.eosusa.io';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = false;
 const THEME = {};
