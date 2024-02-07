@@ -46,7 +46,6 @@ export default defineComponent({
         });
 
         const updateQueryParams =  async () => {
-            debugger;
             await router.replace({ query: { tab: tab.value } });
         };
 

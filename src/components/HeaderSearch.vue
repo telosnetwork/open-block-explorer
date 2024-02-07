@@ -5,6 +5,7 @@ import { OptionsObj, TableByScope } from 'src/types';
 import { api } from 'src/api';
 import { isValidTransactionHex } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
+import { systemAccounts } from 'src/utils/systemAccount';
 
 export default defineComponent({
     name: 'HeaderSearch',
@@ -50,11 +51,13 @@ export default defineComponent({
 
                 // because the get table by scope for userres does not include eosio system or null accounts
                 if (value.includes('eosio')) {
-                    accounts.push(...[{
-                        payer: 'eosio',
-                    } as TableByScope, {
-                        payer: 'eosio.null',
-                    } as TableByScope]);
+                    for (const systemAccount of systemAccounts){
+                        accounts.push(
+                            {
+                                payer: systemAccount,
+                            } as TableByScope,
+                        );
+                    }
                 }
 
                 if (accounts.length > 0) {
