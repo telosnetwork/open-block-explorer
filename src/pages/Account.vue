@@ -36,30 +36,37 @@ export default defineComponent({
 
         onMounted(async () => {
             await store.dispatch('account/updateABI', route.params.account);
+            if (route.query.tab !== tab.value) {
+                await updateQueryParams();
+            }
         });
 
         watch([account], async () => {
             await store.dispatch('account/updateABI', route.params.account);
         });
 
-        const onChangeTab = async (newTab: string) => {
-            await router.push({
-                // taking care to preserve the current #hash anchor and the current query parameters
-                hash: window.location.hash,
-                query: {
-                    ...route.query,
-                    tab:newTab,
-                },
-            });
+        const updateQueryParams =  async () => {
+            debugger;
+            await router.replace({ query: { tab: tab.value } });
+        };
+
+        const onChangeTab = (newTab: string) => {
+            tab.value = newTab;
         };
 
         watch([tab], () => {
             void router.push({
-                path: router.currentRoute.value.path,
                 query: {
                     tab: tab.value,
                 },
             });
+        });
+
+        watch(route, () => {
+            // handle tab update on browser navigation
+            if (route.path.includes('/account/') && route.query.tab !== tab.value){
+                onChangeTab(route.query.tab as string);
+            }
         });
 
         return {

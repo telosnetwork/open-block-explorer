@@ -54,6 +54,10 @@ export const actions: ActionTree<ResourcesStateInterface, StateInterface> = {
 
             const accountData = store.rootState.account.data;
 
+            if (!accountData) {
+                return;
+            }
+
             // self staked resources
             const self_net_weight = Number(accountData.self_delegated_bandwidth?.net_weight.value ?? 0);
             const self_cpu_weight = Number(accountData.self_delegated_bandwidth?.cpu_weight.value ?? 0);
