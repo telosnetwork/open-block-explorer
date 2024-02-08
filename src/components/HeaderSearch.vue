@@ -3,7 +3,7 @@ import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { OptionsObj, TableByScope } from 'src/types';
 import { api } from 'src/api';
-import { ACCOUNT_LENGTH, TRANSACTION_HASH_LENGTH, isValidTransactionHex } from 'src/utils/string-utils';
+import { ACCOUNT_LENGTH, EOS_KEY_LENGTH, PUB_KEY_LENGTH, TRANSACTION_HASH_LENGTH, isValidTransactionHex } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
 import { systemAccounts } from 'src/utils/systemAccount';
 import { debounce } from 'src/utils/time';
@@ -181,8 +181,8 @@ export default defineComponent({
 
                 // key validation
             } else if (
-                (inputValue.value.length === 53 && inputValue.value.startsWith('EOS')) ||
-        (inputValue.value.length === 57 && inputValue.value.startsWith('PUB_K1'))
+                (inputValue.value.length === EOS_KEY_LENGTH && inputValue.value.startsWith('EOS')) ||
+        (inputValue.value.length === PUB_KEY_LENGTH && inputValue.value.startsWith('PUB_K1'))
             ) {
                 await router.push({
                     name: 'key',
@@ -191,7 +191,7 @@ export default defineComponent({
                 router.go(0);
 
                 // default to 'account'
-            } else if (inputValue.value.length <= 13) {
+            } else if (inputValue.value.length <= ACCOUNT_LENGTH) {
                 try {
                     await api.getAccount(inputValue.value.toLowerCase());
                     await router.push({

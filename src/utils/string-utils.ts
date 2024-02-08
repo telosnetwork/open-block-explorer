@@ -12,8 +12,12 @@ export function isValidTransactionHex(hexString: string): boolean {
     return regEx.exec(hexString) !== null;
 }
 
-export const ACCOUNT_LENGTH = 12;
+export const ACCOUNT_LENGTH = 13;
 export const TRANSACTION_HASH_LENGTH = 64;
+
+// key lengths excluding prefix
+export const EOS_KEY_LENGTH = 53;
+export const PUB_KEY_LENGTH = 57;
 
 /**
  * Given an amount of currency (e.g. `"1.0700"` or `3.4`), returns a pretty-printed string. Hidden-zero fractions
