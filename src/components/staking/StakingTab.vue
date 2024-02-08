@@ -29,7 +29,7 @@ export default defineComponent({
         const rexbal = computed(() => store.state.account.rexbal);
         const maturedRex = computed(() => store.state.account.maturedRex);
         const liquidBalance = computed(
-            () => accountData.value?.core_liquid_balance.value,
+            () => accountData.value?.core_liquid_balance?.value ?? 0,
         );
 
         const inputRules = computed((): Array<(data: string) => boolean | string> => [
