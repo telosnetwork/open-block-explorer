@@ -10,10 +10,15 @@ export default defineComponent({
     name: 'Key',
     setup() {
         const route = useRoute();
-        const pubKey = ref<PublicKey>(PublicKey.from(route.params.key as string));
+        const pubKey = ref<PublicKey>();
         const accounts = ref<Name[]>([]);
         onMounted(async () => {
-            accounts.value = (await api.getKeyAccounts(pubKey.value)).account_names;
+            try{
+                pubKey.value = PublicKey.from(route.params.key as string);
+                accounts.value = (await api.getKeyAccounts(pubKey.value)).account_names;
+            }catch(e){
+                console.error(e);
+            }
         });
         return {
             pubKey,
@@ -27,7 +32,18 @@ export default defineComponent({
 </script>
 
 <template>
-<KeyAccountsCard :pubKey="pubKey" :accounts="accounts" />
+<KeyAccountsCard v-if="pubKey" :pubKey="pubKey" :accounts="accounts" />
+<div v-else class="q-pa-lg">
+    <div class="row justify-center">
+        <q-card class="info-card" flat>
+            <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
+                <q-card-section class="q-pl-sm">
+                    <div class="text-h4 text-bold">key not found</div>
+                </q-card-section>
+            </div>
+        </q-card>
+    </div>
+</div>
 </template>
 
 <style scoped lang="sass">

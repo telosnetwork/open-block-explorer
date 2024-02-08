@@ -68,7 +68,7 @@ export default defineComponent({
                     <q-card class="info-card" flat>
                         <div class="q-pa-md-md q-pa-sm-sm q-pa-xs-xs q-pa-xl-lg">
                             <q-card-section class="q-pl-md">
-                                <div class="text-h4 text-bold">Block not found.</div>
+                                <div class="text-h4 text-bold">block not found</div>
                             </q-card-section>
                         </div>
                     </q-card>
