@@ -12,6 +12,9 @@ export function isValidTransactionHex(hexString: string): boolean {
     return regEx.exec(hexString) !== null;
 }
 
+export const ACCOUNT_LENGTH = 12;
+export const TRANSACTION_HASH_LENGTH = 64;
+
 /**
  * Given an amount of currency (e.g. `"1.0700"` or `3.4`), returns a pretty-printed string. Hidden-zero fractions
  * such as `.2` are not accepted.
