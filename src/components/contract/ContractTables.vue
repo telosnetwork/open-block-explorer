@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'src/store';
 import { api } from 'src/api/index';
 import { GetTableRowsParams, GenericTable } from 'src/types';
@@ -65,6 +65,11 @@ export default defineComponent({
         }
         onMounted(async () => {
             await getRows();
+        });
+
+        watch(account, async () => {
+            rows.value = []
+            table.value = options.value[0];
         });
 
         async function showMore() {

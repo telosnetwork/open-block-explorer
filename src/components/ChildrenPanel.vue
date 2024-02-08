@@ -2,7 +2,7 @@
 import { useQuasar } from 'quasar';
 import { api } from 'src/api';
 import { Action, NewAccountData } from 'src/types';
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 export default defineComponent({
     name: 'ChildrenPanel',
     components: {},
@@ -29,6 +29,10 @@ export default defineComponent({
                 formatAccount((el.act.data as NewAccountData).newact, 'account'),
             );
         };
+        watch(()=> props.account, async () => {
+            children.value = [];
+            await loadAccountData();
+        });
         // TODO Refactor
         const formatAccount = (
             name: string,

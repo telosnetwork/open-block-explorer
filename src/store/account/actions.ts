@@ -427,6 +427,7 @@ export const actions: ActionTree<AccountStateInterface, StateInterface> = {
         commit('setTransactionError', '');
     },
     async updateABI({ commit }, account: string) {
+        commit('setABI', {});
         const abi = await api.getABI(account);
         commit('setABI', abi);
     },

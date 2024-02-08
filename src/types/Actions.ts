@@ -10,6 +10,7 @@ export interface ActionData {
     value: number;
     relation: string;
   };
+  trx_id?: string;
 }
 
 export interface GetActionsResponse {

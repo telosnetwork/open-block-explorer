@@ -36,18 +36,40 @@ export default defineComponent({
 
         onMounted(async () => {
             await store.dispatch('account/updateABI', route.params.account);
+            if (route.query.tab !== tab.value) {
+                await updateQueryParams();
+            }
         });
+
+        watch([account], async () => {
+            await store.dispatch('account/updateABI', route.params.account);
+        });
+
+        const updateQueryParams =  async () => {
+            await router.replace({ query: { tab: tab.value } });
+        };
+
+        const onChangeTab = (newTab: string) => {
+            tab.value = newTab;
+        };
 
         watch([tab], () => {
             void router.push({
-                path: router.currentRoute.value.path,
                 query: {
                     tab: tab.value,
                 },
             });
         });
 
+        watch(route, () => {
+            // handle tab update on browser navigation
+            if (route.path.includes('/account/') && route.query.tab !== tab.value){
+                onChangeTab(route.query.tab as string);
+            }
+        });
+
         return {
+            onChangeTab,
             tab,
             account,
             abi,
@@ -64,7 +86,12 @@ export default defineComponent({
         <div class="row">
             <AccountCard class="account-card" :account="account" :tokens="tokenList"/>
         </div>
-        <q-tabs v-model="tab" class="account-view tabs" no-caps>
+        <q-tabs
+            v-model="tab"
+            class="account-view tabs"
+            no-caps
+            @update:model-value="onChangeTab"
+        >
             <q-tab v-if="!accountPageSettings.hideTransactionTab" name="transactions" label="Transactions"/>
             <q-tab v-if="!accountPageSettings.hideContractsTab && abi" name="contract" label="Contract"/>
             <q-tab v-if="!accountPageSettings.hideTokensTab" name="tokens" label="Tokens"/>
