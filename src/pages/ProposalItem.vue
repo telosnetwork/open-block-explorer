@@ -281,7 +281,7 @@ export default defineComponent({
 
             proposer.value = proposal.proposer;
 
-            const totalRequestedApprovals = proposal.provided_approvals.length + proposal.requested_approvals.length
+            const totalRequestedApprovals = proposal.provided_approvals.length + proposal.requested_approvals.length;
             isApproved.value = proposal.provided_approvals.length === totalRequestedApprovals;
             approvalStatus.value = `${proposal.provided_approvals.length}/${totalRequestedApprovals}`;
             isExecuted.value = proposal.executed;
