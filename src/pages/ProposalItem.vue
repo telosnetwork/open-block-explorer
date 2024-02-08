@@ -36,6 +36,7 @@ export default defineComponent({
         const isExecuted = ref(false);
         const isCanceled = ref(false);
         const isUserApprovalList = ref(false);
+        const isApproved = ref(false);
 
         const multsigTransactionData = ref<Action[]>([]);
         const requestedApprovalsRows = ref<RequestedApprovals[]>([]);
@@ -85,9 +86,7 @@ export default defineComponent({
         const isShowExecuteButton = computed(() => (
             isAuthenticated.value &&
             !hasProposalAlreadyExpired.value &&
-            (account.value === proposer.value ||
-                isUserApprovalList.value ||
-                hasUserAlreadyApproved.value) &&
+            isApproved.value &&
             !isExecuted.value &&
             !isCanceled.value
         ));
@@ -281,10 +280,12 @@ export default defineComponent({
             }
 
             proposer.value = proposal.proposer;
-            approvalStatus.value = `${proposal.provided_approvals.length}/${
-                proposal.provided_approvals.length + proposal.requested_approvals.length
-            }`;
+
+            const totalRequestedApprovals = proposal.provided_approvals.length + proposal.requested_approvals.length
+            isApproved.value = proposal.provided_approvals.length === totalRequestedApprovals;
+            approvalStatus.value = `${proposal.provided_approvals.length}/${totalRequestedApprovals}`;
             isExecuted.value = proposal.executed;
+
             hasUserAlreadyApproved.value = proposal.provided_approvals.some(
                 item => item.actor === account.value,
             );
