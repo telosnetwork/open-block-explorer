@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Permission, PermissionLinks } from 'src/types';
 import PermissionCard from 'components/PermissionCard.vue';
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, defineComponent, onMounted, ref, watch } from 'vue';
 import { api } from 'src/api';
 import { useQuasar } from 'quasar';
 import { API } from '@greymass/eosio';
@@ -46,6 +46,10 @@ export default defineComponent({
 
             permission.value = sortPermissions(permissions);
         };
+        watch(account, async () => {
+            permission.value = null;
+            await loadAccountData();
+        });
         const sortPermissions = (perm: Permission[]) => {
             let result: Permission;
             result = perm.find(p => p.perm_name.toString() === 'owner');

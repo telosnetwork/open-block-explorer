@@ -16,6 +16,7 @@ import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
 import ConfigManager from 'src/config/ConfigManager';
+import { isSystemAccount } from 'src/utils/systemAccount';
 
 const chain = getChain();
 export default defineComponent({
@@ -43,8 +44,6 @@ export default defineComponent({
         const createTime = ref<string>('2019-01-01T00:00:00.000');
         const createTransaction = ref<string>('');
         const creatingAccount = ref('');
-        const system_account = ref('eosio');
-
         const isLoading = ref<boolean>(true);
         const tokensLoading = ref<boolean>(true);
         const none = ref<UInt64>(UInt64.from(0));
@@ -177,7 +176,7 @@ export default defineComponent({
 
         const loadResources = () => {
             let ramDenominator;
-            if (props.account !== system_account.value) {
+            if (!isSystemAccount(props.account)) {
                 // display max resource unit value for readability
                 const ramMaxNumber = Number(accountData.value.ram_quota);
                 const ramUnitResult = determineUnit(ramMaxNumber);
@@ -443,7 +442,6 @@ export default defineComponent({
             rexStaked,
             rexDeposits,
             none,
-            system_account,
             radius,
             availableTokens,
             createTime,
@@ -459,6 +457,7 @@ export default defineComponent({
             resources,
             accountExists,
             loadAccountData,
+            isSystemAccount,
             setToken,
             fixDec,
             loadSystemToken,
@@ -479,13 +478,10 @@ export default defineComponent({
         <q-card-section class="resources-container">
             <div class="inline-section">
                 <div class="row justify-center full-height items-center">
-                    <div v-if="account !== system_account" class="col-6">
+                    <div>
                         <div class="text-title">{{ account }}</div>
                     </div>
-                    <div v-else class="col-2">
-                        <div class="text-title">{{ account }}</div>
-                    </div>
-                    <div class="col-1">
+                    <div>
                         <q-btn
                             class="float-right"
                             flat
@@ -517,7 +513,7 @@ export default defineComponent({
                 </div>
                 <q-space/>
             </div>
-            <div v-if="account !== system_account" class="resources">
+            <div v-if="!isSystemAccount(account)" class="resources">
                 <PercentCircle
                     v-if="!accountPageSettings.hideCpuInfo"
                     :radius="radius"

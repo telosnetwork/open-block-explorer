@@ -3,6 +3,7 @@ import { defineComponent, ref, watch, onMounted } from 'vue';
 import { OptionsObj, TableByScope } from 'src/types';
 import { api } from 'src/api';
 import { useQuasar } from 'quasar';
+import { systemAccounts } from 'src/utils/systemAccount';
 
 export default defineComponent({
     name: 'AccountSearch',
@@ -92,9 +93,13 @@ export default defineComponent({
 
                 // get table by scope for userres does not include system account
                 if (value.includes('eosio')) {
-                    accounts.unshift({
-                        payer: 'eosio',
-                    } as TableByScope);
+                    for (const systemAccount of systemAccounts){
+                        accounts.push(
+                            {
+                                payer: systemAccount,
+                            } as TableByScope,
+                        );
+                    }
                 }
 
                 if (accounts.length > 0) {

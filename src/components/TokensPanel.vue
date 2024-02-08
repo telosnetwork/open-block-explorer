@@ -1,4 +1,5 @@
 <script lang="ts">
+import { watch } from 'vue';
 import { api } from 'src/api';
 import { Token } from 'src/types';
 import { defineComponent, onMounted, ref, toRef } from 'vue';
@@ -25,6 +26,10 @@ export default defineComponent({
                 return [];
             }
         };
+        watch(account, async () => {
+            tokens.value = [];
+            await loadTokens();
+        });
 
         const loadTokens = async (): Promise<void> => {
             // TODO Refactor redundant getTokens in AccountCard

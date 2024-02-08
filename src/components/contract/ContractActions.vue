@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 
@@ -52,6 +52,11 @@ export default defineComponent({
                 }
             }
         }
+
+        watch(actions, () => {
+            action.value = actions.value[0];
+            memo.value = {};
+        });
 
         onMounted(async () => {
             actor.value = await store.state.account.user.getAccountName();

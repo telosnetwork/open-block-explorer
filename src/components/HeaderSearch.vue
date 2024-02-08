@@ -3,8 +3,9 @@ import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { OptionsObj, TableByScope } from 'src/types';
 import { api } from 'src/api';
-import { isValidTransactionHex } from 'src/utils/string-utils';
+import { ACCOUNT_LENGTH, TRANSACTION_HASH_LENGTH, isValidTransactionHex } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
+import { systemAccounts } from 'src/utils/systemAccount';
 import { debounce } from 'src/utils/time';
 
 export default defineComponent({
@@ -31,7 +32,14 @@ export default defineComponent({
                 searchProposals(queryValue),
                 searchTransactions(queryValue),
             ]).then((results) => {
+                // flatten search results
                 options.value = ([] as OptionsObj[]).concat.apply([], results);
+
+                // trigger navigation on single result
+                const filteredResults = options.value.filter(result => !result.isHeader);
+                if (filteredResults.length === 1){
+                    void handleGoTo(filteredResults[0].to);
+                }
             });
 
             isLoading.value = false;
@@ -44,6 +52,9 @@ export default defineComponent({
         async function searchAccounts(value: string): Promise<OptionsObj[]> {
             try {
                 const results = [] as OptionsObj[];
+                if (value.length > ACCOUNT_LENGTH){
+                    return results;
+                }
                 const request = {
                     code: 'eosio',
                     limit: 5,
@@ -55,12 +66,17 @@ export default defineComponent({
 
                 // get table by scope for userres does not include system account
                 if (value.includes('eosio')) {
-                    accounts.unshift({
-                        payer: 'eosio',
-                    } as TableByScope);
+                    for (const systemAccount of systemAccounts){
+                        accounts.push(
+                            {
+                                payer: systemAccount,
+                            } as TableByScope,
+                        );
+                    }
                 }
 
                 if (accounts.length > 0) {
+
                     results.push({
                         label: 'Accounts',
                         to: '',
@@ -118,14 +134,14 @@ export default defineComponent({
         async function searchTransactions(value: string): Promise<OptionsObj[]> {
             const results = [] as OptionsObj[];
 
-            if (value.length !== 64) {
+            if (value.length !== TRANSACTION_HASH_LENGTH) {
                 return results;
             }
 
             try {
                 const transactions = await api.getTransaction(value);
 
-                if (transactions?.actions) {
+                if (transactions?.trx_id) {
                     results.push({
                         label: 'Transactions',
                         to: '',
