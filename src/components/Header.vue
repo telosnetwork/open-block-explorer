@@ -98,7 +98,7 @@ export default defineComponent({
                 class="deactive"
                 name="wallet"
                 label="Wallet"
-                :to="'/account/' + account"
+                :to="'/account/' + account + '/?tab=transactions'"
             />
             <q-route-tab
                 v-if="!headerSettings.hideVoteTab"
