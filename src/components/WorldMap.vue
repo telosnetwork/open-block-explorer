@@ -16,7 +16,6 @@ import Feature from 'ol/Feature';
 import { easeOut } from 'ol/easing';
 import { getVectorContext } from 'ol/render';
 import { unByKey } from 'ol/Observable';
-import { mapActions } from 'vuex';
 import { BP } from 'src/types';
 import VectorImageLayer from 'ol/layer/VectorImage';
 import { getCssVar } from 'quasar';
@@ -56,7 +55,8 @@ export default defineComponent({
             currentHeadProducer,
             schedule,
             producerToggle,
-            updateToggleOption
+            updateToggleOption,
+            chainStore,
         };
     },
     data() {
@@ -68,11 +68,8 @@ export default defineComponent({
             MapSource: null
         };
     },
-    methods: {
-        ...mapActions('chain', ['updateBpList'])
-    },
     async mounted() {
-        await this.updateBpList();
+        await this.chainStore.updateBpList();
 
         // ---- Map Styles ----
         const style = new Style({

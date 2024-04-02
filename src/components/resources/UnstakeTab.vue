@@ -1,6 +1,5 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
-import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { DelegatedResources, useResourceStore } from 'src/stores/resources';
@@ -85,13 +84,13 @@ export default defineComponent({
             loading,
             cpuTokens,
             netTokens,
-            ...mapActions({ undelegateResources: 'resources/undelegateResources' }),
             transactionId: ref<string>(null),
             transactionError: null,
             formatDec,
             assetToAmount,
             netStake,
             cpuStake,
+            resourceStore,
         };
     },
     watch: {
@@ -145,7 +144,7 @@ export default defineComponent({
                 return;
             }
 
-            await this.undelegateResources({
+            await this.resourceStore.undelegateResources({
                 from: this.stakingAccount,
                 to: this.receiverAccount,
                 transfer: false,

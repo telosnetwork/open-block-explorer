@@ -411,7 +411,7 @@ export default defineComponent({
             },
         );
         watch(
-            () => resourceStore.getDelegatedToOthersAggregated(),
+            (): number => resourceStore.getDelegatedToOthersAggregated,
             () => {
                 setTotalBalance();
             },

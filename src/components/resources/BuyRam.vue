@@ -5,6 +5,7 @@ import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API, UInt64 } from '@greymass/eosio';
 import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 const chain = getChain();
 
@@ -15,6 +16,7 @@ export default defineComponent({
     },
     setup() {
         const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         let openTransaction = ref<boolean>(false);
         const buyAmount = ref<string>('');
         const symbol = ref<string>(chain.getSystemToken().symbol);
@@ -44,17 +46,17 @@ export default defineComponent({
         const transactionError = computed(
             () => accountStore.TransactionError,
         );
-        const ramPrice = computed((): string => store.state?.chain.ram_price);
+        const ramPrice = computed((): string => chainStore.ram_price);
         const ramAvailable = computed(() =>
             UInt64.sub(
-                accountStore.data.ram_quota,
-                accountStore.data.ram_usage,
+                accountData.value.ram_quota,
+                accountData.value.ram_usage,
             ),
         );
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const accountData = computed((): API.v1.AccountObject => accountStore.getAccountData);
 
         function formatDec() {
-            const precision = store.state.chain.token.precision;
+            const precision = chainStore.token.precision;
             if (buyOption.value === buyOptions[0]) {
                 buyAmount.value = Number(buyAmount.value)
                     .toLocaleString('en-US', {
@@ -71,7 +73,7 @@ export default defineComponent({
         }
 
         async function buy() {
-            void store.dispatch('account/resetTransaction');
+            accountStore.resetTransaction();
             if (buyOption.value === buyOptions[0]) {
                 if (
                     buyAmount.value === '0' ||
@@ -81,7 +83,7 @@ export default defineComponent({
                 ) {
                     return;
                 }
-                await store.dispatch('account/buyRam', {
+                await accountStore.buyRam({
                     amount: buyAmount.value + ' ' + symbol.value,
                     receivingAccount: receivingAccount.value,
                 });
@@ -95,7 +97,7 @@ export default defineComponent({
                 ) {
                     return;
                 }
-                await store.dispatch('account/buyRamBytes', {
+                await accountStore.buyRamBytes({
                     amount: buyAmount.value,
                     receivingAccount: receivingAccount.value,
                 });

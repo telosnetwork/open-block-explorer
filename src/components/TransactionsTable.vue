@@ -331,8 +331,8 @@ export default defineComponent({
                     timestamp: item['@timestamp'] || item.timestamp,
                     action: item,
                     data: hasActions.value
-                        ? { data: item.data as unknown, name: item.account }
-                        : { data: item.act.data as unknown, name: item.act.name },
+                        ? { data: item.data, name: item.account }
+                        : { data: item.act.data, name: item.act.name },
                     actions: [
                         {
                             name: item.trx_id,
@@ -341,7 +341,7 @@ export default defineComponent({
                             action: item,
                             data: hasActions.value
                                 ? {
-                                    data: item.data as unknown,
+                                    data: item.data,
                                     name: item.account,
                                 }
                                 : { data: item.act.data as unknown, name: item.act.name },

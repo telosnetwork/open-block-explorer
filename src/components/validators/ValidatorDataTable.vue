@@ -75,7 +75,7 @@ export default defineComponent({
                     val.splice(index, 1);
                 }
             });
-            store.commit('account/setVote', val);
+            accountStore.setVote(val);
         }
 
         function isTop21(val: string): boolean {

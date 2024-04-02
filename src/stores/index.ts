@@ -2,11 +2,11 @@ import { store } from 'quasar/wrappers';
 
 
 
-import { ContractStateInterface } from 'src/stores/contract/state';
-import { ChainStateInterface } from 'src/stores/chain/state';
-import { AccountStateInterface } from 'src/stores/account/state';
-import { TransactionStateInterface } from 'src/stores/transaction/state';
-import { ResourcesStateInterface } from 'src/stores/resources/state';
+import { ContractStateInterface } from 'src/stores/contract';
+import { ChainStateInterface } from 'src/stores/chain';
+import { AccountStateInterface } from 'src/stores/account';
+import { TransactionStateInterface } from 'src/stores/transaction';
+import { ResourcesStateInterface } from 'src/stores/resources';
 import { createPinia } from 'pinia';
 
 /*

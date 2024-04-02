@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { api } from 'src/api/index';
 import { GetTableRowsParams, GenericTable } from 'src/types';
 import { TableIndexType } from 'src/types/Api';

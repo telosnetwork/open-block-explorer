@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { Token } from 'src/types';
-import { mapActions } from 'vuex';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
@@ -96,7 +95,6 @@ export default defineComponent({
             formatStaked,
             refundProgress,
             refundCountdown,
-            ...mapActions({ sendAction: 'account/sendAction' }),
             transactionId: ref<string>(null),
             transactionError: null,
         };
@@ -109,14 +107,13 @@ export default defineComponent({
                 transfer: false,
             };
             try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                this.transactionId = (
-                    await this.sendAction({
-                        account: 'eosio',
-                        name: 'refund',
-                        data,
-                    })
-                ).transactionId as string;
+                await this.accountStore.sendAction({
+                    account: 'eosio',
+                    name: 'refund',
+                    data,
+                });
+
+                this.transactionId = this.accountStore.TransactionId;
             } catch (e) {
                 this.transactionError = e;
                 this.accountStore.setTransactionError(e);

@@ -88,7 +88,7 @@ export default defineComponent({
                 if (item.is_active === 1) {
                     producersAccount.push({
                         actor: item.owner,
-                        permission: store.state.account.accountPermission,
+                        permission: accountStore.accountPermission,
                     });
                 }
             }
@@ -162,7 +162,7 @@ export default defineComponent({
                                 authorization: [
                                     {
                                         actor: account.value,
-                                        permission: store.state.account.accountPermission,
+                                        permission: accountStore.accountPermission,
                                     },
                                 ],
                                 data,

@@ -1,7 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from 'vue';
 import { Token } from 'src/types';
-import { mapGetters } from 'vuex';
 import StakingInfo from 'src/components/staking/StakingInfo.vue';
 import StakeFromResources from 'src/components/staking/StakeFromResources.vue';
 import ProcessingTab from 'src/components/staking/ProcessingTab.vue';
@@ -79,7 +78,6 @@ export default defineComponent({
         };
     },
     computed: {
-        ...mapGetters({ account: 'account/accountName' }),
         transactionForm(): boolean {
             return !(this.transactionError || this.transactionId);
         },
@@ -88,7 +86,7 @@ export default defineComponent({
         async sendTransaction(): Promise<void> {
             const actionAccount = this.sendToken.contract;
             const data = {
-                from: this.account as string,
+                from: this.accountStore.accountName,
                 to: this.recievingAccount,
                 quantity: `${this.sendAmount} ${this.sendToken.symbol}`,
                 memo: this.memo,
@@ -123,7 +121,7 @@ export default defineComponent({
         async loadAccountData(): Promise<void> {
             let data: API.v1.AccountObject;
             try {
-                data = await this.$api.getAccount(this.account);
+                data = await this.$api.getAccount(this.accountStore.accountName);
                 this.accountStore.setAccountData(data);
             } catch (e) {
                 return;

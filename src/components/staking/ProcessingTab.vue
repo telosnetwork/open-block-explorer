@@ -1,7 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { Token } from 'src/types';
-import { mapActions } from 'vuex';
 import { API } from '@greymass/eosio';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
@@ -71,7 +70,6 @@ export default defineComponent({
             refundProgress,
             maturitiesCountdown,
             maturingRex,
-            ...mapActions({ refund: 'account/refund' }),
             transactionId: ref<string>(null),
             transactionError: null,
         };

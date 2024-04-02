@@ -328,7 +328,7 @@ export default defineComponent({
                             authorization: [
                                 {
                                     actor: account.value,
-                                    permission: store.state.account.accountPermission,
+                                    permission: accountStore.accountPermission,
                                 },
                             ],
                             data,
@@ -353,7 +353,7 @@ export default defineComponent({
                         proposal_name: proposalName,
                         level: {
                             actor: account.value,
-                            permission: store.state.account.accountPermission,
+                            permission: accountStore.accountPermission,
                         },
                     },
                 });
@@ -374,7 +374,7 @@ export default defineComponent({
                         proposal_name: proposalName,
                         level: {
                             actor: account.value,
-                            permission: store.state.account.accountPermission,
+                            permission: accountStore.accountPermission,
                         },
                     },
                 });

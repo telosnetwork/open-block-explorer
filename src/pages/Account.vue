@@ -35,14 +35,14 @@ export default defineComponent({
         const tokenList = ref(api.getTokens(account.value));
 
         onMounted(async () => {
-            await store.dispatch('account/updateABI', route.params.account);
+            await accountStore.updateABI(route.params.account as string);
             if (route.query.tab !== tab.value) {
                 await updateQueryParams();
             }
         });
 
         watch([account], async () => {
-            await store.dispatch('account/updateABI', route.params.account);
+            await accountStore.updateABI(route.params.account as string);
         });
 
         const updateQueryParams =  async () => {

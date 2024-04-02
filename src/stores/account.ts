@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ABI, Action, Authorization, GetTableRowsParams, Rexbal, RexbalRows, RexPoolRows } from 'src/types';
-import { API, Asset, Name } from '@greymass/eosio';
+import { API, Name, UInt64 } from '@greymass/eosio';
 import { Authenticator, User } from 'universal-authenticator-library';
 import { getChain } from 'src/config/ConfigManager';
 import { markRaw } from 'vue';
@@ -50,7 +50,7 @@ export const useAccountStore = defineStore('account', {
         isAuthenticated: false,
         linkedAccounts: [],
         data: {
-            account_name: Name.from(''),
+            account_name: '',
             /** Highest block number on the chain */
             // head_block_num: UInt32;
             // /** Highest block unix timestamp. */
@@ -62,13 +62,13 @@ export const useAccountStore = defineStore('account', {
             // /** Account created as unix timestamp. */
             // created: TimePoint;
             /** Account core token balance */
-            core_liquid_balance: Asset.from(0, symbol),
-            // ram_quota: Int64;
+            core_liquid_balance: UInt64.from(0),
+            ram_quota: UInt64.from(0),
             // net_weight: Int64;
             // cpu_weight: Int64;
             // net_limit: AccountResourceLimit;
             // cpu_limit: AccountResourceLimit;
-            // ram_usage: UInt64;
+            ram_usage: UInt64.from(0),
             // permissions: AccountPermission[];
             // total_resources: AccountTotalResources;
             // self_delegated_bandwidth?: AccountSelfDelegatedBandwidth;
@@ -76,7 +76,8 @@ export const useAccountStore = defineStore('account', {
             // voter_info?: AccountVoterInfo;
             // rex_info?: AccountRexInfo;
             // getPermission(permission: NameType): AccountPermission;
-        } as API.v1.AccountObject,
+        } as unknown as API.v1.AccountObject,
+
         authorization: [],
         rexActions: [],
         TransactionId: '',
