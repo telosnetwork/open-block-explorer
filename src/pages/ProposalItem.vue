@@ -40,6 +40,8 @@ export default defineComponent({
 
         const multsigTransactionData = ref<Action[]>([]);
         const requestedApprovalsRows = ref<RequestedApprovals[]>([]);
+        const activeProducers = ref<RequestedApprovals[]>([]);
+        const activeProducersApproved = ref<RequestedApprovals[]>([]);
 
         const requestedApprovalsColumns = [
             {
@@ -99,15 +101,7 @@ export default defineComponent({
             !isCanceled.value
         ));
 
-        const producersApprovalStatus = computed(() => {
-            const allProducers = requestedApprovalsRows.value.filter(
-                item => item.isBp,
-            );
-            const producersHaveAlreadyApproved = allProducers.filter(
-                item => item.status,
-            );
-            return `${producersHaveAlreadyApproved.length}/${allProducers.length}`;
-        });
+        const producersApprovalStatus = computed(() =>  `${activeProducersApproved.value.length}/${activeProducers.value.length}`);
 
         function handleError(e: unknown, defaultMessage: string) {
             const error = JSON.parse(JSON.stringify(e)) as Error;
@@ -282,7 +276,6 @@ export default defineComponent({
             proposer.value = proposal.proposer;
 
             const totalRequestedApprovals = proposal.provided_approvals.length + proposal.requested_approvals.length;
-            isApproved.value = proposal.provided_approvals.length === totalRequestedApprovals;
             approvalStatus.value = `${proposal.provided_approvals.length}/${totalRequestedApprovals}`;
             isExecuted.value = proposal.executed;
 
@@ -301,6 +294,22 @@ export default defineComponent({
 
             requestedApprovalsRows.value = requestedApprovalsRowsValue;
             multsigTransactionData.value = multsigTransactionDataValue;
+
+            activeProducers.value = requestedApprovalsRows.value.filter(
+                item => item.isBp,
+            );
+            activeProducersApproved.value = activeProducers.value.filter(
+                item => item.status,
+            );
+
+            if (activeProducers.value.length === 0) {
+                // No BPs are involved in the proposal, so we need to 100% of the requested approvals
+                isApproved.value = proposal.provided_approvals.length === totalRequestedApprovals;
+            } else {
+                // If BPs are involved, we need 2/3 (+1) of the BPs to approve the proposal
+                const approval = (activeProducers.value.length * 2 / 3) + 1;
+                isApproved.value = activeProducersApproved.value.length >= Math.floor(approval);
+            }
 
             const transactions = await handleTransactionHistory(proposal.block_num);
 
