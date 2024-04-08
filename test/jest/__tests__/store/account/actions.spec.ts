@@ -129,7 +129,7 @@ describe('Store - Account Actions', () => {
     });
 
     describe('login()', () => {
-        test('when not account provided it should should request account', async () => {
+        test('when not account provided it should request account', async () => {
             authenticator = newAuthenticatorMock(true);
 
             // call the action login

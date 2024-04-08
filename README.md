@@ -38,7 +38,7 @@ This includes following key features:
 - BP Voting and Governance
 - Premium Name bids
 
-Following, excelent products can be taken as reference points for further features:
+Following, excellent products can be taken as reference points for further features:
 
 - [EOS Authority](https://eosauthority.com/)
 - [Blocks](https://bloks.io/)
@@ -112,7 +112,7 @@ app running at localhost:4000
 
 [Vue 2 documentation](https://vuejs.org/v2/api/)
 
-[Vue 3 documenation](https://v3.vuejs.org/)
+[Vue 3 documentation](https://v3.vuejs.org/)
 
 [Testing Quasar with Jest](https://github.com/quasarframework/quasar-testing/tree/next/packages/unit-jest)
 
