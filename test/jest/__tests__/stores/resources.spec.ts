@@ -1,65 +1,20 @@
-import { DelegatedResources, ResourcesStateInterface, useResourceStore } from 'src/stores/resources';
-import { ref, createApp } from 'vue';
-import { StateInterface } from 'src/stores';
-
+import { DelegatedResources, useResourceStore } from 'src/stores/resources';
+import { ref } from 'vue';
 import { GetTableRowsParams } from 'src/types';
 import { API } from '@greymass/eosio';
 import { createPinia, setActivePinia } from 'pinia';
+import { getTableRows } from 'src/api/eosio_core';
+import axios from 'axios';
 
-
-global.fetch = jest.fn((input: RequestInfo | URL) =>
-    Promise.resolve({
-        text: () => {
-            if (input.toString() === 'https://raw.githubusercontent.com/telosnetwork/token-list/main/telosmain.json') {
-                return `{
-                    "tokens": [
-                        {
-                            "name": "Telos",
-                            "logo_sm": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png",
-                            "logo_lg": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png",
-                            "symbol": "TLOS",
-                            "account": "eosio.token"
-                        },
-                        {
-                            "name": "pTokens BTC",
-                            "logo_sm": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/pbtc.png",
-                            "logo_lg": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/pbtc-lg.png",
-                            "symbol": "PBTC",
-                            "account": "btc.ptokens"
-                        }
-                    ]
-                }`;
-            } else {
-                return `[
-                    {
-                      "name": "Telos",
-                      "symbol": "TLOS",
-                      "contract": "eosio.token",
-                      "precision": 4,
-                      "logo": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/telos.png"
-                    },
-                    {
-                      "name": "Qubicles",
-                      "symbol": "QBE",
-                      "contract": "qubicletoken",
-                      "precision": 4,
-                      "logo": "https://raw.githubusercontent.com/Viterbo/token-list/master/logos/qbe.png"
-                    }
-                ]
-                `;
-            }
-        },
-    } as unknown as Response),
-);
+jest.spyOn(axios, 'create');
 
 const localStorageMock = {
     getItem: jest.fn(),
     setItem: jest.fn(),
-    removeItem:jest.fn(),
+    removeItem: jest.fn(),
 };
 
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-
 
 const transactionHeaders = {
     context_free_actions: [] as never[],
@@ -71,9 +26,6 @@ const transactionHeaders = {
     ref_block_prefix: 0,
     transaction_extensions: [] as never[],
 };
-
-// pinia required
-const app = createApp({});
 
 jest.mock('@greymass/eosio', () => ({
     // mocking static functions from
@@ -95,50 +47,72 @@ jest.mock('@greymass/eosio', () => ({
             },
         },
     })),
+    UInt64: {
+        from: (i: number) => Number(i),
+    },
 }));
+
 
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
         getChainId: () => 'chainId',
         getSymbol: () => 'TLOS',
+        getName: () => 'Telos',
         getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
         getRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
         getHyperionEndpoint: () => '',
+        getApiEndpoint: () => '',
         getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
     }),
 }));
 
-const delbandResponse: {rows: DelegatedResources[]} = { rows: [] };
-// const getTableRows = jest.fn().mockImplementation((s: GetTableRowsParams) => {
-//     if (s.table === 'delband' && s.code === 'eosio') {
-//         return Promise.resolve(delbandResponse);
-//     }
-// });
+const delbandResponse: { rows: DelegatedResources[] } = { rows: [] };
 
-jest.mock('src/api', () => ({
-    api: { getTableRows: jest.fn().mockImplementation((s: GetTableRowsParams) => {
+jest.mock('src/api/eosio_core', () => ({
+    getTableRows: jest.fn((s: GetTableRowsParams) => {
         if (s.table === 'delband' && s.code === 'eosio') {
             return Promise.resolve(delbandResponse);
         }
-    })},
+    }),
 }));
 
+// ------------------------------------
+// data for getters
+const accountName = 'accountName';
+const accountDataMock = {
+    self_delegated_bandwidth: {
+        cpu_weight: ref(1),
+        net_weight: ref(1),
+    },
+    net_weight: ref(10000),
+    cpu_weight: ref(10000),
+} as unknown as API.v1.AccountObject;
+
+const AccountGetters = {
+    accountName,
+    data: accountDataMock,
+};
+// actions for account store
+const loadAccountData = jest.fn();
+const AccountActions = {
+    loadAccountData,
+};
+const AccountStore = { ...AccountGetters, ...AccountActions };
+jest.mock('src/stores/account', () => ({
+    useAccountStore: jest.fn().mockImplementation(() => AccountStore),
+}));
+// ------------------------------------
 
 describe('Store - Resources Actions', () => {
     let setLoading: jest.SpyInstance;
     let setCurrentAccount: jest.SpyInstance;
     let setDelegatedToOthers: jest.SpyInstance;
-    let setDelegatedToOthersAggregated: jest.SpyInstance;
+    let setDelegatedFromOthers: jest.SpyInstance;
+    let setForceUpdate: jest.SpyInstance;
     let unsetLoading: jest.SpyInstance;
-    let state: ResourcesStateInterface;
-    let rootState: StateInterface;
-    const accountName = 'accountName'; // logged account
-    let data: unknown = {};
-    const pinia = createPinia();
-    app.use(pinia);
-    setActivePinia(pinia);
-    const resourceStore = useResourceStore();
-
+    let setSelfStaked: jest.SpyInstance;
+    let updateSelfStaked: jest.SpyInstance;
+    let updateDelegatedToOthers: jest.SpyInstance;
 
     const setDelbandResponse = (accountList: string[]) => {
         delbandResponse.rows = [];
@@ -153,41 +127,22 @@ describe('Store - Resources Actions', () => {
     };
 
     beforeEach(() => {
-        setLoading = jest.spyOn(resourceStore, 'setLoading');
-        setCurrentAccount = jest.spyOn(resourceStore, 'setCurrentAccount');
-        setDelegatedToOthers = jest.spyOn(resourceStore, 'setDelegatedToOthers');
-        setDelegatedToOthersAggregated = jest.spyOn(resourceStore, 'setDelegatedToOthersAggregated');
-        unsetLoading = jest.spyOn(resourceStore, 'unsetLoading');
-
-        getTableRows.mockClear();
-
-        state = {
-            currentAccount: '',
-            toOthers: [],
-            fromOthers: null,
-            selfStaked: null,
-            loading: [],
-            forceUpdate: false,
-        } as ResourcesStateInterface;
-
-        rootState = {
-            account: {
-                accountName,
-                data,
-            },
-        } as unknown as StateInterface;
-
+        setActivePinia(createPinia());
     });
 
     describe('updateDelegatedToOthers()', () => {
-
         test('when executed it always brings up to 200 results for the given account', async () => {
-            data = ref(null);
+            const resourceStore = useResourceStore();
+
+            setLoading = jest.spyOn(resourceStore, 'setLoading');
+            setCurrentAccount = jest.spyOn(resourceStore, 'setCurrentAccount');
+            unsetLoading = jest.spyOn(resourceStore, 'unsetLoading');
+            setDelegatedToOthers = jest.spyOn(resourceStore, 'setDelegatedToOthers');
+
             setDelbandResponse([accountName]);
 
             // call the action login
             await resourceStore.updateDelegatedToOthers(accountName);
-
             // Verify the loading state
             expect(setLoading).toHaveBeenCalledWith('updateDelegatedToOthers');
 
@@ -199,110 +154,140 @@ describe('Store - Resources Actions', () => {
                 table: 'delband',
             } as GetTableRowsParams;
 
-            expect(api.getTableRows).toHaveBeenCalledWith(paramsdelband);
+            expect(getTableRows).toHaveBeenCalledWith(paramsdelband);
 
             // Verify the final commits
             expect(setCurrentAccount).toHaveBeenCalledWith(accountName);
-            expect(setCurrentAccount).toHaveBeenCalledWith(delbandResponse.rows);
+            expect(setDelegatedToOthers).toHaveBeenCalledWith(delbandResponse.rows);
 
             // Verify the loading state
             expect(unsetLoading).toHaveBeenCalledWith('updateDelegatedToOthers');
-
         });
     });
 
     describe('updateResources()', () => {
-
-        test('when we don\'t have account data', async () => {
+        test('when the account is the same, we have its data and we don\'t force', async () => {
             const resourceStore = useResourceStore();
-            data = ref(null);
 
-            // call the action login
-            await (resourceStore as { updateResources: (a:unknown, b:boolean) => Promise<void> }).updateResources(
-                { commit, dispatch, state, rootState },
-                false,
-            );
+            // resourceStore.currentAccount = 'account1';
 
-            // Verify the loading and forceUpdate states
-            expect(commit).toHaveBeenCalledWith('setLoading', 'updateResources');
-            expect(commit).toHaveBeenCalledWith('setForceUpdate', false);
+            setLoading = jest.spyOn(resourceStore, 'setLoading');
+            setCurrentAccount = jest.spyOn(resourceStore, 'setCurrentAccount');
+            unsetLoading = jest.spyOn(resourceStore, 'unsetLoading');
+            setForceUpdate = jest.spyOn(resourceStore, 'setForceUpdate');
+            updateSelfStaked = jest.spyOn(resourceStore, 'updateSelfStaked');
+            updateDelegatedToOthers = jest.spyOn(resourceStore, 'updateDelegatedToOthers');
 
-            // Verify dispatch calls
-            expect(dispatch).toHaveBeenCalledWith('updateSelfStaked', accountName);
-            expect(dispatch).toHaveBeenCalledWith('updateDelegatedToOthers', accountName);
-
-            // Verify the final commits
-            expect(commit).toHaveBeenCalledWith('setCurrentAccount', accountName);
+            await resourceStore.updateResources({
+                account: accountName,
+                force: false,
+            });
 
             // Verify the loading and forceUpdate states
-            expect(commit).toHaveBeenCalledWith('setForceUpdate', false);
-            expect(commit).toHaveBeenCalledWith('unsetLoading', 'updateResources');
+            expect(setLoading).toHaveBeenCalledWith('updateResources');
+            expect(setForceUpdate).toHaveBeenCalledWith(false);
+
+            // Verify the loading and forceUpdate states
+            expect(setForceUpdate).toHaveBeenCalledWith(false);
+
+            expect(unsetLoading).toHaveBeenCalledWith('updateResources');
+            expect(resourceStore.currentAccount).toEqual(accountName);
         });
 
-        test('when we have account data', async () => {
+        test('when the account is the same, we have its data and we force', async () => {
             const resourceStore = useResourceStore();
-            data = ref({});
 
-            // call the action login
-            await (resourceStore as { updateResources: (a:unknown, b:boolean) => Promise<void> }).updateResources(
-                { commit, dispatch, state, rootState },
-                false,
-            );
+            setLoading = jest.spyOn(resourceStore, 'setLoading');
+            setCurrentAccount = jest.spyOn(resourceStore, 'setCurrentAccount');
+            unsetLoading = jest.spyOn(resourceStore, 'unsetLoading');
+            setForceUpdate = jest.spyOn(resourceStore, 'setForceUpdate');
+            updateSelfStaked = jest.spyOn(resourceStore, 'updateSelfStaked');
+            updateDelegatedToOthers = jest.spyOn(resourceStore, 'updateDelegatedToOthers');
+
+            await resourceStore.updateResources({
+                account: accountName,
+                force: true,
+            });
 
             // Verify the loading and forceUpdate states
-            expect(commit).toHaveBeenCalledWith('setLoading', 'updateResources');
-            expect(commit).toHaveBeenCalledWith('setForceUpdate', false);
+            expect(setLoading).toHaveBeenCalledWith('updateResources');
+            expect(setForceUpdate).toHaveBeenCalledWith(false);
 
-            // Verify dispatch calls
-            expect(dispatch).toHaveBeenCalledWith('updateSelfStaked', accountName);
-            expect(dispatch).toHaveBeenCalledWith('updateDelegatedToOthers', accountName);
+            expect(updateSelfStaked).toHaveBeenCalledWith(accountName);
+            expect(updateDelegatedToOthers).toHaveBeenCalledWith(accountName);
 
             // Verify the final commits
-            expect(commit).toHaveBeenCalledWith('setCurrentAccount', accountName);
+            expect(setCurrentAccount).toHaveBeenCalledWith(accountName);
 
             // Verify the loading and forceUpdate states
-            expect(commit).toHaveBeenCalledWith('setForceUpdate', false);
-            expect(commit).toHaveBeenCalledWith('unsetLoading', 'updateResources');
+            expect(setForceUpdate).toHaveBeenCalledWith(false);
+
+            expect(unsetLoading).toHaveBeenCalledWith('updateResources');
+            expect(resourceStore.currentAccount).toEqual(accountName);
         });
 
+        test('when we request data from a different account', async () => {
+            const resourceStore = useResourceStore();
+            const newAccount = 'newAccount';
+
+            setLoading = jest.spyOn(resourceStore, 'setLoading');
+            setCurrentAccount = jest.spyOn(resourceStore, 'setCurrentAccount');
+            setDelegatedToOthers = jest.spyOn(resourceStore, 'setDelegatedToOthers');
+            unsetLoading = jest.spyOn(resourceStore, 'unsetLoading');
+            setForceUpdate = jest.spyOn(resourceStore, 'setForceUpdate');
+            updateSelfStaked = jest.spyOn(resourceStore, 'updateSelfStaked');
+            updateDelegatedToOthers = jest.spyOn(resourceStore, 'updateDelegatedToOthers');
+
+            // call the action login
+            await resourceStore.updateResources({
+                account: newAccount,
+                force: false,
+            });
+
+            // Verify the loading and forceUpdate states
+            expect(setLoading).toHaveBeenCalledWith('updateResources');
+            expect(setForceUpdate).toHaveBeenCalledWith(false);
+
+            // Verify dispatch calls
+            expect(updateSelfStaked).toHaveBeenCalledWith(newAccount);
+            expect(updateDelegatedToOthers).toHaveBeenCalledWith(newAccount);
+
+            // Verify the final commits
+            expect(setCurrentAccount).toHaveBeenCalledWith(newAccount);
+
+            // Verify the loading and forceUpdate states
+            expect(setForceUpdate).toHaveBeenCalledWith(false);
+            expect(unsetLoading).toHaveBeenCalledWith('updateResources');
+        });
     });
 
     describe('updateSelfStaked()', () => {
-
         test('when current account is not the given account', async () => {
             const resourceStore = useResourceStore();
 
+            setLoading = jest.spyOn(resourceStore, 'setLoading');
+            setDelegatedFromOthers = jest.spyOn(resourceStore, 'setDelegatedFromOthers');
+            setSelfStaked = jest.spyOn(resourceStore, 'setSelfStaked');
+            unsetLoading = jest.spyOn(resourceStore, 'unsetLoading');
+
             const anotheraccount = 'anotheraccount';
-            rootState.account.data = {
-                self_delegated_bandwidth: {
-                    cpu_weight: ref(1),
-                    net_weight: ref(1),
-                },
-                net_weight: ref(10000),
-                cpu_weight: ref(10000),
-            } as unknown as API.v1.AccountObject;
+
             setDelbandResponse([accountName]);
 
             // call the action login
-            await (resourceStore as { updateSelfStaked: (a:unknown, b:string) => Promise<void> }).updateSelfStaked(
-                { commit, dispatch, state, rootState },
-                anotheraccount,
-            );
+            await resourceStore.updateSelfStaked(anotheraccount);
 
             // Verify the loading state
-            expect(commit).toHaveBeenCalledWith('setLoading', 'updateSelfStaked');
-
-            // Verify the api call to get the account data
-            expect(dispatch).toHaveBeenCalledWith('account/loadAccountData', anotheraccount, { root: true });
+            expect(setLoading).toHaveBeenCalledWith('updateSelfStaked');
 
             // Verify the final commits
-            expect(commit).toHaveBeenCalledWith('setDelegatedFromOthers', {
+            expect(setDelegatedFromOthers).toHaveBeenCalledWith({
                 from: 'not-available',
                 to: anotheraccount,
                 net_weight: '0.0000 TLOS',
                 cpu_weight: '0.0000 TLOS',
             });
-            expect(commit).toHaveBeenCalledWith('setSelfStaked', {
+            expect(setSelfStaked).toHaveBeenCalledWith({
                 from: anotheraccount,
                 to: anotheraccount,
                 net_weight: '1.0000 TLOS',
@@ -310,10 +295,7 @@ describe('Store - Resources Actions', () => {
             });
 
             // Verify the loading state
-            expect(commit).toHaveBeenCalledWith('unsetLoading', 'updateSelfStaked');
-
+            expect(unsetLoading).toHaveBeenCalledWith('updateSelfStaked');
         });
-
     });
-
 });

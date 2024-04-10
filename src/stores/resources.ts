@@ -108,8 +108,8 @@ export const useResourceStore = defineStore('resource', {
 
         async updateResources({ account, force }: {account?:string, force?: boolean}) {
             const accountStore = useAccountStore();
-
             const currentAccount = (account) ?? (accountStore.accountName);
+
             try {
                 this.setLoading('updateResources');
                 this.setForceUpdate(force);
@@ -139,6 +139,7 @@ export const useResourceStore = defineStore('resource', {
 
             try {
                 this.setLoading('updateSelfStaked');
+
                 if (
                     this.currentAccount !== account ||
                     this.selfStaked?.from !== account ||

@@ -8,7 +8,6 @@ import ConfigManager, { getChain } from 'src/config/ConfigManager';
 import { useRouteDataNetwork } from 'src/router';
 import { HeaderSettings } from 'src/types/UiCustomization';
 import { useAccountStore } from 'src/stores/account';
-import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -20,7 +19,6 @@ export default defineComponent({
     setup() {
         const $q = useQuasar();
         const accountStore = useAccountStore();
-        const chainStore = useChainStore();
         const headerSettings = computed((): HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
 
         const account = computed(() => accountStore.accountName);

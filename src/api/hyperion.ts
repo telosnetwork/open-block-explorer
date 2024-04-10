@@ -38,15 +38,6 @@ const name = chain.getName();
 const url =
   `https://raw.githubusercontent.com/telosnetwork/token-list/main/tokens.${name}.json`;
 
-const tokenListPromise = fetch(url)
-    .then(response => response.text())
-    .then((fileContent: string) => JSON.parse(fileContent) as { account: string }[])
-    .then(originals => originals.map(token => token as unknown as Token))
-    .catch((error) => {
-        console.error(error);
-        return [];
-    });
-
 const MAX_REQUESTS_COUNT = 5;
 const INTERVAL_MS = 10;
 let PENDING_REQUESTS = 0;
@@ -97,23 +88,32 @@ export const getCreator = async function (address: string): Promise<AccountCreat
 };
 
 export const getTokens = async function (address?: string): Promise<Token[]> {
-    if (address) {
-        const response = await hyperion.get('v2/state/get_tokens', {
-            params: { account: address },
+    try {
+        const tokens = await axios.get(url).then((response) => {
+            const nhaca = (response.data as Token[]);
+            console.log(nhaca);
+            return nhaca;
         });
-        const tokens = await tokenListPromise;
-        const balances = (response.data as {tokens:Token[]}).tokens;
-        return balances.map((token:Token) => {
-            const tk = tokens.find((t:Token) => t.symbol === token.symbol) as Token;
-            if (tk && tk.logo) {
-                token.logo = tk?.logo;
-            } else {
-                token.logo = DEFAULT_ICON;
-            }
-            return token;
-        });
-    } else {
-        return await tokenListPromise;
+        if (address) {
+            const response = await hyperion.get('v2/state/get_tokens', {
+                params: { account: address },
+            });
+            const balances = (response.data as {tokens:Token[]}).tokens;
+            // return tokens;
+            return balances.map((token:Token) => {
+                const tk = tokens.find((t:Token) => t.symbol === token.symbol);
+                if (tk && tk.logo) {
+                    token.logo = tk?.logo;
+                } else {
+                    token.logo = DEFAULT_ICON;
+                }
+                return token;
+            });
+        } else {
+            return tokens;
+        }
+    } catch(e) {
+        console.error(e);
     }
 };
 
