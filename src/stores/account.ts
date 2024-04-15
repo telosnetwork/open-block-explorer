@@ -234,7 +234,6 @@ export const useAccountStore = defineStore('account', {
         async loadAccountData() {
             try {
                 this.data = await api.getAccount(this.accountName);
-                console.log('account - loadAccountData', this.data);
             } catch (e) {
                 return;
             }
