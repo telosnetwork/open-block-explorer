@@ -89,15 +89,13 @@ export const getCreator = async function (address: string): Promise<AccountCreat
 
 export const getTokens = async function (address?: string): Promise<Token[]> {
     try {
-        const tokens = await axios.get(url).then((response) => {
-            const nhaca = (response.data as Token[]);
-            console.log(nhaca);
-            return nhaca;
-        });
+        const tokens = await axios.get(url).then(response => response.data as Token[]);
+
         if (address) {
             const response = await hyperion.get('v2/state/get_tokens', {
                 params: { account: address },
             });
+
             const balances = (response.data as {tokens:Token[]}).tokens;
             // return tokens;
             return balances.map((token:Token) => {
