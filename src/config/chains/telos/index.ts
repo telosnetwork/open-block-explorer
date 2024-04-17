@@ -150,4 +150,9 @@ export default class Telos extends BaseChain {
             { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
         ];
     }
+
+    getFathomSiteId(): string | null {
+        return 'VMVLEWFD';
+    }
+
 }
