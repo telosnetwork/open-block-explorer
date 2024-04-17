@@ -96,13 +96,23 @@ export default class ConfigManager {
     }
 
     private findChain(chainName: string) {
-        const fromMainnet = this.mainnets.find(
+        let fromMainnet = this.mainnets.find(
             c => c.getName() === chainName,
         );
         if (fromMainnet) {
             return fromMainnet;
+        } else {
+            fromMainnet = this.testnets.find(c => c.getName() === chainName);
         }
 
-        return this.testnets.find(c => c.getName() === chainName);
+        if (fromMainnet) {
+            return fromMainnet;
+        } else {
+            if (typeof chainName === 'string') {
+                throw new Error(`Chain '${chainName}' not found`);
+            } else {
+                throw new Error('CHAIN_NAME env variable not found');
+            }
+        }
     }
 }
