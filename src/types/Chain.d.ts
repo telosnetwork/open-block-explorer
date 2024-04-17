@@ -24,4 +24,5 @@ export interface Chain {
   getFiltersSupported(prop: string): boolean;
   isTestnet(): boolean;
   getFooterLinks(): FooterLink[];
+  getFathomSiteId(): string | null;
 }

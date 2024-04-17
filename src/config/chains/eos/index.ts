@@ -133,4 +133,8 @@ export default class EOS extends BaseChain {
             { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
         ];
     }
+
+    getFathomSiteId(): string | null {
+        return null;
+    }
 }
