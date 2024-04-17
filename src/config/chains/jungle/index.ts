@@ -145,4 +145,9 @@ export default class TelosTestnet extends BaseChain {
             { label: 'REPOSITORY', url: 'https://github.com/telosnetwork/open-block-explorer' },
         ];
     }
+
+    getFathomSiteId(): string | null {
+        return null;
+    }
+
 }
