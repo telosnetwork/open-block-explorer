@@ -1,19 +1,18 @@
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
-import { DialogChainObject } from 'quasar';
-import { getAuthenticators } from 'src/boot/ual';
-import { useQuasar } from 'quasar';
+import { Session } from '@wharfkit/session';
+import { DialogChainObject, useQuasar } from 'quasar';
 import { useAccountStore } from 'src/stores/account';
+import { computed, defineComponent, ref } from 'vue';
 
 
 export default defineComponent({
     name: 'WalletModal',
     setup() {
-        const authenticators = getAuthenticators();
         const $q = useQuasar();
-        const store = useAccountStore();
+        const accountStore = useAccountStore();
         const error = ref<string>(null);
-        const account = computed(() => store.accountName);
+        const account = accountStore.accountName;
+        const user = accountStore.user;
         const loading = {};
         const walletDialog = ref<DialogChainObject>(null);
         const iconSize = computed(() => {
@@ -23,14 +22,9 @@ export default defineComponent({
             return '1.5em';
         });
 
-        const onLogin = async (idx: number) => {
-            const authenticator = authenticators[idx];
-            error.value = null;
+        const onLogin = () => {
             try {
-                await store.login({
-                    account: account.value,
-                    authenticator,
-                });
+                accountStore.login(user as Session);
             } catch (e) {
                 error.value = e as string;
             }
@@ -61,30 +55,6 @@ export default defineComponent({
     </div>
     <q-separator/>
     <q-list>
-        <q-item
-            v-for="(wallet, idx) in $ual.getAuthenticators().availableAuthenticators"
-            :key="wallet.getStyle().text"
-            v-ripple
-            :style="{background: wallet.getStyle().background, color: wallet.getStyle().textColor}"
-        >
-            <q-item-section class="cursor-pointer" avatar @click="onLogin(idx)"><img :src="wallet.getStyle().icon" width="30"></q-item-section>
-            <q-item-section class="cursor-pointer" @click="onLogin(idx)">{{ wallet.getStyle().text }}</q-item-section>
-            <q-item-section class="flex" avatar>
-                <q-spinner v-if="loading === wallet.getStyle().text" :color="wallet.getStyle().textColor" size="2em"/>
-                <q-btn
-                    v-else
-                    :color="wallet.getStyle().textColor"
-                    icon="get_app"
-                    target="_blank"
-                    dense
-                    flat
-                    size="12px"
-                    @click="openUrl(wallet.getOnboardingLink())"
-                >
-                    <q-tooltip>Get app</q-tooltip>
-                </q-btn>
-            </q-item-section>
-        </q-item>
         <q-item v-if="error" :active="!!error" active-class="bg-red-1 text-grey-8">
             <q-item-section>{{ error }}</q-item-section>
         </q-item>
