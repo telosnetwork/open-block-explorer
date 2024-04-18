@@ -1,16 +1,16 @@
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useQuasar } from 'quasar';
-import JsonViewer from 'vue-json-viewer';
-import moment from 'moment';
-import { api } from 'src/api';
-import { RequestedApprovals, Error, Proposal } from 'src/types';
+import { ABI, ABIDef, Action, Serializer, Transaction } from '@wharfkit/session';
 import sha256 from 'fast-sha256';
-import { ABI, ABIDef, Action, Serializer, Transaction } from '@greymass/eosio';
+import moment from 'moment';
+import { useQuasar } from 'quasar';
+import { api } from 'src/api';
 import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
-import { sleep } from 'src/utils/time';
 import { useAccountStore } from 'src/stores/account';
+import { Error, Proposal, RequestedApprovals } from 'src/types';
+import { sleep } from 'src/utils/time';
+import { computed, defineComponent, onMounted, ref } from 'vue';
+import JsonViewer from 'vue-json-viewer';
+import { useRoute, useRouter } from 'vue-router';
 
 export default defineComponent({
     name: 'ProposalItem',
@@ -319,7 +319,7 @@ export default defineComponent({
             name: 'approve' | 'unapprove' | 'cancel' | 'exec';
             data: unknown;
         }) {
-            const response = await accountStore.user.signTransaction(
+            const response = await accountStore.user.transact(
                 {
                     actions: [
                         {
@@ -334,10 +334,6 @@ export default defineComponent({
                             data,
                         },
                     ],
-                },
-                {
-                    blocksBehind: 3,
-                    expireSeconds: 30,
                 },
             );
 

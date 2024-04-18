@@ -3,7 +3,7 @@ import { defineComponent, ref, onMounted } from 'vue';
 import KeyAccountsCard from 'src/components/KeyAccountsCard.vue';
 import { useRoute } from 'vue-router';
 import { api } from 'src/api';
-import { Name, PublicKey } from '@greymass/eosio';
+import { Name, PublicKey } from '@wharfkit/session';
 
 /* eslint-disable */
 export default defineComponent({

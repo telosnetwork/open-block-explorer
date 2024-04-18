@@ -1,7 +1,7 @@
 import { DelegatedResources, useResourceStore } from 'src/stores/resources';
 import { ref } from 'vue';
 import { GetTableRowsParams } from 'src/types';
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 import { createPinia, setActivePinia } from 'pinia';
 import { getTableRows } from 'src/api/eosio_core';
 import axios from 'axios';
@@ -27,7 +27,7 @@ const transactionHeaders = {
     transaction_extensions: [] as never[],
 };
 
-jest.mock('@greymass/eosio', () => ({
+jest.mock('@wharfkit/session', () => ({
     // mocking static functions from
     Name: {
         from: (s: string) => ({ toString: () => s }),
@@ -59,7 +59,7 @@ jest.mock('src/config/ConfigManager', () => ({
         getSymbol: () => 'TLOS',
         getName: () => 'Telos',
         getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
-        getRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
+        getRPCEndpoint: () => '',
         getHyperionEndpoint: () => '',
         getApiEndpoint: () => '',
         getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),

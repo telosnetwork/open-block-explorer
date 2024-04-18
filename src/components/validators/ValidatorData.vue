@@ -6,7 +6,7 @@ import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { GetTableRowsParams } from 'src/types';
 import WalletModal from 'src/components/WalletModal.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { Name } from '@greymass/eosio';
+import { Name } from '@wharfkit/session';
 import { formatCurrency, assetToAmount } from 'src/utils/string-utils';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';

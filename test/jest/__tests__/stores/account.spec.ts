@@ -1,6 +1,4 @@
-// import { AccountStateInterface } from 'src/stores/account';
-
-import { Authenticator, User, UALError, ButtonStyle, Chain } from 'universal-authenticator-library';
+import { Session } from '@wharfkit/session';
 import { createPinia, setActivePinia } from 'pinia';
 import { useAccountStore } from 'src/stores/account';
 
@@ -23,7 +21,7 @@ const transactionHeaders = {
     transaction_extensions: [] as never[],
 };
 
-jest.mock('@greymass/eosio', () => ({
+jest.mock('@wharfkit/session', () => ({
     Name: {
         from: (s: string) => ({ toString: () => s }),
     },
@@ -46,199 +44,85 @@ jest.mock('@greymass/eosio', () => ({
     })),
 }));
 
-jest.mock('src/api/fuel', () => ({
-    FuelUserWrapper: class {
-        constructor() {
-            jest.fn();
-        }
-        getAccountName() {
-            return 'john.doe';
-        }
-        requestPermission = '';
-    },
-}));
 const chainIdMock = 'chainIdMock';
 
 const users = [{
     name: 'John Doe',
     getAccountName: jest.fn().mockResolvedValue('john.doe'),
-} as unknown as User];
-
-class MockAuthenticator extends Authenticator {
-    reset(): void {
-        throw new Error('Method not implemented.');
-    }
-    isErrored(): boolean {
-        throw new Error('Method not implemented.');
-    }
-    getOnboardingLink(): string {
-        throw new Error('Method not implemented.');
-    }
-    getError(): UALError {
-        throw new Error('Method not implemented.');
-    }
-    isLoading(): boolean {
-        throw new Error('Method not implemented.');
-    }
-    getStyle(): ButtonStyle {
-        throw new Error('Method not implemented.');
-    }
-    shouldRender(): boolean {
-        throw new Error('Method not implemented.');
-    }
-    shouldAutoLogin(): boolean {
-        throw new Error('Method not implemented.');
-    }
-    login(accountName?: string): Promise<User[]> {
-        return Promise.resolve(users);
-    }
-    logout(): Promise<void> {
-        throw new Error('Method not implemented.');
-    }
-    requiresGetKeyConfirmation(): boolean {
-        throw new Error('Method not implemented.');
-    }
-    getName(): string {
-        return 'autoLogin';
-    }
-    init(): Promise<void> {
-        // Implementation for initialization logic
-        return Promise.resolve();
-    }
-    shouldRequestAccountName(): Promise<boolean> {
-        return Promise.resolve(true);
-    }
-    chains: Chain[] = [{
-        chainId: chainIdMock,
-    }] as unknown as Chain[]
-}
+} as unknown];
 
 describe('Store - Account Actions', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         setActivePinia(createPinia());
-
     });
 
     describe('login()', () => {
-        test('when no account is provided it should request account', async () => {
+        test('when permission is defined', () => {
             const accountStore = useAccountStore();
 
-            const authenticator = new MockAuthenticator(null);
+            const login = jest.spyOn(accountStore, 'login');
+            const setAccountPermission = jest.spyOn(accountStore, 'setAccountPermission');
+            const setUser = jest.spyOn(accountStore, 'setUser');
+            const setIsAuthenticated = jest.spyOn(accountStore, 'setIsAuthenticated');
+            const setAccountName = jest.spyOn(accountStore, 'setAccountName');
 
-            const accountStoreLoginSpy = jest.spyOn(accountStore, 'login');
-            const mockInit = jest.spyOn(authenticator, 'init');
-            const mockShouldRequestAccountName = jest.spyOn(authenticator, 'shouldRequestAccountName');
+            const mockSession = {
+                permission: 'custom',
+                actor: 'accountName',
+            } as unknown as Session;
 
-            // call the action login
-            await accountStore.login(
-                { account: null, authenticator },
-            );
 
-            // verify that the action called correctly the init function of the authenticator
-            expect(accountStoreLoginSpy).toHaveBeenCalledWith({ account: null, authenticator });
+            accountStore.login(mockSession);
 
-            // // Verify that the action called correctly the commit mutation 'setRequestAccount' with the value true
-            expect(mockInit).toHaveBeenCalledTimes(1);
-
-            expect(mockShouldRequestAccountName).toHaveBeenCalledTimes(1);
-
+            expect(login).toHaveBeenCalledWith(mockSession);
+            expect(setAccountPermission).toHaveBeenCalledWith('custom');
+            expect(setUser).toHaveBeenCalledWith(mockSession);
+            expect(setIsAuthenticated).toHaveBeenCalledWith(true);
+            expect(setAccountName).toHaveBeenCalledWith('accountName');
         });
 
-        test('when not account provided but not needed', async () => {
+        test('when permission is null', () => {
             const accountStore = useAccountStore();
-            const authenticator = new MockAuthenticator(null);
 
-            const requestAccountSpy = jest.spyOn(authenticator, 'shouldRequestAccountName');
-            const authenticatorInit = jest.spyOn(authenticator, 'init');
-            const authenticatorLogin = jest.spyOn(authenticator, 'login');
-            requestAccountSpy.mockResolvedValue(false);
+            const login = jest.spyOn(accountStore, 'login');
+            const setAccountPermission = jest.spyOn(accountStore, 'setAccountPermission');
+            const setUser = jest.spyOn(accountStore, 'setUser');
+            const setIsAuthenticated = jest.spyOn(accountStore, 'setIsAuthenticated');
+            const setAccountName = jest.spyOn(accountStore, 'setAccountName');
 
-            // call the action login
-            await accountStore.login(
-                { account: null, authenticator },
-            );
+            const mockSession = {
+                permission: null,
+                actor: 'accountName',
+            } as unknown as Session;
 
-            // verify that the action called correctly the init function of the authenticator
-            expect(authenticatorInit).toHaveBeenCalled();
+            accountStore.login(mockSession);
 
-            expect(requestAccountSpy).toHaveBeenCalled();
-            expect(accountStore.requestAccount).toEqual(false);
-
-            // Verify that the action called the login method of the authenticator
-            expect(authenticatorLogin).toHaveBeenCalled();
-            expect(accountStore.accountPermission).toBe('active');
-            expect(accountStore.isAuthenticated).toBe(true);
-            expect(accountStore.accountName).toBe('john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('account_' + chainIdMock, 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin_' + chainIdMock, 'autoLogin');
-
+            expect(login).toHaveBeenCalledWith(mockSession);
+            expect(setAccountPermission).toHaveBeenCalledWith('active');
+            expect(setUser).toHaveBeenCalledWith(mockSession);
+            expect(setIsAuthenticated).toHaveBeenCalledWith(true);
+            expect(setAccountName).toHaveBeenCalledWith('accountName');
         });
-
-        test('when account provided - Normal case', async () => {
-            const accountStore = useAccountStore();
-            const authenticator = new MockAuthenticator(null);
-
-            const requestAccountSpy = jest.spyOn(authenticator, 'shouldRequestAccountName');
-            const authenticatorInit = jest.spyOn(authenticator, 'init');
-            const authenticatorLogin = jest.spyOn(authenticator, 'login');
-            requestAccountSpy.mockResolvedValue(false);
-
-            // call the action login
-            await accountStore.login(
-                { account: 'john.doe', authenticator },
-            );
-
-            // Verify that the action called correctly the init function of the authenticator
-            expect(authenticatorInit).toHaveBeenCalled();
-
-            // Verify that the action called the login method of the authenticator
-            expect(authenticatorLogin).toHaveBeenCalled();
-            expect(accountStore.accountPermission).toBe('active');
-            expect(accountStore.isAuthenticated).toBe(true);
-            expect(accountStore.accountName).toBe('john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('account_' + chainIdMock, 'john.doe');
-            expect(localStorageMock.setItem).toHaveBeenCalledWith('autoLogin_' + chainIdMock, 'autoLogin');
-        });
-
     });
 
     describe('logout()', () => {
-        beforeEach(async () => {
-            jest.clearAllMocks();
-
-            // Logs in
-            const accountStore = useAccountStore();
-            const authenticator = new MockAuthenticator(null);
-            await accountStore.login(
-                { account: 'john.doe', authenticator },
-            );
-        });
-
-        test('normal case', () => {
+        test('when permission is defined', () => {
             const accountStore = useAccountStore();
 
-            expect(accountStore.user).not.toBe(null);
-            expect(accountStore.accountPermission).toBe('active');
-            expect(accountStore.isAuthenticated).toBe(true);
-            expect(accountStore.accountName).toBe('john.doe');
+            const logout = jest.spyOn(accountStore, 'logout');
+            const setAccountPermission = jest.spyOn(accountStore, 'setAccountPermission');
+            const setUser = jest.spyOn(accountStore, 'setUser');
+            const setIsAuthenticated = jest.spyOn(accountStore, 'setIsAuthenticated');
+            const setAccountName = jest.spyOn(accountStore, 'setAccountName');
 
-            // call the action logout
             accountStore.logout();
 
-            expect(accountStore.user).toBe(null);
-            expect(accountStore.isAuthenticated).toBe(false);
-            expect(accountStore.accountName).toBe('');
-
-            expect(localStorageMock.removeItem).toHaveBeenCalledWith('account_' + chainIdMock);
-            expect(localStorageMock.removeItem).toHaveBeenCalledWith('autoLogin_' + chainIdMock);
+            expect(logout).toHaveBeenCalledTimes(1);
+            expect(setAccountPermission).toHaveBeenCalledWith('');
+            expect(setUser).toHaveBeenCalledWith(null);
+            expect(setIsAuthenticated).toHaveBeenCalledWith(false);
+            expect(setAccountName).toHaveBeenCalledWith('');
         });
     });
 });
-
-
-
-
-
-
-

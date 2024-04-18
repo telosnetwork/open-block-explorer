@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import { Token } from 'src/types';
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
 

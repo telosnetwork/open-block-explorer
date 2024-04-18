@@ -1,12 +1,13 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import { Token } from 'src/types';
+import { API } from '@wharfkit/session';
+import { api } from 'src/api';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { API } from '@greymass/eosio';
-import { formatCurrency } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
+import { Token } from 'src/types';
+import { formatCurrency } from 'src/utils/string-utils';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'RefundTab',
@@ -126,7 +127,7 @@ export default defineComponent({
         },
         async loadAccountData(): Promise<void> {
             try {
-                const data = await this.$api.getAccount(
+                const data = await api.getAccount(
                     this.accountStore.abi.account_name,
                 );
                 this.accountStore.setAccountData(data);
