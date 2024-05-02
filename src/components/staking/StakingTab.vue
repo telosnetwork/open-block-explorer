@@ -1,13 +1,11 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { API } from '@wharfkit/session';
-import { assetToAmount } from 'src/utils/string-utils';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
-
-const chain = getChain();
+import { useNetworksStore } from 'src/stores/networks';
+import { assetToAmount } from 'src/utils/string-utils';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'StakingTab',
@@ -17,9 +15,11 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
+        const networksStore = useNetworksStore();
+
         let openTransaction = ref<boolean>(false);
         const stakeTokens = ref<string>('');
-        const symbol = ref<string>(chain.getSystemToken().symbol);
+        const symbol = ref<string>(networksStore.getCurrentNetwork.getSystemToken().symbol);
         const transactionId = computed((): string => accountStore.TransactionId);
         const transactionError = computed(() => accountStore.TransactionError);
         const accountData = computed(() => accountStore.data as API.v1.AccountObject);
@@ -61,7 +61,7 @@ export default defineComponent({
                 amount: stakeTokens.value,
             });
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + networksStore.getCurrentNetwork.getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }

@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
-import { formatCurrency } from 'src/utils/string-utils';
-import { Action, GetTableRowsParams } from 'src/types';
 import { api } from 'src/api';
 import { useAccountStore } from 'src/stores/account';
-import { getChain } from 'src/config/ConfigManager';
+import { useNetworksStore } from 'src/stores/networks';
+import { Action, GetTableRowsParams } from 'src/types';
+import { formatCurrency } from 'src/utils/string-utils';
 
 export interface DelegatedResources {
     from: string
@@ -23,11 +23,6 @@ export interface ResourcesStateInterface {
     loading: string[];
     forceUpdate: boolean;
 }
-
-const chain = getChain();
-const symbol = chain.getSystemToken().symbol;
-const precision = chain.getSystemToken().precision;
-
 
 export const useResourceStore = defineStore('resource', {
     state: (): ResourcesStateInterface => ({
@@ -136,6 +131,8 @@ export const useResourceStore = defineStore('resource', {
         // self staked resources actions
         async updateSelfStaked(account: string) {
             const accountStore = useAccountStore();
+            const networksStore = useNetworksStore();
+            const { symbol, precision } = networksStore.getCurrentNetwork.getSystemToken();
 
             try {
                 this.setLoading('updateSelfStaked');

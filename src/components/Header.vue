@@ -4,10 +4,8 @@ import { useQuasar } from 'quasar';
 import LoginHandler from 'components/LoginHandler.vue';
 import HeaderSearch from 'components/HeaderSearch.vue';
 import ChainsMenu from 'components/ChainsMenu.vue';
-import ConfigManager, { getChain } from 'src/config/ConfigManager';
-import { useRouteDataNetwork } from 'src/router';
-import { HeaderSettings } from 'src/types/UiCustomization';
 import { useAccountStore } from 'src/stores/account';
+import { useNetworksStore } from 'src/stores/networks';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -19,22 +17,21 @@ export default defineComponent({
     setup() {
         const $q = useQuasar();
         const accountStore = useAccountStore();
-        const headerSettings = computed((): HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
+        const networksStore = useNetworksStore();
+        const headerSettings = networksStore.getCurrentNetwork.getUiCustomization().headerSettings;
 
         const account = computed(() => accountStore.accountName);
         const isLarge = computed((): boolean => $q.screen.gt.md);
-        const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
+        const showMultichainSelector = networksStore.networks.length > 1;
 
-        const isTestnet = ref(getChain().isTestnet());
-        const smallLogoPath = ref(getChain().getSmallLogoPath());
-        const largeLogoPath = ref(getChain().getLargeLogoPath());
+        const isTestnet = ref(networksStore.getCurrentNetwork.isTestnet());
+        const smallLogoPath = ref(networksStore.getCurrentNetwork.getSmallLogoPath());
+        const largeLogoPath = ref(networksStore.getCurrentNetwork.getLargeLogoPath());
 
-        const network = useRouteDataNetwork();
-
-        watch(network, () => {
-            smallLogoPath.value = getChain().getSmallLogoPath();
-            largeLogoPath.value = getChain().getLargeLogoPath();
-            isTestnet.value = getChain().isTestnet();
+        watch(networksStore.currentNetworkName, () => {
+            smallLogoPath.value = networksStore.getCurrentNetwork.getSmallLogoPath();
+            largeLogoPath.value = networksStore.getCurrentNetwork.getLargeLogoPath();
+            isTestnet.value = networksStore.getCurrentNetwork.isTestnet();
         });
 
         return {

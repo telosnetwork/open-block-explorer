@@ -2,19 +2,21 @@
 import {
     ABIDef,
     ABISerializable,
-    API,
     Action,
     ActionType,
+    API,
     APIClient,
-    Serializer,
-    PublicKey,
     Name,
+    PublicKey,
+    Serializer,
 } from '@wharfkit/session';
+import { useNetworksStore } from 'src/stores/networks';
 import { GetTableRowsParams } from 'src/types';
 import { Chain } from 'src/types/Chain';
-import { getChain } from 'src/config/ConfigManager';
 
-const chain: Chain = getChain();
+
+const networksStore = useNetworksStore();
+const chain: Chain = networksStore.getCurrentNetwork;
 
 const eosioCore = new APIClient({
     url: chain.getHyperionEndpoint(),

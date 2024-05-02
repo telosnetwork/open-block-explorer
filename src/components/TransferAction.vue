@@ -8,10 +8,9 @@ import {
     onMounted,
 } from 'vue';
 import AccountSearch from 'components/AccountSearch.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { ProposalAction } from 'src/types';
+import { useNetworksStore } from 'src/stores/networks';
 
-const chain = getChain();
 
 interface Field {
   name: string;
@@ -32,10 +31,11 @@ export default defineComponent({
         },
     },
     setup(props, context) {
+        const networksStore = useNetworksStore();
         const action = reactive<ProposalAction>(props.modelValue);
 
         const mask = computed(() => {
-            const { precision } = chain.getSystemToken();
+            const { precision } = networksStore.getCurrentNetwork.getSystemToken();
             let mask = '#';
             if (precision > 0) {
                 mask += `.${'#'.repeat(precision)}`;
@@ -43,11 +43,11 @@ export default defineComponent({
             return mask;
         });
 
-        const token = computed(() => chain.getSystemToken().symbol);
+        const token = computed(() => networksStore.getCurrentNetwork.getSystemToken().symbol);
 
         const updateAction = (newAction: ProposalAction) => {
             let actionToFormat = { ...newAction };
-            const { precision } = chain.getSystemToken();
+            const { precision } = networksStore.getCurrentNetwork.getSystemToken();
 
             const numberArray = actionToFormat.data.quantity.match(/\d+/g);
 

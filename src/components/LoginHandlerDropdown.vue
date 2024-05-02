@@ -2,14 +2,15 @@
 import { kit } from 'src/boot/wharf';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useAccountStore } from 'src/stores/account';
-import { computed, defineComponent, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'LoginHandlerDropdown',
     components: { WalletModal },
     setup() {
         const accountStore = useAccountStore();
-        const account = computed(() => accountStore.accountName);
+
+        const account = accountStore.accountName;
         const showModal = ref(false);
 
         const onLogout = async (): Promise<void> => {

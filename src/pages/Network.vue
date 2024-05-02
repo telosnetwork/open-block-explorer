@@ -4,8 +4,8 @@ import PriceChart from 'components/PriceChart.vue';
 import TransactionsTable from 'components/TransactionsTable.vue';
 import WorldMap from 'components/WorldMap.vue';
 import MapData from 'components/MapData.vue';
-import ConfigManager from 'src/config/ConfigManager';
 import { useChainStore } from 'src/stores/chain';
+import { useNetworksStore } from 'src/stores/networks';
 
 enum MapReveal {
     Reveal,
@@ -23,12 +23,14 @@ export default defineComponent({
     },
     setup() {
         const chainStore = useChainStore();
-        const mapDisplay = ConfigManager.get().getCurrentChain().getMapDisplay();
+        const networksStore = useNetworksStore();
+        const mapDisplay = networksStore.getCurrentNetwork.getMapDisplay();
         const showMap = ref(false);
         const showMapHint = ref(false);
         const SCROLL_TIMEOUT = 100;
         let mapReveal = ref(MapReveal.None);
         let isScrolling: NodeJS.Timeout;
+
         const toggleMap = () => {
             showMap.value = !showMap.value;
             if (!showMap.value && mapReveal.value !== MapReveal.None) {

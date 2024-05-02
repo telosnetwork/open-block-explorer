@@ -1,10 +1,9 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
-import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
+import { useNetworksStore } from 'src/stores/networks';
 
-const configMgr = ConfigManager.get();
 
 export default defineComponent({
     name: 'ChainsSelector',
@@ -20,11 +19,11 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const route = useRoute();
         const router = useRouter();
+        const networksStore = useNetworksStore();
 
-        const mainnets = computed(() => sortChainsUsingName(configMgr.getMainnets()));
-        const testnets = computed(() => sortChainsUsingName(configMgr.getTestnets()));
+        const mainnets = computed(() => sortChainsUsingName(networksStore.getMainnets));
+        const testnets = computed(() => sortChainsUsingName(networksStore.getTestnets));
 
         function sortChainsUsingName(chains: Chain[]): Chain[] {
             return chains.sort(
@@ -36,13 +35,13 @@ export default defineComponent({
             if (props.isChainSelected(chain)) {
                 return;
             }
+            props.onChainSelected(chain);
 
             void router.push({
-                path: route.path,
-                query: { network: chain.getName() },
+                name: 'network',
+                query: { network: String(networksStore.currentNetworkName) },
             });
 
-            props.onChainSelected(chain);
         }
 
         return {
@@ -64,7 +63,8 @@ export default defineComponent({
         :class="{ selected: isChainSelected(chain) }"
         clickable
         @click="chainSelected(chain)"
-    ><img class="sidebar-logo" :src="chain.getSmallLogoPath()">
+    >
+        <img class="sidebar-logo" :src="chain.getSmallLogoPath()">
         <q-item-section>
             <div class="q-pl-md">{{ chain.getDisplay() }}</div>
         </q-item-section>

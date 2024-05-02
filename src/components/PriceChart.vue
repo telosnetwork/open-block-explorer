@@ -4,11 +4,9 @@ import { Chart } from 'highcharts-vue';
 import Highcharts from 'highcharts';
 import exportingInit from 'highcharts/modules/exporting';
 import { DateTuple } from 'src/types';
-import { getChain } from 'src/config/ConfigManager';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { getCssVar } from 'quasar';
-
-const chain = getChain();
+import { useNetworksStore } from 'src/stores/networks';
 
 const ONE_MILLION = 1000000;
 const ONE_BILLION = 1000000000;
@@ -20,6 +18,8 @@ export default defineComponent({
         Highcharts: Chart,
     },
     setup() {
+        const networksStore = useNetworksStore();
+
         const hcInstance = Highcharts;
         const chartOptions = ref({
             //   uncomment to fill area
@@ -73,7 +73,7 @@ export default defineComponent({
             },
             series: [
                 {
-                    name: chain.getSystemToken().symbol,
+                    name: networksStore.getCurrentNetwork.getSystemToken().symbol,
                     color: getCssVar('primary'),
                     data: [] as DateTuple[],
                 },
@@ -92,7 +92,7 @@ export default defineComponent({
         const dayChange = ref('');
 
         const fetchPriceChartData = async () => {
-            const data: PriceChartData = await chain.getPriceData();
+            const data: PriceChartData = await networksStore.getCurrentNetwork.getPriceData();
             lastUpdated.value = data.lastUpdated;
             tokenPrice.value = formatCurrencyValue(data.tokenPrice);
             dayChange.value = formatPercentage(data.dayChange);

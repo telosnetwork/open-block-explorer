@@ -1,13 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API, UInt64 } from '@wharfkit/session';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
-
-const chain = getChain();
+import { useNetworksStore } from 'src/stores/networks';
 
 export default defineComponent({
     name: 'BuyRam',
@@ -17,9 +15,11 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
+        const networksStore = useNetworksStore();
+
         let openTransaction = ref<boolean>(false);
         const buyAmount = ref<string>('');
-        const symbol = ref<string>(chain.getSystemToken().symbol);
+        const symbol = ref<string>(networksStore.getCurrentNetwork.getSystemToken().symbol);
         const buyOptions = [symbol.value, 'Bytes'];
         const buyOption = ref<string>(buyOptions[0]);
         const receivingAccount = ref<string>(accountStore.accountName);
@@ -103,7 +103,7 @@ export default defineComponent({
                 });
             }
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + networksStore.getCurrentNetwork.getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }

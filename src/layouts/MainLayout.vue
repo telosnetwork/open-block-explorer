@@ -2,11 +2,10 @@
 import AppFooter from 'components/Footer.vue';
 import AppHeader from 'components/Header.vue';
 import { setCssVar } from 'quasar';
-import { getChain } from 'src/config/ConfigManager';
+import { useNetworksStore } from 'src/stores/networks';
 import { themeProps } from 'src/types/Theme';
 import { DEFAULT_THEME } from 'src/config/BaseChain';
-import { defineComponent, onMounted, watch } from 'vue';
-import { useRouteDataNetwork } from 'src/router';
+import { defineComponent, onMounted, watch, onRenderTracked, onRenderTriggered } from 'vue';
 
 export default defineComponent({
     name: 'MainLayout',
@@ -15,10 +14,11 @@ export default defineComponent({
         AppFooter,
     },
     setup() {
-        const networkChain = useRouteDataNetwork();
+        const networksStore = useNetworksStore();
 
         function setTheme(): void {
-            const theme = getChain().getTheme();
+            const theme = networksStore.getCurrentNetwork.getTheme();
+
             for (let themeVar of themeProps) {
                 if (theme[themeVar]) {
                     setCssVar(themeVar, theme[themeVar]);
@@ -29,14 +29,14 @@ export default defineComponent({
         }
 
         function setMetaData(): void {
-            const chainName = getChain().getName();
+            const chainName = String(networksStore.getCurrentNetwork.getName());
             let link = document.querySelector('link[rel~="icon"]');
             (link as HTMLLinkElement).href = `chains/${chainName}/favicon.png`;
 
             document.title = chainName;
         }
 
-        watch(networkChain, () => {
+        watch(networksStore.currentNetworkName, () => {
             setTheme();
             setMetaData();
         });
@@ -47,7 +47,6 @@ export default defineComponent({
         });
 
         return {
-            networkChain,
         };
     },
 });

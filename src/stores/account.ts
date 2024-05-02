@@ -1,7 +1,7 @@
 import { API, Name, ResolvedSigningRequest, Session, UInt64 } from '@wharfkit/session';
 import { defineStore } from 'pinia';
 import { api } from 'src/api';
-import { getChain } from 'src/config/ConfigManager';
+import { useNetworksStore } from 'src/stores/networks';
 import { ABI, Action, Authorization, GetTableRowsParams, Rexbal, RexbalRows, RexPoolRows } from 'src/types';
 import { formatCurrency } from 'src/utils/string-utils';
 import { markRaw } from 'vue';
@@ -31,8 +31,8 @@ export interface AccountStateInterface {
     chainId: string;
 }
 
-const chain = getChain();
-const { symbol } = chain.getSystemToken();
+const networksStore = useNetworksStore();
+const { symbol } = networksStore.getCurrentNetwork.getSystemToken();
 
 export const useAccountStore = defineStore('account', {
     state: (): AccountStateInterface => ({

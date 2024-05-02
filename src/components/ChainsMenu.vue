@@ -1,11 +1,9 @@
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { computed, onMounted, defineComponent, ref } from 'vue';
 import ChainsListSelector from 'src/components/ChainsListSelector.vue';
-import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
-import { useRoute, useRouter } from 'vue-router';
-
-const configMgr = ConfigManager.get();
+import { useNetworksStore } from 'src/stores/networks';
+import { useRouter, useRoute } from 'vue-router';
 
 export default defineComponent({
     name: 'ChainsMenu',
@@ -14,24 +12,26 @@ export default defineComponent({
     },
     setup() {
         const menuOpened = ref(false);
-        const route = useRoute();
         const router = useRouter();
+        const route = useRoute();
+        const networksStore = useNetworksStore();
 
         const menuIcon = computed(() => menuOpened.value ? 'expand_less' : 'expand_more');
-        const hasChainsInstalled = computed(() => configMgr.getAllChains().length > 0);
+        const hasChainsInstalled = networksStore.networks.length > 0;
 
-        function chainSelected() {
+        function onChainSelected(chain: Chain) {
+            networksStore.currentNetworkName = chain.getName();
             menuOpened.value = false;
         }
 
         function isChainSelected(chain: Chain): boolean {
-            return sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE) === chain.getName();
+            return networksStore.currentNetworkName === chain.getName();
         }
 
         onMounted(() => {
-            const currentChain = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
-            if (currentChain === null) {
-                const chains = configMgr.getMainnets();
+            // FIXME: fallback should be defined by local storage or env file
+            if (!networksStore.currentNetworkName || networksStore.currentNetworkName === '') {
+                const chains = networksStore.getMainnets;
                 const telos = chains.filter(chain => chain.getName() === 'telos')[0];
 
                 if(!isChainSelected(telos)) {
@@ -46,7 +46,7 @@ export default defineComponent({
         return {
             menuOpened,
             menuIcon,
-            chainSelected,
+            onChainSelected,
             isChainSelected,
             hasChainsInstalled,
         };
@@ -60,7 +60,7 @@ export default defineComponent({
     <q-menu v-model="menuOpened">
         <div class="chains-menu">
             <ChainsListSelector
-                :on-chain-selected="chainSelected"
+                :on-chain-selected="onChainSelected"
                 :is-chain-selected="isChainSelected"
             />
         </div>

@@ -3,11 +3,10 @@ import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
 import { isValidAccount } from 'src/utils/string-utils';
-import { getChain } from 'src/config/ConfigManager';
 import { useRouter } from 'vue-router';
 import { useAccountStore } from 'src/stores/account';
+import { useNetworksStore } from 'src/stores/networks';
 
-const chain = getChain();
 
 export default defineComponent({
     name: 'SendDialog',
@@ -23,8 +22,10 @@ export default defineComponent({
     emits: ['update-token-balances'],
     setup(props, context) {
         const accountStore = useAccountStore();
+        const networksStore = useNetworksStore();
+
         const router = useRouter();
-        const sendToken = ref<Token>(chain.getSystemToken());
+        const sendToken = ref<Token>(networksStore.getCurrentNetwork.getSystemToken());
         const availableTokens = toRef(props, 'availableTokens');
         const sendDialog = ref<boolean>(false);
         const openCoinDialog = ref<boolean>(false);
@@ -81,7 +82,7 @@ export default defineComponent({
 
         const resetForm = () => {
             sendToken.value = {
-                symbol: chain.getSystemToken().symbol,
+                symbol: networksStore.getCurrentNetwork.getSystemToken().symbol,
                 precision: 4,
                 amount: 0,
                 contract: 'eosio.token',
