@@ -2,10 +2,10 @@
 import AppFooter from 'components/Footer.vue';
 import AppHeader from 'components/Header.vue';
 import { setCssVar } from 'quasar';
+import { DEFAULT_THEME } from 'src/config/BaseChain';
 import { useNetworksStore } from 'src/stores/networks';
 import { themeProps } from 'src/types/Theme';
-import { DEFAULT_THEME } from 'src/config/BaseChain';
-import { defineComponent, onMounted, watch, onRenderTracked, onRenderTriggered } from 'vue';
+import { defineComponent, onMounted, watch } from 'vue';
 
 export default defineComponent({
     name: 'MainLayout',

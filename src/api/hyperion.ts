@@ -7,25 +7,24 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { useNetworksStore } from 'src/stores/networks';
 import {
-    ActionData,
-    Action,
+    ABI,
     AccountDetails,
+    Action,
+    ActionData,
+    Block,
+    ChainInfo,
+    Get_actions,
+    GetActionsResponse,
+    GetProducers,
+    GetProposals,
+    GetProposalsProps,
+    PermissionLinks,
+    PermissionLinksData,
+    ProducerSchedule,
+    TableByScope,
     Token,
     Transaction,
-    PermissionLinksData,
-    PermissionLinks,
-    TableByScope,
-    Block,
-    Get_actions,
-    ChainInfo,
-    ProducerSchedule,
-    GetProposalsProps,
-    GetProposals,
-    GetProducers,
-    ABI,
 } from 'src/types';
-import { Chain } from 'src/types/Chain';
-import { getChain } from 'src/config/ConfigManager';
 import { AccountCreatorInfo, HyperionTransactionFilter } from 'src/types/Api';
 import { Chain } from 'src/types/Chain';
 

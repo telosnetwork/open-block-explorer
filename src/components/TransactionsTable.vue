@@ -1,9 +1,19 @@
 <script lang="ts">
+// eslintdisable @typescript-eslint/no-unsafe-assignment
+import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
+import { api } from 'src/api';
+import AccountSearch from 'src/components/AccountSearch.vue';
+import DateField from 'src/components/DateField.vue';
+import TokenSearch from 'src/components/TokenSearch.vue';
+import AccountFormat from 'src/components/transaction/AccountFormat.vue';
+import ActionFormat from 'src/components/transaction/ActionFormat.vue';
+import DataFormat from 'src/components/transaction/DataFormat.vue';
+import { useNetworksStore } from 'src/stores/networks';
 import {
     Action,
     PaginationSettings,
-    TransactionTableRow,
     Token,
+    TransactionTableRow,
 } from 'src/types';
 import {
     computed,
@@ -15,16 +25,7 @@ import {
     toRefs,
     watch,
 } from 'vue';
-import DateField from 'src/components/DateField.vue';
-import AccountFormat from 'src/components/transaction/AccountFormat.vue';
-import ActionFormat from 'src/components/transaction/ActionFormat.vue';
-import DataFormat from 'src/components/transaction/DataFormat.vue';
-import AccountSearch from 'src/components/AccountSearch.vue';
-import TokenSearch from 'src/components/TokenSearch.vue';
-import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
-import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
-import { useNetworksStore } from 'src/stores/networks';
 
 const TWO_SECONDS = 2000;
 
