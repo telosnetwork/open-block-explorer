@@ -23,10 +23,10 @@ export default defineComponent({
         const symbol = ref<string>(networksStore.getCurrentNetwork.getSystemToken().symbol);
         const unstakeInput = ref<QInput>(null);
         const transactionId = computed(
-            (): string => accountStore.TransactionId,
+            (): string => accountStore.transactionId,
         );
         const transactionError = computed(
-            () => accountStore.TransactionError,
+            () => accountStore.transactionError,
         );
         const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const rexInfo = computed(() => accountStore.data.rex_info);

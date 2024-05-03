@@ -117,7 +117,7 @@ export default defineComponent({
                     data,
                 });
 
-                this.transactionId = this.accountStore.TransactionId;
+                this.transactionId = this.accountStore.transactionId;
             } catch (e) {
                 this.transactionError = e;
                 this.accountStore.setTransactionError(e);

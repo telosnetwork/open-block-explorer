@@ -1,6 +1,7 @@
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useChainStore } from 'src/stores/chain';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'MapData',
@@ -12,18 +13,16 @@ export default defineComponent({
     },
     setup() {
         const chainStore = useChainStore();
-        const HeadBlockProducer = computed(
-            (): string => chainStore.head_block_producer,
-        );
-        const HeadBlock = computed((): number => chainStore.head_block_num);
-        const lastIrreversibleBlock = computed(
-            (): number => chainStore.last_irreversible_block_num,
-        );
+        const {
+            head_block_producer,
+            head_block_num,
+            last_irreversible_block_num,
+        } = storeToRefs(chainStore);
 
         return {
-            HeadBlock,
-            HeadBlockProducer,
-            lastIrreversibleBlock,
+            head_block_producer,
+            head_block_num,
+            last_irreversible_block_num,
         };
     },
 });
@@ -34,7 +33,7 @@ export default defineComponent({
     <div class="col-3">
         <div class="row">
             <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Head Block</div>
-            <div class="col-12 text-subtitle1 text-bold">{{HeadBlock.toLocaleString()}}</div>
+            <div class="col-12 text-subtitle1 text-bold">{{head_block_num.toLocaleString()}}</div>
         </div>
     </div>
     <div class="col-1">
@@ -43,7 +42,7 @@ export default defineComponent({
     <div class="col-3">
         <div class="row">
             <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Producing</div>
-            <div class="col-12 text-subtitle1 text-bold">{{HeadBlockProducer}}</div>
+            <div class="col-12 text-subtitle1 text-bold">{{head_block_producer}}</div>
         </div>
     </div>
     <div class="col-1">
@@ -52,7 +51,7 @@ export default defineComponent({
     <div class="col-3">
         <div class="row">
             <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Irreversible Block</div>
-            <div class="col-12 text-subtitle1 text-bold">{{lastIrreversibleBlock.toLocaleString()}}</div>
+            <div class="col-12 text-subtitle1 text-bold">{{last_irreversible_block_num.toLocaleString()}}</div>
         </div>
     </div>
 </div>

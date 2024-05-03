@@ -1,11 +1,11 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@wharfkit/session';
-import { assetToAmount, formatNumberWithCommas } from 'src/utils/string-utils';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
 import { useNetworksStore } from 'src/stores/networks';
+import { assetToAmount, formatNumberWithCommas } from 'src/utils/string-utils';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'SavingsTab',
@@ -23,8 +23,8 @@ export default defineComponent({
         );
         const toSavingAmount = ref<string>('');
         const fromSavingAmount = ref<string>('');
-        const transactionId = ref<string>(accountStore.TransactionId);
-        const transactionError = ref<unknown>(accountStore.TransactionError);
+        const transactionId = ref<string>(accountStore.transactionId);
+        const transactionError = ref<unknown>(accountStore.transactionError);
         const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const eligibleStaked = computed(() => (
             assetToAmount(accountStore.maturedRex) +

@@ -1,11 +1,11 @@
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
-import { Token } from 'src/types';
-import { isValidAccount } from 'src/utils/string-utils';
-import { useRouter } from 'vue-router';
 import { useAccountStore } from 'src/stores/account';
 import { useNetworksStore } from 'src/stores/networks';
+import { Token } from 'src/types';
+import { isValidAccount } from 'src/utils/string-utils';
+import { computed, defineComponent, PropType, ref, toRef } from 'vue';
+import { useRouter } from 'vue-router';
 
 
 export default defineComponent({
@@ -35,10 +35,10 @@ export default defineComponent({
 
         const account = computed(() => accountStore.accountName);
         const transactionId = computed(
-            (): string => accountStore.TransactionId,
+            (): string => accountStore.transactionId,
         );
         const transactionError = computed(
-            () => accountStore.TransactionError,
+            () => accountStore.transactionError,
         );
         const transactionForm = computed(
             () => !(transactionError.value || transactionId.value),

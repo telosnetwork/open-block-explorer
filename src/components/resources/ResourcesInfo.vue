@@ -37,12 +37,12 @@ export default defineComponent({
             const selfStakedResources =
                 Number(
                     accountData.value.self_delegated_bandwidth?.net_weight.value
-                        ? accountData.value.self_delegated_bandwidth.net_weight.value
+                        ? accountData.value.self_delegated_bandwidth?.net_weight.value
                         : '0',
                 ) +
                 Number(
                     accountData.value.self_delegated_bandwidth?.cpu_weight.value
-                        ? accountData.value.self_delegated_bandwidth.cpu_weight.value
+                        ? accountData.value.self_delegated_bandwidth?.cpu_weight.value
                         : '0',
                 );
             return totalStakedResources - selfStakedResources;

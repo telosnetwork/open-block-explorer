@@ -45,8 +45,8 @@ export default defineComponent({
         const lastStaked = ref<number>(0);
         const stakedAmount = ref<number>(0);
         const accountValid = computed(() => account.value && account.value !== '');
-        const transactionId = ref<string>(accountStore.TransactionId);
-        const transactionError = ref<unknown>(accountStore.TransactionError);
+        const transactionId = ref<string>(accountStore.transactionId);
+        const transactionError = ref<unknown>(accountStore.transactionError);
         const openTransaction = ref<boolean>(false);
         const showWalletModal = ref<boolean>(false);
         const payrate = ref(0);

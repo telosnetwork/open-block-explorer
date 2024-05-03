@@ -1,20 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable */
+
 //FIXME: remove eslint-disable
 
-import { useStorage } from '@vueuse/core';
+import { RemovableRef, useStorage } from '@vueuse/core';
 import { defineStore } from 'pinia';
 import { createNetwork } from 'src/config/NetworkFactory';
 import { Chain } from 'src/types/Chain';
 export interface NetworksStateInterface {
     networks: Chain[],
-    currentNetworkName: any,
-    preferredNetworkName: any,
+    currentNetworkName: RemovableRef<string>,
+    preferredNetworkName: RemovableRef<string>,
 }
 const CHAIN_LOCAL_STORAGE = 'selectedChainName';
 const PREFERRED_CHAIN_LOCAL_STORAGE = 'preferredChainName';
-const SUPPORTED_NETWORKS = process.env.SUPPORTED_NETWORKS.split(' ');
+const SUPPORTED_NETWORKS: string[] = process.env.SUPPORTED_NETWORKS.split(' ');
 
 export const useNetworksStore = defineStore('networks', {
     state: (): NetworksStateInterface => ({
@@ -34,12 +32,11 @@ export const useNetworksStore = defineStore('networks', {
         },
     },
     actions: {
-        async setupNetworks() {
+        setupNetworks() {
             const supportedNetworks: Chain[] = [];
-            await SUPPORTED_NETWORKS.forEach((networkName: string) => supportedNetworks.push(createNetwork(networkName)));
+            SUPPORTED_NETWORKS.forEach((networkName: string) => supportedNetworks.push(createNetwork(networkName)));
             this.networks = supportedNetworks;
 
-            let isCurrentNetworkUpdated = false;
             if (this.currentNetworkName) {
                 // checks if current network is supported
                 const isCurrentNetworkUpdated = this.updateCurrentNetwork(this.currentNetworkName);
@@ -47,20 +44,15 @@ export const useNetworksStore = defineStore('networks', {
                     // if network is not supported, we remove it
                     this.currentNetworkName = '';
                 }
-            }
-
-            if (this.preferredNetworkName) {
+            } else if (this.preferredNetworkName) {
                 // If there is a preferred network and it is supported, we default to it
                 const preferredNetwork = this.networks.find((chain: Chain) => chain.getName() === this.preferredNetworkName);
                 if (preferredNetwork) {
-                    if (!isCurrentNetworkUpdated) {
-                        // currentNetwork wasn't supported, but preferred network is
-                        // we'll update the current network with the preferred one
-                        this.updateCurrentNetwork(this.preferredNetworkName)
-                        isCurrentNetworkUpdated = true;
-                    }
+                    // currentNetwork wasn't supported, but preferred network is
+                    // we'll update the current network with the preferred one
+                    this.updateCurrentNetwork(this.preferredNetworkName);
                 } else {
-                    this.preferredNetworkName = ''
+                    this.preferredNetworkName = '';
                 }
             }
         },

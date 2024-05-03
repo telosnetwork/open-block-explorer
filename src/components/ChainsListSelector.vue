@@ -1,8 +1,8 @@
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { Chain } from 'src/types/Chain';
-import { useRouter } from 'vue-router';
 import { useNetworksStore } from 'src/stores/networks';
+import { Chain } from 'src/types/Chain';
+import { computed, defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
 
 
 export default defineComponent({
@@ -39,7 +39,7 @@ export default defineComponent({
 
             void router.push({
                 name: 'network',
-                query: { network: String(networksStore.currentNetworkName) },
+                query: { network: chain.getName() },
             });
 
         }

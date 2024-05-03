@@ -36,7 +36,7 @@ export default defineComponent({
             document.title = chainName;
         }
 
-        watch(networksStore.currentNetworkName, () => {
+        watch(networksStore.getCurrentNetwork, () => {
             setTheme();
             setMetaData();
         });

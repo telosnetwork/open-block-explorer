@@ -22,8 +22,8 @@ export default defineComponent({
         const netTokens = ref<string>('');
         const cpuWithdraw = ref<string>('0');
         const netWithdraw = ref<string>('0');
-        const transactionId = ref<string>(accountStore.TransactionId);
-        const transactionError = ref<unknown>(accountStore.TransactionError);
+        const transactionId = ref<string>(accountStore.transactionId);
+        const transactionError = ref<unknown>(accountStore.transactionError);
         const stakingAccount = computed(
             (): string => accountStore.accountName,
         );

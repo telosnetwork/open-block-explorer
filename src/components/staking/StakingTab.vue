@@ -20,8 +20,8 @@ export default defineComponent({
         let openTransaction = ref<boolean>(false);
         const stakeTokens = ref<string>('');
         const symbol = ref<string>(networksStore.getCurrentNetwork.getSystemToken().symbol);
-        const transactionId = computed((): string => accountStore.TransactionId);
-        const transactionError = computed(() => accountStore.TransactionError);
+        const transactionId = computed((): string => accountStore.transactionId);
+        const transactionError = computed(() => accountStore.transactionError);
         const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const rexInfo = computed(() => accountStore.data.rex_info);
         const rexbal = computed(() => accountStore.rexbal);

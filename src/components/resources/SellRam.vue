@@ -20,8 +20,8 @@ export default defineComponent({
         let openTransaction = ref<boolean>(false);
         const sellAmount = ref('');
         const symbol = ref<string>(networksStore.getCurrentNetwork.getSystemToken().symbol);
-        const transactionId = computed(() => accountStore.TransactionId);
-        const transactionError = computed(() => accountStore.TransactionError);
+        const transactionId = computed(() => accountStore.transactionId);
+        const transactionError = computed(() => accountStore.transactionError);
         const ramPrice = computed((): string => chainStore.ram_price);
         const sellPreview = computed(
             () => formatCurrency((Number(sellAmount.value) / 1000) * Number(ramPrice.value), 4, symbol.value),

@@ -1,11 +1,11 @@
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue';
-import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { API, UInt64 } from '@wharfkit/session';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
 import { useNetworksStore } from 'src/stores/networks';
+import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
     name: 'BuyRam',
@@ -24,7 +24,7 @@ export default defineComponent({
         const buyOption = ref<string>(buyOptions[0]);
         const receivingAccount = ref<string>(accountStore.accountName);
         const transactionId = computed(
-            (): string => accountStore.TransactionId,
+            (): string => accountStore.transactionId,
         );
         const buyPreview = computed(() => {
             if (buyOption.value === buyOptions[0]) {
@@ -44,7 +44,7 @@ export default defineComponent({
             }
         });
         const transactionError = computed(
-            () => accountStore.TransactionError,
+            () => accountStore.transactionError,
         );
         const ramPrice = computed((): string => chainStore.ram_price);
         const ramAvailable = computed(() =>

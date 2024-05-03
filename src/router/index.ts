@@ -111,6 +111,9 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
                             query: to.query,
                         });
                     } else {
+                        if (from.query.network && from.query.network !== to.query.network) {
+                            setTimeout(() => location.reload(), 500);
+                        }
                         // The network is valid and we don't need to redirect
                         // We'll allow the original path
                         return;

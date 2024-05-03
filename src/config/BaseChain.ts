@@ -3,7 +3,6 @@ import { Chain } from 'src/types/Chain';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { FooterLink, UiCustomization } from 'src/types/UiCustomization';
-import { RpcEndpoint } from 'universal-authenticator-library';
 
 export const DEFAULT_THEME = {
     primary: '#11589e',

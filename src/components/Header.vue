@@ -1,11 +1,11 @@
 <script lang="ts">
-import { defineComponent, computed, ref, watch } from 'vue';
-import { useQuasar } from 'quasar';
-import LoginHandler from 'components/LoginHandler.vue';
-import HeaderSearch from 'components/HeaderSearch.vue';
 import ChainsMenu from 'components/ChainsMenu.vue';
+import HeaderSearch from 'components/HeaderSearch.vue';
+import LoginHandler from 'components/LoginHandler.vue';
+import { useQuasar } from 'quasar';
 import { useAccountStore } from 'src/stores/account';
 import { useNetworksStore } from 'src/stores/networks';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -24,20 +24,14 @@ export default defineComponent({
         const isLarge = computed((): boolean => $q.screen.gt.md);
         const showMultichainSelector = networksStore.networks.length > 1;
 
-        const isTestnet = ref(networksStore.getCurrentNetwork.isTestnet());
-        const smallLogoPath = ref(networksStore.getCurrentNetwork.getSmallLogoPath());
-        const largeLogoPath = ref(networksStore.getCurrentNetwork.getLargeLogoPath());
-
-        watch(networksStore.currentNetworkName, () => {
-            smallLogoPath.value = networksStore.getCurrentNetwork.getSmallLogoPath();
-            largeLogoPath.value = networksStore.getCurrentNetwork.getLargeLogoPath();
-            isTestnet.value = networksStore.getCurrentNetwork.isTestnet();
-        });
+        const isTestnet = networksStore.getCurrentNetwork.isTestnet();
+        const smallLogoPath = networksStore.getCurrentNetwork.getSmallLogoPath();
+        const largeLogoPath = networksStore.getCurrentNetwork.getLargeLogoPath();
 
         return {
             headerSettings,
             account,
-            isLarge: isLarge,
+            isLarge,
             showMultichainSelector,
             smallLogoPath,
             largeLogoPath,

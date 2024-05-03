@@ -17,8 +17,8 @@ export interface AccountStateInterface {
     data: API.v1.AccountObject;
     authorization: Authorization[];
     rexActions: Action[];
-    TransactionId: string;
-    TransactionError: unknown;
+    transactionId: string;
+    transactionError: unknown;
     rexbal: Rexbal;
     vote: string[];
     abi: ABI;
@@ -74,8 +74,8 @@ export const useAccountStore = defineStore('account', {
 
         authorization: [],
         rexActions: [],
-        TransactionId: '',
-        TransactionError: '',
+        transactionId: '',
+        transactionError: '',
         rexbal: {} as Rexbal,
         vote: [],
         abi: { abi: null } as ABI,
@@ -99,8 +99,8 @@ export const useAccountStore = defineStore('account', {
                 data: this.data,
                 authorization: this.authorization,
                 rexActions: this.rexActions,
-                TransactionId: this.TransactionId,
-                TransactionError: this.TransactionError,
+                transactionId: this.transactionId,
+                transactionError: this.transactionError,
                 rexbal: this.rexbal,
                 vote: this.vote,
                 abi: this.abi,
@@ -133,11 +133,11 @@ export const useAccountStore = defineStore('account', {
                 vote: accountData?.voter_info?.producers.map(vote => vote.toString()) ?? [],
             });
         },
-        setTransaction(TransactionId: string) {
-            this.TransactionId = TransactionId;
+        setTransaction(transactionId: string) {
+            this.transactionId = transactionId;
         },
-        setTransactionError(TransactionError: unknown) {
-            this.TransactionError = TransactionError;
+        setTransactionError(transactionError: unknown) {
+            this.transactionError = transactionError;
         },
         setRexActions(rexActions: Action[]) {
             this.rexActions = rexActions;

@@ -149,6 +149,10 @@ export const useResourceStore = defineStore('resource', {
 
                 const accountData = accountStore.data;
 
+                if(!accountData) {
+                    return;
+                }
+
                 // self staked resources
                 const self_net_weight = Number(accountData.self_delegated_bandwidth?.net_weight.value ?? 0);
                 const self_cpu_weight = Number(accountData.self_delegated_bandwidth?.cpu_weight.value ?? 0);
