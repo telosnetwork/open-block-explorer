@@ -123,7 +123,7 @@ describe('Store - Account Actions', () => {
     describe('login()', () => {
         test('when no account is provided it should request account', async () => {
             const accountStore = useAccountStore();
-            //const authenticator = newAuthenticatorMock(true);
+
             const authenticator = new MockAuthenticator(null);
 
             const accountStoreLoginSpy = jest.spyOn(accountStore, 'login');
@@ -142,7 +142,6 @@ describe('Store - Account Actions', () => {
             expect(mockInit).toHaveBeenCalledTimes(1);
 
             expect(mockShouldRequestAccountName).toHaveBeenCalledTimes(1);
-            // expect(accountStore.requestAccount).toEqual(true);
 
         });
 
