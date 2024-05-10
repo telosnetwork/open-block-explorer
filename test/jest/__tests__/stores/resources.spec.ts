@@ -169,8 +169,6 @@ describe('Store - Resources Actions', () => {
         test('when the account is the same, we have its data and we don\'t force', async () => {
             const resourceStore = useResourceStore();
 
-            // resourceStore.currentAccount = 'account1';
-
             setLoading = jest.spyOn(resourceStore, 'setLoading');
             setCurrentAccount = jest.spyOn(resourceStore, 'setCurrentAccount');
             unsetLoading = jest.spyOn(resourceStore, 'unsetLoading');
