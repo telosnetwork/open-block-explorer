@@ -162,7 +162,7 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
         }
     });
 
-    Router.afterEach((to, from) => {
+    Router.afterEach((to) => {
         if(networksStore.networks.length > 1) {
             if(to.meta.needsNetwork && networksStore.preferredNetworkName !== '') {
                 to.meta.needsNetwork = false;

@@ -1,10 +1,12 @@
-import { DelegatedResources, useResourceStore } from 'src/stores/resources';
-import { ref } from 'vue';
-import { GetTableRowsParams } from 'src/types';
+import { createTestingPinia } from '@pinia/testing';
 import { API } from '@wharfkit/session';
+import axios from 'axios';
 import { createPinia, setActivePinia } from 'pinia';
 import { getTableRows } from 'src/api/eosio_core';
-import axios from 'axios';
+import { useNetworksStore } from 'src/stores/networks';
+import { DelegatedResources, useResourceStore } from 'src/stores/resources';
+import { GetTableRowsParams } from 'src/types';
+import { ref } from 'vue';
 
 jest.spyOn(axios, 'create');
 
@@ -52,18 +54,15 @@ jest.mock('@wharfkit/session', () => ({
     },
 }));
 
-
-jest.mock('src/config/ConfigManager', () => ({
-    getChain: () => ({
-        getChainId: () => 'chainId',
-        getSymbol: () => 'TLOS',
-        getName: () => 'Telos',
-        getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
-        getRPCEndpoint: () => '',
-        getHyperionEndpoint: () => '',
-        getApiEndpoint: () => '',
-        getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
-    }),
+jest.mock('src/stores/networks', () => ({
+    useNetworksStore: jest.fn().mockImplementation(() => ({
+        getCurrentNetwork: {
+            getName: () => 'Telos',
+            getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
+            getApiEndpoint: () => '',
+            getHyperionEndpoint: () => '',
+        },
+    })),
 }));
 
 const delbandResponse: { rows: DelegatedResources[] } = { rows: [] };
@@ -97,6 +96,7 @@ const loadAccountData = jest.fn();
 const AccountActions = {
     loadAccountData,
 };
+
 const AccountStore = { ...AccountGetters, ...AccountActions };
 jest.mock('src/stores/account', () => ({
     useAccountStore: jest.fn().mockImplementation(() => AccountStore),
@@ -127,7 +127,9 @@ describe('Store - Resources Actions', () => {
     };
 
     beforeEach(() => {
+        const mockPinia = createTestingPinia();
         setActivePinia(createPinia());
+        useNetworksStore(mockPinia);
     });
 
     describe('updateDelegatedToOthers()', () => {
