@@ -1,12 +1,12 @@
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
-import { Chart } from 'highcharts-vue';
 import Highcharts from 'highcharts';
+import { Chart } from 'highcharts-vue';
 import exportingInit from 'highcharts/modules/exporting';
-import { DateTuple } from 'src/types';
-import { PriceChartData } from 'src/types/PriceChartData';
 import { getCssVar } from 'quasar';
 import { useNetworksStore } from 'src/stores/networks';
+import { DateTuple } from 'src/types';
+import { PriceChartData } from 'src/types/PriceChartData';
+import { defineComponent, onBeforeMount, ref } from 'vue';
 
 const ONE_MILLION = 1000000;
 const ONE_BILLION = 1000000000;
@@ -84,21 +84,22 @@ export default defineComponent({
                 },
             },
         });
-        const lastUpdated = ref(0);
         const tokenPrice = ref('');
         const marketCap = ref('');
-        const rank = ref('');
         const dayVolume = ref('');
         const dayChange = ref('');
 
         const fetchPriceChartData = async () => {
-            const data: PriceChartData = await networksStore.getCurrentNetwork.getPriceData();
-            lastUpdated.value = data.lastUpdated;
-            tokenPrice.value = formatCurrencyValue(data.tokenPrice);
-            dayChange.value = formatPercentage(data.dayChange);
-            dayVolume.value = formatCurrencyValue(data.dayVolume);
-            marketCap.value = formatCurrencyValue(data.marketCap);
-            chartOptions.value.series[0].data = data.prices;
+            try {
+                const data: PriceChartData = await networksStore.getCurrentNetwork.getPriceData();
+                tokenPrice.value = formatCurrencyValue(data.tokenPrice);
+                dayChange.value = formatPercentage(data.dayChange);
+                dayVolume.value = formatCurrencyValue(data.dayVolume);
+                marketCap.value = formatCurrencyValue(data.marketCap);
+                chartOptions.value.series[0].data = data.prices;
+            } catch(e) {
+                console.error('No price data available', e);
+            }
         };
         const formatPercentage = (val: number): string => `${val.toFixed(2)} %`;
         const formatCurrencyValue = (val: number): string => val < 1 ? `$${val.toFixed(3)}` : val < ONE_MILLION
@@ -107,21 +108,17 @@ export default defineComponent({
                 ? `$${(val / ONE_MILLION).toFixed(2)}M`
                 : `$${(val / ONE_BILLION).toFixed(2)}B`;
 
-        onMounted(async () => {
+        onBeforeMount(async () => {
             await fetchPriceChartData();
         });
+
         return {
             hcInstance,
             chartOptions,
-            lastUpdated,
             tokenPrice,
             marketCap,
-            rank,
             dayVolume,
             dayChange,
-            fetchPriceChartData,
-            formatPercentage,
-            formatCurrencyValue,
         };
     },
 });
@@ -141,23 +138,23 @@ export default defineComponent({
             <div class="col-12 flex row q-mt-md">
                 <div class="col-6 chart-info">
                     <p>TOKEN PRICE</p>
-                    <p class="sub-title">{{ tokenPrice}}</p>
+                    <p class="sub-title" data-test="tokenPrice">{{ tokenPrice }}</p>
                     <p class="border-line"></p>
                 </div>
                 <div class="col-6 chart-info">
                     <p>MARKETCAP</p>
-                    <p class="sub-title">{{ marketCap }}</p>
+                    <p class="sub-title" data-test="marketCap">{{ marketCap }}</p>
                     <p class="border-line"></p>
                 </div>
             </div>
             <div class="col-12 flex row">
                 <div class="col-6 chart-info">
                     <p>24H CHANGE</p>
-                    <p class="sub-title">{{ dayChange  }}</p>
+                    <p class="sub-title" data-test="dayChange">{{ dayChange  }}</p>
                 </div>
                 <div class="col-6 chart-info">
                     <p>24H VOLUME</p>
-                    <p class="sub-title">{{ dayVolume }}</p>
+                    <p class="sub-title" data-test="dayVolume">{{ dayVolume }}</p>
                 </div>
             </div>
         </div>
