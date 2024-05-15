@@ -1,13 +1,11 @@
 <script lang="ts">
-import { defineComponent, computed, ref, watch } from 'vue';
-import { useQuasar } from 'quasar';
-import LoginHandler from 'components/LoginHandler.vue';
-import HeaderSearch from 'components/HeaderSearch.vue';
 import ChainsMenu from 'components/ChainsMenu.vue';
-import ConfigManager, { getChain } from 'src/config/ConfigManager';
-import { useRouteDataNetwork } from 'src/router';
-import { HeaderSettings } from 'src/types/UiCustomization';
+import HeaderSearch from 'components/HeaderSearch.vue';
+import LoginHandler from 'components/LoginHandler.vue';
+import { useQuasar } from 'quasar';
 import { useAccountStore } from 'src/stores/account';
+import { useNetworksStore } from 'src/stores/networks';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'AppHeader',
@@ -19,28 +17,21 @@ export default defineComponent({
     setup() {
         const $q = useQuasar();
         const accountStore = useAccountStore();
-        const headerSettings = computed((): HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
+        const networksStore = useNetworksStore();
+        const headerSettings = networksStore.getCurrentNetwork.getUiCustomization().headerSettings;
 
         const account = computed(() => accountStore.accountName);
         const isLarge = computed((): boolean => $q.screen.gt.md);
-        const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
+        const showMultichainSelector = networksStore.networks.length > 1;
 
-        const isTestnet = ref(getChain().isTestnet());
-        const smallLogoPath = ref(getChain().getSmallLogoPath());
-        const largeLogoPath = ref(getChain().getLargeLogoPath());
-
-        const network = useRouteDataNetwork();
-
-        watch(network, () => {
-            smallLogoPath.value = getChain().getSmallLogoPath();
-            largeLogoPath.value = getChain().getLargeLogoPath();
-            isTestnet.value = getChain().isTestnet();
-        });
+        const isTestnet = networksStore.getCurrentNetwork.isTestnet();
+        const smallLogoPath = networksStore.getCurrentNetwork.getSmallLogoPath();
+        const largeLogoPath = networksStore.getCurrentNetwork.getLargeLogoPath();
 
         return {
             headerSettings,
             account,
-            isLarge: isLarge,
+            isLarge,
             showMultichainSelector,
             smallLogoPath,
             largeLogoPath,

@@ -1,8 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import ChainsListSelector from 'src/components/ChainsListSelector.vue';
-import ConfigManager from 'src/config/ConfigManager';
 import { Chain } from 'src/types/Chain';
+import { useNetworksStore } from 'src/stores/networks';
 
 export default defineComponent({
     name: 'HomePage',
@@ -10,8 +10,11 @@ export default defineComponent({
         ChainsListSelector,
     },
     setup() {
+        const networksStore = useNetworksStore();
+
         function onChainSelected(chain: Chain) {
-            ConfigManager.get().setPreferredChain(chain);
+            networksStore.updatePreferredNetwork(chain.getName());
+            networksStore.updateCurrentNetwork(chain.getName());
         }
 
         return {

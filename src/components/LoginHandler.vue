@@ -1,22 +1,25 @@
 <script lang="ts">
-import { kit, ui } from 'src/boot/wharf';
+import { storeToRefs } from 'pinia';
+import { kit, ui } from 'src/api/wharf';
 import LoginHandlerDropdown from 'src/components/LoginHandlerDropdown.vue';
-import ConfigManager from 'src/config/ConfigManager';
 import { useAccountStore } from 'src/stores/account';
-import { computed, defineComponent, onMounted, ref } from 'vue';
+import { useNetworksStore } from 'src/stores/networks';
+import { defineComponent, onMounted, ref } from 'vue';
 
 export default defineComponent({
     name: 'LoginHandler',
     components: { LoginHandlerDropdown },
     setup() {
         const accountStore = useAccountStore();
+        const networksStore = useNetworksStore();
 
+        const { accountName } = storeToRefs(accountStore);
         const showDropdown = ref(false);
-        const account = computed(() => accountStore.accountName);
+
         const login = async () => {
             try {
                 const result = await kit.login();
-                if (result.session) {
+                if (result?.session) {
                     accountStore.login(result.session);
                 }
             } catch (e) {
@@ -31,10 +34,9 @@ export default defineComponent({
             try {
                 // This is only needed because the application state doesn't allow dynamic switching of chains
                 const sessions = await kit.getSessions();
-                const manager = ConfigManager.get();
                 // It'll restore the first matching account for the chain once switching chains
                 const matchingSession = sessions.find(session =>
-                    session.chain === manager.getCurrentChain().getChainId(),
+                    session.chain === networksStore.getCurrentNetwork.getChainId(),
                 );
                 if (matchingSession) {
                     const session = await kit.restore(matchingSession);
@@ -49,7 +51,7 @@ export default defineComponent({
 
         return {
             showDropdown,
-            account,
+            accountName,
             login,
         };
     },
@@ -59,7 +61,7 @@ export default defineComponent({
 <template>
 <div class="col-xs-5 col-sm-3 col-md-2 col-lg-2">
     <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
-        <LoginHandlerDropdown v-if="account"/>
+        <LoginHandlerDropdown v-if="accountName"/>
         <q-btn
             v-else
             class="button-primary btn-login"

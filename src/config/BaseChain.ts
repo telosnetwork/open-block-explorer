@@ -104,4 +104,8 @@ export default abstract class BaseChain implements Chain {
     isTestnet(): boolean {
         return false;
     }
+
+    tokenContract(): string {
+        return 'eosio.token';
+    }
 }

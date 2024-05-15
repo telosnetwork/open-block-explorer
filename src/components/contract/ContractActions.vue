@@ -12,8 +12,8 @@ export default defineComponent({
         const accountStore = useAccountStore();
         const actor = ref('');
         const openTransaction = ref<boolean>(false);
-        const transactionId = ref<string>(accountStore.TransactionId);
-        const transactionError = ref<unknown>(accountStore.TransactionError);
+        const transactionId = ref<string>(accountStore.transactionId);
+        const transactionError = ref<unknown>(accountStore.transactionError);
         const actions = computed(() =>
             accountStore.abi.abi.actions.map(a => a.name),
         );

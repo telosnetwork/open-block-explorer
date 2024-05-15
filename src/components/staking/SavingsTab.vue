@@ -1,11 +1,11 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { API } from '@wharfkit/session';
-import { assetToAmount, formatNumberWithCommas } from 'src/utils/string-utils';
-import { getChain } from 'src/config/ConfigManager';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
+import { useNetworksStore } from 'src/stores/networks';
+import { assetToAmount, formatNumberWithCommas } from 'src/utils/string-utils';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'SavingsTab',
@@ -15,14 +15,16 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
+        const networksStore = useNetworksStore();
+
         const openTransaction = ref<boolean>(false);
         const stakingAccount = computed(
             (): string => accountStore.accountName,
         );
         const toSavingAmount = ref<string>('');
         const fromSavingAmount = ref<string>('');
-        const transactionId = ref<string>(accountStore.TransactionId);
-        const transactionError = ref<unknown>(accountStore.TransactionError);
+        const transactionId = ref<string>(accountStore.transactionId);
+        const transactionError = ref<unknown>(accountStore.transactionError);
         const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const eligibleStaked = computed(() => (
             assetToAmount(accountStore.maturedRex) +
@@ -64,7 +66,7 @@ export default defineComponent({
                 amount: toSavingAmount.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + networksStore.getCurrentNetwork.getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }
@@ -82,7 +84,7 @@ export default defineComponent({
                 amount: fromSavingAmount.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + networksStore.getCurrentNetwork.getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }

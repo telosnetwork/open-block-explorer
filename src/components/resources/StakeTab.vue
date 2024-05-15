@@ -1,15 +1,12 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency, isValidAccount } from 'src/utils/string-utils';
 import { assetToAmount } from 'src/utils/string-utils';
 import { useAccountStore } from 'src/stores/account';
 import { useResourceStore } from 'src/stores/resources';
 import { useChainStore } from 'src/stores/chain';
-
-const chain = getChain();
-const symbol = chain.getSystemToken().symbol;
+import { useNetworksStore } from 'src/stores/networks';
 
 export default defineComponent({
     name: 'StakeTab',
@@ -20,6 +17,8 @@ export default defineComponent({
         const accountStore = useAccountStore();
         const resourceStore = useResourceStore();
         const chainStore = useChainStore();
+        const networksStore = useNetworksStore();
+
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>(accountStore.accountName || '');
         const accountTotal = computed((): string =>
@@ -28,6 +27,8 @@ export default defineComponent({
         const accountTotalAsNumber = computed(() => assetToAmount(accountTotal.value));
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
+        const symbol = networksStore.getCurrentNetwork.getSystemToken().symbol;
+        const chainId = networksStore.getCurrentNetwork.getChainId();
 
         function formatDec() {
             if (cpuTokens.value !== '0') {
@@ -62,6 +63,8 @@ export default defineComponent({
             isValidAccount,
             resourceStore,
             accountStore,
+            symbol,
+            chainId,
         };
     },
     computed: {
@@ -93,15 +96,15 @@ export default defineComponent({
                 transfer: false,
                 cpu_weight:
                     parseFloat(this.cpuTokens) > 0
-                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol, true)
-                        : `0.0000 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.cpuTokens), 4, this.symbol, true)
+                        : `0.0000 ${this.symbol}`,
                 net_weight:
                     parseFloat(this.netTokens) > 0
-                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol, true)
-                        : `0.0000 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.netTokens), 4, this.symbol, true)
+                        : `0.0000 ${this.symbol}`,
             });
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + this.chainId) !== 'cleos') {
                 this.openTransaction = true;
             }
         },

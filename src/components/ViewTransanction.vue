@@ -15,8 +15,8 @@ export default defineComponent({
         const accountStore = useAccountStore();
         const router = useRouter();
         const msg = computed((): string => props.message);
-        const Id = computed(() => accountStore.TransactionId);
-        const transactionE = computed(() => accountStore.TransactionError);
+        const Id = computed(() => accountStore.transactionId);
+        const transactionE = computed(() => accountStore.transactionError);
 
         const reset = () => {
             void accountStore.resetTransaction();
