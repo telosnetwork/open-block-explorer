@@ -1,25 +1,27 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import { Token } from 'src/types';
 import { API } from '@greymass/eosio';
 import { getChain } from 'src/config/ConfigManager';
 import { formatCurrency } from 'src/utils/string-utils';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
+import { useResourceStore } from 'src/stores/resources';
 
 export default defineComponent({
     name: 'ResourcesInfo',
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
+        const resourceStore = useResourceStore();
         const openCoinDialog = ref<boolean>(false);
         const stakingAccount = ref<string>('');
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
         const total = ref<string>('0');
         const token = ref<Token>(getChain().getSystemToken());
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
-        const ramPrice = computed((): string => store.state?.chain.ram_price === '0'
-            ? '0'
-            : store.state.chain.ram_price);
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
+        const ramPrice = computed((): string => chainStore.ram_price === '0' ? '0' : chainStore.ram_price);
         const ramAvailable = computed(() =>
             Number(accountData.value.ram_quota) -
             Number(accountData.value.ram_usage),
@@ -43,9 +45,7 @@ export default defineComponent({
                 );
             return totalStakedResources - selfStakedResources;
         });
-        const delegatedToOthers = computed(
-            (): number => store.state.resources.toOthersAggregated,
-        );
+        const delegatedToOthers = computed(() => resourceStore.toOthersAggregated);
 
         const accountTotal = computed(() => {
             let value = 0;
@@ -71,7 +71,6 @@ export default defineComponent({
         const formatValue = (val: number): string => formatCurrency(val || 0, token.value.precision, token.value.symbol);
 
         return {
-            store,
             openCoinDialog,
             stakingAccount,
             cpuTokens,

@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'SellRam',
@@ -12,26 +13,20 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         const chain = getChain();
         let openTransaction = ref<boolean>(false);
         const sellAmount = ref('');
         const symbol = ref<string>(chain.getSystemToken().symbol);
-        const transactionId = computed(
-            (): string => store.state.account.TransactionId,
-        );
-        const transactionError = computed(
-            () => store.state.account.TransactionError,
-        );
-        const ramPrice = computed((): string => store.state?.chain.ram_price);
+        const transactionId = computed(() => accountStore.TransactionId);
+        const transactionError = computed(() => accountStore.TransactionError);
+        const ramPrice = computed((): string => chainStore.ram_price);
         const sellPreview = computed(
             () => formatCurrency((Number(sellAmount.value) / 1000) * Number(ramPrice.value), 4, symbol.value),
         );
-        const ramAvailable = computed(
-            () =>
-                Number(store.state.account.data.ram_quota.value) -
-                Number(store.state.account.data.ram_usage.value));
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const ramAvailable = computed(() => Number(accountStore.data.ram_quota.value) - Number(accountStore.data.ram_usage.value));
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
 
         function formatDec() {
             sellAmount.value = parseInt(sellAmount.value)
@@ -39,7 +34,7 @@ export default defineComponent({
                 .replace(/[^0-9.]/g, '');
         }
         async function sell() {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             if (
                 sellAmount.value === '0' ||
                 !ramAvailable.value ||
@@ -47,7 +42,7 @@ export default defineComponent({
             ) {
                 return;
             }
-            await store.dispatch('account/sellRam', {
+            await accountStore.sellRam({
                 amount: sellAmount.value,
             });
 

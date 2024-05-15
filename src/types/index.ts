@@ -20,6 +20,7 @@ export {
     Block,
     Get_actions,
     Error,
+    GetActionsResponse,
 } from 'src/types/Actions';
 export {
     TransactionTableRow,

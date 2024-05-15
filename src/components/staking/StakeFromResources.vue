@@ -1,9 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'src/store';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
 import { API, Asset } from '@greymass/eosio';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'StakeFromResources',
@@ -11,7 +12,8 @@ export default defineComponent({
         ViewTransaction,
     },
     setup() {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         const openTransaction = ref<boolean>(false);
         const chain = getChain();
         const symbol = ref<string>(chain.getSystemToken().symbol);
@@ -19,12 +21,12 @@ export default defineComponent({
         const netTokens = ref<string>('');
         const cpuWithdraw = ref<string>('0');
         const netWithdraw = ref<string>('0');
-        const transactionId = ref<string>(store.state.account.TransactionId);
-        const transactionError = ref<unknown>(store.state.account.TransactionError);
+        const transactionId = ref<string>(accountStore.TransactionId);
+        const transactionError = ref<unknown>(accountStore.TransactionError);
         const stakingAccount = computed(
-            (): string => store.state.account.accountName,
+            (): string => accountStore.accountName,
         );
-        const accountData = computed((): API.v1.AccountObject => store.state?.account.data);
+        const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const cpuWeight = computed(
             (): Asset => accountData.value.total_resources.cpu_weight,
         );
@@ -37,8 +39,8 @@ export default defineComponent({
                 cpuTokens.value = Number(cpuTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
-                        maximumFractionDigits: store.state.chain.token.precision,
-                        minimumFractionDigits: store.state.chain.token.precision,
+                        maximumFractionDigits: chainStore.token.precision,
+                        minimumFractionDigits: chainStore.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
             }
@@ -46,15 +48,15 @@ export default defineComponent({
                 netTokens.value = Number(netTokens.value)
                     .toLocaleString('en-US', {
                         style: 'decimal',
-                        maximumFractionDigits: store.state.chain.token.precision,
-                        minimumFractionDigits: store.state.chain.token.precision,
+                        maximumFractionDigits: chainStore.token.precision,
+                        minimumFractionDigits: chainStore.token.precision,
                     })
                     .replace(/[^0-9.]/g, '');
             }
         }
 
         async function stake() {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             if (
                 (cpuTokens.value === '0' && netTokens.value === '0') ||
                 Number(cpuTokens.value) >= Number(cpuWeight.value) ||
@@ -63,7 +65,7 @@ export default defineComponent({
                 return;
             }
 
-            await store.dispatch('account/stakeCpuNetRex', {
+            await accountStore.stakeCpuNetRex({
                 cpuAmount: cpuTokens.value || '0',
                 netAmount: netTokens.value || '0',
             });
@@ -74,11 +76,11 @@ export default defineComponent({
         }
 
         async function unstake() {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             if (cpuWithdraw.value === '0' && netWithdraw.value === '0') {
                 return;
             }
-            await store.dispatch('account/unstakeCpuNetRex', {
+            await accountStore.unstakeCpuNetRex({
                 cpuAmount: cpuWithdraw.value || '0',
                 netAmount: netWithdraw.value || '0',
             });

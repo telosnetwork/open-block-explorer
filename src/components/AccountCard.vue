@@ -1,14 +1,12 @@
 <script lang="ts">
 import { Token, GetTableRowsParams, RexbalRows, RexPoolRows } from 'src/types';
 import { defineComponent, computed, ref, onMounted, watch } from 'vue';
-import { useAntelopeStore } from 'src/store/antelope.store';
 import PercentCircle from 'src/components/PercentCircle.vue';
 import SendDialog from 'src/components/SendDialog.vue';
 import ResourcesDialog from 'src/components/resources/ResourcesDialog.vue';
 import StakingDialog from 'src/components/staking/StakingDialog.vue';
 import DateField from 'src/components/DateField.vue';
-import { date, useQuasar } from 'quasar';
-import { copyToClipboard } from 'quasar';
+import { date, useQuasar, copyToClipboard } from 'quasar';
 import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
 import { useRouter } from 'vue-router';
@@ -17,6 +15,9 @@ import { API, UInt64 } from '@greymass/eosio';
 import { formatCurrency } from 'src/utils/string-utils';
 import ConfigManager from 'src/config/ConfigManager';
 import { isSystemAccount } from 'src/utils/systemAccount';
+import { useResourceStore } from 'src/stores/resources';
+import { useChainStore } from 'src/stores/chain';
+import { useAccountStore } from 'src/stores/account';
 
 const chain = getChain();
 export default defineComponent({
@@ -37,7 +38,9 @@ export default defineComponent({
     setup(props) {
         const $q = useQuasar();
         const router = useRouter();
-        const store = useAntelopeStore();
+        const resourceStore = useResourceStore();
+        const chainStore = useChainStore();
+        const accountStore = useAccountStore();
 
         const accountPageSettings = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
 
@@ -55,9 +58,7 @@ export default defineComponent({
         const ramUnit = ref<string>('kb');
         const resources = ref<number>(0);
         const delegatedByOthers = ref<number>(0.0);
-        const delegatedToOthers = computed(
-            (): number => store.resources.getDelegatedToOthersAggregated(),
-        );
+        const delegatedToOthers = computed(() => resourceStore.getDelegatedToOthersAggregated);
         const rexStaked = ref<number>(0);
         const rexProfits = ref<number>(0);
         const rexDeposits = ref<number>(0);
@@ -93,7 +94,7 @@ export default defineComponent({
 
         const staked = computed((): number => stakedRefund.value + stakedNET.value + stakedCPU.value);
 
-        const token = computed((): Token => store.state.chain.token);
+        const token = computed((): Token => chainStore.token);
 
         const liquidNative = computed((): number => accountData.value?.core_liquid_balance?.value
             ? accountData.value.core_liquid_balance.value
@@ -118,14 +119,14 @@ export default defineComponent({
             return result;
         });
 
-        const isAccount = computed((): boolean => store.state.account.accountName === props.account);
+        const isAccount = computed((): boolean => accountStore.accountName === props.account);
 
         const createTimeFormat = computed((): string =>
             date.formatDate(createTime.value, 'DD MMMM YYYY @ hh:mm A'),
         );
 
         const setToken = (value: Token) => {
-            void store.commit('chain/setToken', value);
+            void chainStore.setToken(value);
         };
 
         const loadAccountData = async (): Promise<void> => {
@@ -258,8 +259,7 @@ export default defineComponent({
             }
         };
 
-        const updateResources = (payload: {account:string, force: boolean}) =>
-            store.resources.updateResources(payload);
+        const updateResources = (payload: {account:string, force: boolean}) => resourceStore.updateResources(payload);
 
         const getRexFund = async () => {
             const paramsrexfund = {
@@ -393,11 +393,11 @@ export default defineComponent({
         onMounted(async () => {
             usdPrice.value = await chain.getUsdPrice();
             await loadAccountData();
-            await store.dispatch('account/updateRexData', {
+            await accountStore.updateRexData({
                 account: props.account,
             });
             loadSystemToken();
-            void store.dispatch('chain/updateRamPrice');
+            void chainStore.updateRamPrice();
         });
 
         watch(
@@ -405,14 +405,13 @@ export default defineComponent({
             async () => {
                 resetBalances();
                 await loadAccountData();
-                await store.dispatch('account/updateRexData', {
+                await accountStore.updateRexData({
                     account: props.account,
                 });
             },
         );
-
         watch(
-            () => store.resources.getDelegatedToOthersAggregated(),
+            (): number => resourceStore.getDelegatedToOthersAggregated,
             () => {
                 setTotalBalance();
             },

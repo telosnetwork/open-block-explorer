@@ -2,8 +2,8 @@
 import { computed, defineComponent, ref } from 'vue';
 import { DialogChainObject } from 'quasar';
 import { getAuthenticators } from 'src/boot/ual';
-import { useStore } from 'src/store';
 import { useQuasar } from 'quasar';
+import { useAccountStore } from 'src/stores/account';
 
 
 export default defineComponent({
@@ -11,9 +11,9 @@ export default defineComponent({
     setup() {
         const authenticators = getAuthenticators();
         const $q = useQuasar();
-        const store = useStore();
+        const store = useAccountStore();
         const error = ref<string>(null);
-        const account = computed(() => store.state.account.accountName);
+        const account = computed(() => store.accountName);
         const loading = {};
         const walletDialog = ref<DialogChainObject>(null);
         const iconSize = computed(() => {
@@ -27,7 +27,7 @@ export default defineComponent({
             const authenticator = authenticators[idx];
             error.value = null;
             try {
-                await store.dispatch('account/login', {
+                await store.login({
                     account: account.value,
                     authenticator,
                 });
