@@ -1,9 +1,7 @@
-import { createTestingPinia } from '@pinia/testing';
 import { API } from '@wharfkit/session';
 import axios from 'axios';
 import { createPinia, setActivePinia } from 'pinia';
 import { getTableRows } from 'src/api/eosio_core';
-import { useNetworksStore } from 'src/stores/networks';
 import { DelegatedResources, useResourceStore } from 'src/stores/resources';
 import { GetTableRowsParams } from 'src/types';
 import { ref } from 'vue';
@@ -127,9 +125,7 @@ describe('Store - Resources Actions', () => {
     };
 
     beforeEach(() => {
-        const mockPinia = createTestingPinia();
         setActivePinia(createPinia());
-        useNetworksStore(mockPinia);
     });
 
     describe('updateDelegatedToOthers()', () => {

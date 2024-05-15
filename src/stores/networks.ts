@@ -1,6 +1,3 @@
-
-//FIXME: remove eslint-disable
-
 import { RemovableRef, useStorage } from '@vueuse/core';
 import { defineStore } from 'pinia';
 import { createNetwork } from 'src/config/NetworkFactory';
