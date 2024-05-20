@@ -12,7 +12,7 @@ import {
     PublicKey,
     ActionType,
     ABISerializable,
-} from '@greymass/eosio';
+} from '@wharfkit/session';
 import {
     AccountDetails,
     Action,

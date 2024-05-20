@@ -1,18 +1,19 @@
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from 'vue';
-import { Token } from 'src/types';
-import StakingInfo from 'src/components/staking/StakingInfo.vue';
-import StakeFromResources from 'src/components/staking/StakeFromResources.vue';
+import { API } from '@wharfkit/session';
+import { api } from 'src/api';
+import HistoryTab from 'src/components/staking/HistoryTab.vue';
 import ProcessingTab from 'src/components/staking/ProcessingTab.vue';
+import SavingsTab from 'src/components/staking/SavingsTab.vue';
+import StakeFromResources from 'src/components/staking/StakeFromResources.vue';
+import StakingInfo from 'src/components/staking/StakingInfo.vue';
 import StakingTab from 'src/components/staking/StakingTab.vue';
 import UnstakingTab from 'src/components/staking/UnstakingTab.vue';
-import HistoryTab from 'src/components/staking/HistoryTab.vue';
-import SavingsTab from 'src/components/staking/SavingsTab.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { API } from '@greymass/eosio';
-import { formatCurrency } from 'src/utils/string-utils';
-import { useChainStore } from 'src/stores/chain';
 import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
+import { Token } from 'src/types';
+import { formatCurrency } from 'src/utils/string-utils';
+import { computed, defineComponent, PropType, ref } from 'vue';
 
 const symbol = getChain().getSystemToken().symbol;
 
@@ -92,13 +93,13 @@ export default defineComponent({
                 memo: this.memo,
             };
             try {
-                this.transactionId = (
-                    await this.accountStore.sendAction({
-                        account: actionAccount,
-                        data,
-                        name: 'transfer',
-                    })
-                ).transactionId;
+                const result = await this.accountStore.sendAction({
+                    account: actionAccount,
+                    data,
+                    name: 'transfer',
+                });
+
+                this.transactionId = String(result.transaction.id);
             } catch (e) {
                 this.transactionError = e as string;
             }
@@ -121,7 +122,7 @@ export default defineComponent({
         async loadAccountData(): Promise<void> {
             let data: API.v1.AccountObject;
             try {
-                data = await this.$api.getAccount(this.accountStore.accountName);
+                data = await api.getAccount(this.accountStore.accountName);
                 this.accountStore.setAccountData(data);
             } catch (e) {
                 return;
@@ -130,7 +131,7 @@ export default defineComponent({
     },
     async mounted() {
         try {
-            const apyValue = await this.$api.getApy();
+            const apyValue = await api.getApy();
             this.apy = `${apyValue}%`;
         } catch (e) {
             console.error(e);

@@ -11,7 +11,7 @@ export interface Chain {
   getSmallLogoPath(): string;
   getLargeLogoPath(): string;
   getChainId(): string;
-  getRPCEndpoint(): RpcEndpoint;
+  getRPCEndpoint(): string;
   getFuelRPCEndpoint(): RpcEndpoint | null;
   getHyperionEndpoint(): string;
   getApiEndpoint(): string;

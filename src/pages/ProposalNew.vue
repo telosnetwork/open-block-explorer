@@ -2,18 +2,18 @@
 <!-- eslint-disable vue/no-static-inline-styles -->
 <!-- eslint-disable vue/no-static-inline-styles -->
 <script lang="ts">
-import { defineComponent, reactive, ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import moment from 'moment';
-import ProposalSuccess from 'components/ProposalSuccess.vue';
-import ProposalAuthorization from 'components/ProposalAuthorization.vue';
 import ProposalAction from 'components/ProposalAction.vue';
+import ProposalAuthorization from 'components/ProposalAuthorization.vue';
+import ProposalSuccess from 'components/ProposalSuccess.vue';
 import ProposalUploadCSV from 'components/ProposalUploadCSV.vue';
-import { Authorization, ProposalForm, Error } from 'src/types';
-import { api } from 'src/api';
-import { randomEosioName } from 'src/utils/handleEosioName';
+import moment from 'moment';
 import { useQuasar } from 'quasar';
+import { api } from 'src/api';
 import { useAccountStore } from 'src/stores/account';
+import { Authorization, Error, ProposalForm } from 'src/types';
+import { randomEosioName } from 'src/utils/handleEosioName';
+import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
     name: 'ProposalNew',
@@ -153,7 +153,7 @@ export default defineComponent({
                     data.trx.actions[i].data = hexData as { [key: string]: string | number; };
                 }
 
-                const transaction = await accountStore.user.signTransaction(
+                const result = await accountStore.user.transact(
                     {
                         actions: [
                             {
@@ -169,16 +169,9 @@ export default defineComponent({
                             },
                         ],
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 30,
-                    },
                 );
-                if (accountStore.autoLogin !== 'cleos') {
-                    success.showModal = true;
-                }
 
-                success.transactionId = transaction.transactionId;
+                success.transactionId = String(result.resolved.transaction.id);
                 success.proposalName = data.proposal_name;
             } catch (e) {
                 const error = JSON.parse(JSON.stringify(e)) as Error;

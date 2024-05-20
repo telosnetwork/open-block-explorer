@@ -1,4 +1,4 @@
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 
 export interface ActionData {
   actions: Action[];

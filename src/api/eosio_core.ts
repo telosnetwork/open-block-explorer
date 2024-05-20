@@ -9,7 +9,7 @@ import {
     Serializer,
     PublicKey,
     Name,
-} from '@greymass/eosio';
+} from '@wharfkit/session';
 import { GetTableRowsParams } from 'src/types';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';

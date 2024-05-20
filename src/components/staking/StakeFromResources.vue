@@ -2,7 +2,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { getChain } from 'src/config/ConfigManager';
-import { API, Asset } from '@greymass/eosio';
+import { API, Asset } from '@wharfkit/session';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
 

@@ -1,31 +1,20 @@
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { kit } from 'src/boot/wharf';
 import WalletModal from 'src/components/WalletModal.vue';
-import { getAuthenticators } from 'src/boot/ual';
-import { Authenticator } from 'universal-authenticator-library';
-import { getChain } from 'src/config/ConfigManager';
 import { useAccountStore } from 'src/stores/account';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'LoginHandlerDropdown',
     components: { WalletModal },
     setup() {
-        const authenticators = getAuthenticators();
         const accountStore = useAccountStore();
         const account = computed(() => accountStore.accountName);
         const showModal = ref(false);
 
-        const getAuthenticator = (): Authenticator => {
-            const wallet = localStorage.getItem('autoLogin_' + getChain().getChainId());
-            return authenticators.find(
-                auth => auth.getName() === wallet,
-            );
-        };
-
         const onLogout = async (): Promise<void> => {
-            const authenticator = getAuthenticator();
             try {
-                authenticator && (await authenticator.logout());
+                await kit.logout();
                 clearAccount();
             } catch (error) {
                 console.error('Authenticator logout error', error);

@@ -1,9 +1,8 @@
-import BaseChain from 'src/config/BaseChain';
-import { RpcEndpoint } from 'universal-authenticator-library';
 import { getEmptyPriceChartData } from 'src/api/price';
+import BaseChain from 'src/config/BaseChain';
+import { Token } from 'src/types';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
-import { Token } from 'src/types';
 import { FooterLink } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
@@ -17,11 +16,7 @@ const TOKEN = {
     contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://ux.eosusa.io';
-const RPC_ENDPOINT = {
-    protocol: 'https',
-    host: 'ux.eosusa.io',
-    port: 443,
-};
+const RPC_ENDPOINT = 'https://ux.eosusa.io';
 const API_ENDPOINT = 'https://ux.eosusa.io';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = false;
@@ -44,11 +39,11 @@ export default class UX extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): RpcEndpoint {
+    getRPCEndpoint(): string {
         return RPC_ENDPOINT;
     }
 
-    getFuelRPCEndpoint(): RpcEndpoint | null {
+    getFuelRPCEndpoint(): string {
         return null;
     }
 

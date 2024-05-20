@@ -1,22 +1,17 @@
+import { API, Name, ResolvedSigningRequest, Session, UInt64 } from '@wharfkit/session';
 import { defineStore } from 'pinia';
-import { ABI, Action, Authorization, GetTableRowsParams, Rexbal, RexbalRows, RexPoolRows } from 'src/types';
-import { API, Name, UInt64 } from '@greymass/eosio';
-import { Authenticator, User } from 'universal-authenticator-library';
-import { getChain } from 'src/config/ConfigManager';
-import { markRaw } from 'vue';
-import { formatCurrency } from 'src/utils/string-utils';
-import { FuelUserWrapper } from 'src/api/fuel';
 import { api } from 'src/api';
-import { SignTransactionResponse } from 'universal-authenticator-library/dist/interfaces';
-
+import { getChain } from 'src/config/ConfigManager';
+import { ABI, Action, Authorization, GetTableRowsParams, Rexbal, RexbalRows, RexPoolRows } from 'src/types';
+import { formatCurrency } from 'src/utils/string-utils';
+import { markRaw } from 'vue';
 
 export interface AccountStateInterface {
     loading: unknown;
     accountName: string;
     accountPermission: string;
     requestAccount: boolean;
-    user: User;
-    autoLogin: unknown;
+    user: Session;
     isAuthenticated: boolean;
     linkedAccounts: Array<unknown>;
     data: API.v1.AccountObject;
@@ -46,7 +41,6 @@ export const useAccountStore = defineStore('account', {
         accountPermission: 'active',
         requestAccount: false,
         user: null,
-        autoLogin: null,
         isAuthenticated: false,
         linkedAccounts: [],
         data: {
@@ -100,7 +94,6 @@ export const useAccountStore = defineStore('account', {
                 accountName: this.accountName,
                 accountPermission: this.accountPermission,
                 user: this.user,
-                autoLogin: this.autoLogin,
                 isAuthenticated: this.isAuthenticated,
                 linkedAccounts: this.linkedAccounts,
                 data: this.data,
@@ -123,19 +116,16 @@ export const useAccountStore = defineStore('account', {
         getAccountData(): API.v1.AccountObject {
             return this.data as API.v1.AccountObject;
         },
-        getUser(): User {
-            return this.user as User;
+        getUser(): Session {
+            return this.user as Session;
         },
     },
     actions: {
-        setUser(user: User) {
+        setUser(user: Session) {
             this.user = user ? markRaw(user) : user;
         },
         setAccountName(accountName: string) {
             this.accountName = accountName;
-        },
-        setAutoLogin(autoLogin: string) {
-            this.autoLogin = autoLogin;
         },
         setAccountData(accountData: API.v1.AccountObject) {
             this.$patch({
@@ -189,47 +179,17 @@ export const useAccountStore = defineStore('account', {
             this.chainId = chainId;
         },
 
-        async login({ account, authenticator }: {account: string, authenticator: Authenticator}): Promise<void> {
-            await authenticator.init();
-
-            if (!account) {
-                const requestAccount = await (
-                    authenticator
-                ).shouldRequestAccountName();
-                if (requestAccount) {
-                    this.requestAccount = true;
-                    return;
-                }
-            }
-
-
-            const users = await authenticator.login();
-            if (users?.length) {
-                const account = new FuelUserWrapper(users[0]);
-                const permission = account.requestPermission;
-                const accountName = await account.getAccountName();
-
-                this.$patch({
-                    accountPermission: permission || 'active',
-                    user: account,
-                    isAuthenticated: true,
-                    accountName: accountName,
-                    chainId: authenticator.chains[0].chainId,
-                });
-
-                localStorage.setItem(`account_${authenticator.chains[0].chainId}`, accountName);
-                localStorage.setItem(
-                    `autoLogin_${(authenticator).chains[0].chainId}`,
-                    (authenticator).getName(),
-                );
-            }
+        login(session: Session)  {
+            this.setAccountPermission(String(session.permission || 'active'));
+            this.setUser(session);
+            this.setIsAuthenticated(true);
+            this.setAccountName(String(session.actor));
         },
         logout() {
-            this.isAuthenticated = false;
-            this.accountName = '';
-            this.user = null;
-            localStorage.removeItem(`account_${this.chainId}`);
-            localStorage.removeItem(`autoLogin_${this.chainId}`);
+            this.setIsAuthenticated(false);
+            this.setAccountName('');
+            this.setAccountPermission('');
+            this.setUser(null);
         },
         async loadAccountData() {
             try {
@@ -351,7 +311,7 @@ export const useAccountStore = defineStore('account', {
             account?: Name|string;
             actor?: Name|string;
             permission?: string;
-        }): Promise<SignTransactionResponse | null> {
+        }): Promise<ResolvedSigningRequest | null> {
             const actions = [
                 {
                     account: account ?? this.abi.account_name,
@@ -368,27 +328,20 @@ export const useAccountStore = defineStore('account', {
             return this.sendTransaction(actions);
         },
         async sendTransaction(actions: Action[]) {
-            let transaction = null;
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
+                return result.resolved;
             } catch (e) {
                 console.error(e);
                 this.setTransactionError(e);
             }
-
-            return transaction;
         },
         async stakeRex({ amount }: {amount: string}) {
-            let transaction = null;
             const quantityStr = formatCurrency(amount, 4, symbol, true);
             const actions = [
                 {
@@ -421,16 +374,12 @@ export const useAccountStore = defineStore('account', {
                 },
             ] as Action[];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
                 void this.updateRexData({ account: this.accountName });
             } catch (e) {
@@ -438,7 +387,6 @@ export const useAccountStore = defineStore('account', {
             }
         },
         async unstakeRex({ amount }: {amount: number|string}) {
-            let transaction = null;
             const tokenRexBalance = this.rexbal.rex_balance
                 ? Number(this.rexbal.rex_balance.split(' ')[0])
                 : 0;
@@ -480,16 +428,12 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
                 void this.updateRexData({ account: this.accountName });
             } catch (e) {
@@ -497,7 +441,6 @@ export const useAccountStore = defineStore('account', {
             }
         },
         async unstakeRexFund({ amount }: {amount: number}) {
-            let transaction = null;
             const quantityStr = formatCurrency(amount, 4, symbol, true);
 
             const actions = [
@@ -517,22 +460,17 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
             } catch (e) {
                 this.setTransactionError(e);
             }
         },
         async stakeCpuNetRex({ cpuAmount, netAmount }: {cpuAmount: string, netAmount: string}) {
-            let transaction = null;
             const quantityStrCPU = formatCurrency(cpuAmount, 4, symbol, true);
             const quantityStrNET = formatCurrency(netAmount, 4, symbol, true);
             const actions = [
@@ -554,16 +492,12 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
                 void this.updateRexData({ account: this.accountName });
             } catch (e) {
@@ -571,7 +505,6 @@ export const useAccountStore = defineStore('account', {
             }
         },
         async unstakeCpuNetRex({ cpuAmount, netAmount }: {cpuAmount: string, netAmount: string}) {
-            let transaction = null;
             const quantityStrCPU = formatCurrency(cpuAmount, 4, symbol, true);
             const quantityStrNET = formatCurrency(netAmount, 4, symbol, true);
             const actions = [
@@ -593,16 +526,12 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
                 void this.updateRexData({ account: this.accountName });
             } catch (e) {
@@ -618,7 +547,6 @@ export const useAccountStore = defineStore('account', {
             this.setABI(abi);
         },
         async sendVoteTransaction() {
-            let transaction = null;
             const actions = [
                 {
                     account: 'eosio',
@@ -637,22 +565,17 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
             } catch (e) {
                 this.setTransactionError(e);
             }
         },
         async buyRam({ amount, receivingAccount }: {amount: string, receivingAccount?: string}) {
-            let transaction = null;
             const actions = [
                 {
                     account: 'eosio',
@@ -671,23 +594,18 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
             } catch (e) {
                 this.setTransactionError(e);
             }
         },
         async buyRamBytes({ amount, receivingAccount }: {amount: string, receivingAccount?: string}) {
-            let transaction = null;
             const actions = [
                 {
                     account: 'eosio',
@@ -706,23 +624,18 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
             } catch (e) {
                 this.setTransactionError(e);
             }
         },
         async sellRam({ amount }: {amount: string}) {
-            let transaction = null;
             const actions = [
                 {
                     account: 'eosio',
@@ -740,23 +653,18 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
             } catch (e) {
                 this.setTransactionError(e);
             }
         },
         async moveToSavings({ amount }: {amount: string}) {
-            let transaction = null;
             const rexToUnstake = formatCurrency((+amount / this.tlosRexRatio), 4, 'REX', true);
             const actions = [
                 {
@@ -775,16 +683,12 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
                 void this.updateRexData({ account: this.accountName });
             } catch (e) {
@@ -792,7 +696,6 @@ export const useAccountStore = defineStore('account', {
             }
         },
         async moveFromSavings({ amount }: {amount: string}) {
-            let transaction = null;
             const rexToUnstake = formatCurrency((+amount / this.tlosRexRatio), 4, 'REX', true);
 
             const actions = [
@@ -812,16 +715,12 @@ export const useAccountStore = defineStore('account', {
                 },
             ];
             try {
-                transaction = await this.user.signTransaction(
+                const result = await this.user.transact(
                     {
                         actions,
                     },
-                    {
-                        blocksBehind: 3,
-                        expireSeconds: 180,
-                    },
                 );
-                this.setTransaction(transaction.transactionId);
+                this.setTransaction(String(result.resolved.transaction.id));
                 void this.loadAccountData();
                 void this.updateRexData({ account: this.accountName });
             } catch (e) {

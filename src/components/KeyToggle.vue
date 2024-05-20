@@ -2,7 +2,7 @@
 import { useQuasar } from 'quasar';
 import { computed, defineComponent, ref } from 'vue';
 import { copyToClipboard } from 'quasar';
-import { PublicKey, Weight } from '@greymass/eosio';
+import { PublicKey, Weight } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'KeyToggle',

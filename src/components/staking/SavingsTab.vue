@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 import { assetToAmount, formatNumberWithCommas } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
 import { useAccountStore } from 'src/stores/account';
