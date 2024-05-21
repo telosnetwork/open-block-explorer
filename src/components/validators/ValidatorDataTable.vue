@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue';
-import { useStore } from 'src/store';
 import { Producer } from 'src/types';
 import { getChain } from 'src/config/ConfigManager';
+import { useAccountStore } from 'src/stores/account';
+import { useChainStore } from 'src/stores/chain';
 
 const chain = getChain();
 
@@ -14,21 +15,22 @@ export default defineComponent({
         top21pay24h: { type: Number, required: true },
     },
     setup(props) {
-        const store = useStore();
+        const accountStore = useAccountStore();
+        const chainStore = useChainStore();
         const symbol = chain.getSystemToken().symbol;
-        const account = computed(() => store.state.account.accountName);
+        const account = computed(() => accountStore.accountName);
         const previousVote = computed(() =>
-            store.state.account.data.voter_info
-                ? store.state.account.data.voter_info.producers.map(vote =>
+            accountStore.data.voter_info
+                ? accountStore.data.voter_info.producers.map(vote =>
                     vote.toString(),
                 )
                 : [],
         );
         const producers = computed(() =>
-            [...store.state.chain.producers].map(val => val.owner),
+            [...chainStore.producers].map(val => val.owner),
         );
         const currentVote = computed(() => {
-            let votes = [...store.state.account.vote];
+            let votes = [...accountStore.vote];
             votes.forEach((vote, index) => {
                 if (!producers.value.includes(vote)) {
                     votes.splice(index, 1);
@@ -38,13 +40,13 @@ export default defineComponent({
         });
         const selection = ref<string[]>([]);
         const HeadProducer = computed(
-            (): string => store.state.chain.head_block_producer,
+            (): string => chainStore.head_block_producer,
         );
         const producerRows = computed(
-            (): Producer[] => store.state.chain.producers || [],
+            (): Producer[] => chainStore.producers || [],
         );
         const producerPay = computed(() => props.top21pay24h);
-        const bpTop21 = computed(() => store.state.chain.producerSchedule);
+        const bpTop21 = computed(() => chainStore.producerSchedule);
 
         const maxSelected = computed(
             () => currentVote.value.length === MAX_VOTE_PRODUCERS,
@@ -73,7 +75,7 @@ export default defineComponent({
                     val.splice(index, 1);
                 }
             });
-            store.commit('account/setVote', val);
+            accountStore.setVote(val);
         }
 
         function isTop21(val: string): boolean {

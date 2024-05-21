@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import { useStore } from 'src/store';
+import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'MapData',
@@ -11,13 +11,13 @@ export default defineComponent({
         },
     },
     setup() {
-        const store = useStore();
+        const chainStore = useChainStore();
         const HeadBlockProducer = computed(
-            (): string => store.state.chain.head_block_producer,
+            (): string => chainStore.head_block_producer,
         );
-        const HeadBlock = computed((): number => store.state.chain.head_block_num);
+        const HeadBlock = computed((): number => chainStore.head_block_num);
         const lastIrreversibleBlock = computed(
-            (): number => store.state.chain.last_irreversible_block_num,
+            (): number => chainStore.last_irreversible_block_num,
         );
 
         return {

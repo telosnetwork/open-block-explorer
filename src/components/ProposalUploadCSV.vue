@@ -2,15 +2,16 @@
 import { defineComponent, ref } from 'vue';
 import csvToJson from 'csvtojson';
 import { useQuasar } from 'quasar';
-import { useAntelopeStore } from 'src/store/antelope.store';
+import { useAccountStore } from 'src/stores/account';
 
 export default defineComponent({
     name: 'ProposalUploadCSV',
     emits: ['actions'],
     setup(_, context) {
         const $q = useQuasar();
+        const accountStore = useAccountStore();
         const file = ref<File | null>(null);
-        const permission = useAntelopeStore().state.account.accountPermission;
+        const permission = accountStore.accountPermission;
 
         function handleError(message: string) {
             $q.notify({

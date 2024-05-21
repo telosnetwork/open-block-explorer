@@ -10,7 +10,7 @@ import {
     beforeEach,
 } from '@jest/globals';
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-jest';
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import PriceChart from 'src/components/PriceChart.vue';
 import { PriceStats, PriceHistory } from 'src/types';
 import axios from 'axios';
@@ -55,9 +55,16 @@ describe('PriceChart', () => {
             it('returns value rounded to 2 decimals as a % string', () => {
                 const testVal = 123.456;
                 const expected = '123.46 %';
-                const wrapper = shallowMount(PriceChart);
+                const wrapper = mount(PriceChart, {
+                    global: {
+                        stubs: {
+                            Highcharts: {
+                                template: '<span />',
+                            },
+                        },
+                    },
+                });
                 const received = wrapper.vm.formatPercentage(testVal);
-
                 expect(received).toBe(expected);
             });
         });
@@ -65,7 +72,15 @@ describe('PriceChart', () => {
             it('returns value as "$" rounded to 2 decimals if value is less than a million', () => {
                 const testVal = 999999.9911;
                 const expected = '$999999.99';
-                const wrapper = shallowMount(PriceChart);
+                const wrapper = mount(PriceChart, {
+                    global: {
+                        stubs: {
+                            Highcharts: {
+                                template: '<span />',
+                            },
+                        },
+                    },
+                });
                 const received = wrapper.vm.formatCurrencyValue(testVal);
 
                 expect(received).toBe(expected);
@@ -73,7 +88,15 @@ describe('PriceChart', () => {
             it('returns value "$" divided by a million rounded to 2 decimals and appended with "M" if value is greater than a million and less than a billion', () => {
                 const testVal = 1234567.89;
                 const expected = '$1.23M';
-                const wrapper = shallowMount(PriceChart);
+                const wrapper =  mount(PriceChart, {
+                    global: {
+                        stubs: {
+                            Highcharts: {
+                                template: '<span />',
+                            },
+                        },
+                    },
+                });
                 const received = wrapper.vm.formatCurrencyValue(testVal);
 
                 expect(received).toBe(expected);
@@ -81,7 +104,15 @@ describe('PriceChart', () => {
             it('returns value "$" divided by a billion rounded to 2 decimals and appended with "B" if value is greater than a billion', () => {
                 const testVal = 123456789123.45678;
                 const expected = '$123.46B';
-                const wrapper = shallowMount(PriceChart);
+                const wrapper =  mount(PriceChart, {
+                    global: {
+                        stubs: {
+                            Highcharts: {
+                                template: '<span />',
+                            },
+                        },
+                    },
+                });
                 const received = wrapper.vm.formatCurrencyValue(testVal);
 
                 expect(received).toBe(expected);

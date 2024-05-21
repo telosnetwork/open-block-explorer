@@ -4,8 +4,8 @@ import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
 import { Token } from 'src/types';
 import { isValidAccount } from 'src/utils/string-utils';
 import { getChain } from 'src/config/ConfigManager';
-import { useStore } from 'src/store';
 import { useRouter } from 'vue-router';
+import { useAccountStore } from 'src/stores/account';
 
 const chain = getChain();
 
@@ -22,7 +22,7 @@ export default defineComponent({
     },
     emits: ['update-token-balances'],
     setup(props, context) {
-        const store = useStore();
+        const accountStore = useAccountStore();
         const router = useRouter();
         const sendToken = ref<Token>(chain.getSystemToken());
         const availableTokens = toRef(props, 'availableTokens');
@@ -32,12 +32,12 @@ export default defineComponent({
         const sendAmount = ref<string>('');
         const memo = ref<string>('');
 
-        const account = computed(() => store.state.account.accountName);
+        const account = computed(() => accountStore.accountName);
         const transactionId = computed(
-            (): string => store.state.account.TransactionId,
+            (): string => accountStore.TransactionId,
         );
         const transactionError = computed(
-            () => store.state.account.TransactionError,
+            () => accountStore.TransactionError,
         );
         const transactionForm = computed(
             () => !(transactionError.value || transactionId.value),
@@ -48,7 +48,7 @@ export default defineComponent({
         );
 
         const sendTransaction = async (): Promise<void> => {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             const actionAccount = sendToken.value?.contract;
             const data = {
                 from: account.value,
@@ -56,17 +56,17 @@ export default defineComponent({
                 quantity: `${sendAmount.value} ${sendToken.value?.symbol}`,
                 memo: memo.value,
             };
-            await store.dispatch('account/sendAction', {
+            await accountStore.sendAction({
                 account: actionAccount,
                 data,
                 name: 'transfer',
             });
-            void store.dispatch('account/loadAccountData');
+            void accountStore.loadAccountData();
             context.emit('update-token-balances');
         };
 
         const setDefaults = () => {
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
             if (availableTokens.value.length > 0) {
                 sendToken.value = availableTokens.value.find(token => (
                     token.symbol === sendToken.value?.symbol &&
@@ -94,7 +94,7 @@ export default defineComponent({
                 params: { transaction: transactionId.value },
             });
             router.go(0);
-            void store.dispatch('account/resetTransaction');
+            void accountStore.resetTransaction();
         };
 
         const formatDec = () => {

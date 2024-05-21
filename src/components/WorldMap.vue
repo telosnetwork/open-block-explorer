@@ -16,11 +16,10 @@ import Feature from 'ol/Feature';
 import { easeOut } from 'ol/easing';
 import { getVectorContext } from 'ol/render';
 import { unByKey } from 'ol/Observable';
-import { mapActions } from 'vuex';
 import { BP } from 'src/types';
-import { useStore } from 'src/store';
 import VectorImageLayer from 'ol/layer/VectorImage';
 import { getCssVar } from 'quasar';
+import { useChainStore } from 'src/stores/chain';
 
 export default defineComponent({
     name: 'WorldMap',
@@ -29,18 +28,18 @@ export default defineComponent({
         View
     },
     setup() {
-        const store = useStore();
+        const chainStore = useChainStore();
         const center = ref([40, 40]);
         const projection = ref('EPSG:4326');
         const zoom = ref(8);
         const rotation = ref(0);
         const producerToggle = ref<boolean>(Boolean(Number(localStorage.getItem('mapBP-toggle'))));
-        const BPlist = computed((): BP[] => store.state.chain.bpList);
+        const BPlist = computed((): BP[] => chainStore.bpList);
         const schedule = computed(
-            (): string[] => store.state.chain.producerSchedule
+            (): string[] => chainStore.producerSchedule
         );
         const HeadProducer = computed(
-            (): string => store.state.chain.head_block_producer
+            (): string => chainStore.head_block_producer
         );
         const currentHeadProducer = ref<string>('');
         function updateToggleOption(val: boolean) {
@@ -56,7 +55,8 @@ export default defineComponent({
             currentHeadProducer,
             schedule,
             producerToggle,
-            updateToggleOption
+            updateToggleOption,
+            chainStore,
         };
     },
     data() {
@@ -68,11 +68,8 @@ export default defineComponent({
             MapSource: null
         };
     },
-    methods: {
-        ...mapActions('chain', ['updateBpList'])
-    },
     async mounted() {
-        await this.updateBpList();
+        await this.chainStore.updateBpList();
 
         // ---- Map Styles ----
         const style = new Style({

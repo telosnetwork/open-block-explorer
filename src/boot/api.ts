@@ -2,7 +2,7 @@ import { boot } from 'quasar/wrappers';
 import { ApiClient } from 'src/types/Api';
 import { api } from 'src/api';
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   interface ComponentCustomProperties {
     $api: ApiClient;
   }

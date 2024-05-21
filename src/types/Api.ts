@@ -10,8 +10,9 @@ import {
     UInt32Type,
     API,
     PublicKey,
+    ActionType,
+    ABISerializable,
 } from '@greymass/eosio';
-import { Transaction } from 'src/types/Transaction';
 import {
     AccountDetails,
     Action,
@@ -21,7 +22,15 @@ import {
     Block,
     ActionData,
     Get_actions,
-} from 'src/types/Actions';
+    Transaction,
+    ABI,
+    ChainInfo,
+    ProducerSchedule,
+    GetProposals,
+    GetProducers,
+    GetActionsResponse,
+    GetProposalsProps,
+} from 'src/types';
 
 export type AccountCreatorInfo = {
   creator: string;
@@ -93,13 +102,25 @@ export type ApiClient = {
   getHyperionAccountData: (address: string) => Promise<AccountDetails>;
   getCreator: (address: string) => Promise<any>;
   getTokens: (address: string) => Promise<Token[]>;
-  getTransactions: (filter: HyperionTransactionFilter) => Promise<Action[]>;
+  getTransactions: (filter: HyperionTransactionFilter) => Promise<GetActionsResponse>;
   getTransaction: (address: string) => Promise<ActionData>;
-  getTransactionV1: (id: string) => Promise<Transaction>;
   getChildren: (address: string) => Promise<Action[]>;
+  getTableRows: (tableInput: GetTableRowsParams) => Promise<unknown>;
+  getTokenBalances: (address: string) => Promise<unknown>;
+  getTransactionV1: (id: string) => Promise<Transaction>;
   getPermissionLinks: (address: string) => Promise<PermissionLinks[]>;
   getTableByScope: (data: unknown) => Promise<TableByScope[]>;
   getBlock: (block: string) => Promise<Block>;
   getActions: (address: string, filter: string) => Promise<Get_actions>;
+  getInfo: () => Promise<ChainInfo>;
+  getSchedule: () => Promise<ProducerSchedule>;
+  getProposals: ({ proposer, proposal, requested, provided, executed, limit, skip }: GetProposalsProps) => Promise<GetProposals>;
+  getProducers: () => Promise<GetProducers>;
+  getABI: (account: string) => Promise<ABI>;
+  deserializeActionData: (data: ActionType) => Promise<ABISerializable>;
+  serializeActionData: (account: string, name: string, data: unknown) => Promise<unknown>;
+  getProducerSchedule: () =>  Promise<{
+    active: { producers: { producer_name: string }[] };
+  }>;
   getApy: () => Promise<string>;
 };

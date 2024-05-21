@@ -84,12 +84,6 @@ const userTokens = {
 
 installQuasarPlugin();
 
-global.fetch = jest.fn(() =>
-    Promise.resolve({
-        text: () => JSON.stringify(tokenList),
-    } as unknown as Response),
-);
-
 // mocking internal chain implementation
 jest.mock('src/config/ConfigManager', () => ({
     getChain: () => ({
@@ -118,12 +112,10 @@ global.AbortController = jest.fn(() => ({
 
 jest.mock('axios', () => ({
     create: () => mockHyperion,
+    get: jest.fn().mockImplementation(url => Promise.resolve({ data: tokenList })),
 }));
 
 const mockHyperion: AxiosInstance = {
-    get: () => Promise.resolve({
-        data: userTokens,
-    }),
     interceptors: {
         request: {
             use: jest.fn(),
@@ -132,6 +124,11 @@ const mockHyperion: AxiosInstance = {
             use: jest.fn(),
         } as unknown as AxiosInterceptorManager<AxiosResponse<unknown>>,
     },
+    get: jest.fn().mockImplementation((url) => {
+        if(url === 'v2/state/get_tokens') {
+            return Promise.resolve({ data: userTokens });
+        }
+    }),
 } as unknown as AxiosInstance;
 
 
@@ -148,6 +145,7 @@ describe('Hyperion API', () => {
             const tokens = await getTokens();
             expect(tokens).toEqual(tokenList);
         });
+
         it('getTokens(account) tokens for account => list of user\'s tokens (no balances)', async () => {
             const tokens = await getTokens('someaccount');
             const userTokensWithLogos = userTokens.tokens.map((token: Token) => {
