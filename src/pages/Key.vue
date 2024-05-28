@@ -15,7 +15,7 @@ export default defineComponent({
         onMounted(async () => {
             try{
                 pubKey.value = PublicKey.from(route.params.key as string);
-                accounts.value = (await api.getKeyAccounts(pubKey.value)).account_names;
+                accounts.value = (await api.getAccountsByPublicKey(pubKey.value)).account_names;
             }catch(e){
                 console.error(e);
             }

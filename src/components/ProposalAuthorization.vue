@@ -31,7 +31,7 @@ export default defineComponent({
     },
     emits: ['update:actor', 'update:permission', 'remove'],
     setup(props, context) {
-        const actorsOptions = ref<string[]>([]);
+        const actorsOptions = ref<Name[]>([]);
         const permissionsOptions = ref<Name[]>([]);
         const allRequiredAccounts = ref<RequiredAccounts[]>([]);
 
@@ -94,18 +94,19 @@ export default defineComponent({
 
         async function searchAccounts(value: string): Promise<void> {
             try {
-                const accounts = await api.getTableByScope({
+                const accountsResponse = await api.getTableByScope({
                     code: 'eosio',
                     limit: 5,
                     lower_bound: value,
                     table: 'userres',
                     upper_bound: value.padEnd(12, 'z'),
                 });
+                const accounts = accountsResponse.rows;
 
                 if (accounts.length > 0) {
                     // get table by scope for userres does not include system account
                     if ('eosio'.includes(value)) {
-                        actorsOptions.value.push('eosio');
+                        actorsOptions.value.push(Name.from('eosio'));
                     }
 
                     accounts.forEach((user) => {

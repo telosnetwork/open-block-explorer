@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Name } from '@wharfkit/session';
+import { Name, UInt32 } from '@wharfkit/session';
 import { api } from 'src/api';
 import ValidatorDataTable from 'src/components/validators/ValidatorDataTable.vue';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
@@ -52,7 +52,7 @@ export default defineComponent({
         const payrate = ref(0);
         const top21pay24h = ref(0);
         const supply = ref(0);
-        const voters = ref(0);
+        const voters = ref(UInt32.from(0));
         const amount_voted = ref(0);
         const votesProgress = computed(() => amount_voted.value / supply.value || 0);
 
@@ -120,7 +120,7 @@ export default defineComponent({
                 lower_bound: 'eosio',
                 table: 'voters',
             };
-            voters.value = (await api.getTableByScope(request))[0].count;
+            voters.value = (await api.getTableByScope(request)).rows[0].count;
             const totalStakeParams = {
                 code: 'eosio',
                 scope: 'eosio',

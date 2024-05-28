@@ -127,7 +127,7 @@ export default defineComponent({
             const activeProducers = await api.getProducerSchedule();
 
             const activeProducersAccount = activeProducers.active.producers.map(
-                producer => producer.producer_name,
+                producer => producer.producer_name.toString(),
             );
 
             let requestedApprovals: RequestedApprovals[] = [];
@@ -255,10 +255,7 @@ export default defineComponent({
             const block = await api.getBlock(String(blockNumber));
             const transactionsPromise = block.transactions.map(
                 async (transaction) => {
-                    let trxId = transaction.trx.id;
-                    if (typeof trxId !== 'string') {
-                        trxId = transaction.trx.toString();
-                    }
+                    let trxId = transaction.id.toString();
                     const { actions } = await api.getTransaction(trxId);
                     return actions;
                 },

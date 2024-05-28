@@ -4,7 +4,7 @@ import TransactionTable from 'src/components/TransactionsTable.vue';
 import BlockCard from 'components/BlockCard.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/api';
-import { Action, Block } from 'src/types';
+import { API } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'BlockPage',
@@ -12,8 +12,9 @@ export default defineComponent({
         const route = useRoute();
         const router = useRouter();
         const found = ref(true);
-        const block = ref<Block>(null);
-        const actions = ref<Action[]>([]);
+        const block = ref<API.v1.GetBlockResponse>(null);
+        //TODO: FIX THIS UNKNOWN
+        const actions = ref<unknown[]>([]);
         const tab = ref<string>((route.query['tab'] as string) || 'actions');
         onMounted(async () => {
             // api get block and set block
@@ -23,11 +24,11 @@ export default defineComponent({
                     ...act,
                     trx_id: tr.trx.id,
                     act: {
-                        ...act.act,
+                        ...act,
                         name: act.name,
                         data: act.data,
                         account: act.account,
-                    },
+                    } as unknown,
                     '@timestamp': block.value.timestamp,
                 }));
                 actions.value = actions.value.concat(act);

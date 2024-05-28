@@ -1,12 +1,18 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { OptionsObj, TableByScope } from 'src/types';
+import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
-import { ACCOUNT_LENGTH, EOS_KEY_LENGTH, PUB_KEY_LENGTH, TRANSACTION_HASH_LENGTH, isValidTransactionHex } from 'src/utils/string-utils';
+import {
+    ACCOUNT_LENGTH,
+    EOS_KEY_LENGTH,
+    PUB_KEY_LENGTH,
+    TRANSACTION_HASH_LENGTH,
+    isValidTransactionHex,
+} from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
-import { systemAccounts } from 'src/utils/systemAccount';
 import { debounce } from 'src/utils/time';
+import { searchAccounts } from 'src/utils/searchAccounts';
 
 export default defineComponent({
     name: 'HeaderSearch',
@@ -49,56 +55,6 @@ export default defineComponent({
 
         watch(inputValue, onInput);
 
-        async function searchAccounts(value: string): Promise<OptionsObj[]> {
-            try {
-                const results = [] as OptionsObj[];
-                if (value.length > ACCOUNT_LENGTH){
-                    return results;
-                }
-                const request = {
-                    code: 'eosio',
-                    limit: 5,
-                    lower_bound: cleanSearchInput(value),
-                    table: 'userres',
-                    upper_bound: value.padEnd(12, 'z'),
-                };
-                const accounts = await api.getTableByScope(request);
-
-                // get table by scope for userres does not include system account
-                if (value.includes('eosio')) {
-                    for (const systemAccount of systemAccounts){
-                        accounts.push(
-                            {
-                                payer: systemAccount,
-                            } as TableByScope,
-                        );
-                    }
-                }
-
-                if (accounts.length > 0) {
-
-                    results.push({
-                        label: 'Accounts',
-                        to: '',
-                        isHeader: true,
-                    });
-
-                    accounts.forEach((user) => {
-                        if (user.payer.includes(value)) {
-                            results.push({
-                                label: user.payer,
-                                to: `/account/${user.payer}`,
-                                isHeader: false,
-                            });
-                        }
-                    });
-                }
-                return results;
-            } catch (error) {
-                return;
-            }
-        }
-
         async function searchProposals(value: string): Promise<OptionsObj[]> {
             try {
                 const results = [] as OptionsObj[];
@@ -126,10 +82,7 @@ export default defineComponent({
             }
         }
 
-        function cleanSearchInput(value: string): string {
-            // remove leading and trailing spaces and periods from search input for query
-            return value.replace(/^[\s.]+|[\s.]+$/g, '');
-        }
+
 
         async function searchTransactions(value: string): Promise<OptionsObj[]> {
             const results = [] as OptionsObj[];

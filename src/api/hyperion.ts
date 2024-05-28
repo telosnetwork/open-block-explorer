@@ -5,73 +5,33 @@
  */
 
 import axios, { AxiosRequestConfig } from 'axios';
+import { addInterceptors } from 'src/api/axios_helpers';
 import { useNetworksStore } from 'src/stores/networks';
 import {
-    ABI,
     AccountDetails,
     Action,
     ActionData,
-    Block,
-    ChainInfo,
     Get_actions,
     GetActionsResponse,
-    GetProducers,
     GetProposals,
     GetProposalsProps,
     PermissionLinks,
     PermissionLinksData,
-    ProducerSchedule,
-    TableByScope,
     Token,
-    Transaction,
 } from 'src/types';
 import { AccountCreatorInfo, HyperionTransactionFilter } from 'src/types/Api';
 import { Chain } from 'src/types/Chain';
-
 const networksStore = useNetworksStore();
 const chain: Chain = networksStore.getCurrentNetwork;
 
 const hyperion = axios.create({ baseURL: chain.getHyperionEndpoint() });
-const controller = new AbortController();
-export const DEFAULT_ICON = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjciIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAyNyAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTgiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=';
-
+addInterceptors(hyperion);
 const name = chain.getName();
+
+export const DEFAULT_ICON = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjciIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAyNyAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTgiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=';
 
 const url =
   `https://raw.githubusercontent.com/telosnetwork/token-list/main/tokens.${name}.json`;
-
-const MAX_REQUESTS_COUNT = 5;
-const INTERVAL_MS = 10;
-let PENDING_REQUESTS = 0;
-
-/**
- * Axios Request Interceptor
- */
-hyperion.interceptors.request.use(function (config) {
-    return new Promise((resolve) => {
-        const interval = setInterval(() => {
-            if (PENDING_REQUESTS < MAX_REQUESTS_COUNT) {
-                PENDING_REQUESTS++;
-                clearInterval(interval);
-                resolve(config);
-            }
-        }, INTERVAL_MS);
-    });
-});
-
-/**
- * Axios Response Interceptor
- */
-hyperion.interceptors.response.use(
-    function (response) {
-        PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
-        return Promise.resolve(response);
-    },
-    function (error) {
-        PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
-        return Promise.reject(error);
-    },
-);
 
 export const getHyperionAccountData = async function (
     address: string,
@@ -174,18 +134,6 @@ export const getTransaction = async function (
     return response.data;
 };
 
-export const getTransactionV1 = async function (
-    id?: string,
-): Promise<Transaction> {
-    const response = await hyperion.post<Transaction>(
-        'v1/history/get_transaction',
-        {
-            id: id,
-        },
-    );
-    return response.data;
-};
-
 export const getChildren = async function (
     address?: string,
 ): Promise<Action[]> {
@@ -214,50 +162,25 @@ export const getPermissionLinks = async function (
     return response.data.links;
 };
 
-export const getTableByScope = async function (
-    data: unknown,
-): Promise<TableByScope[]> {
-    const response = await hyperion.post('v1/chain/get_table_by_scope', data);
-    return (response.data as {rows:TableByScope[]}).rows;
-};
-
-export const getBlock = async function (block: string): Promise<Block> {
-    controller.abort();
-    const response = await hyperion.post('v1/chain/get_block', {
-        block_num_or_id: block,
-        signal: controller.signal,
-    });
-    return response.data as Block;
-};
-
 export const getActions = async function (
     account: string,
     filter: string,
     limit?: number,
     skip?: number,
 ): Promise<Get_actions> {
-    controller.abort();
-    const response = await hyperion.get('v2/history/get_actions', {
-        params: {
-            account,
-            filter,
-            limit,
-            skip,
+    const signal = new AbortController().signal;
+    const response = await hyperion.get('v2/history/get_actions',
+        {
+            params: {
+                account,
+                filter,
+                limit,
+                skip,
+            },
+            signal,
         },
-    });
+    );
     return response.data as Get_actions;
-};
-
-export const getInfo = async function (): Promise<ChainInfo> {
-    controller.abort();
-    const response = await hyperion.get('v1/chain/get_info');
-    return response.data as ChainInfo;
-};
-
-export const getSchedule = async function (): Promise<ProducerSchedule> {
-    controller.abort();
-    const response = await hyperion.get('v1/chain/get_producer_schedule');
-    return response.data as ProducerSchedule;
 };
 
 export const getProposals = async function ({
@@ -283,21 +206,6 @@ export const getProposals = async function ({
     return response.data as GetProposals;
 };
 
-export const getProducers = async function (): Promise<GetProducers> {
-    const response = await hyperion.post('v1/chain/get_producers', {
-        json: true,
-        limit: 10000,
-    });
-    return response.data as GetProducers;
-};
-
-export const getABI = async function (account: string): Promise<ABI> {
-    const response = await hyperion.post('v1/chain/get_abi', {
-        account_name: account,
-    });
-    return response.data as ABI;
-};
-
 export const getHyperionKeyAccounts = async function (
     key: string,
 ): Promise<{ account_names: string[] }> {
@@ -307,9 +215,4 @@ export const getHyperionKeyAccounts = async function (
     return response.data as { account_names: string[] };
 };
 
-export const getProducerSchedule = async function (): Promise<{
-  active: { producers: { producer_name: string }[] };
-}> {
-    const response = await hyperion.get('v1/chain/get_producer_schedule');
-    return response.data as { active: { producers: { producer_name: string }[] } };
-};
+
