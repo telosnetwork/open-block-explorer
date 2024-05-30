@@ -1,10 +1,10 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from 'vue';
-import TransactionTable from 'src/components/TransactionsTable.vue';
+import TransactionsTable from 'src/components/TransactionsTable.vue';
 import BlockCard from 'components/BlockCard.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/api';
-import { API } from '@wharfkit/session';
+import { Action, API, Transaction } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'BlockPage',
@@ -13,25 +13,14 @@ export default defineComponent({
         const router = useRouter();
         const found = ref(true);
         const block = ref<API.v1.GetBlockResponse>(null);
-        //TODO: FIX THIS UNKNOWN
-        const actions = ref<unknown[]>([]);
+        const actions = ref<Action[]>([]);
         const tab = ref<string>((route.query['tab'] as string) || 'actions');
         onMounted(async () => {
             // api get block and set block
             block.value = await api.getBlock(route.params.block as string);
-            block.value.transactions.forEach((tr) => {
-                const act = tr.trx.transaction?.actions.map(act => ({
-                    ...act,
-                    trx_id: tr.trx.id,
-                    act: {
-                        ...act,
-                        name: act.name,
-                        data: act.data,
-                        account: act.account,
-                    } as unknown,
-                    '@timestamp': block.value.timestamp,
-                }));
-                actions.value = actions.value.concat(act);
+            block.value.transactions.forEach((transactionReceipt) => {
+                const transaction = transactionReceipt.trx.transaction as Transaction;
+                actions.value = transaction.actions;
             });
             found.value = !!block.value;
         });
@@ -47,12 +36,12 @@ export default defineComponent({
             tab,
             transaction: route.params.transaction,
             found,
-            Actions: actions,
+            actions,
             block,
         };
     },
     components: {
-        TransactionTable,
+        TransactionsTable,
         BlockCard,
     },
 });
@@ -62,7 +51,7 @@ export default defineComponent({
 
 <div class="row">
     <div class="col-12 header-support q-pb-lg">
-        <BlockCard v-if="found" class="q-pa-lg" :block="block"/>
+        <BlockCard v-if="found" class="q-pa-lg" :block="block as API.v1.GetBlockResponse"/>
         <div v-else class="q-pa-lg">
             <div class="row full-width justify-center">
                 <div class="col-xs-12 col-md-8 col-lg-6">
@@ -78,7 +67,7 @@ export default defineComponent({
         </div>
     </div>
     <div class="q-pt-lg container-max-width">
-        <TransactionTable :actions="Actions" :toggleEnabled="false"/>
+        <TransactionsTable :actions="actions as Action[]" :toggleEnabled="false"/>
     </div>
 </div>
 

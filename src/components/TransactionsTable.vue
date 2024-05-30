@@ -1,5 +1,4 @@
 <script lang="ts">
-// eslintdisable @typescript-eslint/no-unsafe-assignment
 import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
 import { api } from 'src/api';
 import AccountSearch from 'src/components/AccountSearch.vue';
@@ -20,7 +19,6 @@ import {
     defineComponent,
     onBeforeUnmount,
     onMounted,
-    PropType,
     ref,
     toRefs,
     watch,
@@ -60,7 +58,7 @@ export default defineComponent({
             default: null,
         },
         actions: {
-            type: Object as PropType<Action[]>,
+            type: Array<Action>,
             required: false,
             default: null,
         },

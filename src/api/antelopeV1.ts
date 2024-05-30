@@ -12,7 +12,7 @@ import {
     Serializer,
 } from '@wharfkit/session';
 import axios from 'axios';
-import { addInterceptors } from 'src/api/axios_helpers';
+import { addInterceptors } from 'src/api/axiosInterceptors';
 import { useNetworksStore } from 'src/stores/networks';
 import {
     GetProducers,
@@ -20,23 +20,14 @@ import {
 } from 'src/types';
 
 const networksStore = useNetworksStore();
-const eosioAxios = axios.create({ baseURL: networksStore.getCurrentNetwork.getApiEndpoint() });
+const eosioAxios = axios.create({ baseURL: networksStore.getCurrentNetwork.getV1Endpoint() });
 addInterceptors(eosioAxios);
 
-const eosio = new APIClient({ url: networksStore.getCurrentNetwork.getApiEndpoint() });
+const eosio = new APIClient({ url: networksStore.getCurrentNetwork.getV1Endpoint() });
 
 export const getAccount = async function (
     address: string,
 ): Promise<API.v1.AccountObject> {
-    // if (address) {
-    //     const response = await eosio.get('v1/chain/get_account', {
-    //         params: {
-    //             account: address,
-    //         },
-    //     });
-
-    //     return response.data as AccountDetails;
-    // }
     try {
         return await eosio.v1.chain.get_account(address);
     } catch (e) {
@@ -47,11 +38,6 @@ export const getAccount = async function (
 export const getAccountsByPublicKey = async function (
     key: PublicKey,
 ): Promise<{ account_names: Name[] }> {
-    // const response = await eosio.post('v1/history/get_key_accounts', {
-    //     public_key: key,
-    // });
-
-    // return response.data as { account_names: Name[] };
     try {
         return await eosio.v1.history.get_key_accounts(key);
     } catch(e) {
@@ -63,15 +49,7 @@ export const getAccountsByPublicKey = async function (
 export const getTokenBalances = async function (
     address: string,
 ): Promise<Asset[]> {
-    // if (address) {
     const { contract } = networksStore.getCurrentNetwork.getSystemToken();
-    //     const response = await eosio.post('v1/chain/get_currency_balance', {
-    //         code: contract,
-    //         account: address,
-    //     });
-
-    //     return response.data as Asset[];
-    // }
     try {
         return await eosio.v1.chain.get_currency_balance(contract, address);
     } catch(e) {
@@ -82,8 +60,6 @@ export const getTokenBalances = async function (
 export const getTableRows = async function (
     tableInput: GetTableRowsParams,
 ): Promise<API.v1.GetTableRowsResponse> {
-    // const response = await eosio.post('v1/chain/get_table_rows', { tableInput });
-    // return response.data as unknown;
     try {
         return await eosio.v1.chain.get_table_rows(tableInput);
     } catch(e) {
@@ -99,20 +75,11 @@ export const getTableByScope = async function (
     } catch(e) {
         console.error('Error on v1/chain/get_table_by_scope', e);
     }
-    // const response = await eosio.post('v1/chain/get_table_by_scope', { data });
-    // return (response.data as {rows:TableByScope[]}).rows;
 };
 
 export const getTransactionV1 = async function (
     id?: string,
 ): Promise<API.v1.GetTransactionResponse> {
-    // const response = await eosio.post<Transaction>(
-    //     'v1/history/get_transaction',
-    //     {
-    //         id: id,
-    //     },
-    // );
-    // return response.data;
     try {
         return await eosio.v1.history.get_transaction(id);
     } catch(e) {
@@ -123,13 +90,6 @@ export const getTransactionV1 = async function (
 export const getBlock = async function (
     block: string,
 ):Promise<API.v1.GetBlockResponse> {
-    // const controller = new AbortController();
-    // const response = await eosio.post('v1/chain/get_block', {
-    //     block_num_or_id: block,
-    //     signal: controller.signal,
-    // });
-    // controller.abort();
-    // return response.data as Block;
     try {
         return await eosio.v1.chain.get_block(block);
     } catch(e) {
@@ -139,10 +99,6 @@ export const getBlock = async function (
 
 export const getInfo = async function ():
 Promise<API.v1.GetInfoResponse> {
-    // const controller = new AbortController();
-    // const response = await eosio.get('v1/chain/get_info', { signal: controller.signal });
-    // controller.abort();
-    // return response.data as ChainInfo;
     try {
         return await eosio.v1.chain.get_info();
     } catch(e) {
@@ -152,10 +108,6 @@ Promise<API.v1.GetInfoResponse> {
 
 export const getProducerSchedule = async function ():
 Promise<API.v1.GetProducerScheduleResponse> {
-    // const controller = new AbortController();
-    // const response = await eosio.get('v1/chain/get_producer_schedule', { signal: controller.signal });
-    // controller.abort();
-    // return response.data as ProducerSchedule;
     try {
         return await eosio.v1.chain.get_producer_schedule();
     } catch(e) {
@@ -179,10 +131,6 @@ Promise<GetProducers> {
 export const getABI = async function (
     account: string,
 ): Promise<API.v1.GetAbiResponse> {
-    // const response = await eosio.post('v1/chain/get_abi', {
-    //     account_name: account,
-    // });
-    // return response.data as ABI;
     try {
         return await eosio.v1.chain.get_abi(account);
     } catch(e) {

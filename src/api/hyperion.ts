@@ -5,7 +5,7 @@
  */
 
 import axios, { AxiosRequestConfig } from 'axios';
-import { addInterceptors } from 'src/api/axios_helpers';
+import { addInterceptors } from 'src/api/axiosInterceptors';
 import { useNetworksStore } from 'src/stores/networks';
 import {
     AccountDetails,

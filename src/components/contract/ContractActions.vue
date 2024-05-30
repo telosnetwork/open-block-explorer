@@ -15,7 +15,7 @@ export default defineComponent({
         const transactionId = ref<string>(accountStore.transactionId);
         const transactionError = ref<unknown>(accountStore.transactionError);
         const actions = computed(() =>
-            accountStore.abi.abi.actions.map(a => a.name),
+            accountStore.abi.abi.actions.map(a => a.name.toString()),
         );
         const action = ref<string>(actions.value[0]);
         const fields = computed(

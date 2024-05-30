@@ -39,7 +39,7 @@ export default defineComponent({
             (): string[] => chainStore.producerSchedule
         );
         const HeadProducer = computed(
-            (): string => chainStore.head_block_producer
+            (): string => chainStore.head_block_producer.toString()
         );
         const currentHeadProducer = ref<string>('');
         function updateToggleOption(val: boolean) {

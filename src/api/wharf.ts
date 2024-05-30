@@ -15,7 +15,7 @@ export const kit = new SessionKit({
     chains: [
         {
             id: networksStore.getCurrentNetwork.getChainId(),
-            url: String(networksStore.getCurrentNetwork.getRPCEndpoint()),
+            url: String(networksStore.getCurrentNetwork.getV1Endpoint()),
         },
     ],
     ui,

@@ -35,10 +35,8 @@ const TOKEN = {
 } as Token;
 
 const HYPERION_ENDPOINT = 'https://mainnet.telos.net';
-
-const RPC_ENDPOINT = 'https://mainnet.telos.net';
-const FUEL_RPC_ENDPOINT = 'https://telos.greymass.com';
-const API_ENDPOINT = 'https://api.telos.net/v1';
+const V1_ENDPOINT = 'https://mainnet.telos.net';
+const NETWORK_ENDPOINT = 'https://api.telos.net';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
 const THEME = {
@@ -83,16 +81,12 @@ export default class Telos extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): string {
-        return RPC_ENDPOINT;
+    getV1Endpoint(): string {
+        return V1_ENDPOINT;
     }
 
-    getFuelRPCEndpoint(): string | null {
-        return FUEL_RPC_ENDPOINT;
-    }
-
-    getApiEndpoint(): string {
-        return API_ENDPOINT;
+    getNetworkEndpoint(): string | null {
+        return NETWORK_ENDPOINT;
     }
 
     getS3ProducerBucket(): string {

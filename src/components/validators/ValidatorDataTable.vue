@@ -40,7 +40,7 @@ export default defineComponent({
         });
         const selection = ref<string[]>([]);
         const HeadProducer = computed(
-            (): string => chainStore.head_block_producer,
+            (): string => chainStore.head_block_producer.toString(),
         );
         const producerRows = computed(
             (): Producer[] => chainStore.producers || [],

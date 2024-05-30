@@ -82,8 +82,6 @@ export default defineComponent({
             }
         }
 
-
-
         async function searchTransactions(value: string): Promise<OptionsObj[]> {
             const results = [] as OptionsObj[];
 

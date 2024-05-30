@@ -30,7 +30,7 @@ import {
     getTokenBalances,
     getTransactionV1,
     serializeActionData,
-} from 'src/api/eosio_core';
+} from 'src/api/antelopeV1';
 
 import { getApy } from 'src/api/telosApi';
 

@@ -4,7 +4,7 @@ import sha256 from 'fast-sha256';
 import moment from 'moment';
 import { useQuasar } from 'quasar';
 import { api } from 'src/api';
-import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
+import { deserializeActionDataFromAbi } from 'src/api/antelopeV1';
 import { useAccountStore } from 'src/stores/account';
 import { Error, Proposal, RequestedApprovals } from 'src/types';
 import { sleep } from 'src/utils/time';

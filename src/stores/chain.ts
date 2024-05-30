@@ -122,7 +122,7 @@ export const useChainStore = defineStore('chain', {
             try {
                 const info = await api.getInfo();
                 this.head_block_num  = info.head_block_num;
-                this.last_irreversible_block_num  =info.last_irreversible_block_num;
+                this.last_irreversible_block_num = info.last_irreversible_block_num;
                 this.head_block_producer = info.head_block_producer;
             } catch (err) {
                 console.error(err);

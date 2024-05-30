@@ -19,8 +19,7 @@ const TOKEN = {
     contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://wax.eosusa.io';
-const RPC_ENDPOINT = 'https://wax.eosusa.io';
-const API_ENDPOINT = 'https://example.com';
+const V1_ENDPOINT = 'https://wax.eosusa.io';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = false;
 const THEME = {};
@@ -42,16 +41,8 @@ export default class EOS extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): string {
-        return RPC_ENDPOINT;
-    }
-
-    getFuelRPCEndpoint(): string | null {
-        return null;
-    }
-
-    getApiEndpoint(): string {
-        return API_ENDPOINT;
+    getV1Endpoint(): string {
+        return V1_ENDPOINT;
     }
 
     getS3ProducerBucket(): string {
