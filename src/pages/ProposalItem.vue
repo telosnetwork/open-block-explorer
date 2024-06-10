@@ -1,5 +1,5 @@
 <script lang="ts">
-import { ABI, ABIDef, Action, Serializer, Transaction } from '@wharfkit/session';
+import { ABI, ABIDef, Action, Serializer } from '@wharfkit/session';
 import sha256 from 'fast-sha256';
 import moment from 'moment';
 import { useQuasar } from 'quasar';
@@ -209,7 +209,7 @@ export default defineComponent({
 
             const { trx } = action.act.data;
 
-            const transaction = Transaction.from(trx);
+            const transaction = trx;
             expirationDate.value = transaction.expiration.toString();
 
             const setAbiCache : {[key: string]: ABIDef} = {};

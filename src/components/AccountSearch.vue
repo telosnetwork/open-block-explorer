@@ -3,7 +3,8 @@ import { defineComponent, ref, watch, onMounted } from 'vue';
 import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
 import { useQuasar } from 'quasar';
-import { searchAccounts } from 'src/utils/searchAccounts';
+import { Name, API } from '@wharfkit/session';
+import { systemAccounts } from 'src/utils/systemAccount';
 
 export default defineComponent({
     name: 'AccountSearch',
@@ -77,6 +78,69 @@ export default defineComponent({
                     }
                 }, 500);
             });
+        }
+
+        async function searchAccounts(value: string): Promise<OptionsObj[]> {
+            try {
+                const results = [] as OptionsObj[];
+                const request = {
+                    code: 'eosio',
+                    limit: 5,
+                    lower_bound: cleanSearchInput(value),
+                    table: 'userres',
+                    upper_bound: value.padEnd(12, 'z'),
+                };
+                const tableRows = await api.getTableByScope(request);
+
+                const accounts = tableRows.rows;
+                // get table by scope for userres does not include system account
+                if (value.includes('eosio')) {
+                    for (const systemAccount of systemAccounts){
+                        accounts.push(
+                            {
+                                payer: Name.from(systemAccount),
+                            } as API.v1.GetTableByScopeResponseRow,
+                        );
+                    }
+                }
+
+                if (accounts.length > 0) {
+                    results.push({
+                        label: 'Accounts',
+                        to: '',
+                        isHeader: true,
+                    });
+                    accounts.forEach((user) => {
+                        if (user.payer.toString().includes(value)) {
+                            results.push({
+                                label: user.payer.toString(),
+                                to: `${user.payer.toString()}`,
+                                isHeader: false,
+                            });
+                        }
+                    });
+                    // if has only one result and it's the one that is on the inputValue, emit update
+                    if (props.emitUpdateOnInput) {
+                        if (results.length === 2 && results[1].label === inputValue.value) {
+                            isError.value = false;
+                            context.emit('update:modelValue', inputValue.value);
+                        } else {
+                            isError.value = true;
+                        }
+                    }
+                } else {
+                    isError.value = true;
+                }
+                return results;
+            } catch (error) {
+                isError.value = true;
+                return;
+            }
+        }
+
+        function cleanSearchInput(value: string): string {
+            // remove leading and trailing spaces and periods from search input for query
+            return value.replace(/^[\s.]+|[\s.]+$/g, '');
         }
 
         async function handleSelected(account_name?: string) {

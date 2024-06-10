@@ -31,8 +31,8 @@ export default defineComponent({
     },
     emits: ['update:actor', 'update:permission', 'remove'],
     setup(props, context) {
-        const actorsOptions = ref<Name[]>([]);
-        const permissionsOptions = ref<Name[]>([]);
+        const actorsOptions = ref<string[]>([]);
+        const permissionsOptions = ref<string[]>([]);
         const allRequiredAccounts = ref<RequiredAccounts[]>([]);
 
         const isActorError = ref(false);
@@ -84,7 +84,7 @@ export default defineComponent({
                 return;
             }
 
-            const queryValue = props.actor.toLowerCase();
+            const queryValue = props.actor.toString().toLowerCase();
             actorsOptions.value = [];
 
             await searchAccounts(queryValue);
@@ -106,18 +106,18 @@ export default defineComponent({
                 if (accounts.length > 0) {
                     // get table by scope for userres does not include system account
                     if ('eosio'.includes(value)) {
-                        actorsOptions.value.push(Name.from('eosio'));
+                        actorsOptions.value.push('eosio');
                     }
 
                     accounts.forEach((user) => {
-                        actorsOptions.value.push(user.payer);
+                        actorsOptions.value.push(user.payer.toString());
                     });
 
                     const account = await api.getAccount(value);
 
                     if (typeof account !== 'undefined') {
-                        allRequiredAccounts.value = account.permissions.map(
-                            permission => ({
+                        account.permissions.forEach((permission) => {
+                            allRequiredAccounts.value.push({
                                 permissionName: permission.perm_name,
                                 threshold: permission.required_auth.threshold,
                                 accounts: permission.required_auth.accounts.map(item => ({
@@ -125,12 +125,11 @@ export default defineComponent({
                                     actor: item.permission.actor,
                                     permission: item.permission.permission,
                                 })),
-                            }),
-                        );
+                            });
+                            const permissionString = permission.perm_name.toString();
+                            permissionsOptions.value.push(permissionString);
+                        });
 
-                        permissionsOptions.value = account.permissions.map(
-                            permission => permission.perm_name,
-                        );
                         context.emit('update:permission', permissionsOptions.value[0]);
                     }
                 } else {
@@ -228,7 +227,7 @@ export default defineComponent({
             <q-popup-proxy transition-show="scale" transition-hide="scale">
                 <q-card>
                     <q-card-section>
-                        <div class="text-body1 text-weight-bold text-center">{{ requiredAccounts.permissionName }} ({{ requiredAccounts.threshold }})</div>
+                        <div class="text-body1 text-weight-bold text-center">{{ requiredAccounts.permissionName.toString() }} ({{ requiredAccounts.threshold }})</div>
                         <q-separator class="q-my-sm"/>
                         <table>
                             <tr v-for="(item, index) in requiredAccounts.accounts" :key="index" class="q-pb-xs">

@@ -144,13 +144,7 @@ export default defineComponent({
                         data: unknown;
                     };
 
-                    const hexData = await api.serializeActionData(
-                        item.account,
-                        item.name,
-                        item.data,
-                    );
-
-                    data.trx.actions[i].data = hexData as { [key: string]: string | number; };
+                    data.trx.actions[i].data = item as { [key: string]: string | number; };
                 }
 
                 const result = await accountStore.user.transact(

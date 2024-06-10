@@ -145,11 +145,12 @@ export const deserializeActionData = async function (
     data: ActionType,
 ): Promise<ABISerializable> {
     const abi = await getABI(String(data.account));
-    if (!abi) {
+    if (!abi.abi) {
         throw new Error(`No ABI for ${String(data.account)}`);
     }
-    const action = Action.from(data, abi as unknown as ABIDef);
-    return Serializer.objectify(action.decodeData(abi as unknown as ABIDef)) as ABISerializable;
+    const action = Action.from(data, abi.abi);
+
+    return Serializer.objectify(action.decodeData(abi.abi)) as ABISerializable;
 };
 
 export const deserializeActionDataFromAbi = function (

@@ -12,7 +12,8 @@ import {
 } from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
 import { debounce } from 'src/utils/time';
-import { searchAccounts } from 'src/utils/searchAccounts';
+import { systemAccounts } from 'src/utils/systemAccount';
+import { Name, API } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'HeaderSearch',
@@ -51,6 +52,53 @@ export default defineComponent({
             isLoading.value = false;
         };
 
+        async function searchAccounts(value: string): Promise<OptionsObj[]> {
+            try {
+                const results = [] as OptionsObj[];
+                if (value.length > ACCOUNT_LENGTH){
+                    return results;
+                }
+                const request = {
+                    code: 'eosio',
+                    limit: 5,
+                    lower_bound: cleanSearchInput(value),
+                    table: 'userres',
+                    upper_bound: value.padEnd(12, 'z'),
+                };
+                const response = await api.getTableByScope(request);
+                const accounts = response.rows;
+                // get table by scope for userres does not include system account
+                if (value.includes('eosio')) {
+                    for (const systemAccount of systemAccounts){
+                        accounts.push(
+                            {
+                                payer: Name.from(systemAccount),
+                            } as API.v1.GetTableByScopeResponseRow,
+                        );
+                    }
+                }
+                if (accounts.length > 0) {
+                    results.push({
+                        label: 'Accounts',
+                        to: '',
+                        isHeader: true,
+                    });
+                    accounts.forEach((user) => {
+                        if (user.payer.toString().includes(value)) {
+                            results.push({
+                                label: user.payer.toString(),
+                                to: `/account/${user.payer.toString()}`,
+                                isHeader: false,
+                            });
+                        }
+                    });
+                }
+                return results;
+            } catch (error) {
+                return;
+            }
+        }
+
         const onInput = debounce(fetchData, 200);
 
         watch(inputValue, onInput);
@@ -80,6 +128,11 @@ export default defineComponent({
             } catch (error) {
                 return;
             }
+        }
+
+        function cleanSearchInput(value: string): string {
+            // remove leading and trailing spaces and periods from search input for query
+            return value.replace(/^[\s.]+|[\s.]+$/g, '');
         }
 
         async function searchTransactions(value: string): Promise<OptionsObj[]> {
