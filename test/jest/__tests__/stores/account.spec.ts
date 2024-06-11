@@ -50,7 +50,8 @@ jest.mock('src/stores/networks', () => ({
             getName: () => 'Telos',
             getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
             getHyperionEndpoint: () => '',
-            getApiEndpoint: () => '',
+            getV1Endpoint: () => '',
+            getNetworkEndpoint: () => '',
         },
     })),
 }));

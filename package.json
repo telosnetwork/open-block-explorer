@@ -52,6 +52,8 @@
     "eslint-plugin-jest": "^25.2.2",
     "eslint-plugin-unused-imports": "^3.0.0",
     "eslint-plugin-vue": "^9.0.0",
+    "jest": "^26.6.3",
+    "ts-jest": "ˆ26.5.6",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "vue-property-decorator": "^9.1.2"
   },
