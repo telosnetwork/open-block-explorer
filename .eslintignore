@@ -8,3 +8,4 @@
 babel.config.js
 /src-ssr
 quasar.conf.js
+/test

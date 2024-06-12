@@ -11,15 +11,15 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const options = computed(() =>
-            accountStore.abi.abi.tables.map((table) => {
+            accountStore.abi.abi?.tables.map((table) => {
                 return table.name.toString();
             })
         );
         const account = computed(() => accountStore.abi.account_name);
         const table = ref(options.value[0]);
         const scope = ref<string>(accountStore.abi.account_name);
-        const lower = ref<string>(null);
-        const upper = ref<string>(null);
+        const lower = ref<string>('');
+        const upper = ref<string>('');
         const limit = ref<string>('20');
         const pagination = ref({
             sortBy: 'timestamp',
@@ -46,7 +46,7 @@ export default defineComponent({
             } as GetTableRowsParams;
             let data = ((await api.getTableRows(params)) as GenericTable).rows;
             data = data.map((row) => formatData(row));
-            rows.value = data;
+            rows?.value = data;
         }
         async function updateRows(val: string) {
             const params = {

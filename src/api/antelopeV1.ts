@@ -32,6 +32,7 @@ export const getAccount = async function (
         return await eosio.v1.chain.get_account(address);
     } catch (e) {
         console.error('Error on v1/chain/get_account', e);
+        throw e;
     }
 };
 
@@ -42,6 +43,7 @@ export const getAccountsByPublicKey = async function (
         return await eosio.v1.history.get_key_accounts(key);
     } catch(e) {
         console.error('Error on v1/history/get_key_accounts', e);
+        throw e;
     }
 
 };
@@ -54,6 +56,7 @@ export const getTokenBalances = async function (
         return await eosio.v1.chain.get_currency_balance(contract, address);
     } catch(e) {
         console.error('Error on v1/chain/get_currency_balance', e);
+        throw e;
     }
 };
 
@@ -64,6 +67,7 @@ export const getTableRows = async function (
         return await eosio.v1.chain.get_table_rows(tableInput);
     } catch(e) {
         console.error('Error on v1/chain/get_table_rows', e);
+        throw e;
     }
 };
 
@@ -74,6 +78,7 @@ export const getTableByScope = async function (
         return await eosio.v1.chain.get_table_by_scope(data);
     } catch(e) {
         console.error('Error on v1/chain/get_table_by_scope', e);
+        throw e;
     }
 };
 
@@ -84,6 +89,7 @@ export const getTransactionV1 = async function (
         return await eosio.v1.history.get_transaction(id);
     } catch(e) {
         console.error('Error on v1/history/get_transaction', e);
+        throw e;
     }
 };
 
@@ -94,6 +100,7 @@ export const getBlock = async function (
         return await eosio.v1.chain.get_block(block);
     } catch(e) {
         console.error('Error on v1/chain/get_block', e);
+        throw e;
     }
 };
 
@@ -103,6 +110,7 @@ Promise<API.v1.GetInfoResponse> {
         return await eosio.v1.chain.get_info();
     } catch(e) {
         console.error('Error on v1/chain/get_info', e);
+        throw e;
     }
 };
 
@@ -112,6 +120,7 @@ Promise<API.v1.GetProducerScheduleResponse> {
         return await eosio.v1.chain.get_producer_schedule();
     } catch(e) {
         console.error('Error on v1/chain/get_producer_schedule', e);
+        throw e;
     }
 };
 
@@ -125,6 +134,7 @@ Promise<GetProducers> {
         return response.data as GetProducers;
     } catch(e) {
         console.error('Error on v1/chain/get_producers', e);
+        throw e;
     }
 };
 
@@ -135,6 +145,7 @@ export const getABI = async function (
         return await eosio.v1.chain.get_abi(account);
     } catch(e) {
         console.error('Error on v1/chain/get_abi', e);
+        throw e;
     }
 };
 

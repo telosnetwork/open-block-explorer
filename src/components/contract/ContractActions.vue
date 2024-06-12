@@ -15,13 +15,12 @@ export default defineComponent({
         const transactionId = ref<string>(accountStore.transactionId);
         const transactionError = ref<unknown>(accountStore.transactionError);
         const actions = computed(() =>
-            accountStore.abi.abi.actions.map(a => a.name.toString()),
+            accountStore.abi.abi?.actions.map(a => a.name.toString()),
         );
         const action = ref<string>(actions.value[0]);
         const fields = computed(
             () =>
-                accountStore.abi.abi.structs.find(s => s.name === action.value)
-                    .fields,
+                accountStore.abi.abi?.structs?.find(s => s.name === action.value)?.fields,
         );
 
         async function signAction() {
@@ -36,8 +35,8 @@ export default defineComponent({
 
         function formatMemo() {
             for (let key in memo.value) {
-                const field = fields.value.find(val => val.name === key);
-                if (field.type === 'bool') {
+                const field = fields.value?.find(val => val.name === key);
+                if (field?.type === 'bool') {
                     memo.value[key] = memo.value[key] === 'true' ||
                         memo.value[key] === '1' ||
                         memo.value[key] === 'True' ||

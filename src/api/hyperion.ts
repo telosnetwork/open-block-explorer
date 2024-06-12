@@ -74,6 +74,7 @@ export const getTokens = async function (address?: string): Promise<Token[]> {
         }
     } catch(e) {
         console.error(e);
+        throw e;
     }
 };
 

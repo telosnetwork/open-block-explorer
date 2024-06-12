@@ -101,7 +101,7 @@ export default defineComponent({
 
         const totalValue = computed((): number => {
             if (typeof totalTokens.value === 'number') {
-                return usdPrice.value * totalTokens.value;
+                return (usdPrice.value ?? 0) * totalTokens.value;
             }
             return 0;
         });
@@ -178,7 +178,7 @@ export default defineComponent({
             let ramDenominator;
             if (!isSystemAccount(props.account)) {
                 // display max resource unit value for readability
-                const ramMaxNumber = Number(accountData.value.ram_quota);
+                const ramMaxNumber = Number(accountData.value?.ram_quota);
                 const ramUnitResult = determineUnit(ramMaxNumber);
                 ramDenominator = ramUnitResult.denominator;
                 ramUnit.value = ramUnitResult.unit;
@@ -187,8 +187,8 @@ export default defineComponent({
                     ramMaxNumber / ramDenominator,
                 );
                 // get units
-                const netUsedNumber = Number(accountData.value.net_limit.used);
-                const netMaxNumber = Number(accountData.value.net_limit.max);
+                const netUsedNumber = Number(accountData.value?.net_limit.used);
+                const netMaxNumber = Number(accountData.value?.net_limit.max);
                 const netUnitResult = determineUnit(netMaxNumber);
                 const netDenominator = netUnitResult.denominator;
                 netUnit.value = netUnitResult.unit;
@@ -199,28 +199,28 @@ export default defineComponent({
                     netMaxNumber / netDenominator,
                 );
                 cpu_used.value = fixDec(
-                    Number(accountData.value.cpu_limit.used) * MICRO_UNIT.value,
+                    Number(accountData.value?.cpu_limit.used) * MICRO_UNIT.value,
                 );
                 cpu_max.value = fixDec(
-                    Number(accountData.value.cpu_limit.max) * MICRO_UNIT.value,
+                    Number(accountData.value?.cpu_limit.max) * MICRO_UNIT.value,
                 );
                 stakedResources.value =
-                    Number(accountData.value.total_resources.cpu_weight.value) +
-                    Number(accountData.value.total_resources.net_weight.value);
+                    Number(accountData.value?.total_resources.cpu_weight.value) +
+                    Number(accountData.value?.total_resources.net_weight.value);
 
                 stakedCPU.value = Number(
-                    accountData.value.self_delegated_bandwidth?.cpu_weight.value || 0,
+                    accountData.value?.self_delegated_bandwidth?.cpu_weight.value || 0,
                 );
 
                 stakedNET.value = Number(
-                    accountData.value.self_delegated_bandwidth?.net_weight.value || 0,
+                    accountData.value?.self_delegated_bandwidth?.net_weight.value || 0,
                 );
 
                 delegatedByOthers.value = Math.abs(
                     stakedResources.value - stakedNET.value - stakedCPU.value,
                 );
             }
-            const ramUsedNumber = Number(accountData.value.ram_usage);
+            const ramUsedNumber = Number(accountData.value?.ram_usage);
             // only change denominator and units if wasn't already set
             if (!ramDenominator) {
                 const ramUnitResult = determineUnit(ramUsedNumber);
