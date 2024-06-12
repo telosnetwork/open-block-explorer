@@ -79,7 +79,7 @@ export const useChainStore = defineStore('chain', {
                 const objectList = await axios.get(networksStore.getCurrentNetwork.getS3ProducerBucket());
                 const parser = new DOMParser();
                 const contentsArray = parser
-                    .parseFromString(objectList.data, 'text/xml')
+                    .parseFromString(objectList.data as string, 'text/xml')
                     .getElementsByTagName('Contents');
                 const lastEntry = contentsArray[contentsArray.length - 1];
                 const lastKey = lastEntry.childNodes[0].textContent;

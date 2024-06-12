@@ -114,7 +114,7 @@ export default defineComponent({
 
             if (areBlockProducersApproving.value) {
                 data.requested = data.requested.concat(
-                    JSON.parse(JSON.stringify(blockProducers.value)),
+                    blockProducers.value,
                 );
             }
 
