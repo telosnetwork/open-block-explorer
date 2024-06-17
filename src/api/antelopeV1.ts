@@ -1,5 +1,6 @@
 /* see https://github.com/greymass/eosio-core/blob/master/test/api.ts for documentation */
 import {
+    ABI,
     ABIDef,
     ABISerializable,
     Action,
@@ -140,16 +141,17 @@ export const getABI = async function (
 
 
 /** non API */
-
 export const deserializeActionData = async function (
     data: ActionType,
 ): Promise<ABISerializable> {
-    const abi = await getABI(String(data.account));
+    const contractAccount = data.account.toString();
+    const abi = await getABI(contractAccount);
+
     if (!abi.abi) {
         throw new Error(`No ABI for ${String(data.account)}`);
     }
-    const action = Action.from(data, abi.abi);
 
+    const action = Action.from(data, abi.abi);
     return Serializer.objectify(action.decodeData(abi.abi)) as ABISerializable;
 };
 
@@ -170,11 +172,12 @@ export const serializeActionData = async function (
     name: string,
     data: unknown,
 ): Promise<unknown> {
-    const abi = await getABI(account) as ABIDef;
-    if (!abi) {
+    const response = await getABI(account);
+    if (!response) {
         throw new Error(`No ABI for ${account}`);
     }
 
+    const abi = ABI.from(response.abi);
     const { hexString } = Serializer.encode({ object: data, abi, type: name });
     return hexString;
 };

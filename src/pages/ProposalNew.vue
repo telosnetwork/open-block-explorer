@@ -144,7 +144,13 @@ export default defineComponent({
                         data: unknown;
                     };
 
-                    data.trx.actions[i].data = item as { [key: string]: string | number; };
+                    const hexData = await api.serializeActionData(
+                        item.account,
+                        item.name,
+                        item.data,
+                    );
+
+                    data.trx.actions[i].data = hexData as { [key: string]: string | number; };
                 }
 
                 const result = await accountStore.user.transact(
@@ -167,6 +173,7 @@ export default defineComponent({
 
                 success.transactionId = String(result.resolved.transaction.id);
                 success.proposalName = data.proposal_name;
+                success.showModal = true;
             } catch (e) {
                 const error = JSON.parse(JSON.stringify(e)) as Error;
                 handleError(
