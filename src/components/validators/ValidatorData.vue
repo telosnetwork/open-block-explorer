@@ -1,22 +1,21 @@
 <script lang="ts">
-import { Name } from '@wharfkit/session';
+import { Name, UInt32 } from '@wharfkit/session';
 import { api } from 'src/api';
 import ValidatorDataTable from 'src/components/validators/ValidatorDataTable.vue';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import WalletModal from 'src/components/WalletModal.vue';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
 import { useNetworksStore } from 'src/stores/networks';
 import { GetTableRowsParams } from 'src/types';
 import { assetToAmount, formatCurrency } from 'src/utils/string-utils';
 import { computed, defineComponent, onMounted, ref, watch } from 'vue';
+import { kit, ui } from 'src/api/wharf';
 
 export default defineComponent({
     name: 'ValidatorData',
     components: {
         ValidatorDataTable,
         ViewTransaction,
-        WalletModal,
     },
     setup() {
         const accountStore = useAccountStore();
@@ -52,7 +51,7 @@ export default defineComponent({
         const payrate = ref(0);
         const top21pay24h = ref(0);
         const supply = ref(0);
-        const voters = ref(0);
+        const voters = ref(UInt32.from(0));
         const amount_voted = ref(0);
         const votesProgress = computed(() => amount_voted.value / supply.value || 0);
 
@@ -120,7 +119,7 @@ export default defineComponent({
                 lower_bound: 'eosio',
                 table: 'voters',
             };
-            voters.value = (await api.getTableByScope(request))[0].count;
+            voters.value = (await api.getTableByScope(request)).rows[0].count;
             const totalStakeParams = {
                 code: 'eosio',
                 scope: 'eosio',
@@ -137,13 +136,21 @@ export default defineComponent({
         function toggleView() {
             showCpu.value = !showCpu.value;
         }
+
         async function sendVoteTransaction() {
             if (accountValid.value) {
                 await accountStore.sendVoteTransaction();
                 openTransaction.value = true;
                 await getVoteWeight();
             } else {
-                showWalletModal.value = true;
+                try {
+                    const result = await kit.login();
+                    if (result?.session) {
+                        accountStore.login(result.session);
+                    }
+                } catch (e) {
+                    console.error('error logging in', e);
+                }
             }
         }
 
@@ -152,6 +159,7 @@ export default defineComponent({
         });
 
         onMounted(async () => {
+            ui.appendDialogElement();
             await getVotingStatistics();
         });
 
@@ -284,7 +292,6 @@ export default defineComponent({
         message="transaction complete"
     />
 </div>
-<WalletModal v-model="showWalletModal"/>
 </template>
 
 <style lang="sass" scoped>

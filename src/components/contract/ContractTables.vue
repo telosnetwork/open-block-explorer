@@ -11,8 +11,8 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const options = computed(() =>
-            accountStore.abi.abi.tables.map((table: {name: string}) => {
-                return table.name;
+            accountStore.abi.abi.tables.map((table) => {
+                return table.name.toString();
             })
         );
         const account = computed(() => accountStore.abi.account_name);

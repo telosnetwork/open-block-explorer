@@ -34,9 +34,9 @@ const TOKEN = {
     contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://testnet.telos.net';
+const V1_ENDPOINT = 'https://testnet.telos.net';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
-const RPC_ENDPOINT = 'https://testnet.telos.net';
-const API_ENDPOINT = 'https://api-dev.telos.net/v1';
+const NETWORK_ENDPOINT = 'https://api-dev.telos.net';
 const DISPLAY_MAP = false;
 const THEME = {
     primary: '#571aff',
@@ -80,16 +80,12 @@ export default class TelosTestnet extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): string {
-        return RPC_ENDPOINT;
+    getNetworkEndpoint(): string {
+        return NETWORK_ENDPOINT;
     }
 
-    getFuelRPCEndpoint(): string | null {
-        return null;
-    }
-
-    getApiEndpoint(): string {
-        return API_ENDPOINT;
+    getV1Endpoint(): string {
+        return V1_ENDPOINT;
     }
 
     getS3ProducerBucket(): string {

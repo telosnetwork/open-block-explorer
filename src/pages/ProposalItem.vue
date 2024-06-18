@@ -1,10 +1,10 @@
 <script lang="ts">
-import { ABI, ABIDef, Action, Serializer, Transaction } from '@wharfkit/session';
+import { ABI, ABIDef, Action, Serializer } from '@wharfkit/session';
 import sha256 from 'fast-sha256';
 import moment from 'moment';
 import { useQuasar } from 'quasar';
 import { api } from 'src/api';
-import { deserializeActionDataFromAbi } from 'src/api/eosio_core';
+import { deserializeActionDataFromAbi } from 'src/api/antelopeV1';
 import { useAccountStore } from 'src/stores/account';
 import { Error, Proposal, RequestedApprovals } from 'src/types';
 import { sleep } from 'src/utils/time';
@@ -127,7 +127,7 @@ export default defineComponent({
             const activeProducers = await api.getProducerSchedule();
 
             const activeProducersAccount = activeProducers.active.producers.map(
-                producer => producer.producer_name,
+                producer => producer.producer_name.toString(),
             );
 
             let requestedApprovals: RequestedApprovals[] = [];
@@ -209,7 +209,7 @@ export default defineComponent({
 
             const { trx } = action.act.data;
 
-            const transaction = Transaction.from(trx);
+            const transaction = trx;
             expirationDate.value = transaction.expiration.toString();
 
             const setAbiCache : {[key: string]: ABIDef} = {};
@@ -255,10 +255,7 @@ export default defineComponent({
             const block = await api.getBlock(String(blockNumber));
             const transactionsPromise = block.transactions.map(
                 async (transaction) => {
-                    let trxId = transaction.trx.id;
-                    if (typeof trxId !== 'string') {
-                        trxId = transaction.trx.toString();
-                    }
+                    let trxId = transaction.id.toString();
                     const { actions } = await api.getTransaction(trxId);
                     return actions;
                 },

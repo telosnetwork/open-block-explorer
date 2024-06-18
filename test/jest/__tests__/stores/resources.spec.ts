@@ -1,7 +1,7 @@
 import { API } from '@wharfkit/session';
 import axios from 'axios';
 import { createPinia, setActivePinia } from 'pinia';
-import { getTableRows } from 'src/api/eosio_core';
+import { getTableRows } from 'src/api/antelopeV1';
 import { DelegatedResources, useResourceStore } from 'src/stores/resources';
 import { GetTableRowsParams } from 'src/types';
 import { ref } from 'vue';
@@ -57,15 +57,16 @@ jest.mock('src/stores/networks', () => ({
         getCurrentNetwork: {
             getName: () => 'Telos',
             getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
-            getApiEndpoint: () => '',
+            getNetworkEndpoint: () => '',
             getHyperionEndpoint: () => '',
+            getV1Endpoint: () => '',
         },
     })),
 }));
 
 const delbandResponse: { rows: DelegatedResources[] } = { rows: [] };
 
-jest.mock('src/api/eosio_core', () => ({
+jest.mock('src/api/antelopeV1', () => ({
     getTableRows: jest.fn((s: GetTableRowsParams) => {
         if (s.table === 'delband' && s.code === 'eosio') {
             return Promise.resolve(delbandResponse);

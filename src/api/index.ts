@@ -5,39 +5,38 @@
  *  - for existing method enpoint, export from service file and update the import statement here
  */
 import {
-    getHyperionAccountData,
-    getCreator,
-    getTokens,
-    getTransactions,
-    getTransaction,
-    getTransactionV1,
-    getChildren,
-    getPermissionLinks,
-    getTableByScope,
-    getBlock,
     getActions,
-    getInfo,
-    getSchedule,
+    getChildren,
+    getCreator,
+    getHyperionAccountData,
+    getPermissionLinks,
     getProposals,
-    getProducers,
-    getABI,
-    getProducerSchedule,
+    getTokens,
+    getTransaction,
+    getTransactions,
 } from 'src/api/hyperion'; //  e.g. './new-service' method name stays the same
 
 import {
+    deserializeActionData,
+    getABI,
     getAccount,
-    getKeyAccounts,
+    getAccountsByPublicKey,
+    getBlock,
+    getInfo,
+    getProducers,
+    getProducerSchedule,
+    getTableByScope,
     getTableRows,
     getTokenBalances,
-    deserializeActionData,
+    getTransactionV1,
     serializeActionData,
-} from 'src/api/eosio_core';
+} from 'src/api/antelopeV1';
 
 import { getApy } from 'src/api/telosApi';
 
 export const api = {
     getAccount,
-    getKeyAccounts,
+    getAccountsByPublicKey,
     getHyperionAccountData,
     getCreator,
     getTokens,
@@ -52,12 +51,11 @@ export const api = {
     getBlock,
     getActions,
     getInfo,
-    getSchedule,
+    getProducerSchedule,
     getProposals,
     getProducers,
     getABI,
     deserializeActionData,
     serializeActionData,
-    getProducerSchedule,
     getApy,
 };

@@ -2,7 +2,7 @@ import { API, Name, ResolvedSigningRequest, Session, UInt64 } from '@wharfkit/se
 import { defineStore } from 'pinia';
 import { api } from 'src/api';
 import { useNetworksStore } from 'src/stores/networks';
-import { ABI, Action, Authorization, GetTableRowsParams, Rexbal, RexbalRows, RexPoolRows } from 'src/types';
+import { Action, Authorization, GetTableRowsParams, Rexbal, RexbalRows, RexPoolRows } from 'src/types';
 import { formatCurrency } from 'src/utils/string-utils';
 import { markRaw } from 'vue';
 
@@ -21,7 +21,7 @@ export interface AccountStateInterface {
     transactionError: unknown;
     rexbal: Rexbal;
     vote: string[];
-    abi: ABI;
+    abi: API.v1.GetAbiResponse;
     coreRexBalance: string;
     maturingRex: string;
     maturedRex: string;
@@ -78,7 +78,7 @@ export const useAccountStore = defineStore('account', {
         transactionError: '',
         rexbal: {} as Rexbal,
         vote: [],
-        abi: { abi: null } as ABI,
+        abi: { account_name: '', abi: null } as API.v1.GetAbiResponse,
         coreRexBalance: `0 ${symbol}`,
         maturingRex: `0 ${symbol}`,
         maturedRex: `0 ${symbol}`,
@@ -160,7 +160,7 @@ export const useAccountStore = defineStore('account', {
         setVote(vote: string[]) {
             this.vote = vote.sort();
         },
-        setABI(abi: ABI) {
+        setABI(abi: API.v1.GetAbiResponse) {
             this.abi = abi;
         },
         setTlosRexRatio(tlosRexRatio: number) {

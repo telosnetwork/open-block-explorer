@@ -3,20 +3,19 @@ import {
     defineComponent,
     ref,
     computed,
-    PropType,
     watch,
     onMounted,
 } from 'vue';
 import { copyToClipboard, useQuasar } from 'quasar';
-import { Block } from 'src/types';
 import { useRouter } from 'vue-router';
 import { formatDate } from 'src/utils/string-utils';
+import { API } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'BlockCard',
     props: {
         block: {
-            type: Object as PropType<Block>,
+            type: API.v1.GetBlockResponse,
             required: false,
             default: null,
         },
@@ -24,13 +23,13 @@ export default defineComponent({
     setup(props) {
         const router = useRouter();
         const q = useQuasar();
-        const Block = computed(() => props.block);
+        const blockResponse = computed(() => props.block);
         const blockInfo = ref<{ key: string; value: string }[]>([]);
         async function nextBlock() {
             await router.push({
                 name: 'block',
                 params: {
-                    block: Block.value.block_num + 1,
+                    block: blockResponse.value.block_num.toNumber() + 1,
                 },
             });
             router.go(0);
@@ -39,7 +38,7 @@ export default defineComponent({
             await router.push({
                 name: 'block',
                 params: {
-                    block: Block.value.block_num - 1,
+                    block: blockResponse.value.block_num.toNumber() - 1,
                 },
             });
             void router.go(0);
@@ -70,42 +69,42 @@ export default defineComponent({
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
         function setBlockData() {
-            if (Block.value) {
+            if (blockResponse.value) {
                 let actionCount = 0;
                 let cpu = 0;
                 let net = 0;
-                Block.value.transactions.forEach((tx) => {
+                blockResponse.value.transactions.forEach((tx) => {
                     if (tx.trx.transaction && tx.trx.transaction.actions) {
                         actionCount += tx.trx.transaction.actions.length;
                     }
-                    cpu += tx.cpu_usage_us;
-                    net += tx.net_usage_words;
+                    cpu += tx.cpu_usage_us.toNumber();
+                    net += tx.net_usage_words.toNumber();
                 });
                 blockInfo.value = [
-                    { key: 'Producer', value: Block.value.producer },
-                    { key: 'Block time', value: formatDate(Block.value.timestamp) },
+                    { key: 'Producer', value: blockResponse.value.producer.toString() },
+                    { key: 'Block time', value: formatDate(blockResponse.value.timestamp.toString()) },
                     { key: 'CPU usage', value: cpu.toString() + ' μs' },
                     { key: 'Net usage', value: (net * 8).toString() + ' Bytes' },
                     {
                         key: 'Schedule Version',
-                        value: Block.value.schedule_version.toString(),
+                        value: blockResponse.value.schedule_version.toString(),
                     },
                     {
                         key: 'Transactions',
-                        value: Block.value.transactions.length.toString(),
+                        value: blockResponse.value.transactions.length.toString(),
                     },
                     { key: 'Actions', value: actionCount.toString() },
                 ];
             }
         }
-        watch(Block, () => {
+        watch(blockResponse, () => {
             setBlockData();
         });
         onMounted(() => {
             setBlockData();
         });
         return {
-            block_num: computed(() => Block.value?.block_num || 0),
+            block_num: computed(() => blockResponse.value?.block_num.toNumber() || 0),
             nextBlock,
             previousBlock,
             numberWithCommas,
@@ -172,7 +171,7 @@ export default defineComponent({
                     <div class="text-grey-7">SUMMARY</div>
                 </q-card-section>
                 <div v-for="item in blockInfo" :key="item.key">
-                    <q-separator class="card-separator" inset="inset"/>
+                    <q-separator class="card-separator" inset/>
                     <q-card-section>
                         <div class="row">
                             <div class="col-xs-12 col-sm-6">

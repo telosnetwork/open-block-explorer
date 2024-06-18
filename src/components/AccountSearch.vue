@@ -1,8 +1,9 @@
 <script lang="ts">
 import { defineComponent, ref, watch, onMounted } from 'vue';
-import { OptionsObj, TableByScope } from 'src/types';
+import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
 import { useQuasar } from 'quasar';
+import { Name, API } from '@wharfkit/session';
 import { systemAccounts } from 'src/utils/systemAccount';
 
 export default defineComponent({
@@ -89,15 +90,16 @@ export default defineComponent({
                     table: 'userres',
                     upper_bound: value.padEnd(12, 'z'),
                 };
-                const accounts = await api.getTableByScope(request);
+                const tableRows = await api.getTableByScope(request);
 
+                const accounts = tableRows.rows;
                 // get table by scope for userres does not include system account
                 if (value.includes('eosio')) {
                     for (const systemAccount of systemAccounts){
                         accounts.push(
                             {
-                                payer: systemAccount,
-                            } as TableByScope,
+                                payer: Name.from(systemAccount),
+                            } as API.v1.GetTableByScopeResponseRow,
                         );
                     }
                 }
@@ -108,17 +110,15 @@ export default defineComponent({
                         to: '',
                         isHeader: true,
                     });
-
                     accounts.forEach((user) => {
-                        if (user.payer.includes(value)) {
+                        if (user.payer.toString().includes(value)) {
                             results.push({
-                                label: user.payer,
-                                to: `${user.payer}`,
+                                label: user.payer.toString(),
+                                to: `${user.payer.toString()}`,
                                 isHeader: false,
                             });
                         }
                     });
-
                     // if has only one result and it's the one that is on the inputValue, emit update
                     if (props.emitUpdateOnInput) {
                         if (results.length === 2 && results[1].label === inputValue.value) {

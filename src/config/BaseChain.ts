@@ -84,9 +84,7 @@ export default abstract class BaseChain implements Chain {
     abstract getChainId(): string;
     abstract getDisplay(): string;
     abstract getHyperionEndpoint(): string;
-    abstract getRPCEndpoint(): string;
-    abstract getFuelRPCEndpoint(): string | null;
-    abstract getApiEndpoint(): string;
+    abstract getV1Endpoint(): string;
     abstract getS3ProducerBucket(): string;
     abstract getPriceData(): Promise<PriceChartData>;
     abstract getUsdPrice(): Promise<number>;
@@ -107,5 +105,9 @@ export default abstract class BaseChain implements Chain {
 
     tokenContract(): string {
         return 'eosio.token';
+    }
+
+    getNetworkEndpoint(): string {
+        return '';
     }
 }

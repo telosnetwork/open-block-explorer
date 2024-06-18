@@ -5,6 +5,7 @@ import Wax from 'src/config/chains/wax';
 
 import Jungle from 'src/config/chains/jungle';
 import TelosTestnet from 'src/config/chains/telos-testnet';
+import WaxTestnet from 'src/config/chains/wax-testnet';
 
 import { Chain } from 'src/types/Chain';
 
@@ -23,6 +24,8 @@ export const createNetwork = (name: string): Chain => {
         return new Jungle('jungle');
     case 'telos-testnet':
         return new TelosTestnet('telos-testnet');
+    case 'wax-testnet':
+        return new WaxTestnet('wax-testnet');
     default:
         console.error(`Network ${name} not supported`);
     }

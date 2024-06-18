@@ -1,3 +1,4 @@
+import { Name, UInt32 } from '@wharfkit/session';
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import { api } from 'src/api';
@@ -9,9 +10,9 @@ export interface ChainStateInterface {
     token: Token;
     bpList: BP[];
     producers: Producer[];
-    head_block_num: number;
-    last_irreversible_block_num: number;
-    head_block_producer: string;
+    head_block_num: UInt32;
+    last_irreversible_block_num: UInt32;
+    head_block_producer: Name;
     producerSchedule: string[];
     ram_price: string;
 }
@@ -26,9 +27,9 @@ export const useChainStore = defineStore('chain', {
         },
         bpList: [],
         producers: [],
-        head_block_num: 0,
-        last_irreversible_block_num: 0,
-        head_block_producer: '',
+        head_block_num: UInt32.from(0),
+        last_irreversible_block_num: UInt32.from(0),
+        head_block_producer: Name.from(''),
         producerSchedule: [],
         ram_price: '0',
     }),
@@ -50,14 +51,14 @@ export const useChainStore = defineStore('chain', {
         setBpList(bpList: BP[]) {
             this.bpList = bpList;
         },
-        setHead_block_num(hbn: number) {
-            this.head_block_num = hbn;
+        setHead_block_num(hbn: number | UInt32) {
+            this.head_block_num = UInt32.from(hbn);
         },
-        setLIB(lib: number) {
-            this.last_irreversible_block_num = lib;
+        setLIB(lib: number | UInt32) {
+            this.last_irreversible_block_num = UInt32.from(lib);
         },
-        setHead_block_producer(hbp: string) {
-            this.head_block_producer = hbp;
+        setHead_block_producer(hbp: string | Name) {
+            this.head_block_producer = Name.from(hbp);
         },
         setProducerSchedule(schedule: string[]) {
             this.producerSchedule = schedule;
@@ -72,13 +73,13 @@ export const useChainStore = defineStore('chain', {
             try {
                 const networksStore = useNetworksStore();
 
-                const producerSchedule = (await api.getSchedule()).active.producers;
-                const schedule = producerSchedule.map(el => el.producer_name);
+                const producerSchedule = (await api.getProducerSchedule()).active.producers;
+                const schedule = producerSchedule.map(el => String(el.producer_name));
                 this.setProducerSchedule(schedule);
                 const objectList = await axios.get(networksStore.getCurrentNetwork.getS3ProducerBucket());
                 const parser = new DOMParser();
                 const contentsArray = parser
-                    .parseFromString(objectList.data, 'text/xml')
+                    .parseFromString(objectList.data as string, 'text/xml')
                     .getElementsByTagName('Contents');
                 const lastEntry = contentsArray[contentsArray.length - 1];
                 const lastKey = lastEntry.childNodes[0].textContent;
@@ -121,7 +122,7 @@ export const useChainStore = defineStore('chain', {
             try {
                 const info = await api.getInfo();
                 this.head_block_num  = info.head_block_num;
-                this.last_irreversible_block_num  =info.last_irreversible_block_num;
+                this.last_irreversible_block_num = info.last_irreversible_block_num;
                 this.head_block_producer = info.head_block_producer;
             } catch (err) {
                 console.error(err);

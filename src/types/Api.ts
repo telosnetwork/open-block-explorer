@@ -98,7 +98,7 @@ export interface GetTableRowsParams {
 
 export type ApiClient = {
   getAccount: (address: string) => Promise<API.v1.AccountObject>;
-  getKeyAccounts: (key: PublicKey) => Promise<{ account_names: Name[] }>;
+  getAccountsByPublicKey: (key: PublicKey) => Promise<{ account_names: Name[] }>;
   getHyperionAccountData: (address: string) => Promise<AccountDetails>;
   getCreator: (address: string) => Promise<any>;
   getTokens: (address: string) => Promise<Token[]>;

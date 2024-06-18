@@ -34,9 +34,8 @@ const TOKEN = {
     contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://jungle.eosusa.io';
+const V1_ENDPOINT = 'https://jungle.eosusa.io';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
-const RPC_ENDPOINT = 'https://jungle.eosusa.io';
-const API_ENDPOINT = 'https://jungle.eosusa.io';
 const DISPLAY_MAP = false;
 const THEME = {
     primary: '#28417c',
@@ -61,7 +60,7 @@ const THEME = {
     'color-footer-background': '#000000',
 };
 
-export default class TelosTestnet extends BaseChain {
+export default class Jungle extends BaseChain {
     getName(): string {
         return NAME;
     }
@@ -78,16 +77,12 @@ export default class TelosTestnet extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): string {
-        return RPC_ENDPOINT;
-    }
-
     getFuelRPCEndpoint(): string | null {
         return null;
     }
 
-    getApiEndpoint(): string {
-        return API_ENDPOINT;
+    getV1Endpoint(): string {
+        return V1_ENDPOINT;
     }
 
     getS3ProducerBucket(): string {

@@ -127,15 +127,18 @@ export default defineComponent({
                 return;
             }
         },
+        async loadData(): Promise<void> {
+            try {
+                const apyValue = await api.getApy();
+                this.apy = `${apyValue}%`;
+            } catch (e) {
+                console.error(e);
+            }
+            await this.loadAccountData();
+        },
     },
-    async mounted() {
-        try {
-            const apyValue = await api.getApy();
-            this.apy = `${apyValue}%`;
-        } catch (e) {
-            console.error(e);
-        }
-        await this.loadAccountData();
+    mounted() {
+        void this.loadData();
     },
 });
 </script>

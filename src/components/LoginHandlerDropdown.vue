@@ -2,17 +2,14 @@
 import { Session } from '@wharfkit/session';
 import { storeToRefs } from 'pinia';
 import { kit } from 'src/api/wharf';
-import WalletModal from 'src/components/WalletModal.vue';
 import { useAccountStore } from 'src/stores/account';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'LoginHandlerDropdown',
-    components: { WalletModal },
     setup() {
         const accountStore = useAccountStore();
         const { accountName, user } = storeToRefs(accountStore);
-        const showModal = ref(false);
 
         const onLogout = async (): Promise<void> => {
             try {
@@ -29,7 +26,6 @@ export default defineComponent({
         };
         return {
             accountName,
-            showModal,
             disconnectLabel: 'Disconnect',
             onLogout,
         };
@@ -67,7 +63,6 @@ export default defineComponent({
         </q-card-section>
     </q-card>
 </q-btn-dropdown>
-<WalletModal v-model="showModal"/>
 
 </template>
 <style lang="sass" scoped>

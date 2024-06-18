@@ -4,12 +4,8 @@ const esModules = ['quasar', 'quasar/lang', 'lodash-es'].join('|');
 module.exports = {
     globals: {
         __DEV__: true,
-        // Remove if using `const enums`
-        // See https://huafu.github.io/ts-jest/user/config/isolatedModules#example
-        'ts-jest': {
-            isolatedModules: true,
-        },
     },
+    testEnvironment: 'jsdom',
     // noStackTrace: true,
     // bail: true,
     // cache: false,
@@ -67,7 +63,7 @@ module.exports = {
     // See https://github.com/vuejs/vue-jest/issues/188#issuecomment-620750728
     moduleFileExtensions: ['vue', 'js', 'jsx', 'json', 'ts', 'tsx'],
     moduleNameMapper: {
-        '^quasar$': 'quasar/dist/quasar.esm.prod.js',
+        '^quasar$': 'quasar/dist/quasar.client.js',
         '^~/(.*)$': '<rootDir>/$1',
         '^src/(.*)$': '<rootDir>/src/$1',
         '^app/(.*)$': '<rootDir>/$1',
@@ -77,16 +73,17 @@ module.exports = {
         '^assets/(.*)$': '<rootDir>/src/assets/$1',
         '^boot/(.*)$': '<rootDir>/src/boot/$1',
         '.*css$': '@quasar/quasar-app-extension-testing-unit-jest/stub.css',
+        '^@vue/test-utils': '<rootDir>/node_modules/@vue/test-utils/dist/vue-test-utils.cjs.js',
     },
     transform: {
     // See https://jestjs.io/docs/en/configuration.html#transformignorepatterns-array-string
         [`^(${esModules}).+\\.js$`]: 'babel-jest',
-        '^.+\\.(ts|js|html)$': 'ts-jest',
+        '^.+\\.(ts|js|html)$': ['ts-jest', { isolatedModules: true }],
         // vue-jest uses find-babel-file, which searches by this order:
         //  (async) .babelrc, .babelrc.js, package.json, babel.config.js
         //  (sync) .babelrc, .babelrc.js, babel.config.js, package.json
         // https://github.com/tleunen/find-babel-config/issues/33
-        '.*\\.vue$': 'vue-jest',
+        '.*\\.vue$': '@vue/vue3-jest',
         '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$':
       'jest-transform-stub',
     },

@@ -1,12 +1,19 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { OptionsObj, TableByScope } from 'src/types';
+import { OptionsObj } from 'src/types';
 import { api } from 'src/api';
-import { ACCOUNT_LENGTH, EOS_KEY_LENGTH, PUB_KEY_LENGTH, TRANSACTION_HASH_LENGTH, isValidTransactionHex } from 'src/utils/string-utils';
+import {
+    ACCOUNT_LENGTH,
+    EOS_KEY_LENGTH,
+    PUB_KEY_LENGTH,
+    TRANSACTION_HASH_LENGTH,
+    isValidTransactionHex,
+} from 'src/utils/string-utils';
 import { useQuasar } from 'quasar';
-import { systemAccounts } from 'src/utils/systemAccount';
 import { debounce } from 'src/utils/time';
+import { systemAccounts } from 'src/utils/systemAccount';
+import { Name, API } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'HeaderSearch',
@@ -45,10 +52,6 @@ export default defineComponent({
             isLoading.value = false;
         };
 
-        const onInput = debounce(fetchData, 200);
-
-        watch(inputValue, onInput);
-
         async function searchAccounts(value: string): Promise<OptionsObj[]> {
             try {
                 const results = [] as OptionsObj[];
@@ -62,32 +65,29 @@ export default defineComponent({
                     table: 'userres',
                     upper_bound: value.padEnd(12, 'z'),
                 };
-                const accounts = await api.getTableByScope(request);
-
+                const response = await api.getTableByScope(request);
+                const accounts = response.rows;
                 // get table by scope for userres does not include system account
                 if (value.includes('eosio')) {
                     for (const systemAccount of systemAccounts){
                         accounts.push(
                             {
-                                payer: systemAccount,
-                            } as TableByScope,
+                                payer: Name.from(systemAccount),
+                            } as API.v1.GetTableByScopeResponseRow,
                         );
                     }
                 }
-
                 if (accounts.length > 0) {
-
                     results.push({
                         label: 'Accounts',
                         to: '',
                         isHeader: true,
                     });
-
                     accounts.forEach((user) => {
-                        if (user.payer.includes(value)) {
+                        if (user.payer.toString().includes(value)) {
                             results.push({
-                                label: user.payer,
-                                to: `/account/${user.payer}`,
+                                label: user.payer.toString(),
+                                to: `/account/${user.payer.toString()}`,
                                 isHeader: false,
                             });
                         }
@@ -98,6 +98,10 @@ export default defineComponent({
                 return;
             }
         }
+
+        const onInput = debounce(fetchData, 200);
+
+        watch(inputValue, onInput);
 
         async function searchProposals(value: string): Promise<OptionsObj[]> {
             try {

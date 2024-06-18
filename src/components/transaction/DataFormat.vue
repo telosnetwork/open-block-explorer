@@ -28,7 +28,7 @@ export default defineComponent({
         const isOverflowing = ref(false);
         const transferData = computed(() => actionData.value as TransferData);
         const clientHeight = computed(() => dataBox.value?.clientHeight ?? 0);
-        let currentData = ref<string | unknown>(null);
+        const currentData = ref(null);
         const maxHeight = 110; // the maximum row height
         const switchHeight = 40;
         const maxHeightStyle = `calc(${maxHeight}px - ${switchHeight}px)`;

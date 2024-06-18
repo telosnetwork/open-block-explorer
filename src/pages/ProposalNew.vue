@@ -114,7 +114,7 @@ export default defineComponent({
 
             if (areBlockProducersApproving.value) {
                 data.requested = data.requested.concat(
-                    JSON.parse(JSON.stringify(blockProducers.value)),
+                    blockProducers.value,
                 );
             }
 
@@ -173,6 +173,7 @@ export default defineComponent({
 
                 success.transactionId = String(result.resolved.transaction.id);
                 success.proposalName = data.proposal_name;
+                success.showModal = true;
             } catch (e) {
                 const error = JSON.parse(JSON.stringify(e)) as Error;
                 handleError(
