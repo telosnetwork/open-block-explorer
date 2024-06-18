@@ -24,17 +24,18 @@ export default defineComponent({
                 const transaction = transactionReceipt.trx.transaction as Transaction;
                 void Promise.all(transaction.actions.map(async (act) => {
                     const data = await deserializeActionData(act);
-                    console.log('meu teste nojento', data);
                     return {
                         ...act,
-                        trx_id: transactionReceipt.trx.id,
+                        name: act.name.toString(),
+                        account: act.account.toString(),
+                        trx_id: transactionReceipt.trx.id.toString(),
                         data: data,
                         act: {
-                            name: act.name,
+                            name: act.name.toString(),
                             data: data,
-                            account: act.account,
+                            account: act.account.toString(),
                         },
-                        '@timestamp': block.value.timestamp,
+                        '@timestamp': block.value.timestamp.toString(),
                     } as unknown as Action;
                 })).then((acts) => {
                     actions.value = actions.value.concat(acts);
