@@ -4,7 +4,9 @@ import TransactionsTable from 'src/components/TransactionsTable.vue';
 import BlockCard from 'components/BlockCard.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/api';
-import { Action, API, Transaction } from '@wharfkit/session';
+import { API, Transaction } from '@wharfkit/session';
+import { Action } from 'src/types';
+import { deserializeActionData } from 'src/api/antelopeV1';
 
 export default defineComponent({
     name: 'BlockPage',
@@ -20,7 +22,23 @@ export default defineComponent({
             block.value = await api.getBlock(route.params.block as string);
             block.value.transactions.forEach((transactionReceipt) => {
                 const transaction = transactionReceipt.trx.transaction as Transaction;
-                actions.value = transaction.actions;
+                void Promise.all(transaction.actions.map(async (act) => {
+                    const data = await deserializeActionData(act);
+                    console.log('meu teste nojento', data);
+                    return {
+                        ...act,
+                        trx_id: transactionReceipt.trx.id,
+                        data: data,
+                        act: {
+                            name: act.name,
+                            data: data,
+                            account: act.account,
+                        },
+                        '@timestamp': block.value.timestamp,
+                    } as unknown as Action;
+                })).then((acts) => {
+                    actions.value = actions.value.concat(acts);
+                });
             });
             found.value = !!block.value;
         });
