@@ -15,6 +15,10 @@ import { formatDate } from 'src/utils/string-utils';
 export default defineComponent({
     name: 'BlockCard',
     props: {
+        block_num: {
+            type: String,
+            required: true,
+        },
         block: {
             type: Object as PropType<Block>,
             required: false,
@@ -22,8 +26,10 @@ export default defineComponent({
         },
     },
     setup(props) {
+        const loading = ref<boolean>(true);
         const router = useRouter();
         const q = useQuasar();
+        const blockNum = computed(() => props.block_num);
         const Block = computed(() => props.block);
         const blockInfo = ref<{ key: string; value: string }[]>([]);
         async function nextBlock() {
@@ -96,6 +102,7 @@ export default defineComponent({
                     },
                     { key: 'Actions', value: actionCount.toString() },
                 ];
+                loading.value = false;
             }
         }
         watch(Block, () => {
@@ -105,13 +112,14 @@ export default defineComponent({
             setBlockData();
         });
         return {
-            block_num: computed(() => Block.value?.block_num || 0),
             nextBlock,
             previousBlock,
             numberWithCommas,
             formatDate,
             copy,
             blockInfo,
+            blockNum,
+            loading,
         };
     },
 });
@@ -154,7 +162,7 @@ export default defineComponent({
                 </q-card-section>
                 <q-card-section class="q-pt-none">
                     <div class="row items-center">
-                        <div class="col-11 text-bold ellipsis">{{numberWithCommas(block_num)}}</div>
+                        <div class="col-11 text-bold ellipsis">{{numberWithCommas(parseInt(block_num))}}</div>
                         <div class="col-1">
                             <q-btn
                                 class="float-right"
@@ -168,20 +176,28 @@ export default defineComponent({
                         </div>
                     </div>
                 </q-card-section>
-                <q-card-section>
-                    <div class="text-grey-7">SUMMARY</div>
+                <!-- we show a centered spinner if loading is true -->
+                <q-card-section v-if="loading" class="q-pa-none">
+                    <div class="row full-width justify-center">
+                        <q-spinner-dots color="primary" size="40px"/>
+                    </div>
                 </q-card-section>
-                <div v-for="item in blockInfo" :key="item.key">
-                    <q-separator class="card-separator" inset="inset"/>
+                <template v-else>
                     <q-card-section>
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6">
-                                <div class="text-body1 text-weight-medium text-uppercase">{{item.key}}</div>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 text-right text-bold">{{item.value}}</div>
-                        </div>
+                        <div class="text-grey-7">SUMMARY</div>
                     </q-card-section>
-                </div>
+                    <div v-for="item in blockInfo" :key="item.key">
+                        <q-separator class="card-separator" inset="inset"/>
+                        <q-card-section>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="text-body1 text-weight-medium text-uppercase">{{item.key}}</div>
+                                </div>
+                                <div class="col-xs-12 col-sm-6 text-right text-bold">{{item.value}}</div>
+                            </div>
+                        </q-card-section>
+                    </div>
+                </template>
             </div>
         </q-card>
     </div>
