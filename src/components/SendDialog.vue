@@ -81,11 +81,12 @@ export default defineComponent({
         };
 
         const resetForm = () => {
+            const token = networksStore.getCurrentNetwork.getSystemToken();
             sendToken.value = {
-                symbol: networksStore.getCurrentNetwork.getSystemToken().symbol,
-                precision: 4,
-                amount: 0,
-                contract: 'eosio.token',
+                symbol: token.symbol,
+                precision: token.precision,
+                amount: token.amount,
+                contract: token.contract,
             };
         };
 

@@ -14,7 +14,7 @@ const NAME = 'wax';
 const DISPLAY = 'WAX';
 const TOKEN = {
     symbol: 'WAX',
-    precision: 4,
+    precision: 8,
     amount: 0,
     contract: 'eosio.token',
 } as Token;
