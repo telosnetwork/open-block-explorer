@@ -4,7 +4,7 @@ import PermissionCard from 'components/PermissionCard.vue';
 import { computed, defineComponent, onMounted, ref, watch } from 'vue';
 import { api } from 'src/api';
 import { useQuasar } from 'quasar';
-import { API } from '@greymass/eosio';
+import { API } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'KeysPanel',
