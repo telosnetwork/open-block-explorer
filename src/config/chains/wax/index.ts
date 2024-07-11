@@ -1,12 +1,11 @@
-import BaseChain from 'src/config/BaseChain';
-import { RpcEndpoint } from 'universal-authenticator-library';
 import {
     getCoingeckoPriceChartData,
     getCoingeckoUsdPrice,
 } from 'src/api/price';
+import BaseChain from 'src/config/BaseChain';
+import { Token } from 'src/types';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
-import { Token } from 'src/types';
 import { FooterLink } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
@@ -15,16 +14,12 @@ const NAME = 'wax';
 const DISPLAY = 'WAX';
 const TOKEN = {
     symbol: 'WAX',
-    precision: 4,
+    precision: 8,
     amount: 0,
     contract: 'eosio.token',
 } as Token;
 const HYPERION_ENDPOINT = 'https://wax.eosusa.io';
-const RPC_ENDPOINT = {
-    protocol: 'https',
-    host: 'wax.eosusa.io',
-    port: 443,
-};
+const RPC_ENDPOINT = 'https://wax.eosusa.io';
 const API_ENDPOINT = 'https://example.com';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = false;
@@ -47,11 +42,11 @@ export default class EOS extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): RpcEndpoint {
+    getRPCEndpoint(): string {
         return RPC_ENDPOINT;
     }
 
-    getFuelRPCEndpoint(): RpcEndpoint | null {
+    getFuelRPCEndpoint(): string | null {
         return null;
     }
 

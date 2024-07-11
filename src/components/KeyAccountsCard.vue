@@ -3,7 +3,7 @@ import { useQuasar } from 'quasar';
 import { defineComponent, PropType, computed, ref } from 'vue';
 import { copyToClipboard } from 'quasar';
 import { getChain } from 'src/config/ConfigManager';
-import { Name, PublicKey } from '@greymass/eosio';
+import { Name, PublicKey } from '@wharfkit/session';
 
 export default defineComponent({
     name: 'KeyAccountsCard',

@@ -13,15 +13,14 @@
 
  */
 
-import BaseChain from 'src/config/BaseChain';
-import { RpcEndpoint } from 'universal-authenticator-library';
 import {
     getCoingeckoPriceChartData,
     getCoingeckoUsdPrice,
 } from 'src/api/price';
+import BaseChain from 'src/config/BaseChain';
+import { Token } from 'src/types';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
-import { Token } from 'src/types';
 import { FooterLink } from 'src/types/UiCustomization';
 
 const CHAIN_ID =
@@ -37,16 +36,8 @@ const TOKEN = {
 
 const HYPERION_ENDPOINT = 'https://mainnet.telos.net';
 
-const RPC_ENDPOINT = {
-    protocol: 'https',
-    host: 'mainnet.telos.net',
-    port: 443,
-};
-const FUEL_RPC_ENDPOINT = {
-    protocol: 'https',
-    host: 'telos.greymass.com',
-    port: 443,
-};
+const RPC_ENDPOINT = 'https://mainnet.telos.net';
+const FUEL_RPC_ENDPOINT = 'https://telos.greymass.com';
 const API_ENDPOINT = 'https://api.telos.net/v1';
 const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const DISPLAY_MAP = true;
@@ -92,11 +83,11 @@ export default class Telos extends BaseChain {
         return HYPERION_ENDPOINT;
     }
 
-    getRPCEndpoint(): RpcEndpoint {
+    getRPCEndpoint(): string {
         return RPC_ENDPOINT;
     }
 
-    getFuelRPCEndpoint(): RpcEndpoint | null {
+    getFuelRPCEndpoint(): string | null {
         return FUEL_RPC_ENDPOINT;
     }
 
