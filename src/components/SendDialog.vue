@@ -82,9 +82,9 @@ export default defineComponent({
         const resetForm = () => {
             sendToken.value = {
                 symbol: chain.getSystemToken().symbol,
-                precision: 4,
-                amount: 0,
-                contract: 'eosio.token',
+                precision: chain.getSystemToken().precision,
+                amount: chain.getSystemToken().amount,
+                contract: chain.getSystemToken().contract,
             };
         };
 
