@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted, watch } from 'vue';
-import TransactionTable from 'src/components/TransactionsTable.vue';
+import BlockTransactionsTable from 'src/components/BlockTransactionsTable.vue';
 import BlockCard from 'components/BlockCard.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from 'src/api';
@@ -78,7 +78,7 @@ export default defineComponent({
         };
     },
     components: {
-        TransactionTable,
+        BlockTransactionsTable,
         BlockCard,
     },
 });
@@ -112,7 +112,7 @@ export default defineComponent({
         </div>
     </div>
     <div class="q-pt-lg container-max-width">
-        <TransactionTable :actions="Actions" :toggleEnabled="false"/>
+        <BlockTransactionsTable :actions="Actions" :toggleEnabled="false"/>
     </div>
 </div>
 
