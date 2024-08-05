@@ -2680,6 +2680,18 @@
     "@wharfkit/token" "^1.1.2"
     tslib "^2.1.0"
 
+"@wharfkit/antelope@1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@wharfkit/antelope/-/antelope-1.0.9.tgz#87388b8ab86f6f0e63950284661b7e8da16e76a7"
+  integrity sha512-kqJJmvp+//OG372HELb8IdSMvSZI9u/S6TPiljB5sm3Yl4rRLJL+EV8SxmfuAY/kF5asbHQkW2HWR8L12HXZ6w==
+  dependencies:
+    bn.js "^4.11.9"
+    brorand "^1.1.0"
+    elliptic "^6.5.4"
+    hash.js "^1.0.0"
+    pako "^2.1.0"
+    tslib "^2.0.3"
+
 "@wharfkit/antelope@^1.0.0", "@wharfkit/antelope@^1.0.2", "@wharfkit/antelope@^1.0.4", "@wharfkit/antelope@^1.0.5", "@wharfkit/antelope@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@wharfkit/antelope/-/antelope-1.0.7.tgz#5ca010db963e061b2e8c47c14e55f86817718c2e"
@@ -2730,10 +2742,10 @@
     js-big-decimal "^2.0.7"
     tslib "^2.1.0"
 
-"@wharfkit/session@^1.2.8":
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/@wharfkit/session/-/session-1.2.8.tgz#84de7a2343df4a45600af6e1e3fe294785da295f"
-  integrity sha512-F1oC+4rqCDbt84eKI0Vd2ahhR05Zi2FefqD14PLOo8sj1s5oR5uq7Zc9orSmprkkTqnYFAh9QOck+CWe+xR+8A==
+"@wharfkit/session@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@wharfkit/session/-/session-1.3.1.tgz#2cbfa14aafc21abba060e97dab24e9263c78ad6e"
+  integrity sha512-x+SV14arfhvuiDGyWAH2WIKW7v2WKQ1njc3EzU5ZzE6xVWRfKZ23mqtz83YemQ2h0562+QR712CzX5ZhAcdcpg==
   dependencies:
     "@wharfkit/abicache" "^1.2.1"
     "@wharfkit/account" "^1.0.0"
@@ -2778,10 +2790,10 @@
     isomorphic-ws "^5.0.0"
     ws "^8.13.0"
 
-"@wharfkit/wallet-plugin-cleos@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@wharfkit/wallet-plugin-cleos/-/wallet-plugin-cleos-1.1.1.tgz#8c27118a01c9d50f3c3638553eac77ed8f8db03b"
-  integrity sha512-cFLsx10+Js0ggHUZGi1oTZMWF/fXBAqk9uuCSszPda2VKVWzUijqJJU+vX+TAdCd3WBi86utHJeVoVSIhHEq5A==
+"@wharfkit/wallet-plugin-cleos@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@wharfkit/wallet-plugin-cleos/-/wallet-plugin-cleos-1.2.0.tgz#a00686d3071ec67a67b657c015731e527ee8c084"
+  integrity sha512-lO1AjLfyzRaj2kZc7vAoRhXWwsltNsW3j8uV9EDWmrpBuHYbq+odgQLgTZFenvxfUjsrnvCP1RHFyubDpo1QQg==
   dependencies:
     tslib "^2.1.0"
 
