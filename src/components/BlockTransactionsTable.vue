@@ -1,19 +1,9 @@
 <script lang="ts">
-// eslintdisable @typescript-eslint/no-unsafe-assignment
-import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
-import { api } from 'src/api';
-import AccountSearch from 'src/components/AccountSearch.vue';
-import DateField from 'src/components/DateField.vue';
-import TokenSearch from 'src/components/TokenSearch.vue';
-import AccountFormat from 'src/components/transaction/AccountFormat.vue';
-import ActionFormat from 'src/components/transaction/ActionFormat.vue';
-import DataFormat from 'src/components/transaction/DataFormat.vue';
-import { useNetworksStore } from 'src/stores/networks';
 import {
     Action,
     PaginationSettings,
-    Token,
     TransactionTableRow,
+    Token,
 } from 'src/types';
 import {
     computed,
@@ -25,7 +15,18 @@ import {
     toRefs,
     watch,
 } from 'vue';
+import DateField from 'src/components/DateField.vue';
+import AccountFormat from 'src/components/transaction/AccountFormat.vue';
+import ActionFormat from 'src/components/transaction/ActionFormat.vue';
+import DataFormat from 'src/components/transaction/DataFormat.vue';
+import AccountSearch from 'src/components/AccountSearch.vue';
+import TokenSearch from 'src/components/TokenSearch.vue';
+import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
+import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
+import { Chain } from 'src/types/Chain';
+import { getChain } from 'src/config/ConfigManager';
+const chain: Chain = getChain();
 
 const TWO_SECONDS = 2000;
 
@@ -44,7 +45,7 @@ const getStoredRowSetting = () => {
 };
 
 export default defineComponent({
-    name: 'TransactionsTable',
+    name: 'BlockTransactionsTable',
     components: {
         DateField,
         AccountFormat,
@@ -86,8 +87,6 @@ export default defineComponent({
     setup(props) {
         const route = useRoute();
         const router = useRouter();
-        const networksStore = useNetworksStore();
-
         const { account, actions } = toRefs(props);
         const columns = [
             {
@@ -168,7 +167,7 @@ export default defineComponent({
         });
 
         // accounts filter
-        const showAccountFilter = ref<boolean>(networksStore.getCurrentNetwork.getFiltersSupported('notified'));
+        const showAccountFilter = ref<boolean>(chain.getFiltersSupported('notified'));
         const accountsModel = ref('');
         const accountsDisplay = computed(() => {
             if (accountsModel.value) {
@@ -252,9 +251,8 @@ export default defineComponent({
         const filterRows = () => {
             filteredRows.value = rows.value;
         };
-
         const loadTableData = async (): Promise<void> => {
-            let tableData: Action[];
+            let tableData: Action[] = [];
             if (isTransaction.value) {
                 tableData = (await api.getTransaction(account.value)).actions;
             } else if (hasActions.value) {
@@ -262,46 +260,21 @@ export default defineComponent({
             } else {
                 const page = paginationSettings.value.page;
                 let limit = paginationSettings.value.rowsPerPage;
-
-                let notified = accountsModel.value ?? '';
-                let after = '';
-                let before = '';
-                if (toDateModel.value !== now) {
-                    before = new Date(toDateModel.value).toISOString();
-                }
-                if (fromDateModel.value !== '') {
-                    after = new Date(fromDateModel.value).toISOString();
-                }
+                const notified = accountsModel.value ?? '';
+                const after = fromDateModel.value !== '' ? new Date(fromDateModel.value).toISOString() : '';
+                const before = toDateModel.value !== now ? new Date(toDateModel.value).toISOString() : '';
                 const sort = paginationSettings.value.descending ? 'desc' : 'asc';
+                const extras: {[key:string]:string} = {};
 
-                let extras: {[key:string]:string} | null = tokenModel.value ? { 'act.account': tokenModel.value.contract } : null;
-                if (actionsModel.value) {
-                    extras = extras ? {
-                        ...extras,
-                        'act.name': actionsModel.value,
-                    } : {
-                        'act.name': actionsModel.value,
-                    };
-                }
-
-                if (page > 1 && currentFirstAction.value === 0) {
-                    currentFirstAction.value = rows.value[0]?.action.global_sequence;
-                }
-
-                if (currentFirstAction.value > 0) {
-                    extras = extras ? {
-                        ...extras,
-                        'global_sequence': '0-' + currentFirstAction.value.toString(),
-                    } : {
-                        'global_sequence': '0-' + currentFirstAction.value.toString(),
-                    };
-                }
-
-                // if token is selected, we need to get all transactions and filter them
-                // so we eventually will need more than the current page size
                 if (tokenModel.value) {
-                    limit = 100;
+                    extras['act.account'] = tokenModel.value.contract;
+                    // Increase limit to allow for filtering
+                    limit = limit * 3;
                 }
+                if (actionsModel.value) {
+                    extras['act.name'] = actionsModel.value;
+                }
+
                 const response = await api.getTransactions({
                     page,
                     limit,
@@ -319,36 +292,42 @@ export default defineComponent({
             if (tableData) {
                 if (tokenModel.value) {
                     tableData = tableData.filter(
-                        item => (item.act.data as {quantity?:string}).quantity?.includes(tokenModel.value.symbol),
+                        item => (item.act.data as {quantity?:string})?.quantity?.includes(tokenModel.value.symbol),
                     );
-
-                    // take only the first aginationSettings.value.rowsPerPage items
-                    tableData = tableData.slice(0, paginationSettings.value.rowsPerPage);
                 }
 
-                rows.value = tableData.map(item => ({
-                    name: item.trx_id,
-                    transaction: { id: item.trx_id, type: 'transaction' },
-                    timestamp: item['@timestamp'] || item.timestamp,
-                    action: item,
-                    data: hasActions.value
-                        ? { data: item.data, name: item.account }
-                        : { data: item.act.data, name: item.act.name },
-                    actions: [
-                        {
-                            name: item.trx_id,
-                            transaction: { id: item.trx_id, type: 'transaction' },
-                            timestamp: item['@timestamp'],
-                            action: item,
-                            data: hasActions.value
-                                ? {
-                                    data: item.data,
-                                    name: item.account,
-                                }
-                                : { data: item.act.data as unknown, name: item.act.name },
-                        },
-                    ],
-                }));
+                const flattenedData: TransactionTableRow[] = [];
+                tableData.forEach((action) => {
+                    const actionsArray = action.act?.data ? [action] : [];
+                    actionsArray.forEach((act) => {
+                        flattenedData.push({
+                            name: act.trx_id,
+                            transaction: { id: act.trx_id, type: 'transaction' },
+                            timestamp: act['@timestamp'] || act.timestamp,
+                            action: act,
+                            data: {
+                                data: act.act.data,
+                                name: act.act.name,
+                            },
+                            actions: actionsArray.map(a => ({
+                                name: a.trx_id,
+                                transaction: { id: a.trx_id, type: 'transaction' },
+                                timestamp: a['@timestamp'] || a.timestamp,
+                                action: a,
+                                data: {
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                                    data: a.act.data,
+                                    name: a.act.name,
+                                },
+                            })),
+                        });
+                    });
+                });
+
+                // Apply pagination after filtering
+                const startIndex = (paginationSettings.value.page - 1) * paginationSettings.value.rowsPerPage;
+                rows.value = flattenedData.slice(startIndex, startIndex + paginationSettings.value.rowsPerPage);
+                totalRows.value = flattenedData.length;
             }
             void filterRows();
         };
