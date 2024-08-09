@@ -62,22 +62,14 @@ export const baseUiConfiguration: UiCustomization = {
 };
 
 export default abstract class BaseChain implements Chain {
-    protected name: string;
-
-    constructor(name: string) {
-        this.name = name;
-    }
-
-    getName(): string {
-        return this.name;
-    }
+    abstract getName(): string;
 
     getLargeLogoPath(): string {
-        return `~/assets/${this.name}/logo_lg.svg`;
+        return `~/assets/${this.getName()}/logo_lg.svg`;
     }
 
     getSmallLogoPath(): string {
-        return `~/assets/${this.name}/logo_sm.svg`;
+        return `~/assets/${this.getName()}/logo_sm.svg`;
     }
 
     abstract getSystemToken(): Token;

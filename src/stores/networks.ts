@@ -9,7 +9,8 @@ export interface NetworksStateInterface {
 }
 const CHAIN_LOCAL_STORAGE = 'selectedChainName';
 const PREFERRED_CHAIN_LOCAL_STORAGE = 'preferredChainName';
-const SUPPORTED_NETWORKS: string[] = process.env.SUPPORTED_NETWORKS.split(' ');
+
+const supportedNetworks: string[] = process.env.SUPPORTED_NETWORKS.split(' ');
 
 export const useNetworksStore = defineStore('networks', {
     state: (): NetworksStateInterface => ({
@@ -30,9 +31,9 @@ export const useNetworksStore = defineStore('networks', {
     },
     actions: {
         setupNetworks() {
-            const supportedNetworks: Chain[] = [];
-            SUPPORTED_NETWORKS.forEach((networkName: string) => supportedNetworks.push(createNetwork(networkName)));
-            this.networks = supportedNetworks;
+            const supportedNetworksObjs: Chain[] = [];
+            supportedNetworks.forEach((networkName: string) => supportedNetworksObjs.push(createNetwork(networkName)));
+            this.networks = supportedNetworksObjs;
 
             if (this.currentNetworkName) {
                 // checks if current network is supported
@@ -76,7 +77,7 @@ export const useNetworksStore = defineStore('networks', {
 });
 
 /**
- * SUPPORTED_NETWORKS defines all networks we want to show
+ * supportedNetworks defines all networks we want to show
  * if length > 1, we enable the multichain selector
  * initial state loads all networks
  */

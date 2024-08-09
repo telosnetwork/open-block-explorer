@@ -8,21 +8,20 @@ import TelosTestnet from 'src/config/chains/telos-testnet';
 
 import { Chain } from 'src/types/Chain';
 
-// TODO: turn these classes into functions and remove name parameter
 export const createNetwork = (name: string): Chain => {
     switch (name) {
     case 'eos':
-        return new EOS('eos');
+        return new EOS();
     case 'telos':
-        return new Telos('telos');
+        return new Telos();
     case 'ux':
-        return new UX('ux');
+        return new UX();
     case 'wax':
-        return new Wax('wax');
+        return new Wax();
     case 'jungle':
-        return new Jungle('jungle');
+        return new Jungle();
     case 'telos-testnet':
-        return new TelosTestnet('telos-testnet');
+        return new TelosTestnet();
     default:
         console.error(`Network ${name} not supported`);
     }
