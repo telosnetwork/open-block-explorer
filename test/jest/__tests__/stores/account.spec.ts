@@ -44,12 +44,16 @@ jest.mock('@wharfkit/session', () => ({
     })),
 }));
 
-const chainIdMock = 'chainIdMock';
-
-const users = [{
-    name: 'John Doe',
-    getAccountName: jest.fn().mockResolvedValue('john.doe'),
-} as unknown];
+jest.mock('src/stores/networks', () => ({
+    useNetworksStore: jest.fn().mockImplementation(() => ({
+        getCurrentNetwork: {
+            getName: () => 'Telos',
+            getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
+            getHyperionEndpoint: () => '',
+            getApiEndpoint: () => '',
+        },
+    })),
+}));
 
 describe('Store - Account Actions', () => {
     beforeEach(() => {

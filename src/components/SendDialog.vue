@@ -1,13 +1,12 @@
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import CoinSelectorDialog from 'src/components/CoinSelectorDialog.vue';
+import { useAccountStore } from 'src/stores/account';
+import { useNetworksStore } from 'src/stores/networks';
 import { Token } from 'src/types';
 import { isValidAccount } from 'src/utils/string-utils';
-import { getChain } from 'src/config/ConfigManager';
+import { computed, defineComponent, PropType, ref, toRef } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAccountStore } from 'src/stores/account';
 
-const chain = getChain();
 
 export default defineComponent({
     name: 'SendDialog',
@@ -23,8 +22,10 @@ export default defineComponent({
     emits: ['update-token-balances'],
     setup(props, context) {
         const accountStore = useAccountStore();
+        const networksStore = useNetworksStore();
+
         const router = useRouter();
-        const sendToken = ref<Token>(chain.getSystemToken());
+        const sendToken = ref<Token>(networksStore.getCurrentNetwork.getSystemToken());
         const availableTokens = toRef(props, 'availableTokens');
         const sendDialog = ref<boolean>(false);
         const openCoinDialog = ref<boolean>(false);
@@ -34,10 +35,10 @@ export default defineComponent({
 
         const account = computed(() => accountStore.accountName);
         const transactionId = computed(
-            (): string => accountStore.TransactionId,
+            (): string => accountStore.transactionId,
         );
         const transactionError = computed(
-            () => accountStore.TransactionError,
+            () => accountStore.transactionError,
         );
         const transactionForm = computed(
             () => !(transactionError.value || transactionId.value),
@@ -80,11 +81,12 @@ export default defineComponent({
         };
 
         const resetForm = () => {
+            const token = networksStore.getCurrentNetwork.getSystemToken();
             sendToken.value = {
-                symbol: chain.getSystemToken().symbol,
-                precision: chain.getSystemToken().precision,
-                amount: chain.getSystemToken().amount,
-                contract: chain.getSystemToken().contract,
+                symbol: token.symbol,
+                precision: token.precision,
+                amount: token.amount,
+                contract: token.contract,
             };
         };
 
