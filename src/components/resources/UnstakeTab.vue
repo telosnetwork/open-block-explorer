@@ -1,14 +1,11 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { DelegatedResources, useResourceStore } from 'src/stores/resources';
 import { assetToAmount, formatCurrency } from 'src/utils/string-utils';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
-
-const chain = getChain();
-const symbol = chain.getSystemToken().symbol;
+import { useNetworksStore } from 'src/stores/networks';
 
 export default defineComponent({
     name: 'UnstakeTab',
@@ -19,12 +16,16 @@ export default defineComponent({
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
         const resourceStore = useResourceStore();
+        const networksStore = useNetworksStore();
+
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>(
             accountStore.accountName.toLowerCase() || '',
         );
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
+        const symbol = networksStore.getCurrentNetwork.getSystemToken().symbol;
+        const chainId = networksStore.getCurrentNetwork.getChainId();
 
         function formatDec() {
             if (cpuTokens.value !== '0') {
@@ -91,6 +92,8 @@ export default defineComponent({
             netStake,
             cpuStake,
             resourceStore,
+            chainId,
+            symbol,
         };
     },
     watch: {
@@ -150,15 +153,15 @@ export default defineComponent({
                 transfer: false,
                 cpu_weight:
                     parseFloat(this.cpuTokens) > 0
-                        ? formatCurrency(parseFloat(this.cpuTokens), 4, symbol, true)
-                        : `0.0000 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.cpuTokens), 4, this.symbol, true)
+                        : `0.0000 ${this.symbol}`,
                 net_weight:
                     parseFloat(this.netTokens) > 0
-                        ? formatCurrency(parseFloat(this.netTokens), 4, symbol, true)
-                        : `0.0000 ${symbol}`,
+                        ? formatCurrency(parseFloat(this.netTokens), 4, this.symbol, true)
+                        : `0.0000 ${this.symbol}`,
             });
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + this.chainId) !== 'cleos') {
                 this.openTransaction = true;
             }
         },

@@ -1,20 +1,22 @@
 <script lang="ts">
-import { kit } from 'src/boot/wharf';
+import { Session } from '@wharfkit/session';
+import { storeToRefs } from 'pinia';
+import { kit } from 'src/api/wharf';
 import WalletModal from 'src/components/WalletModal.vue';
 import { useAccountStore } from 'src/stores/account';
-import { computed, defineComponent, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'LoginHandlerDropdown',
     components: { WalletModal },
     setup() {
         const accountStore = useAccountStore();
-        const account = computed(() => accountStore.accountName);
+        const { accountName, user } = storeToRefs(accountStore);
         const showModal = ref(false);
 
         const onLogout = async (): Promise<void> => {
             try {
-                await kit.logout();
+                await kit.logout(user.value as Session);
                 clearAccount();
             } catch (error) {
                 console.error('Authenticator logout error', error);
@@ -26,7 +28,7 @@ export default defineComponent({
             void accountStore.logout();
         };
         return {
-            account,
+            accountName,
             showModal,
             disconnectLabel: 'Disconnect',
             onLogout,
@@ -39,12 +41,12 @@ export default defineComponent({
 <q-btn-dropdown
     class="connect-button"
     color="primary"
-    :label="account"
+    :label="accountName"
     :content-style="{ backgroundColor: '#172c6c' }"
 >
     <q-card class="buttons-container">
         <q-card-section class="account-link">
-            <a class="text-white" :href=" '/account/' + account">
+            <a class="text-white" :href=" '/account/' + accountName">
                 <div class="row">
                     <div class="col-12">
                         View my account

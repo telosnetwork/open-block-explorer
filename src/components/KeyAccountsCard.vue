@@ -1,9 +1,8 @@
 <script lang="ts">
-import { useQuasar } from 'quasar';
-import { defineComponent, PropType, computed, ref } from 'vue';
-import { copyToClipboard } from 'quasar';
-import { getChain } from 'src/config/ConfigManager';
 import { Name, PublicKey } from '@wharfkit/session';
+import { copyToClipboard, useQuasar } from 'quasar';
+import { useNetworksStore } from 'src/stores/networks';
+import { computed, defineComponent, PropType, ref } from 'vue';
 
 export default defineComponent({
     name: 'KeyAccountsCard',
@@ -18,7 +17,8 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const chain = getChain();
+        const networksStore = useNetworksStore();
+
         const key = ref(props.pubKey);
         const legacyKeyFormat = ref<boolean>(false);
         const Accounts = computed(() => props.accounts);
@@ -27,7 +27,7 @@ export default defineComponent({
             ? key.value.toLegacyString()
             : key.value.toString());
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        const tokenLogo = computed(() => chain.getSmallLogoPath());
+        const tokenLogo = computed(() => networksStore.getCurrentNetwork.getSmallLogoPath());
         function copy(value: string) {
             copyToClipboard(value)
                 .then((): void => {

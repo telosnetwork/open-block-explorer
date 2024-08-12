@@ -2,9 +2,9 @@
 import { API } from '@wharfkit/session';
 import { api } from 'src/api';
 import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
+import { useNetworksStore } from 'src/stores/networks';
 import { Token } from 'src/types';
 import { formatCurrency } from 'src/utils/string-utils';
 import { computed, defineComponent, ref } from 'vue';
@@ -17,6 +17,8 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
+        const networksStore = useNetworksStore();
+
         const openTransaction = ref<boolean>(false);
         const stakingAccount = ref<string>('');
         const total = ref<string>('0');
@@ -83,6 +85,7 @@ export default defineComponent({
 
         return {
             accountStore,
+            networksStore,
             openTransaction,
             stakingAccount,
             total,
@@ -114,14 +117,14 @@ export default defineComponent({
                     data,
                 });
 
-                this.transactionId = this.accountStore.TransactionId;
+                this.transactionId = this.accountStore.transactionId;
             } catch (e) {
                 this.transactionError = e;
                 this.accountStore.setTransactionError(e);
             }
             await this.loadAccountData();
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + this.networksStore.getCurrentNetwork.getChainId()) !== 'cleos') {
                 this.openTransaction = true;
             }
         },
