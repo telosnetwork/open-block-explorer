@@ -27,13 +27,13 @@ This includes following key features:
 
 - Transaction log including extensive filter options
 - Smart Contract verification
-- Ressource management and staking (CPU, NET, RAM)
+- Resource management and staking (CPU, NET, RAM)
 - REX staking / unstaking / savings
 - Account power up
-- Ressource trading (RAM)
+- Resource trading (RAM)
 - Multi-Signature (MSIG) setup and management
-- Wallet functionality (non custodial), including transafer
-- Permission and key managament (active / onwer)
+- Wallet functionality (non custodial), including transfer
+- Permission and key management (active / owner)
 - Chain and Block Provider (BP) statistics
 - BP Voting and Governance
 - Premium Name bids
