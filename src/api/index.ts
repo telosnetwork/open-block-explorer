@@ -2,7 +2,7 @@
  * Add another endpoint resource:
  *  - add a unique file in src/api/
  *  - for new method,  export and import here, add to api export
- *  - for existing method enpoint, export from service file and update the import statement here
+ *  - for existing method endpoint, export from service file and update the import statement here
  */
 import {
     getHyperionAccountData,

@@ -47,7 +47,7 @@ const THEME = {
     'color-footer-background': '#000000',
 };
 
-// create vars for map colors (border, backround, countries, popup, text, popup)
+// create vars for map colors (border, background, countries, popup, text, popup)
 
 export default class EOS extends BaseChain {
     getName(): string {
