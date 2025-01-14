@@ -301,7 +301,10 @@ export default defineComponent({
             activeProducersApproved.value = activeProducers.value.filter(
                 item => item.status,
             );
-
+            // Commenting this out, the logic is bad.
+            // BPs can be involved in non-BP proposals, so we can't just check if BPs are involved and then assume 2/3 + 1
+            // And if no BPs are involved, doesn't mean we need 100% approval, most msigs are 2/3 or 5/7, etc...
+            /*
             if (activeProducers.value.length === 0) {
                 // No BPs are involved in the proposal, so we need to 100% of the requested approvals
                 isApproved.value = proposal.provided_approvals.length === totalRequestedApprovals;
@@ -310,6 +313,8 @@ export default defineComponent({
                 const approval = (activeProducers.value.length * 2 / 3) + 1;
                 isApproved.value = activeProducersApproved.value.length >= Math.floor(approval);
             }
+              */
+            isApproved.value = true;
 
             const transactions = await handleTransactionHistory(proposal.block_num);
 
