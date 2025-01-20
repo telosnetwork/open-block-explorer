@@ -1,5 +1,5 @@
 /* regex to validate EOSIO account name convention see: https://regex101.com/r/d8uKrG/1 */
-import { getChain } from 'src/config/ConfigManager';
+import { useNetworksStore } from 'src/stores/networks';
 import { RexHistory } from 'src/types';
 
 export function isValidAccount(account: string): boolean {
@@ -107,11 +107,13 @@ export function formatDate(date: string, showTime = true): string {
 }
 
 export function getRexHistoryAsset(data: RexHistory): string {
+    const networksStore = useNetworksStore();
+
     if (data.rex){
         return data.rex;
     }
     if (typeof data.amount === 'number') {
-        const symbol = getChain().getSystemToken().symbol;
+        const symbol = networksStore.getCurrentNetwork.getSystemToken().symbol;
         return `${data.amount} ${symbol}`;
     }else{
         return data.amount;

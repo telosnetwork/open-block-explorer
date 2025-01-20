@@ -1,11 +1,11 @@
 <script lang="ts">
-import ConfigManager from 'src/config/ConfigManager';
-import { computed } from 'vue';
+import { useNetworksStore } from 'src/stores/networks';
 
 export default {
     name: 'AppFooter',
     setup() {
-        const footerLinks = computed(() => ConfigManager.get().getCurrentChain().getFooterLinks());
+        const networksStore = useNetworksStore();
+        const footerLinks = networksStore.getCurrentNetwork.getFooterLinks();
 
         return {
             footerLinks,

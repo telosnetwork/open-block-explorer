@@ -1,11 +1,9 @@
 <script lang="ts">
 import { defineComponent, computed, ref } from 'vue';
 import { Producer } from 'src/types';
-import { getChain } from 'src/config/ConfigManager';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
-
-const chain = getChain();
+import { useNetworksStore } from 'src/stores/networks';
 
 const MAX_VOTE_PRODUCERS = 30;
 
@@ -17,7 +15,9 @@ export default defineComponent({
     setup(props) {
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
-        const symbol = chain.getSystemToken().symbol;
+        const networksStore = useNetworksStore();
+
+        const symbol = networksStore.getCurrentNetwork.getSystemToken().symbol;
         const account = computed(() => accountStore.accountName);
         const previousVote = computed(() =>
             accountStore.data.voter_info

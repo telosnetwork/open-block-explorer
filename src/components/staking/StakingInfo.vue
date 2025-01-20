@@ -1,19 +1,19 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import { getChain } from 'src/config/ConfigManager';
 import { API } from '@wharfkit/session';
-import { Token } from 'src/types';
-import { useChainStore } from 'src/stores/chain';
 import { useAccountStore } from 'src/stores/account';
-
-const chain = getChain();
+import { useChainStore } from 'src/stores/chain';
+import { useNetworksStore } from 'src/stores/networks';
+import { Token } from 'src/types';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'StakingInfo',
     setup() {
         const chainStore = useChainStore();
         const accountStore = useAccountStore();
-        const symbol = ref<string>(chain.getSystemToken().symbol);
+        const networksStore = useNetworksStore();
+
+        const symbol = ref<string>(networksStore.getCurrentNetwork.getSystemToken().symbol);
         const stakingAccount = ref<string>('');
         const total = ref<string>('0');
         const token = computed((): Token => chainStore.token);

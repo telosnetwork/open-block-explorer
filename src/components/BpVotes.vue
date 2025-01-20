@@ -1,32 +1,41 @@
-<script setup lang="ts">
-import { ref, defineProps, onBeforeMount, watch } from 'vue';
+<script lang="ts">
+import { defineComponent, ref, onBeforeMount, watch } from 'vue';
 import { getHyperionAccountData } from 'src/api/hyperion';
 
-const  props = defineProps({
-    account: {
-        type: String,
-        required: true,
+export default defineComponent({
+    name: 'BpVotes',
+    props: {
+        account: {
+            type: String,
+            required: true,
+        },
+    },
+    setup(props) {
+        const bpVotes = ref([]);
+        const fetchVotes = async () => {
+            try {
+                const {
+                    account: {
+                        voter_info: { producers },
+                    },
+                } = await getHyperionAccountData(props.account);
+                bpVotes.value = producers;
+            } catch(e) {
+                console.error(e);
+            }
+        };
+        onBeforeMount(fetchVotes);
+        watch(() => props.account, async () => {
+            bpVotes.value = [];
+            await fetchVotes();
+        });
+
+        return {
+            bpVotes,
+        };
     },
 });
 
-const bpVotes = ref([]);
-const fetchVotes = async () => {
-    try {
-        const {
-            account: {
-                voter_info: { producers },
-            },
-        } = await getHyperionAccountData(props.account);
-        bpVotes.value = producers;
-    } catch(e) {
-        console.error(e);
-    }
-};
-onBeforeMount(fetchVotes);
-watch(() => props.account, async () => {
-    bpVotes.value = [];
-    await fetchVotes();
-});
 </script>
 
 <template>

@@ -1,17 +1,16 @@
 <script lang="ts">
-import {
-    defineComponent,
-    PropType,
-    computed,
-    watch,
-    reactive,
-    onMounted,
-} from 'vue';
 import AccountSearch from 'components/AccountSearch.vue';
-import { getChain } from 'src/config/ConfigManager';
+import { useNetworksStore } from 'src/stores/networks';
 import { ProposalAction } from 'src/types';
+import {
+    computed,
+    defineComponent,
+    onMounted,
+    PropType,
+    reactive,
+    watch,
+} from 'vue';
 
-const chain = getChain();
 
 interface Field {
   name: string;
@@ -32,10 +31,11 @@ export default defineComponent({
         },
     },
     setup(props, context) {
+        const networksStore = useNetworksStore();
         const action = reactive<ProposalAction>(props.modelValue);
+        const { precision, symbol } = networksStore.getCurrentNetwork.getSystemToken();
 
         const mask = computed(() => {
-            const { precision } = chain.getSystemToken();
             let mask = '#';
             if (precision > 0) {
                 mask += `.${'#'.repeat(precision)}`;
@@ -43,12 +43,8 @@ export default defineComponent({
             return mask;
         });
 
-        const token = computed(() => chain.getSystemToken().symbol);
-
         const updateAction = (newAction: ProposalAction) => {
             let actionToFormat = { ...newAction };
-            const { precision } = chain.getSystemToken();
-
             const numberArray = actionToFormat.data.quantity.match(/\d+/g);
 
             let quantity = '0';
@@ -75,15 +71,15 @@ export default defineComponent({
         });
 
         watch(action, (currentValue) => {
-            if (!currentValue.data.quantity.includes(token.value)) {
-                currentValue.data.quantity = `${currentValue.data.quantity} ${token.value}`;
+            if (!currentValue.data.quantity.includes(symbol)) {
+                currentValue.data.quantity = `${currentValue.data.quantity} ${symbol}`;
             }
             context.emit('update:modelValue', currentValue);
         });
 
         return {
             mask,
-            token,
+            symbol,
             action,
         };
     },
@@ -110,7 +106,7 @@ export default defineComponent({
             v-else-if="field.name === 'quantity'"
             v-model="action.data[field.name]"
             :mask="mask"
-            :suffix="token"
+            :suffix="symbol"
             fill-mask="0"
             reverse-fill-mask
             outlined

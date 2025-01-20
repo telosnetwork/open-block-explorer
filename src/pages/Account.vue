@@ -10,7 +10,7 @@ import BpVotes from 'components/BpVotes.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { useAccountStore } from 'src/stores/account';
-import ConfigManager from 'src/config/ConfigManager';
+import { useNetworksStore } from 'src/stores/networks';
 
 export default defineComponent({
     name: 'AccountPage',
@@ -25,9 +25,11 @@ export default defineComponent({
     },
     setup() {
         const accountStore = useAccountStore();
+        const networksStore = useNetworksStore();
+
         const route = useRoute();
         const router = useRouter();
-        const accountPageSettings = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
+        const accountPageSettings = networksStore.getCurrentNetwork.getUiCustomization().accountPageSettings;
 
         const tab = ref<string>((route.query['tab'] as string) || 'transactions');
         const account = computed(() => (route.params.account as string) || '');
