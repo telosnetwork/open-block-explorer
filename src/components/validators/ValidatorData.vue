@@ -94,7 +94,7 @@ export default defineComponent({
         }
             ).rows[0].bpay_rate;
             // 2 shares per top 21 bp
-            // 1 share for standby up untill 42 bps
+            // 1 share for standby up until 42 bps
             top21pay24h.value =
         (((payrate.value / 100000) * supply.value) / 365 / sharecount) * 2;
         }
