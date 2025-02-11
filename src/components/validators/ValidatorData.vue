@@ -1,17 +1,15 @@
 <script lang="ts">
-import { defineComponent, computed, ref, onMounted, watch } from 'vue';
-import ValidatorDataTable from 'src/components/validators/ValidatorDataTable.vue';
-import { api } from 'src/api';
-import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { GetTableRowsParams } from 'src/types';
-import WalletModal from 'src/components/WalletModal.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { Name } from '@wharfkit/session';
-import { formatCurrency, assetToAmount } from 'src/utils/string-utils';
+import { api } from 'src/api';
+import ValidatorDataTable from 'src/components/validators/ValidatorDataTable.vue';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
+import WalletModal from 'src/components/WalletModal.vue';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
-
-const chain = getChain();
+import { useNetworksStore } from 'src/stores/networks';
+import { GetTableRowsParams } from 'src/types';
+import { assetToAmount, formatCurrency } from 'src/utils/string-utils';
+import { computed, defineComponent, onMounted, ref, watch } from 'vue';
 
 export default defineComponent({
     name: 'ValidatorData',
@@ -23,7 +21,9 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
-        const symbol = chain.getSystemToken().symbol;
+        const networksStore = useNetworksStore();
+
+        const symbol = networksStore.getCurrentNetwork.getSystemToken().symbol;
         const account = computed(() => accountStore.accountName);
         const balance = computed(
             () => formatCurrency(lastWeight.value, 2, symbol),
@@ -45,8 +45,8 @@ export default defineComponent({
         const lastStaked = ref<number>(0);
         const stakedAmount = ref<number>(0);
         const accountValid = computed(() => account.value && account.value !== '');
-        const transactionId = ref<string>(accountStore.TransactionId);
-        const transactionError = ref<unknown>(accountStore.TransactionError);
+        const transactionId = ref<string>(accountStore.transactionId);
+        const transactionError = ref<unknown>(accountStore.transactionError);
         const openTransaction = ref<boolean>(false);
         const showWalletModal = ref<boolean>(false);
         const payrate = ref(0);
@@ -102,7 +102,7 @@ export default defineComponent({
         async function updateSupply() {
             const paramsSupply = {
                 code: 'eosio.token',
-                scope: chain.getSystemToken().symbol,
+                scope: networksStore.getCurrentNetwork.getSystemToken().symbol,
                 table: 'stat',
             } as GetTableRowsParams;
             supply.value = assetToAmount(

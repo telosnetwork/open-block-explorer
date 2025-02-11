@@ -1,11 +1,8 @@
 import { route } from 'quasar/wrappers';
-import { createRouter, createWebHistory } from 'vue-router';
-import { StateInterface } from 'src/stores';
 import routes from 'src/router/routes';
-import ConfigManager from 'src/config/ConfigManager';
-import { ComputedRef, computed, reactive } from 'vue';
-
-const configMgr = ConfigManager.get();
+import { StateInterface } from 'src/stores';
+import { useNetworksStore } from 'src/stores/networks';
+import { createRouter, createWebHistory } from 'vue-router';
 
 /*
  * If not building with SSR mode, you can
@@ -16,17 +13,10 @@ const configMgr = ConfigManager.get();
  * with the Router instance.
  */
 
-const routeData = reactive({ network: '' });
-
-const updateSelectedChain = (chainName: string) => {
-    const chains = configMgr.getAllChains();
-    const chain = chains.filter(chain => chain.getName() === chainName)[0];
-    routeData.network = chain.getName();
-    configMgr.setCurrentChain(chain);
-};
-
 export default route<StateInterface>(function (/* { store, ssrContext } */) {
+    const networksStore = useNetworksStore();
     const createHistory = createWebHistory;
+
     const Router = createRouter({
         routes,
 
@@ -36,79 +26,146 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
         history: createHistory(process.env.VUE_ROUTER_BASE),
     });
 
-    Router.beforeEach((to, from) => {
-        const chains = configMgr.getAllChains();
-        const selectedChainOnStore = sessionStorage.getItem(ConfigManager.CHAIN_LOCAL_STORAGE);
-        const preferredChainName = configMgr.getPreferredChain();
-        const isMultichain = process.env.SHOW_MULTICHAIN_SELECTOR === 'true';
+    const updateNetwork = (name: string) => {
+        const isUpdated = networksStore.updateCurrentNetwork(name);
 
-        if(isMultichain) {
-            if (to.path === '/') { // if attempting to go to home page
-                if (to.query.network) { // if there is network param, proceed to network with the param
+        if (!isUpdated) {
+            console.error(`Network ${name} is not supported`);
+        }
+    };
+
+    /* Global router guard intention
+    * When dealing with multiple chains, we need to make sure user is properly redirected.
+    * Here are the scenarios:
+    *
+    * When user specifies a network, but the network is not supported
+    *   they should be redirected to the network selection page (Home)
+    *
+    * When user specified a network and it is supported
+    * and its path is the '/' (Home)
+    *   the current network must be updated (in case it's different from currentChainName)
+    *   and they should be redirected to /network
+    *
+    * When user specified a network and it is supported
+    * and its path is not '/' (Home)
+    *   the current network must be updated (in case it's different from currentChainName)
+    *   and the path should not be changed
+    *
+    * When network is not specified, but currentNetworkName is
+    * and its path is the '/' (Home)
+    *   we redirect the user to /network
+    *   with currentNetworkName as network
+    *
+    * When network is not specified, but currentNetworkName is
+    * and its path is not '/' (Home)
+    *   we redirect the user to same path
+    *   with currentNetworkName as network
+    *
+    * When network is not specified, but preferredNetworkName is
+    * and its path is the '/' (Home)
+    *   we update currentNetworkName
+    *   we redirect the user to /network
+    *   with currentNetworkName as network
+    *
+    * When network is not specified, but preferredNetworkName is
+    * and its path is not '/' (Home)
+    *   we update currentNetworkName
+    *   we redirect the user to same path
+    *   with currentNetworkName as network
+    *
+    * When network is not specified, and neither preferredNetworkName and currentNetworkName are
+    *  we redirect the user to '/' (Home), where preferredNetworkName is selected
+    *
+    * note: validity of currentChainName and preferredChainName have already
+    * been guarateed on networkStore.setupNetworks()
+    */
+
+    Router.beforeEach((to, from) => {
+        if(networksStore.networks.length > 1) {
+            // Route only needs to be handled in case of multiple networks
+            if(
+                to.meta.needsNetwork === true &&
+                networksStore.preferredNetworkName === ''
+            ) {
+                // Preferred network needs to be defined
+                // Either network was not specified or it is not supported
+                return;
+            }
+
+            if (to.query.network) {
+                // if network is specified
+                const toNetwork = Array.isArray(to.query.network) ? to.query.network[0] : to.query.network;
+                const isNetworkSupported = networksStore.isNetworkSupported(toNetwork);
+
+                if (isNetworkSupported) {
+                    if (toNetwork !== networksStore.currentNetworkName) {
+                        // We'll update the current network when the specified network is supported
+                        updateNetwork(toNetwork);
+                    }
+
+                    if (to.path === '/') {
+                        // When path is not specified
+                        // Redirects to the network main page
+                        return ({
+                            path: 'network',
+                            query: to.query,
+                        });
+                    } else {
+                        if (from.query.network && from.query.network !== to.query.network) {
+                            setTimeout(() => location.reload(), 500);
+                        }
+                        // The network is valid and we don't need to redirect
+                        // We'll allow the original path
+                        return;
+                    }
+                } else {
+                    // redirects to manually select the chain
                     return ({
-                        path: 'network',
-                        query: to.query,
-                    });
-                } else if (selectedChainOnStore) { // if there is no network param and local storage has current network
-                    return ({
-                        path: 'network',
-                        query: {
-                            network: selectedChainOnStore,
-                        },
-                    });
-                } else if (preferredChainName) { // if there is no network param and local storage has preferred network selected
-                    updateSelectedChain(preferredChainName);
-                    return ({
-                        path: 'network',
-                        query: {
-                            network: preferredChainName,
+                        path: '/',
+                        meta: {
+                            needsNetwork: true,
                         },
                     });
                 }
-                // else, will proceed to home page
+
             } else {
-                if (!to.query.network) { // if doesn't have network param
-                    if (selectedChainOnStore) {
-                        return ({
-                            ...to,
-                            query: {
-                                ...to.query,
-                                network: selectedChainOnStore,
-                            },
-                        });
-                    } else if (preferredChainName) { // if has a preferred chain selected on sotre
-                        updateSelectedChain(preferredChainName);
-                        return ({
-                            ...to,
-                            query: {
-                                ...to.query,
-                                network: preferredChainName,
-                            },
-                        });
-                    } else { // if doesn't have a preferred chain selected on store, go to home page (landing page)
-                        return ({
-                            path: '/',
-                        });
-                    }
-                } else if (chains.filter(chain => chain.getName() === to.query.network).length === 0) { // check if the network is not part of the system
-                    if (preferredChainName) { // if has a preferred chain selected on sotre
-                        updateSelectedChain(preferredChainName);
-                        return ({
-                            ...to,
-                            query: {
-                                ...to.query,
-                                network: preferredChainName,
-                            },
-                        });
-                    } else { // if doesn't have a preferred chain selected on store, go to home page (landing page)
-                        return ({
-                            path: '/',
-                        });
-                    }
-                } else if ((from.query.network && from.query.network !== to.query.network) || selectedChainOnStore !== to.query.network) { // if i'm changing from network
-                    updateSelectedChain(Array.isArray(to.query.network) ? to.query.network[0] : to.query.network);
-                    setTimeout(() => location.reload(), 500);
+                if (networksStore.currentNetworkName && networksStore.currentNetworkName !== '') {
+                    const path = to.path === '/' ? 'network' : to.path;
+                    return ({
+                        path,
+                        query: {
+                            network: String(networksStore.currentNetworkName),
+                        },
+                    });
                 }
+                if (networksStore.preferredNetworkName && networksStore.preferredNetworkName !== '') {
+                    updateNetwork(networksStore.preferredNetworkName);
+                    const path = to.path === '/' ? 'network' : to.path;
+                    return ({
+                        path,
+                        query: {
+                            network: String(networksStore.preferredNetworkName),
+                        },
+                        meta: {
+                            needsNetwork: false,
+                        },
+                    });
+                }
+
+                return ({
+                    path: '/',
+                    meta: {
+                        needsNetwork: true,
+                    },
+                });
+            }
+        }
+    });
+
+    Router.afterEach((to) => {
+        if(networksStore.networks.length > 1) {
+            if(to.meta.needsNetwork && networksStore.preferredNetworkName !== '') {
+                to.meta.needsNetwork = false;
             }
         }
     });
@@ -116,6 +173,3 @@ export default route<StateInterface>(function (/* { store, ssrContext } */) {
     return Router;
 });
 
-export function useRouteDataNetwork(): ComputedRef<string> {
-    return computed(() => routeData.network);
-}

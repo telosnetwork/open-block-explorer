@@ -1,11 +1,11 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { API } from '@wharfkit/session';
-import { formatCurrency } from 'src/utils/string-utils';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
+import { useNetworksStore } from 'src/stores/networks';
+import { formatCurrency } from 'src/utils/string-utils';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'SellRam',
@@ -15,12 +15,13 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
-        const chain = getChain();
+        const networksStore = useNetworksStore();
+
         let openTransaction = ref<boolean>(false);
         const sellAmount = ref('');
-        const symbol = ref<string>(chain.getSystemToken().symbol);
-        const transactionId = computed(() => accountStore.TransactionId);
-        const transactionError = computed(() => accountStore.TransactionError);
+        const symbol = ref<string>(networksStore.getCurrentNetwork.getSystemToken().symbol);
+        const transactionId = computed(() => accountStore.transactionId);
+        const transactionError = computed(() => accountStore.transactionError);
         const ramPrice = computed((): string => chainStore.ram_price);
         const sellPreview = computed(
             () => formatCurrency((Number(sellAmount.value) / 1000) * Number(ramPrice.value), 4, symbol.value),
@@ -46,7 +47,7 @@ export default defineComponent({
                 amount: sellAmount.value,
             });
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + networksStore.getCurrentNetwork.getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }

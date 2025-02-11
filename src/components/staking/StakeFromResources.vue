@@ -1,10 +1,10 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import ViewTransaction from 'src/components/ViewTransanction.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { API, Asset } from '@wharfkit/session';
+import ViewTransaction from 'src/components/ViewTransanction.vue';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
+import { useNetworksStore } from 'src/stores/networks';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'StakeFromResources',
@@ -14,15 +14,16 @@ export default defineComponent({
     setup() {
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
+        const networksStore = useNetworksStore();
+
         const openTransaction = ref<boolean>(false);
-        const chain = getChain();
-        const symbol = ref<string>(chain.getSystemToken().symbol);
+        const symbol = ref<string>(networksStore.getCurrentNetwork.getSystemToken().symbol);
         const cpuTokens = ref<string>('');
         const netTokens = ref<string>('');
         const cpuWithdraw = ref<string>('0');
         const netWithdraw = ref<string>('0');
-        const transactionId = ref<string>(accountStore.TransactionId);
-        const transactionError = ref<unknown>(accountStore.TransactionError);
+        const transactionId = ref<string>(accountStore.transactionId);
+        const transactionError = ref<unknown>(accountStore.transactionError);
         const stakingAccount = computed(
             (): string => accountStore.accountName,
         );
@@ -70,7 +71,7 @@ export default defineComponent({
                 netAmount: netTokens.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + networksStore.getCurrentNetwork.getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }
@@ -85,7 +86,7 @@ export default defineComponent({
                 netAmount: netWithdraw.value || '0',
             });
 
-            if (localStorage.getItem('autoLogin_' + getChain().getChainId()) !== 'cleos') {
+            if (localStorage.getItem('autoLogin_' + networksStore.getCurrentNetwork.getChainId()) !== 'cleos') {
                 openTransaction.value = true;
             }
         }

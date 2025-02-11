@@ -7,19 +7,17 @@ import ResourcesDialog from 'src/components/resources/ResourcesDialog.vue';
 import StakingDialog from 'src/components/staking/StakingDialog.vue';
 import DateField from 'src/components/DateField.vue';
 import { date, useQuasar, copyToClipboard } from 'quasar';
-import { getChain } from 'src/config/ConfigManager';
 import { api } from 'src/api';
 import { useRouter } from 'vue-router';
 import { TableIndexType } from 'src/types/Api';
 import { API, UInt64 } from '@wharfkit/session';
 import { formatCurrency } from 'src/utils/string-utils';
-import ConfigManager from 'src/config/ConfigManager';
 import { isSystemAccount } from 'src/utils/systemAccount';
 import { useResourceStore } from 'src/stores/resources';
 import { useChainStore } from 'src/stores/chain';
 import { useAccountStore } from 'src/stores/account';
+import { useNetworksStore } from 'src/stores/networks';
 
-const chain = getChain();
 export default defineComponent({
     name: 'AccountCard',
     components: {
@@ -41,8 +39,9 @@ export default defineComponent({
         const resourceStore = useResourceStore();
         const chainStore = useChainStore();
         const accountStore = useAccountStore();
+        const networksStore = useNetworksStore();
 
-        const accountPageSettings = computed(() => ConfigManager.get().getCurrentChain().getUiCustomization().accountPageSettings);
+        const accountPageSettings = networksStore.getCurrentNetwork.getUiCustomization().accountPageSettings;
 
         const createTime = ref<string>('2019-01-01T00:00:00.000');
         const createTransaction = ref<string>('');
@@ -114,7 +113,7 @@ export default defineComponent({
             const tokenPrice = formatCurrency(usdPrice.value ?? 0, 4);
 
             if (totalValue.value && usdPrice.value) {
-                result = `$${usd} (@ $${tokenPrice}/${chain.getSystemToken().symbol})`;
+                result = `$${usd} (@ $${tokenPrice}/${networksStore.getCurrentNetwork.getSystemToken().symbol})`;
             }
             return result;
         });
@@ -234,7 +233,10 @@ export default defineComponent({
         };
 
         const setTotalBalance = () => {
-            totalTokens.value = liquidNative.value + rex.value + staked.value + delegatedToOthers.value;
+            totalTokens.value = Number(liquidNative.value) +
+                Number(rex.value) +
+                Number(staked.value) +
+                Number(delegatedToOthers.value);
             isLoading.value = false;
         };
 
@@ -329,7 +331,7 @@ export default defineComponent({
 
         const loadSystemToken = (): void => {
             if (token.value.symbol === '') {
-                setToken(chain.getSystemToken());
+                setToken(networksStore.getCurrentNetwork.getSystemToken());
             }
         };
 
@@ -380,7 +382,7 @@ export default defineComponent({
             console.assert(typeof val === 'number' || typeof val === 'string', val);
             return typeof val === 'string'
                 ? val
-                : formatCurrency(val, 4, chain.getSystemToken().symbol);
+                : formatCurrency(val, 4, networksStore.getCurrentNetwork.getSystemToken().symbol);
         };
 
         const resetBalances = () => {
@@ -391,7 +393,7 @@ export default defineComponent({
         };
 
         onMounted(async () => {
-            usdPrice.value = await chain.getUsdPrice();
+            usdPrice.value = await networksStore.getCurrentNetwork.getUsdPrice();
             await loadAccountData();
             await accountStore.updateRexData({
                 account: props.account,

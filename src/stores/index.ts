@@ -2,12 +2,13 @@ import { store } from 'quasar/wrappers';
 
 
 
-import { ContractStateInterface } from 'src/stores/contract';
-import { ChainStateInterface } from 'src/stores/chain';
-import { AccountStateInterface } from 'src/stores/account';
-import { TransactionStateInterface } from 'src/stores/transaction';
-import { ResourcesStateInterface } from 'src/stores/resources';
 import { createPinia } from 'pinia';
+import { AccountStateInterface } from 'src/stores/account';
+import { ChainStateInterface } from 'src/stores/chain';
+import { ContractStateInterface } from 'src/stores/contract';
+import { NetworksStateInterface } from 'src/stores/networks';
+import { ResourcesStateInterface } from 'src/stores/resources';
+import { TransactionStateInterface } from 'src/stores/transaction';
 
 /*
  * If not building with SSR mode, you can
@@ -25,6 +26,7 @@ export interface StateInterface {
     account: AccountStateInterface;
     transaction: TransactionStateInterface;
     resources: ResourcesStateInterface;
+    networks: NetworksStateInterface;
 }
 
 export default store(() => createPinia());

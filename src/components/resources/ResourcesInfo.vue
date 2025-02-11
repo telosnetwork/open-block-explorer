@@ -1,12 +1,12 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
-import { Token } from 'src/types';
 import { API } from '@wharfkit/session';
-import { getChain } from 'src/config/ConfigManager';
-import { formatCurrency } from 'src/utils/string-utils';
 import { useAccountStore } from 'src/stores/account';
 import { useChainStore } from 'src/stores/chain';
+import { useNetworksStore } from 'src/stores/networks';
 import { useResourceStore } from 'src/stores/resources';
+import { Token } from 'src/types';
+import { formatCurrency } from 'src/utils/string-utils';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
     name: 'ResourcesInfo',
@@ -14,12 +14,14 @@ export default defineComponent({
         const accountStore = useAccountStore();
         const chainStore = useChainStore();
         const resourceStore = useResourceStore();
+        const networksStore = useNetworksStore();
+
         const openCoinDialog = ref<boolean>(false);
         const stakingAccount = ref<string>('');
         const cpuTokens = ref<string>('0');
         const netTokens = ref<string>('0');
         const total = ref<string>('0');
-        const token = ref<Token>(getChain().getSystemToken());
+        const token = ref<Token>(networksStore.getCurrentNetwork.getSystemToken());
         const accountData = computed(() => accountStore.data as API.v1.AccountObject);
         const ramPrice = computed((): string => chainStore.ram_price === '0' ? '0' : chainStore.ram_price);
         const ramAvailable = computed(() =>
@@ -35,12 +37,12 @@ export default defineComponent({
             const selfStakedResources =
                 Number(
                     accountData.value.self_delegated_bandwidth?.net_weight.value
-                        ? accountData.value.self_delegated_bandwidth.net_weight.value
+                        ? accountData.value.self_delegated_bandwidth?.net_weight.value
                         : '0',
                 ) +
                 Number(
                     accountData.value.self_delegated_bandwidth?.cpu_weight.value
-                        ? accountData.value.self_delegated_bandwidth.cpu_weight.value
+                        ? accountData.value.self_delegated_bandwidth?.cpu_weight.value
                         : '0',
                 );
             return totalStakedResources - selfStakedResources;

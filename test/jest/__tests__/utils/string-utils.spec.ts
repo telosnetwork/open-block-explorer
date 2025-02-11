@@ -1,13 +1,21 @@
 import { describe, expect, it } from '@jest/globals';
 import {
+    assetToAmount,
+    formatCurrency,
+    formatDate,
+    formatNumberWithCommas,
+    getRexHistoryAsset,
     isValidAccount,
     isValidTransactionHex,
-    formatCurrency,
-    assetToAmount,
-    formatNumberWithCommas,
-    formatDate,
-    getRexHistoryAsset,
 } from 'src/utils/string-utils';
+
+jest.mock('src/stores/networks', () => ({
+    useNetworksStore: jest.fn().mockImplementation(() => ({
+        getCurrentNetwork: {
+            getSystemToken: () => ({ symbol: 'TLOS', contract: 'eosio.token', precision: 4 }),
+        },
+    })),
+}));
 
 describe('string-utils utility functions', () => {
     describe('isValidAccount', () => {

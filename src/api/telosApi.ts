@@ -1,12 +1,13 @@
 import axios from 'axios';
+import { useNetworksStore } from 'src/stores/networks';
 import { Chain } from 'src/types/Chain';
-import { getChain } from 'src/config/ConfigManager';
 
 const MAX_REQUESTS_COUNT = 5;
 const INTERVAL_MS = 10;
 let PENDING_REQUESTS = 0;
 
-const chain: Chain = getChain();
+const networksStore = useNetworksStore();
+const chain: Chain = networksStore.getCurrentNetwork;
 
 const telosApi = axios.create({ baseURL: chain.getApiEndpoint() });
 

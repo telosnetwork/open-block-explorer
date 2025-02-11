@@ -1,7 +1,7 @@
 import { API, Name, ResolvedSigningRequest, Session, UInt64 } from '@wharfkit/session';
 import { defineStore } from 'pinia';
 import { api } from 'src/api';
-import { getChain } from 'src/config/ConfigManager';
+import { useNetworksStore } from 'src/stores/networks';
 import { ABI, Action, Authorization, GetTableRowsParams, Rexbal, RexbalRows, RexPoolRows } from 'src/types';
 import { formatCurrency } from 'src/utils/string-utils';
 import { markRaw } from 'vue';
@@ -17,8 +17,8 @@ export interface AccountStateInterface {
     data: API.v1.AccountObject;
     authorization: Authorization[];
     rexActions: Action[];
-    TransactionId: string;
-    TransactionError: unknown;
+    transactionId: string;
+    transactionError: unknown;
     rexbal: Rexbal;
     vote: string[];
     abi: ABI;
@@ -31,8 +31,8 @@ export interface AccountStateInterface {
     chainId: string;
 }
 
-const chain = getChain();
-const { symbol } = chain.getSystemToken();
+const networksStore = useNetworksStore();
+const { symbol } = networksStore.getCurrentNetwork.getSystemToken();
 
 export const useAccountStore = defineStore('account', {
     state: (): AccountStateInterface => ({
@@ -74,8 +74,8 @@ export const useAccountStore = defineStore('account', {
 
         authorization: [],
         rexActions: [],
-        TransactionId: '',
-        TransactionError: '',
+        transactionId: '',
+        transactionError: '',
         rexbal: {} as Rexbal,
         vote: [],
         abi: { abi: null } as ABI,
@@ -99,8 +99,8 @@ export const useAccountStore = defineStore('account', {
                 data: this.data,
                 authorization: this.authorization,
                 rexActions: this.rexActions,
-                TransactionId: this.TransactionId,
-                TransactionError: this.TransactionError,
+                transactionId: this.transactionId,
+                transactionError: this.transactionError,
                 rexbal: this.rexbal,
                 vote: this.vote,
                 abi: this.abi,
@@ -133,11 +133,11 @@ export const useAccountStore = defineStore('account', {
                 vote: accountData?.voter_info?.producers.map(vote => vote.toString()) ?? [],
             });
         },
-        setTransaction(TransactionId: string) {
-            this.TransactionId = TransactionId;
+        setTransaction(transactionId: string) {
+            this.transactionId = transactionId;
         },
-        setTransactionError(TransactionError: unknown) {
-            this.TransactionError = TransactionError;
+        setTransactionError(transactionError: unknown) {
+            this.transactionError = transactionError;
         },
         setRexActions(rexActions: Action[]) {
             this.rexActions = rexActions;

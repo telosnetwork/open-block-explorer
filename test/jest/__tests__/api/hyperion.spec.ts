@@ -84,30 +84,13 @@ const userTokens = {
 
 installQuasarPlugin();
 
-// mocking internal chain implementation
-jest.mock('src/config/ConfigManager', () => ({
-    getChain: () => ({
-        getName: () => 'telos',
-        getSymbol: () => 'TLOS',
-        getHyperionEndpoint: () => '',
-        getFuelRPCEndpoint: () => ({ protocol: 'https', host: 'host', port: 443 }),
-    }),
-}));
-
-
-// mocking AbortController
-const abortFn = jest.fn();
-global.AbortController = jest.fn(() => ({
-    signal: {
-        addEventListener: jest.fn(),
-        aborted: false,
-        onabort: jest.fn(),
-        reason: '',
-        throwIfAborted: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-    },
-    abort: abortFn,
+jest.mock('src/stores/networks', () => ({
+    useNetworksStore: jest.fn().mockImplementation(() => ({
+        getCurrentNetwork: {
+            getName: () => 'Telos',
+            getHyperionEndpoint: () => '',
+        },
+    })),
 }));
 
 jest.mock('axios', () => ({
@@ -133,8 +116,8 @@ const mockHyperion: AxiosInstance = {
 
 
 import {
-    getTokens,
     DEFAULT_ICON,
+    getTokens,
 } from 'src/api/hyperion';
 import { Token } from 'src/types';
 

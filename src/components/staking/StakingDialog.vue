@@ -8,14 +8,13 @@ import StakeFromResources from 'src/components/staking/StakeFromResources.vue';
 import StakingInfo from 'src/components/staking/StakingInfo.vue';
 import StakingTab from 'src/components/staking/StakingTab.vue';
 import UnstakingTab from 'src/components/staking/UnstakingTab.vue';
-import { getChain } from 'src/config/ConfigManager';
 import { useAccountStore } from 'src/stores/account';
-import { useChainStore } from 'src/stores/chain';
+import { useNetworksStore } from 'src/stores/networks';
 import { Token } from 'src/types';
 import { formatCurrency } from 'src/utils/string-utils';
 import { computed, defineComponent, PropType, ref } from 'vue';
 
-const symbol = getChain().getSystemToken().symbol;
+const networksStore = useNetworksStore();
 
 export default defineComponent({
     name: 'StakingDialog',
@@ -31,12 +30,11 @@ export default defineComponent({
     data() {
         return {
             sendToken: {
-                symbol,
-                precision: 4,
+                symbol: String(networksStore.getCurrentNetwork.getSystemToken().symbol),
+                precision: Number(networksStore.getCurrentNetwork.getSystemToken().precision),
                 amount: 0,
                 contract: 'eosio.token',
             } as Token,
-            sendDialog: false,
             apy: '--',
         };
     },
@@ -48,11 +46,12 @@ export default defineComponent({
     },
     setup() {
         const accountStore = useAccountStore();
-        const chainStore = useChainStore();
+
         const rexfund = computed(() => accountStore.rexfund || 0);
-        const symbol = computed(() => chainStore.token.symbol);
         const transactionId = ref<string>(null);
         const transactionError = ref<string>(null);
+
+        const symbol = networksStore.getCurrentNetwork.getSystemToken().symbol;
 
         const withdrawRexFund = async () => {
             await accountStore.unstakeRexFund({ amount: rexfund.value });
@@ -61,7 +60,7 @@ export default defineComponent({
             });
         };
 
-        const prettyRexFund = computed(() => formatCurrency(rexfund.value, 4, symbol.value));
+        const prettyRexFund = computed(() => formatCurrency(rexfund.value, 4, symbol));
 
         return {
             openCoinDialog: ref<boolean>(false),

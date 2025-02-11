@@ -1,11 +1,9 @@
-import { defineStore } from 'pinia';
-import { BP, GetTableRowsParams, Producer, Token } from 'src/types';
-import { api } from 'src/api';
 import axios from 'axios';
+import { defineStore } from 'pinia';
+import { api } from 'src/api';
+import { useNetworksStore } from 'src/stores/networks';
+import { BP, GetTableRowsParams, Producer, Token } from 'src/types';
 import { formatCurrency } from 'src/utils/string-utils';
-import { Chain } from 'src/types/Chain';
-import { getChain } from 'src/config/ConfigManager';
-
 
 export interface ChainStateInterface {
     token: Token;
@@ -17,8 +15,6 @@ export interface ChainStateInterface {
     producerSchedule: string[];
     ram_price: string;
 }
-
-const chain: Chain = getChain();
 
 export const useChainStore = defineStore('chain', {
     state: (): ChainStateInterface => ({
@@ -74,10 +70,12 @@ export const useChainStore = defineStore('chain', {
         },
         async updateBpList() {
             try {
+                const networksStore = useNetworksStore();
+
                 const producerSchedule = (await api.getSchedule()).active.producers;
                 const schedule = producerSchedule.map(el => el.producer_name);
                 this.setProducerSchedule(schedule);
-                const objectList = await axios.get(chain.getS3ProducerBucket());
+                const objectList = await axios.get(networksStore.getCurrentNetwork.getS3ProducerBucket());
                 const parser = new DOMParser();
                 const contentsArray = parser
                     .parseFromString(objectList.data, 'text/xml')
@@ -85,7 +83,7 @@ export const useChainStore = defineStore('chain', {
                 const lastEntry = contentsArray[contentsArray.length - 1];
                 const lastKey = lastEntry.childNodes[0].textContent;
                 const producerData: BP[] = (
-            await axios.get(`${chain.getS3ProducerBucket()}/${lastKey}`)
+            await axios.get(`${networksStore.getCurrentNetwork.getS3ProducerBucket()}/${lastKey}`)
         ).data as BP[];
                 let producers = (await api.getProducers()).rows;
                 producers = producers.filter(producer => producer.is_active === 1);

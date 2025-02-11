@@ -24,9 +24,7 @@ import TokenSearch from 'src/components/TokenSearch.vue';
 import { api } from 'src/api';
 import { useRoute, useRouter } from 'vue-router';
 import { QBtnDropdown, QPopupProxy, QTable } from 'quasar';
-import { Chain } from 'src/types/Chain';
-import { getChain } from 'src/config/ConfigManager';
-const chain: Chain = getChain();
+import { useNetworksStore } from 'src/stores/networks';
 
 const TWO_SECONDS = 2000;
 
@@ -87,6 +85,7 @@ export default defineComponent({
     setup(props) {
         const route = useRoute();
         const router = useRouter();
+        const networksStore = useNetworksStore();
         const { account, actions } = toRefs(props);
         const columns = [
             {
@@ -167,7 +166,7 @@ export default defineComponent({
         });
 
         // accounts filter
-        const showAccountFilter = ref<boolean>(chain.getFiltersSupported('notified'));
+        const showAccountFilter = ref<boolean>(networksStore.getCurrentNetwork.getFiltersSupported('notified'));
         const accountsModel = ref('');
         const accountsDisplay = computed(() => {
             if (accountsModel.value) {
