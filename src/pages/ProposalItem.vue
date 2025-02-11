@@ -11,6 +11,8 @@ import { sleep } from 'src/utils/time';
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import JsonViewer from 'vue-json-viewer';
 import { useRoute, useRouter } from 'vue-router';
+import { TableIndexType } from 'src/types/Api';
+import { PackedTransaction, Checksum256 } from '@wharfkit/antelope/lib/eosio-core';
 
 export default defineComponent({
     name: 'ProposalItem',
@@ -29,6 +31,7 @@ export default defineComponent({
         const isLoading = ref(true);
 
         const proposer = ref('');
+        const proposalhash = ref<Checksum256>();
         const approvalStatus = ref('');
         const expirationDate = ref('');
 
@@ -273,6 +276,34 @@ export default defineComponent({
                 return;
             }
 
+            const proposalRows = await api.getTableRows({
+                code: 'eosio.msig',
+                scope: proposal.proposer,
+                table: 'proposal',
+                lower_bound: proposal.proposal_name as unknown as TableIndexType,
+                upper_bound: proposal.proposal_name as unknown as TableIndexType,
+                limit: 1,
+            }) as { rows: { packed_transaction: string }[] };
+
+            if (proposalRows.rows.length === 0) {
+                handleError(null, 'Proposal not found');
+                await router.push('/proposal');
+                return;
+            }
+
+            const proposalRow: { packed_transaction: string } = proposalRows.rows[0];
+
+            const packed = PackedTransaction.from({
+                compression: false,
+                signatures: [],
+                packed_trx: proposalRow.packed_transaction,
+                packed_context_free_data: [],
+            });
+
+            const transaction = packed.getTransaction();
+
+            proposalhash.value = transaction.id;
+
             proposer.value = proposal.proposer;
 
             const totalRequestedApprovals = proposal.provided_approvals.length + proposal.requested_approvals.length;
@@ -365,6 +396,7 @@ export default defineComponent({
                             actor: account.value,
                             permission: accountStore.accountPermission,
                         },
+                        proposal_hash: proposalhash.value,
                     },
                 });
                 await sleep();
