@@ -7,7 +7,7 @@ export default defineComponent({
     name: 'ContractActions',
     components: { ViewTransaction },
     setup() {
-        const memo = ref<Record<string, unknown>>({});
+        const actionData = ref<Record<string, unknown>>({});
         const permission = ref<string>('');
         const accountStore = useAccountStore();
         const actor = ref('');
@@ -25,31 +25,45 @@ export default defineComponent({
         );
 
         async function signAction() {
+            const actDataObj = actionDataToObject();
             await accountStore.sendAction({
                 name: action.value,
                 actor: actor.value,
                 permission: permission.value,
-                data: memo.value,
+                data: actDataObj,
             });
             openTransaction.value = true;
         }
 
-        function formatMemo() {
-            for (let key in memo.value) {
+        function actionDataToObject() {
+            const obj: {[key: string]: unknown} = {};
+            for (let key in actionData.value) {
+                const field = fields.value.find(val => val.name === key);
+                let value = actionData.value[key];
+                if (typeof value === 'string' && field.type.endsWith('[]')) {
+                    value = JSON.parse(value);
+                }
+                obj[key] = value;
+            }
+            return obj;
+        }
+
+        function formatActionData() {
+            for (let key in actionData.value) {
                 const field = fields.value.find(val => val.name === key);
                 if (field.type === 'bool') {
-                    memo.value[key] = memo.value[key] === 'true' ||
-                        memo.value[key] === '1' ||
-                        memo.value[key] === 'True' ||
-                        memo.value[key] === 'T' ||
-                        memo.value[key] === 't';
+                    actionData.value[key] = actionData.value[key] === 'true' ||
+                        actionData.value[key] === '1' ||
+                        actionData.value[key] === 'True' ||
+                        actionData.value[key] === 'T' ||
+                        actionData.value[key] === 't';
                 }
             }
         }
 
         watch(actions, () => {
             action.value = actions.value[0];
-            memo.value = {};
+            actionData.value = {};
         });
 
         onMounted(() => {
@@ -61,14 +75,14 @@ export default defineComponent({
             action,
             actions,
             fields,
-            memo,
+            memo: actionData,
             signAction,
             actor,
             permission,
             openTransaction,
             transactionId,
             transactionError,
-            formatMemo,
+            formatMemo: formatActionData,
         };
     },
 });
