@@ -59,9 +59,6 @@ export function formatCurrency(
         amountAsString = (+originalAsString).toFixed(precision);
     }
 
-    if (amountAsString === '0.0004') {
-    }
-
     if (amountAsString.indexOf('.') === -1) {
         amountAsString += '.0';
     }
