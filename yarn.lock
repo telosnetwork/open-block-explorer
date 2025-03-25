@@ -2680,10 +2680,10 @@
     "@wharfkit/token" "^1.1.2"
     tslib "^2.1.0"
 
-"@wharfkit/antelope@1.0.10":
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/@wharfkit/antelope/-/antelope-1.0.10.tgz#5c63d6b67a4b62038575cd86ef47edaa8d1f57dd"
-  integrity sha512-12m4nD6+ZZl+mwzySuFkeiJCOrbXQT6mqg9amr1l/JtRewRdxeN9QTsEoPjE5MCTXbJc84X51KCT71ysglse0Q==
+"@wharfkit/antelope@1.0.13":
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/@wharfkit/antelope/-/antelope-1.0.13.tgz#216b28da9d9a91ece9db273447f4419aa770657f"
+  integrity sha512-f4O5O8+6Bd5BHpMUHTmlWQmlhX5xYb4AfzT2NJweyqIPqQOstm+aInF42AtUhSALDa8fvoY80YZoqwM0L8TUyw==
   dependencies:
     bn.js "^4.11.9"
     brorand "^1.1.0"

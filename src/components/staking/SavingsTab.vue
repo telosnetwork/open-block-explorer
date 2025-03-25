@@ -74,7 +74,7 @@ export default defineComponent({
             if (
                 fromSavingAmount.value === '0' ||
                 fromSavingAmount.value === '' ||
-                Number(fromSavingAmount.value) >= assetToAmount(rexSavings.value)
+                assetToAmount(fromSavingAmount.value) > assetToAmount(rexSavings.value)
             ) {
                 return;
             }

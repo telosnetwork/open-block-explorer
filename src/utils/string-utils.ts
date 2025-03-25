@@ -34,6 +34,9 @@ export function formatCurrency(
     symbol?: string,
     skipPrettyPrinting?: boolean,
 ): string {
+    if (+amount > 0 && +amount < 0.5) {
+
+    }
     const floatingPointNumberRegex = /^-?(0|[1-9]\d*)(\.\d+)?$/;
     const amountIsValid =
         (typeof amount === 'number' || floatingPointNumberRegex.test(amount)) &&
@@ -43,16 +46,30 @@ export function formatCurrency(
         throw `${amount} is not a valid number`;
     }
 
-    let amountAsString = typeof amount === 'number' ? amount.toString() : amount;
+    const originalAsString = typeof amount === 'number' ? amount.toString() : amount;
+    let amountAsString = originalAsString;
 
     // ensure correct precision
-    amountAsString = (+amountAsString).toFixed(precision);
+    const beforeLastDigit = originalAsString.substr(0, precision + 1);
+    // const beforeLastDigit = originalAsString.substr(0, precision + 2);
+    const zero = '0.' + '0'.repeat(precision - 1);
+    if (beforeLastDigit === zero) {
+        amountAsString = originalAsString.substr(0, precision + 2);
+    } else {
+        amountAsString = (+originalAsString).toFixed(precision);
+    }
+
+    if (amountAsString === '0.0004') {
+    }
+
+    if (amountAsString.indexOf('.') === -1) {
+        amountAsString += '.0';
+    }
 
     if (!skipPrettyPrinting) {
         // commify
         amountAsString = (() => {
             const [integer, fraction] = amountAsString.split('.');
-
             return `${(+integer).toLocaleString('en')}.${fraction}`;
         })();
     }
