@@ -116,6 +116,10 @@ describe('string-utils utility functions', () => {
 
             expect(formatCurrency(0, 2, 'USD')).toBe('0 USD');
             expect(formatCurrency(0, 4, 'TLOS')).toBe('0 TLOS');
+
+            expect(formatCurrency('0.12345', 4, 'TLOS')).toBe('0.1234 TLOS');
+            expect(formatCurrency('0.0003456', 4, 'TLOS')).toBe('0.0003 TLOS');
+
         });
 
         it('should pretty print when skipPrettyPrinting is true', () => {
