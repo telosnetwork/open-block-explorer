@@ -49,27 +49,28 @@ export function formatCurrency(
     const originalAsString = typeof amount === 'number' ? amount.toString() : amount;
     let amountAsString = originalAsString;
 
-    // ensure correct precision
-    const beforeLastDigit = originalAsString.substr(0, precision + 1);
-    // const beforeLastDigit = originalAsString.substr(0, precision + 2);
-    const zero = '0.' + '0'.repeat(precision - 1);
-    if (beforeLastDigit === zero) {
-        amountAsString = originalAsString.substr(0, precision + 2);
-    } else {
-        amountAsString = (+originalAsString).toFixed(precision);
-    }
-
-    if (amountAsString.indexOf('.') === -1) {
-        amountAsString += '.0';
-    }
-
     if (!skipPrettyPrinting) {
         // commify
+        if (amountAsString.indexOf('.') === -1) {
+            // only in case of integer
+            amountAsString = originalAsString + '.' + '0'.repeat(precision);
+        }
         amountAsString = (() => {
             const [integer, fraction] = amountAsString.split('.');
-            return `${(+integer).toLocaleString('en')}.${fraction}`;
+            let fixed_fraction = fraction;
+
+            if (fixed_fraction.length < precision) {
+                // if the fraction is shorter than the precision, pad it with zeroes
+                fixed_fraction += '0'.repeat(precision - fixed_fraction.length);
+            } else {
+                // if the fraction is longer than the precision or equal to it, trim it
+                fixed_fraction = fixed_fraction.slice(0, precision);
+            }
+
+            return `${(+integer).toLocaleString('en')}.${fixed_fraction}`;
         })();
     }
+
 
 
     if (+amountAsString === 0 && !skipPrettyPrinting) {
