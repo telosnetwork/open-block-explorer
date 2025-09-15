@@ -154,7 +154,7 @@ export default defineComponent({
                                         label="Top 21"
                                     />
                                     <q-chip
-                                        v-else-if="(producerRows.indexOf(bp) + 1) < 43"
+                                        v-else-if="(producerRows.indexOf(bp) + 1) < 36"
                                         outline
                                         square
                                         color="primary"
@@ -175,7 +175,7 @@ export default defineComponent({
                                 <div class="row items-center full-height">{{ (bp.total_votes / 10000).toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}</div>
                             </div>
                             <div class="col-2 q-py-md">
-                                <div class="row items-center full-height">{{ ((producerRows.indexOf(bp) + 1) < 22 ? (producerPay*((120-2*producerRows.indexOf(bp))/100)) : (producerRows.indexOf(bp) + 1) < 43 ? ((producerPay/2)*((162-2*producerRows.indexOf(bp))/100)) : 0 ).toFixed(0)  + ` ${symbol}` }}</div>
+                                <div class="row items-center full-height">{{ ((producerRows.indexOf(bp) + 1) < 22 ? (producerPay*((120-2*producerRows.indexOf(bp))/100)) : (producerRows.indexOf(bp) + 1) < 36 ? ((producerPay/2)*((162-2*producerRows.indexOf(bp))/100)) : 0 ).toFixed(0)  + ` ${symbol}` }}</div>
                             </div>
                             <div class="col-1 select-box q-py-md">
                                 <div class="row full-selection justify-center">
