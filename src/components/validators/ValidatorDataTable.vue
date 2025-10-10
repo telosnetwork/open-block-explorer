@@ -172,7 +172,19 @@ export default defineComponent({
                                 </div>
                             </div>
                             <div class="col-2 q-py-md">
-                                <div class="row items-center full-height">{{ (bp.total_votes / 10000).toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}</div>
+                                <div class="row items-center full-height">
+                                    <div>
+                                        {{ (bp.total_votes / 10000).toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }}
+                                        <br>
+                                        <q-chip
+                                            v-if="bp.self_staked_boost > 0"
+                                            color="primary"
+                                            text-color="white"
+                                            :label="`+${(bp.self_staked_boost / 10000).toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,})} Boosted`"
+                                            size="sm"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-2 q-py-md">
                                 <div class="row items-center full-height">{{ ((producerRows.indexOf(bp) + 1) < 22 ? producerPay : (producerRows.indexOf(bp) + 1) < 43 ? producerPay / 2 : 0 ).toFixed(0)  + ` ${symbol}` }}</div>

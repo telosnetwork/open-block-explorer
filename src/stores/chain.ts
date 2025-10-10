@@ -5,6 +5,7 @@ import axios from 'axios';
 import { formatCurrency } from 'src/utils/string-utils';
 import { Chain } from 'src/types/Chain';
 import { getChain } from 'src/config/ConfigManager';
+import { Name } from '@wharfkit/session';
 
 
 export interface ChainStateInterface {
@@ -89,28 +90,44 @@ export const useChainStore = defineStore('chain', {
         ).data as BP[];
                 let producers = (await api.getProducers()).rows;
                 producers = producers.filter(producer => producer.is_active === 1);
-                producers = producers.map((data) => {
+                producers = await Promise.all(producers.map(async (data) => {
                     const bp = producerData.find(
                         producer => producer.owner === data.owner,
                     );
+                    const producerVote = await api.getTableRows({
+                        code: 'eosio',
+                        scope: 'eosio',
+                        table: 'voters',
+                        lower_bound: Name.from(data.owner),
+                        limit: 1,
+                    }) as { rows:  { owner: string; self_stake_boost: number; producers: string[]; last_vote_weight: number }[] };
+                    let selfStakedBoost = 0;
+                    if (producerVote.rows.length > 0 && producerVote.rows[0].owner === data.owner && producerVote.rows[0].self_stake_boost > 0 && producerVote.rows[0].producers.includes(data.owner)) {
+                        selfStakedBoost = (producerVote.rows[0].self_stake_boost / 100) * producerVote.rows[0].last_vote_weight;
+                    }
                     if (bp) {
                         try {
                             return {
                                 ...data,
                                 name: bp.org.candidate_name,
                                 location: bp.org.location.name,
+                                self_staked_boost: selfStakedBoost,
                             };
                         } catch (error) {
-                            return data;
+                            return {
+                                ...data,
+                                self_staked_boost: selfStakedBoost,
+                            };
                         }
                     } else {
                         return {
                             ...data,
                             name: data.owner,
                             location: '',
+                            self_staked_boost: selfStakedBoost,
                         };
                     }
-                });
+                }));
                 producerData.sort((a, b) => b.total_votes - a.total_votes);
                 producers.sort((a, b) => b.total_votes - a.total_votes);
                 this.setProducers(producers);
