@@ -29,8 +29,8 @@ export default defineComponent({
             () => formatCurrency(lastWeight.value, 2, symbol),
         );
         const activecount = computed(() => {
-            if (chainStore.producers.length > 42) {
-                return 42;
+            if (chainStore.producers.length > 35) {
+                return 35;
             } else {
                 return chainStore.producers.length;
             }
@@ -94,7 +94,7 @@ export default defineComponent({
         }
             ).rows[0].bpay_rate;
             // 2 shares per top 21 bp
-            // 1 share for standby up untill 42 bps
+            // 1 share for standby up until 35 bps
             top21pay24h.value =
         (((payrate.value / 100000) * supply.value) / 365 / sharecount) * 2;
         }
