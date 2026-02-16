@@ -187,7 +187,7 @@ export default defineComponent({
                                 </div>
                             </div>
                             <div class="col-2 q-py-md">
-                                <div class="row items-center full-height">{{ ((producerRows.indexOf(bp) + 1) < 22 ? producerPay : (producerRows.indexOf(bp) + 1) < 43 ? producerPay / 2 : 0 ).toFixed(0)  + ` ${symbol}` }}</div>
+                                <div class="row items-center full-height">{{ ((producerRows.indexOf(bp) + 1) < 22 ? (producerPay*((120-2*producerRows.indexOf(bp))/100)) : (producerRows.indexOf(bp) + 1) < 43 ? ((producerPay/2)*((162-2*producerRows.indexOf(bp))/100)) : 0 ).toFixed(0)  + ` ${symbol}` }}</div>
                             </div>
                             <div class="col-1 select-box q-py-md">
                                 <div class="row full-selection justify-center">
