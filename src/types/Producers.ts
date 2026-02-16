@@ -8,4 +8,5 @@ export interface Producer {
   total_votes: number;
   location: string;
   name: string;
+  self_staked_boost: number;
 }
