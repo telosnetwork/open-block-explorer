@@ -263,9 +263,11 @@ export const useAccountStore = defineStore('account', {
                 rexbal.rex_maturities.forEach((maturity) => {
                     const maturityYear = new Date(maturity.first).getFullYear();
                     const maturityTime = new Date(maturity.first).getTime();
-                    if (maturityYear - thisYear > 1) {
-                        savingsRex = tlosRexRatio * (Number(maturity.second) / 10000);
-                    } else if (maturityTime - now < 0) {
+                    const diffNow = maturityTime - now;
+                    const diffMaturity = maturityYear - thisYear;
+                    if (diffMaturity > 1) {
+                        savingsRex += tlosRexRatio * (Number(maturity.second) / 10000);
+                    } else if (diffNow < 0) {
                         maturedRex += tlosRexRatio * (Number(maturity.second) / 10000);
                     } else {
                         maturingRex = tlosRexRatio * (Number(maturity.second) / 10000);
