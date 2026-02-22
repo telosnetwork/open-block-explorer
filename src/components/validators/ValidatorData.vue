@@ -80,23 +80,30 @@ export default defineComponent({
 
         async function updatePayRate() {
             const sharecount =
-        activecount.value <= 21
-            ? activecount.value * 2
-            : 42 + (activecount.value - 21);
+                activecount.value <= 21
+                    ? ((activecount.value / 2.0) * (2.0 * 1.2 - (activecount.value - 1) * 0.02) * 2.0)
+                    : (42.0 + ((activecount.value - 21) / 2.0) * (2.0 * 1.2 - (activecount.value - 22) * 0.02));
+
             const paramsPayrate = {
-                code: 'eosio',
-                scope: 'eosio',
-                table: 'payrate',
+                code: 'delphioracle',
+                scope: 'tlosusd',
+                table: 'averages',
             } as GetTableRowsParams;
-            payrate.value = (
-        (await api.getTableRows(paramsPayrate)) as {
-          rows: { bpay_rate: number }[];
-        }
-            ).rows[0].bpay_rate;
-            // 2 shares per top 21 bp
-            // 1 share for standby up until 35 bps
-            top21pay24h.value =
-        (((payrate.value / 100000) * supply.value) / 365 / sharecount) * 2;
+
+            const tlosusd = (
+                (await api.getTableRows(paramsPayrate)) as {
+                    rows: { value: number }[];
+                }
+            ).rows[0].value;
+
+            // Calculate base value using the formula
+            const baseValue = Math.min(
+                ((189000 * 12) / 365) * Math.pow(tlosusd / 10000.0, -0.516),
+                ((315000 * 12) / 365),
+            );
+
+            // Apply sharecount division and multiply by 10000
+            top21pay24h.value = (baseValue * 2) / sharecount;
         }
 
         async function updateSupply() {
