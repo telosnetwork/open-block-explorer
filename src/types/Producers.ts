@@ -9,4 +9,7 @@ export interface Producer {
   location: string;
   name: string;
   self_staked_boost: number;
+  is_self_staking: boolean;
+  self_staked_amount: number;
+  num_producers_voted: number;
 }

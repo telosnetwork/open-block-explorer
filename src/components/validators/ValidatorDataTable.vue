@@ -180,9 +180,25 @@ export default defineComponent({
                                             v-if="bp.self_staked_boost > 0"
                                             color="primary"
                                             text-color="white"
-                                            :label="`+${(bp.self_staked_boost / 10000).toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,})} Boosted`"
+                                            :label="`🔒 ${(bp.self_staked_amount / 10000).toLocaleString(undefined, {minimumFractionDigits: 0,maximumFractionDigits: 0,})} ${symbol} (10x Boost)`"
                                             size="sm"
-                                        />
+                                        >
+                                            <q-tooltip>
+                                                Self-staked: {{ (bp.self_staked_amount / 10000).toLocaleString(undefined, {minimumFractionDigits: 4,maximumFractionDigits: 4,}) }} {{ symbol }}
+                                                · Boost: +{{ (bp.self_staked_boost / 10000).toLocaleString(undefined, {minimumFractionDigits: 0,maximumFractionDigits: 0,}) }} votes
+                                                · Voting for {{ bp.num_producers_voted }}/30 BPs
+                                            </q-tooltip>
+                                        </q-chip>
+                                        <q-chip
+                                            v-else-if="bp.is_self_staking"
+                                            outline
+                                            color="positive"
+                                            text-color="positive"
+                                            :label="`🔒 ${(bp.self_staked_amount / 10000).toLocaleString(undefined, {minimumFractionDigits: 0,maximumFractionDigits: 0,})} ${symbol} Self Staked`"
+                                            size="sm"
+                                        >
+                                            <q-tooltip>This BP self-stakes but hasn't activated the 10x boost yet. A re-vote or stake change will activate it.</q-tooltip>
+                                        </q-chip>
                                     </div>
                                 </div>
                             </div>
