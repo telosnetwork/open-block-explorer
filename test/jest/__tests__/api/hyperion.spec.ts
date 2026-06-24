@@ -82,6 +82,76 @@ const userTokens = {
     ],
 };
 
+const makeAction = (
+    trxId: string,
+    account: string,
+    name: string,
+    data: unknown,
+    timestamp: string,
+    globalSequence: number,
+): Action => ({
+    '@timestamp': timestamp,
+    account_ram_deltas: [],
+    act: {
+        account,
+        authorization: [],
+        data,
+        name,
+    },
+    action_ordinal: 1,
+    block_num: 1,
+    cpu_usage_us: 0,
+    creator_action_ordinal: 0,
+    global_sequence: globalSequence,
+    net_usage_words: 0,
+    notified: [],
+    producer: '',
+    signatures: [],
+    timestamp,
+    trx_id: trxId,
+    receipts: [],
+    account,
+    authorization: [],
+    data,
+    name,
+});
+
+const accountAction = makeAction(
+    'base-trx',
+    'eosio.token',
+    'transfer',
+    { from: 'someaccount', to: 'otheraccount', quantity: '1.0000 TLOS' },
+    '2026-06-24T15:00:00.000',
+    1,
+);
+
+const incomingTransferAction = makeAction(
+    'incoming-transfer-trx',
+    'eosio.token',
+    'transfer',
+    { from: 'otheraccount', to: 'someaccount', quantity: '2.0000 TLOS' },
+    '2026-06-24T14:50:00.000',
+    2,
+);
+
+const issueToAccountAction = makeAction(
+    'issue-trx',
+    'vapaeetokens',
+    'issue',
+    { to: 'someaccount', quantity: '3.0000 CNT', memo: 'bridge mint' },
+    '2026-06-24T15:10:00.000',
+    3,
+);
+
+const issueToOtherAccountAction = makeAction(
+    'issue-other-trx',
+    'vapaeetokens',
+    'issue',
+    { to: 'otheraccount', quantity: '3.0000 CNT', memo: 'bridge mint' },
+    '2026-06-24T15:20:00.000',
+    4,
+);
+
 installQuasarPlugin();
 
 // mocking internal chain implementation
@@ -112,8 +182,16 @@ global.AbortController = jest.fn(() => ({
 
 jest.mock('axios', () => ({
     create: () => mockHyperion,
-    get: jest.fn().mockImplementation(url => Promise.resolve({ data: tokenList })),
+    get: jest.fn().mockImplementation(() => Promise.resolve({ data: tokenList })),
 }));
+
+const getParam = (
+    config: AxiosRequestConfig | undefined,
+    key: string,
+): string => {
+    const params = config?.params as Record<string, string> | undefined;
+    return params?.[key] || '';
+};
 
 const mockHyperion: AxiosInstance = {
     interceptors: {
@@ -124,9 +202,43 @@ const mockHyperion: AxiosInstance = {
             use: jest.fn(),
         } as unknown as AxiosInterceptorManager<AxiosResponse<unknown>>,
     },
-    get: jest.fn().mockImplementation((url) => {
+    get: jest.fn().mockImplementation((...args: unknown[]) => {
+        const url = args[0] as string;
+        const config = args[1] as AxiosRequestConfig | undefined;
         if(url === 'v2/state/get_tokens') {
             return Promise.resolve({ data: userTokens });
+        }
+        if(url === 'v2/history/get_actions') {
+            if(getParam(config, 'account') === 'someaccount') {
+                return Promise.resolve({
+                    data: {
+                        actions: [accountAction],
+                        total: { value: 1 },
+                    },
+                });
+            }
+            if(getParam(config, 'transfer.to') === 'someaccount') {
+                return Promise.resolve({
+                    data: {
+                        actions: [incomingTransferAction],
+                        total: { value: 1 },
+                    },
+                });
+            }
+            if(getParam(config, 'act.account') === 'vapaeetokens' && getParam(config, 'act.name') === 'issue') {
+                return Promise.resolve({
+                    data: {
+                        actions: [issueToAccountAction, issueToOtherAccountAction],
+                        total: { value: 2 },
+                    },
+                });
+            }
+            return Promise.resolve({
+                data: {
+                    actions: [],
+                    total: { value: 0 },
+                },
+            });
         }
     }),
 } as unknown as AxiosInstance;
@@ -135,8 +247,9 @@ const mockHyperion: AxiosInstance = {
 import {
     getTokens,
     DEFAULT_ICON,
+    getAccountTransactions,
 } from 'src/api/hyperion';
-import { Token } from 'src/types';
+import { Action, Token } from 'src/types';
 
 
 describe('Hyperion API', () => {
@@ -160,6 +273,23 @@ describe('Hyperion API', () => {
             });
 
             expect(tokens).toEqual(userTokensWithLogos);
+        });
+    });
+
+    describe('getAccountTransactions()', () => {
+        it('includes incoming transfers and token issues where the account is only the action data recipient', async () => {
+            const response = await getAccountTransactions({
+                account: 'someaccount',
+                limit: 10,
+                sort: 'desc',
+            });
+
+            expect(response.data.actions.map(action => action.trx_id)).toEqual([
+                'issue-trx',
+                'base-trx',
+                'incoming-transfer-trx',
+            ]);
+            expect(response.data.total.value).toBe(3);
         });
     });
 
