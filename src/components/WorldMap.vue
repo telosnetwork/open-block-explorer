@@ -93,10 +93,10 @@ export default defineComponent({
         const producerStyle = new Style({
             image: new CircleStyle({
                 fill: new Fill({
-                    color: '#8276d2'
+                    color: '#4FACFE'
                 }),
                 stroke: new Stroke({
-                    color: '#63C9EF',
+                    color: '#00F2FE',
                     width: 3
                 }),
                 radius: 5
@@ -107,7 +107,7 @@ export default defineComponent({
         const top21Style = new Style({
             image: new CircleStyle({
                 fill: new Fill({
-                    color: '#8276d2'
+                    color: '#4FACFE'
                 }),
                 stroke: new Stroke({
                     color: '#FFFFFF',
@@ -439,7 +439,7 @@ export default defineComponent({
 
 .ol-popup
   position: absolute
-  background: linear-gradient(90deg, rgba(203, 202, 245, 0.7) 0%, rgba(169, 202, 243, 0.7) 56.377%, rgba(73, 206, 255, 0.7) 100%)
+  background: linear-gradient(90deg, rgba(191, 224, 255, 0.85) 0%, rgba(165, 248, 255, 0.85) 100%)
   box-shadow: 0 1px 4px rgba(0,0,0,0.2)
   padding: 5px
   border-radius: 10px
@@ -457,13 +457,13 @@ export default defineComponent({
   pointer-events: none
 
 .ol-popup:after
-  border-top-color: #CBCAF5
+  border-top-color: #BFE0FF
   border-width: 10px
   left: 48px
   margin-left: -10px
 
 .ol-popup:before
-  border-top-color: #CBCAF5
+  border-top-color: #BFE0FF
   border-width: 11px
   left: 48px
   margin-left: -11px
@@ -479,7 +479,7 @@ export default defineComponent({
 
 .owner-text
   color: var(--q-secondary)
-  font-family: Actor
+  font-family: Silka
   font-size: 13px
   font-weight: 400
   line-height: 5px
@@ -488,7 +488,7 @@ export default defineComponent({
 
 .country-text
   color: var(--q-secondary)
-  font-family: Roboto
+  font-family: Silka
   font-size: 10px
   font-weight: 400
   line-height: 5px

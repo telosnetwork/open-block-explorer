@@ -149,7 +149,7 @@ export default defineComponent({
     right: 0
     left: 0
   &--use-color
-    background: linear-gradient(0deg, #f3effbff 0%, #f3effbaa 40%, #f3effb77 80%, #f3effb33 100%)
+    background: linear-gradient(0deg, #f9f9f9ff 0%, #f9f9f9aa 40%, #f9f9f977 80%, #f9f9f933 100%)
 
 .row
   display: flex

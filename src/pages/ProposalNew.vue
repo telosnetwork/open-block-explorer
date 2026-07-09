@@ -536,6 +536,6 @@ export default defineComponent({
 .proposal-success
     &__card
         &--background
-            background: '#E8E2F7'
+            background: '#E6E9EC'
 
 </style>

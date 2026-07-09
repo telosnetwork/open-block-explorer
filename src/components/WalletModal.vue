@@ -66,7 +66,7 @@ export default defineComponent({
 .fixed-full
   flex-direction: column
 .modal-container
-  background: radial-gradient(50% 67.35% at 50% 67.35%, #8A65D4 0%,  rgb(9, 26, 98, 100))
+  background: radial-gradient(50% 67.35% at 50% 67.35%, #404142 0%,  #1B1B1D 100%)
 .modal-header
   margin-left: 0.6rem
   color: white

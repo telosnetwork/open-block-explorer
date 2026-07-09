@@ -122,7 +122,7 @@ export default defineComponent({
   grid-template-rows: min-content
 
 .token-card
-  background: rgba(138, 101, 212, 0.1)
+  background: rgba(79, 172, 254, 0.1)
   border-radius: .2rem
   box-shadow: none
   padding: 0.5rem 0

@@ -116,7 +116,7 @@ export default defineComponent({
                         dense
                         dark
                         class="full-width"
-                        standout="bg-deep-purple-2 text-white"
+                        standout="bg-grey-8 text-white"
                         placeholder='0'
                         :lazy-rules='true'
                         :rules="inputRules"
@@ -146,7 +146,7 @@ export default defineComponent({
 
 <style scoped lang="sass">
 .button-accent
-  background: rgba(108, 35, 255, 1)
+  background: #0088FF
   border-radius: 4px
   color: $grey-4
 .grey-3

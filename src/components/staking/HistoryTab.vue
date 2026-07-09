@@ -56,7 +56,7 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
+    background: #0088FF
     border-radius: 4px
     color: $grey-4
 .container-refund

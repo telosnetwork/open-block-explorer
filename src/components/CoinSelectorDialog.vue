@@ -117,13 +117,13 @@ export default defineComponent({
 
 .addBtn
   color: white
-  background-image: linear-gradient(to right, $deep-purple-2 20%, $light-blue-6 80% )
+  background-image: linear-gradient(to right, #00F2FE 20%, #C471F5 80% )
 
   &:hover
-    background-image: linear-gradient(to left, $deep-purple-2 20%, $light-blue-6 80%)
+    background-image: linear-gradient(to left, #00F2FE 20%, #C471F5 80%)
 
 .dialogCard
-  background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
+  background: radial-gradient(circle at 48% 100%, #404142 0%, #2C2B2F 20%, #1B1B1D 92%)
   color: white
 
   // Hide scrollbar for Chrome, Safari and Opera

@@ -960,7 +960,7 @@ $medium:920px
     overflow-x: auto
 
 .table-header
-    color: #000000 !important
+    color: #2C2B2F !important
     opacity: 0.5
 
 .hover-dec

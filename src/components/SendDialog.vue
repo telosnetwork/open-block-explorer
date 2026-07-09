@@ -229,7 +229,7 @@ export default defineComponent({
                                 <q-input
                                     v-model="sendAmount"
                                     class="full-width"
-                                    standout="bg-deep-purple-2 text-white"
+                                    standout="bg-grey-8 text-white"
                                     placeholder="0"
                                     :debounce="1000"
                                     :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
@@ -247,7 +247,7 @@ export default defineComponent({
                                     <q-input
                                         v-model="memo"
                                         class="full-width send-input"
-                                        standout="bg-deep-purple-2 text-white"
+                                        standout="bg-grey-8 text-white"
                                         dark
                                         type="textarea"
                                     />
@@ -313,11 +313,11 @@ export default defineComponent({
 
 .sendCard
   color: $grey-6
-  background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
+  background: radial-gradient(circle at 48% 100%, #404142 0%, #2C2B2F 20%, #1B1B1D 92%)
   .send-icon
     padding-bottom: 30px
   .button-accent
-    background: rgba(108, 35, 255, 1)
+    background: #0088FF
     border-radius: 4px
     color: $grey-4
   .color-grey-3
@@ -328,7 +328,7 @@ export default defineComponent({
 
 .selector-container
   cursor: pointer
-  background: rgba(108, 35, 255, 1)
+  background: #0088FF
   border-radius: 4px
   height: 40px
   margin-top: 1px

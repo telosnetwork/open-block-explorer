@@ -145,7 +145,7 @@ export default defineComponent({
                         class="full-width"
                         dense
                         dark
-                        standout="bg-deep-purple-2 text-white"
+                        standout="bg-grey-8 text-white"
                         placeholder='0'
                         type="text"
                         :lazy-rules='true'
@@ -166,7 +166,7 @@ export default defineComponent({
                     <q-input
                         v-model="netTokens"
                         class="full-width"
-                        standout="bg-deep-purple-2 text-white"
+                        standout="bg-grey-8 text-white"
                         placeholder='0'
                         :lazy-rules='true'
                         :rules="[ val =>  val >= 0 && val <= netWeight.value || 'Invalid amount.' ]"
@@ -199,7 +199,7 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-  background: rgba(108, 35, 255, 1)
+  background: #0088FF
   border-radius: 4px
   color: $grey-4
 .balance-amount:hover

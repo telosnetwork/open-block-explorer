@@ -111,9 +111,9 @@ export default defineComponent({
     margin-left: 50px
 
 .permission-card
-    background: #8A65D41A
+    background: #4FACFE1A
     .permission-name-section
-        background: #8A65D41A
+        background: #4FACFE1A
         min-width: 8rem
         flex-shrink: 0
 
@@ -124,31 +124,31 @@ export default defineComponent({
 
 .permission-action-section
   min-width: 10rem
-  background: #945eff63
+  background: #0088FF63
 
 .owner-permission
     .permission-card
-        background: #FB5B451A
+        background: #B423181A
         .permission-name-section
-            background: #FB5B451A
+            background: #B423181A
         .permission-action-section
           min-width: 8rem
-          background: #fb5b454d
+          background: #B423184D
 
 .children
     .branch
         width: 50px
         .branch-corner
-            border-left: 2px solid #00000033
-            border-bottom: 2px solid #00000033
+            border-left: 2px solid #2C2B2F33
+            border-bottom: 2px solid #2C2B2F33
             border-radius: 0 8px
             margin-left: 20px
         .branch-side-top
-            border-bottom: 2px solid #00000033
-            border-left: 2px solid #00000033
+            border-bottom: 2px solid #2C2B2F33
+            border-left: 2px solid #2C2B2F33
             margin-left: 20px
         .branch-side
-            border-left: 2px solid #00000033
+            border-left: 2px solid #2C2B2F33
             margin-left: 20px
     .borderless
         .branch-corner,.branch-side-top,.branch-side

@@ -104,7 +104,7 @@ export default defineComponent({
 
 .circle-bg
   fill: none
-  stroke: #eee
+  stroke: #E6E9EC
   stroke-width: 2
   stroke-opacity: .5
 

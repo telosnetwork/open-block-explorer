@@ -40,7 +40,7 @@ export default defineComponent({
     class="connect-button"
     color="primary"
     :label="account"
-    :content-style="{ backgroundColor: '#172c6c' }"
+    :content-style="{ backgroundColor: '#2C2B2F' }"
 >
     <q-card class="buttons-container">
         <q-card-section class="account-link">

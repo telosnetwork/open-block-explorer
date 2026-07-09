@@ -172,7 +172,7 @@ export default defineComponent({
                     <div class="row q-pt-sm">
                         <div class="col-7 q-pt-sm">Refund
                             <q-icon class="q-ml-xs" name="far fa-question-circle">
-                                <q-tooltip class="bg-deep-purple-12" anchor="top middle" self="center middle">If it has been more than 72 hours since your unstake transaction. Click on Refund to claim your tokens.</q-tooltip>
+                                <q-tooltip class="bg-secondary" anchor="top middle" self="center middle">If it has been more than 72 hours since your unstake transaction. Click on Refund to claim your tokens.</q-tooltip>
                             </q-icon>
                         </div>
                         <div class="col-5 text-right grey-3">
@@ -199,7 +199,7 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
+    background: #0088FF
     border-radius: 4px
     color: $grey-4
 .container-refund

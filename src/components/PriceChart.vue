@@ -55,7 +55,7 @@ export default defineComponent({
                             y2: 1,
                         },
                         stops: [
-                            // [0, '#571AFF'],
+                            // [0, '#4FACFE'],
                             [0, getCssVar('color-graph-shadow')],
                         ],
                     },
@@ -188,7 +188,7 @@ $medium:750px
     width: 100%
     background-color:#ffffff
     background: #FFFFFF
-    box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
+    box-shadow: 0px 9px 14px rgba(44, 43, 47, 0.06), 0px 1px 4px rgba(44, 43, 47, 0.12)
     border-radius: 10px
 
 .title
@@ -197,7 +197,7 @@ $medium:750px
     font-size: 14px
     line-height: 17px
     text-transform: uppercase
-    color: #071A5F
+    color: #2C2B2F
 .sub-title
     font-style: normal
     font-weight: normal
@@ -214,7 +214,7 @@ $medium:750px
 
 .highcharts-data-table table
   border-collapse: collapse
-  border: 1px solid #ebebeb
+  border: 1px solid #E6E9EC
   margin: 10px auto
   text-align: center
   width: 100%
@@ -223,7 +223,7 @@ $medium:750px
 .highcharts-data-table caption
   padding: 1em 0
   font-size: 1.2em
-  color: #555
+  color: #57595F
 
 .highcharts-data-table th
   font-weight: 600
@@ -236,10 +236,10 @@ $medium:750px
 
 .highcharts-data-table thead tr,
 .highcharts-data-table tr:nth-child(even)
-  background: #f8f8f8
+  background: #F9F9F9
 
 .highcharts-data-table tr:hover
-  background: #f1f7ff
+  background: #E6E9EC
 
 .highcharts-description
   height:250px

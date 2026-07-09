@@ -199,7 +199,7 @@ export default defineComponent({
                 <q-input
                     v-model="cpuTokens"
                     class="full-width"
-                    standout="bg-deep-purple-2 text-white"
+                    standout="bg-grey-8 text-white"
                     placeholder="0"
                     :lazy-rules="true"
                     :rules="cpuInputRules"
@@ -223,7 +223,7 @@ export default defineComponent({
                 <q-input
                     v-model="netTokens"
                     class="full-width"
-                    standout="bg-deep-purple-2 text-white"
+                    standout="bg-grey-8 text-white"
                     placeholder="0"
                     :lazy-rules="true"
                     :rules="netInputRules"
@@ -265,7 +265,7 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
+    background: #0088FF
     border-radius: 4px
     color: $grey-4
 
@@ -288,7 +288,7 @@ export default defineComponent({
                 outline: none
                 box-shadow: none
         .q-field__label
-            color: #9e9e9e
+            color: #7C7D83
         &.q-field--highlighted
             .q-field__label
                 color: white
