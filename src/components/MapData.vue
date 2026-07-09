@@ -37,7 +37,7 @@ export default defineComponent({
             <div class="col-12 text-subtitle1 text-bold stat-value">{{HeadBlock.toLocaleString()}}</div>
         </div>
     </div>
-    <div class="col-1">
+    <div class="col-1 stat-divider">
         <div class="hr-vertical"> </div>
     </div>
     <div class="col-3 stat-block">
@@ -46,7 +46,7 @@ export default defineComponent({
             <div class="col-12 text-subtitle1 text-bold stat-value">{{HeadBlockProducer}}</div>
         </div>
     </div>
-    <div class="col-1">
+    <div class="col-1 stat-divider">
         <div class="hr-vertical"></div>
     </div>
     <div class="col-3 stat-block">
@@ -80,10 +80,15 @@ export default defineComponent({
   color: var(--q-dark)
   font-size: 18px
   font-weight: 700
+.stat-divider
+  display: flex
+  justify-content: center
 .map-data--visible
   .stat-label,
   .stat-value
     color: #FFFFFF
+  .hr-vertical
+    border-right-color: rgba(255, 255, 255, 0.42)
 hr
   content: ""
   display: block
@@ -99,15 +104,35 @@ hr
   height: 100%
   border-size: 0.5rem
   border : 0px
-  border-right: 2px solid var(--q-primary)
-  margin-left: 1rem
-  margin-right: 1rem
+  border-right: 2px solid rgba(44, 43, 47, 0.64)
+  margin-left: auto
+  margin-right: auto
   margin-top: -0.1rem
 
 @media screen and (max-width: 420px)
+  .map-data
+    flex-wrap: nowrap
+    padding: 14px 6px
+    box-shadow: 0 6px 14px rgba(79, 172, 254, 0.06)
+  .stat-block
+    flex: 1 1 0 !important
+    max-width: none !important
+    min-width: 0
+  .stat-divider
+    flex: 0 0 16px !important
+    max-width: 16px !important
+  .hr-vertical
+    height: 62px
+    border-right: 1px solid rgba(94, 33, 122, 0.58)
+    margin-top: 2px
+  .stat-label
+    font-size: 9px !important
+    white-space: nowrap
+  .stat-value
+    font-size: clamp(15px, 4vw, 18px) !important
   .actor-font
     .text-bold
-        font-size: 18px
+        font-size: clamp(15px, 4vw, 18px)
     .text-weight-thin
-        font-size: 10px
+        font-size: 9px
 </style>

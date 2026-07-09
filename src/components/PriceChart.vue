@@ -114,7 +114,7 @@ export default defineComponent({
             series: [
                 {
                     name: chain.getSystemToken().symbol,
-                    color: '#2C2B2F',
+                    color: '#1B6FAF',
                     data: [] as DateTuple[],
                 },
             ],
@@ -269,12 +269,12 @@ $medium:750px
 .border-line
     width: 19px
     height: 2px
-    background: var(--q-primary)
+    background: linear-gradient(90deg, #00F2FE 0%, #4FACFE 54%, #C471F5 100%)
     border-radius: 4px
     @media screen and (max-width: $medium) // screen < $medium
-        width: 156px !important
+        width: 126px !important
         margin: auto
-        margin-buttom: 22px
+        margin-bottom: 22px
     @media screen and (min-width: $medium) //screen > $medium
         width: 19px
 .price-box
@@ -322,7 +322,7 @@ $medium:750px
     font-weight: 600
     font-size: 24px
     line-height: 29px
-    color: var(--q-primary)
+    color: #5E217A
 
 .highcharts-figure,
 .highcharts-data-table table
@@ -358,6 +358,41 @@ $medium:750px
 
 .highcharts-data-table tr:hover
   background: #f1f7ff
+
+@media screen and (max-width: $medium)
+    .price-box
+        background: linear-gradient(180deg, #FFFFFF 0%, #FBFDFF 100%)
+        border-color: rgba(79, 172, 254, 0.14)
+        box-shadow: 0 8px 18px rgba(79, 172, 254, 0.1), 0 2px 8px rgba(44, 43, 47, 0.08)
+        &::before
+            height: 2px
+            opacity: .72
+        &::after
+            opacity: .42
+    .chart-pane
+        padding: 14px 14px 4px !important
+    .metrics-pane
+        padding: 0 18px 16px !important
+        > .row
+            margin-top: 0 !important
+    .chart-info
+        min-height: 86px
+        padding: 10px 8px 18px
+        border-top-color: rgba(79, 172, 254, 0.12)
+        p
+            margin-bottom: 8px
+        p:first-child
+            font-size: 12px
+            font-weight: 600
+        &::before
+            right: calc(50% - 32px)
+            left: calc(50% - 32px)
+            width: 64px
+            height: 3px
+            opacity: .86
+    .sub-title
+        font-size: 22px
+        line-height: 27px
 
 .highcharts-description
   height:250px
