@@ -166,10 +166,18 @@ export default defineComponent({
 }
 .render-container{
     position: absolute;
-    left: 100000px;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-100vw);
+    visibility: hidden;
     &.show-map{
       position: relative;
       left:0;
+      opacity: 1;
+      pointer-events: auto;
+      transform: none;
+      visibility: visible;
     }
 }
 .hide{

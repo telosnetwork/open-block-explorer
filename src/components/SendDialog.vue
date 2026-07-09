@@ -195,7 +195,7 @@ export default defineComponent({
                                 <div class="row justify-between q-px-sm q-pb-sm q-gutter-x-sm">RECEIVING ACCOUNT</div>
                                 <q-input
                                     v-model="receivingAccount"
-                                    class="full-width"
+                                    class="full-width send-field"
                                     standout="standout"
                                     dense
                                     dark
@@ -228,8 +228,8 @@ export default defineComponent({
                                 </div>
                                 <q-input
                                     v-model="sendAmount"
-                                    class="full-width"
-                                    standout="bg-deep-purple-2 text-white"
+                                    class="full-width send-field"
+                                    standout="bg-dark text-white"
                                     placeholder="0"
                                     :debounce="1000"
                                     :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
@@ -246,8 +246,8 @@ export default defineComponent({
                                 <div class="row">
                                     <q-input
                                         v-model="memo"
-                                        class="full-width send-input"
-                                        standout="bg-deep-purple-2 text-white"
+                                        class="full-width send-input send-field"
+                                        standout="bg-dark text-white"
                                         dark
                                         type="textarea"
                                     />
@@ -312,23 +312,53 @@ export default defineComponent({
 
 
 .sendCard
-  color: $grey-6
-  background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
+  color: $grey-3
+  background: var(--q-color-secondary-gradient)
   .send-icon
     padding-bottom: 30px
   .button-accent
-    background: rgba(108, 35, 255, 1)
+    background: var(--q-color-primary-gradient)
     border-radius: 4px
-    color: $grey-4
+    color: var(--q-dark)
   .color-grey-3
     color: $grey-3
+
+:deep(.send-field)
+  .q-field__control
+    background: rgba(255, 255, 255, 0.1) !important
+    border: 1px solid rgba(255, 255, 255, 0.1)
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12)
+    color: #FFFFFF
+  .q-field__native,
+  .q-field__input,
+  textarea
+    color: #FFFFFF !important
+    caret-color: var(--q-info, #00F2FE)
+  .q-field__native::placeholder,
+  .q-field__input::placeholder,
+  textarea::placeholder
+    color: rgba(255, 255, 255, 0.62)
+    opacity: 1
+  .q-field__marginal,
+  .q-field__append,
+  .q-field__prepend
+    color: rgba(255, 255, 255, 0.78)
+  &.q-field--focused
+    .q-field__control
+      border-color: rgba(0, 242, 254, 0.56)
+      box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.08)
+  &.q-field--error
+    .q-field__control
+      border-color: rgba(251, 91, 69, 0.78)
+    .q-field__bottom
+      color: #FFB4A8
 
 .sarrowButton
   background: rgba($grey-9, 0.1)
 
 .selector-container
   cursor: pointer
-  background: rgba(108, 35, 255, 1)
+  background: var(--q-color-primary-gradient)
   border-radius: 4px
   height: 40px
   margin-top: 1px
@@ -338,14 +368,14 @@ export default defineComponent({
     border-color: $grey-1
     border-radius: 4px
   .arrowButton
-    color: $grey-4
+    color: var(--q-dark)
 
   .text-h6
-    color: $grey-4
+    color: var(--q-dark)
     font-weight: 600
     font-size: 1.1rem
   .subtitle
-    color: $grey-4
+    color: var(--q-dark)
 .send-img
   height: 35px !important
 

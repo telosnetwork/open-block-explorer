@@ -111,9 +111,9 @@ export default defineComponent({
     margin-left: 50px
 
 .permission-card
-    background: #8A65D41A
+    background: rgba(79, 172, 254, 0.12)
     .permission-name-section
-        background: #8A65D41A
+        background: rgba(79, 172, 254, 0.12)
         min-width: 8rem
         flex-shrink: 0
 
@@ -124,7 +124,7 @@ export default defineComponent({
 
 .permission-action-section
   min-width: 10rem
-  background: #945eff63
+  background: rgba(196, 113, 245, 0.32)
 
 .owner-permission
     .permission-card

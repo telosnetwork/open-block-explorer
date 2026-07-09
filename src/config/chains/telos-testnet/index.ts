@@ -22,6 +22,7 @@ import { Token } from 'src/types';
 import { PriceChartData } from 'src/types/PriceChartData';
 import { Theme } from 'src/types/Theme';
 import { FooterLink } from 'src/types/UiCustomization';
+import { TELOS_BRAND_THEME } from 'src/config/chains/telos/theme';
 
 const CHAIN_ID =
   '1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f';
@@ -38,30 +39,7 @@ const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = 'https://testnet.telos.net';
 const API_ENDPOINT = 'https://api-dev.telos.net/v1';
 const DISPLAY_MAP = false;
-const THEME = {
-    primary: '#571aff',
-    secondary: '#071A5F',
-    accent: '#9C27B0',
-    dark: '#1d1d1d',
-    positive: '#21BA45',
-    negative: '#ff0000',
-    info: '#31CCEC',
-    warning: '#F2C037',
-    'color-map': '#4325c2',
-    'color-primary-gradient': 'linear-gradient(90deg, #071A5F 0%, #571AFF 100%)',
-    'color-secondary-gradient':
-    'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
-    'color-tertiary-gradient':
-    'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
-    'color-progress-gradient': '#571aff',
-    'color-producer-card-background': '#f5f4fe',
-    'color-select-box-background': '#e0dffb',
-    'color-header-background': '#071A5F',
-    'color-header-border': '#8a65d41a',
-    'color-header-support-background': 'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
-    'color-graph-shadow': '#571aff28',
-    'color-footer-background': '#071A5F',
-};
+const THEME = TELOS_BRAND_THEME;
 
 export default class TelosTestnet extends BaseChain {
     getName(): string {
@@ -109,11 +87,11 @@ export default class TelosTestnet extends BaseChain {
     }
 
     getLargeLogoPath(): string {
-        return 'chains/telos/telos_logo.png';
+        return 'brand-assets/telos-zero/telos-zero-light-gradient.png';
     }
 
     getSmallLogoPath(): string {
-        return 'chains/telos/tlos.png';
+        return 'brand-assets/telos/telos-icon.svg';
     }
 
     getMapDisplay(): boolean {

@@ -94,14 +94,14 @@ export default defineComponent({
 <style lang="sass" scoped>
 
 .stakeCard
-  color: $grey-6
-  background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
+  color: $grey-3
+  background: var(--q-color-secondary-gradient)
   .send-icon
     padding-bottom: 30px
   .button-accent
-    background: rgba(108, 35, 255, 1)
+    background: var(--q-color-primary-gradient)
     border-radius: 4px
-    color: $grey-4
+    color: var(--q-dark)
   .color-grey-3
     color: $grey-3
 
@@ -110,7 +110,7 @@ export default defineComponent({
 
 .selector-container
   cursor: pointer
-  background: rgba(108, 35, 255, 1)
+  background: var(--q-color-primary-gradient)
   border-radius: 4px
   height: 40px
   margin-top: 1px
@@ -120,14 +120,14 @@ export default defineComponent({
     border-color: $grey-1
     border-radius: 4px
   .arrowButton
-    color: $grey-4
+    color: var(--q-dark)
 
   .text-h6
-    color: $grey-4
+    color: var(--q-dark)
     font-weight: 600
     font-size: 1.1rem
   .subtitle
-    color: $grey-4
+    color: var(--q-dark)
 .send-img
   height: 35px
   max-width: 60px

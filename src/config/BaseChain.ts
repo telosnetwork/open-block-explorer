@@ -22,7 +22,7 @@ export const DEFAULT_THEME = {
     'color-progress-gradient': '#11589e',
     'color-producer-card-background': '#f0f0f0',
     'color-select-box-background': '#e9e9e9',
-    'color-separator-background': 'rgba(138, 101, 212, 0.1)',
+    'color-seperator-background': 'rgba(138, 101, 212, 0.1)',
     'color-card-shadow': 'rgba(37, 42, 97, 0.3)',
     'color-dropdown-card': '#172c6c',
     'color-header-background': '#4C4C4C',

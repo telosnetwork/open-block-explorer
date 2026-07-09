@@ -122,7 +122,7 @@ export default defineComponent({
                 <q-input
                     v-model="stakingAccount"
                     class="full-width"
-                    standout="bg-deep-purple-2 text-white"
+                    standout="bg-dark text-white"
                     dense
                     dark
                     :lazy-rules="true"
@@ -142,7 +142,7 @@ export default defineComponent({
                 <q-input
                     v-model="cpuTokens"
                     class="full-width"
-                    standout="bg-deep-purple-2 text-white"
+                    standout="bg-dark text-white"
                     placeholder="0"
                     :lazy-rules="true"
                     :rules="inputRules"
@@ -162,7 +162,7 @@ export default defineComponent({
                 <q-input
                     v-model="netTokens"
                     class="full-width"
-                    standout="bg-deep-purple-2 text-white"
+                    standout="bg-dark text-white"
                     placeholder="0"
                     :lazy-rules="true"
                     :rules="inputRules"
@@ -198,7 +198,7 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
+    background: var(--q-color-primary-gradient)
     border-radius: 4px
-    color: $grey-4
+    color: var(--q-dark)
 </style>

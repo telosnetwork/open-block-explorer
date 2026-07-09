@@ -228,7 +228,7 @@ export default defineComponent({
     fill-input
     hide-bottom-space
     input-style="color:white"
-    color="white"
+    color="info"
     :loading="isLoading"
     :model-value="inputValue"
     :options="options"
@@ -272,9 +272,19 @@ export default defineComponent({
 
 <style lang="sass">
 .search-input
-  background: rgba(255, 255, 255, 0.15)
+  background: rgba(255, 255, 255, 0.1)
+  border: 1px solid rgba(255, 255, 255, 0.22)
   border-radius: 4px
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08)
+
+.search-input.q-field--focused
+  border-color: var(--q-primary)
+  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.16)
 
 .search-input .q-select__dropdown-icon
   color: white
+
+.search-input .q-field__native,
+.search-input .q-field__input
+  font-weight: 500
 </style>

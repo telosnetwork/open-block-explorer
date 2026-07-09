@@ -164,36 +164,21 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: '\'OBE\'',
-        short_name: '\'OBE\'',
-        description: '..',
+        name: 'Telos Block Explorer',
+        short_name: 'Telos Explorer',
+        description: 'Open block explorer for Telos and AntelopeIO networks.',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#ffffff',
-        theme_color: '#027be3',
+        background_color: '#FFFFFF',
+        theme_color: '#2C2B2F',
         icons: [
           {
-            src: 'icons/icon-128x128.png',
-            sizes: '128x128',
-            type: 'image/png'
-          },
-          {
-            src: 'icons/icon-192x192.png',
+            src: 'icons/android-chrome-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'icons/icon-256x256.png',
-            sizes: '256x256',
-            type: 'image/png'
-          },
-          {
-            src: 'icons/icon-384x384.png',
-            sizes: '384x384',
-            type: 'image/png'
-          },
-          {
-            src: 'icons/icon-512x512.png',
+            src: 'icons/android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png'
           }

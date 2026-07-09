@@ -80,11 +80,11 @@ export default defineComponent({
                 radius: 5
             }),
             fill: new Fill({
-                color: getCssVar('color-map')
+                color: 'rgba(79, 172, 254, 0.86)'
             }),
             stroke: new Stroke({
                 color: getCssVar('color-map'),
-                width: 1
+                width: 1.25
             }),
             zIndex: 50
         });
@@ -93,29 +93,29 @@ export default defineComponent({
         const producerStyle = new Style({
             image: new CircleStyle({
                 fill: new Fill({
-                    color: '#8276d2'
+                    color: '#00F2FE'
                 }),
                 stroke: new Stroke({
-                    color: '#63C9EF',
-                    width: 3
+                    color: '#C471F5',
+                    width: 4
                 }),
-                radius: 5
+                radius: 7
             }),
-            zIndex: 51
+            zIndex: 53
         });
 
         const top21Style = new Style({
             image: new CircleStyle({
                 fill: new Fill({
-                    color: '#8276d2'
+                    color: '#2C2B2F'
                 }),
                 stroke: new Stroke({
-                    color: '#FFFFFF',
+                    color: '#00F2FE',
                     width: 3
                 }),
-                radius: 5
+                radius: 6
             }),
-            zIndex: 51
+            zIndex: 52
         });
 
         // Map source uses vectorLayer with vector source
@@ -338,7 +338,7 @@ export default defineComponent({
                     image: new CircleStyle({
                         radius: radius,
                         stroke: new Stroke({
-                            color: 'rgba(255, 255, 255, ' + opacity + ')',
+                            color: 'rgba(0, 242, 254, ' + opacity + ')',
                             width: 0.25 + opacity
                         })
                     })
@@ -439,10 +439,11 @@ export default defineComponent({
 
 .ol-popup
   position: absolute
-  background: linear-gradient(90deg, rgba(203, 202, 245, 0.7) 0%, rgba(169, 202, 243, 0.7) 56.377%, rgba(73, 206, 255, 0.7) 100%)
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2)
-  padding: 5px
-  border-radius: 10px
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 249, 249, 0.96) 52%, rgba(230, 233, 236, 0.96) 100%)
+  border: 1px solid rgba(0, 242, 254, 0.32)
+  box-shadow: 0 14px 32px rgba(44, 43, 47, 0.18)
+  padding: 8px
+  border-radius: 8px
   bottom: 12px
   left: -50px
   min-width: 200px
@@ -457,13 +458,13 @@ export default defineComponent({
   pointer-events: none
 
 .ol-popup:after
-  border-top-color: #CBCAF5
+  border-top-color: #4FACFE
   border-width: 10px
   left: 48px
   margin-left: -10px
 
 .ol-popup:before
-  border-top-color: #CBCAF5
+  border-top-color: #4FACFE
   border-width: 11px
   left: 48px
   margin-left: -11px
@@ -478,8 +479,8 @@ export default defineComponent({
   content: "✖"
 
 .owner-text
-  color: var(--q-secondary)
-  font-family: Actor
+  color: var(--q-dark)
+  font-family: Silka, Arial, sans-serif
   font-size: 13px
   font-weight: 400
   line-height: 5px
@@ -488,7 +489,7 @@ export default defineComponent({
 
 .country-text
   color: var(--q-secondary)
-  font-family: Roboto
+  font-family: Silka, Arial, sans-serif
   font-size: 10px
   font-weight: 400
   line-height: 5px
