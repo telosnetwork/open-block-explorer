@@ -121,7 +121,7 @@ export default defineComponent({
                                 class="text-bold"
                                 transparent
                                 align="middle"
-                                color="purple-2"
+                                color="blue-2"
                                 text-color="black"
                             >{{executed ? 'EXECUTED' : 'PENDING'}}</q-badge>
                             <q-badge

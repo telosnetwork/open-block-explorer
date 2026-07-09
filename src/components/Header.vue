@@ -177,6 +177,7 @@ export default defineComponent({
 .header-background
   border-bottom: 2px solid var(--q-color-header-border)
   background: var(--q-color-header-background)
+  color: var(--q-color-header-text)
 
 
 </style>

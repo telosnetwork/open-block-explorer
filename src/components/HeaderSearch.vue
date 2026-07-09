@@ -272,7 +272,7 @@ export default defineComponent({
 <style lang="sass">
 .search-input
   background: #FFFFFF
-  border: 1px solid #E6E9EC
+  border: 1px solid #C7CCD0
   border-radius: 100px
 
 .search-input.q-field--filled .q-field__control

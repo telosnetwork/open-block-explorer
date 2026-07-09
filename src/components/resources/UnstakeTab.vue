@@ -288,7 +288,7 @@ export default defineComponent({
                 outline: none
                 box-shadow: none
         .q-field__label
-            color: #7C7D83
+            color: #ACADB1
         &.q-field--highlighted
             .q-field__label
                 color: white

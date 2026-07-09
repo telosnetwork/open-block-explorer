@@ -70,7 +70,7 @@ export default defineComponent({
 </template>
 <style lang="sass" scoped>
 .q-menu
-  background-color: blue
+  background-color: var(--q-color-dropdown-card)
   min-width: unset
 .q-list
   width: 12rem

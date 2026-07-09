@@ -87,7 +87,7 @@ export default defineComponent({
 
 .Card
   color: $grey-3
-  background: rgba(84, 0, 253, 1)
+  background: radial-gradient(circle at 48% 100%, #404142 0%, #2C2B2F 20%, #1B1B1D 92%)
   .send-icon
     padding-bottom: 30px
   .color-grey-3

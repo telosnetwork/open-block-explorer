@@ -115,10 +115,10 @@ body
     margin-top: 1rem
     z-index: 1
 
-q-card.card--light-bg
+.card--light-bg
     background: #F9F9F9
 
-q-card-section.section--light-bg
+.section--light-bg
     background: #E6E9EC
 
 .q-btn
@@ -129,6 +129,11 @@ q-card-section.section--light-bg
 
 .q-dialog-plugin
     max-width: 100%
+
+// validation errors need the light error tint to stay legible on dark dialog fields
+.q-field--dark.q-field--error
+    .q-field__bottom
+        color: #FEF3F2
 
 .q-page-container
     margin-left: auto

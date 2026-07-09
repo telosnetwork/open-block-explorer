@@ -237,7 +237,7 @@ export default defineComponent({
                         <q-icon
                             class="info-icon"
                             name="info"
-                            color="white"
+                            color="secondary"
                             size="20px"
                         >
                             <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">Voting is inversley weighted and increases the more validators you vote for (up to 30).</q-tooltip>
