@@ -138,5 +138,5 @@ export default defineComponent({
     height: 3px
     border-radius: 3px 3px 0 0
 .tabs-separator
-  background: var(--q-color-seperator-background)
+  background: rgba(255, 255, 255, 0.12)
 </style>

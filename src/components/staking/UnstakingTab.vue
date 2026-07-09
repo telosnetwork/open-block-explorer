@@ -146,5 +146,5 @@ export default defineComponent({
 .grey-3
   color: #FFFFFF
 .balance-amount:hover
-  color: $primary
+  color: var(--q-info)
 </style>

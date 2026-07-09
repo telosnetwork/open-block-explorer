@@ -110,5 +110,5 @@ export default defineComponent({
   border: 1px solid rgba(255, 255, 255, 0.12)
   border-radius: 16px
 .grey-3
-  color: #FFFFFF
+  color: #E6E9EC
 </style>

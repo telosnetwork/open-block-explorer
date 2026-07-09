@@ -92,5 +92,6 @@ export default defineComponent({
 .chains-menu-dropdown
     background: var(--q-color-dropdown-card)
     border-radius: 12px
-    overflow: hidden
+    overflow-y: auto
+    overflow-x: hidden
 </style>

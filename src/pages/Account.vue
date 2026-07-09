@@ -89,6 +89,7 @@ export default defineComponent({
         <q-tabs
             v-model="tab"
             class="account-view tabs"
+            active-color="white"
             no-caps
             @update:model-value="onChangeTab"
         >
@@ -132,6 +133,10 @@ export default defineComponent({
   margin-right: auto
   margin-bottom: 2rem
   box-shadow: none
-.tabs
-  color: white
+.account-view.tabs
+  color: #ACADB1
+  .q-tab__indicator
+    background: var(--q-color-primary-gradient)
+    height: 3px
+    border-radius: 3px 3px 0 0
 </style>

@@ -203,5 +203,5 @@ export default defineComponent({
   border-radius: 8px
   color: #FFFFFF
 .balance-amount:hover
-  color: $primary
+  color: var(--q-info)
 </style>

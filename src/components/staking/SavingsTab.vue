@@ -209,7 +209,7 @@ export default defineComponent({
   color: #FFFFFF;
 }
 .balance-amount:hover{
-  color: $primary;
+  color: var(--q-info);
 }
 .staking-form .q-field{
     width:100%;

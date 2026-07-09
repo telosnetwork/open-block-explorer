@@ -65,5 +65,5 @@ export default defineComponent({
   .q-separator
     background: rgba(255, 255, 255, 0.12)
 .grey-3
-  color: #FFFFFF
+  color: #E6E9EC
 </style>
