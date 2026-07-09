@@ -915,7 +915,8 @@ $medium:920px
 .trx-table--title
   font-size: 22.75px
   font-style: normal
-  font-weight: 400
+  font-weight: 600
+  letter-spacing: -0.01em
   line-height: 27px
 
 .trx-table--main-container
@@ -960,8 +961,8 @@ $medium:920px
     overflow-x: auto
 
 .table-header
-    color: #000000 !important
-    opacity: 0.5
+    color: #57595F !important
+    font-weight: 500
 
 .hover-dec
   text-decoration: none

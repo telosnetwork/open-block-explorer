@@ -80,7 +80,7 @@ export default defineComponent({
                 </div>
             </div>
         </div>
-        <q-separator/>
+        <q-separator class="dialog-separator"/>
         <q-list class="dialogList">
             <q-item
                 v-for="token in filteredTokens"
@@ -107,9 +107,10 @@ export default defineComponent({
 .dialogCard
   flex: 0 1 350px
   height: 80vh
+  border-radius: 16px
 
 .greyItem
-  background: rgba($grey-4, 20%)
+  background: rgba(255, 255, 255, 0.08)
 
 .addToken
   text-decoration: underline
@@ -117,13 +118,17 @@ export default defineComponent({
 
 .addBtn
   color: white
-  background-image: linear-gradient(to right, $deep-purple-2 20%, $light-blue-6 80% )
+  background: var(--q-primary)
+  border-radius: 8px
 
   &:hover
-    background-image: linear-gradient(to left, $deep-purple-2 20%, $light-blue-6 80%)
+    filter: brightness(1.08)
+
+.dialog-separator
+  background: rgba(255, 255, 255, 0.12)
 
 .dialogCard
-  background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
+  background: var(--q-color-secondary-gradient)
   color: white
 
   // Hide scrollbar for Chrome, Safari and Opera

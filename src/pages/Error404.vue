@@ -1,14 +1,8 @@
 <script lang="ts">
-import { DEFAULT_THEME } from 'src/config/BaseChain';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'Error404Page',
-    setup () {
-        return {
-            secondary: DEFAULT_THEME.secondary,
-        };
-    },
 });
 </script>
 
@@ -19,8 +13,9 @@ export default defineComponent({
         <div class="text-h2">Oops. Nothing here...</div>
         <q-btn
             class="q-mt-xl"
-            color="white"
-            :text-color="secondary"
+            color="primary"
+            text-color="white"
+            rounded
             unelevated
             to="/"
             label="Go Home"

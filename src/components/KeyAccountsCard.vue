@@ -32,7 +32,7 @@ export default defineComponent({
             copyToClipboard(value)
                 .then((): void => {
                     $q.notify({
-                        color: 'green-4',
+                        color: 'positive',
                         textColor: 'white',
                         message: 'Copied to clipboard',
                         timeout: 1000,
@@ -40,7 +40,7 @@ export default defineComponent({
                 })
                 .catch(() => {
                     $q.notify({
-                        color: 'red-8',
+                        color: 'negative',
                         textColor: 'white',
                         message: 'Could not copy',
                         timeout: 1000,
@@ -84,7 +84,7 @@ export default defineComponent({
                                 class="rotate-315"
                                 flat
                                 round
-                                color="black"
+                                color="secondary"
                                 icon="vpn_key"
                                 size="xs"
                                 @click="toggleKey()"
@@ -95,7 +95,7 @@ export default defineComponent({
                                 <q-btn
                                     flat
                                     round
-                                    color="black"
+                                    color="secondary"
                                     icon="content_copy"
                                     size="xs"
                                     @click="copy(keyDisplay)"
@@ -127,9 +127,10 @@ export default defineComponent({
 	width: 28px
 	height: 28px
 .hover-dec
+	color: var(--q-primary)
 	text-decoration: none
 	&:hover
-		text-decoration: none
+		text-decoration: underline
 .key-field
 	word-wrap: break-word
 </style>

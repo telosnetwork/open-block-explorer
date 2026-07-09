@@ -39,7 +39,7 @@ export default defineComponent({
                 : '0',
         );
         const strokeColor = computed(() =>
-            parseFloat(formatResourcePercent.value) >= 90 ? 'red' : 'white',
+            parseFloat(formatResourcePercent.value) >= 90 ? '#F97066' : '#4FACFE',
         );
         const fractionUnits = computed(
             () => `${fraction.value}${unit.value}/${total.value}${unit.value}`,
@@ -82,7 +82,7 @@ export default defineComponent({
             :stroke-dasharray="dashArray"
             :d="`M18 2 a ${radius} ${radius} 0 0 1 0 88 a ${radius} ${radius} 0 0 1 0 ${-diameter}`"
             :stroke="strokeColor"
-            :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1, 'stroke' : !Number.isNaN(formatResourcePercent) && Number(formatResourcePercent) > 80 ? 'red' : 'white' }"
+            :style="{ 'stroke-opacity' : Number.isNaN(formatResourcePercent) ? 0 : 1, 'stroke' : !Number.isNaN(formatResourcePercent) && Number(formatResourcePercent) > 80 ? '#F97066' : 'var(--q-color-map)' }"
         />
         <text class="text label" x="18" :y="radius - offset">{{ label }}</text>
         <text class="text percentage" x="20" :y="radius + 12">{{ formatResourcePercent }}%</text>
@@ -104,7 +104,7 @@ export default defineComponent({
 
 .circle-bg
   fill: none
-  stroke: #eee
+  stroke: #E6E9EC
   stroke-width: 2
   stroke-opacity: .5
 

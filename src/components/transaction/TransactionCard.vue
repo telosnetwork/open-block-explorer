@@ -29,7 +29,7 @@ export default defineComponent({
             copyToClipboard(value)
                 .then((): void => {
                     this.$q.notify({
-                        color: 'green-4',
+                        color: 'positive',
                         textColor: 'white',
                         message: 'Copied to clipboard',
                         timeout: 1000,
@@ -37,7 +37,7 @@ export default defineComponent({
                 })
                 .catch(() => {
                     this.$q.notify({
-                        color: 'red-8',
+                        color: 'negative',
                         textColor: 'white',
                         message: 'Could not copy',
                         timeout: 1000,
@@ -71,7 +71,7 @@ export default defineComponent({
                                 class="float-right"
                                 flat
                                 round
-                                color="black"
+                                color="secondary"
                                 icon="content_copy"
                                 size="sm"
                                 @click="copy(transaction)"
@@ -93,7 +93,7 @@ export default defineComponent({
                             <q-btn
                                 flat
                                 round
-                                color="black"
+                                color="secondary"
                                 icon="content_copy"
                                 size="sm"
                                 @click="copy(blockNum)"
@@ -119,18 +119,15 @@ export default defineComponent({
                         <div class="col-xs-12 col-sm-6 text-right text-bold">
                             <q-badge
                                 class="text-bold"
+                                :class="executed ? 'status-badge--success' : 'status-badge--warning'"
                                 transparent
                                 align="middle"
-                                color="purple-2"
-                                text-color="black"
                             >{{executed ? 'EXECUTED' : 'PENDING'}}</q-badge>
                             <q-badge
                                 v-if="irreversable"
-                                class="q-ml-sm text-bold"
+                                class="q-ml-sm text-bold status-badge--neutral"
                                 transparent
                                 align="middle"
-                                color="deep-orange-2"
-                                text-color="black"
                             >{{'IRREVERSIBLE'}}</q-badge>
                         </div>
                     </div>
@@ -169,4 +166,14 @@ export default defineComponent({
 
 </template>
 
-<style lang="sass"></style>
+<style lang="sass" scoped>
+.q-badge.status-badge--success
+  background: #ECFDF3
+  color: #027A48
+.q-badge.status-badge--warning
+  background: #F2C037
+  color: #2C2B2F
+.q-badge.status-badge--neutral
+  background: #E6E9EC
+  color: #2C2B2F
+</style>

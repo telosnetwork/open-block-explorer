@@ -79,12 +79,12 @@ export default defineComponent({
   padding: 0 0.5rem;
 
   &.action-transfer{
-    background: rgba(196, 196, 196, 0.3);
+    background: #E6E9EC;
     font-weight: bold;
   }
 
   &.action-general{
-    border: 0.1rem solid rgba(196, 196, 196, 0.3);
+    border: 1px solid #E6E9EC;
   }
 }
 </style>

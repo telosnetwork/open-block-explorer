@@ -50,7 +50,7 @@ export default defineComponent({
 .bg-blur
   background: rgba(255,255,255,0.2)
   backdrop-filter: blur(5px)
-  border-radius: 5px
+  border-radius: 8px
 .full-vw
   width: 100vw
 </style>

@@ -30,6 +30,7 @@ export default defineComponent({
 <style lang="sass" scoped>
 .hover-dec
   text-decoration: none
+  color: var(--q-primary)
   &:hover
     text-decoration: underline
 </style>

@@ -89,18 +89,17 @@ export default defineComponent({
             <q-btn
                 outline
                 padding="sm md"
-                color="white"
-                text-color="primary"
+                color="primary"
                 label="Download example"
             /></a></div>
     </li>
     <li class="text-subtitle1 q-mb-md">Edit the example csv
-        <ul class="text-body2 text-grey-8 q-px-md q-mt-xs">
+        <ul class="text-body2 proposal-upload-csv__help q-px-md q-mt-xs">
             <li>The quantity token must be uppercase</li>
             <li>Must have one space between the value and the token</li>
             <li>The decimal values must be separated with a dot</li>
             <li>The memo is optional</li>
-        </ul><code class="block q-mt-md q-py-sm q-px-md bg-grey-3 text-body1 rounded-borders">
+        </ul><code class="block q-mt-md q-py-sm q-px-md text-body1 proposal-upload-csv__code">
             payingaccount, receivingaccount, 0.1, The memo
         </code>
     </li>
@@ -127,8 +126,7 @@ export default defineComponent({
                 <q-btn
                     outline
                     padding="sm md"
-                    color="white"
-                    text-color="primary"
+                    color="primary"
                     label="Upload"
                     :disabled="file === null"
                     @click="handleUploadCSV"
@@ -138,3 +136,11 @@ export default defineComponent({
     </li>
 </ol>
 </template>
+<style lang="sass">
+.proposal-upload-csv__help
+    color: #57595F
+
+.proposal-upload-csv__code
+    background: var(--q-color-select-box-background)
+    border-radius: 8px
+</style>

@@ -122,7 +122,7 @@ export default defineComponent({
                 <q-input
                     v-model="stakingAccount"
                     class="full-width"
-                    standout="bg-deep-purple-2 text-white"
+                    standout="bg-dropdown-dark text-white"
                     dense
                     dark
                     :lazy-rules="true"
@@ -142,7 +142,7 @@ export default defineComponent({
                 <q-input
                     v-model="cpuTokens"
                     class="full-width"
-                    standout="bg-deep-purple-2 text-white"
+                    standout="bg-dropdown-dark text-white"
                     placeholder="0"
                     :lazy-rules="true"
                     :rules="inputRules"
@@ -162,7 +162,7 @@ export default defineComponent({
                 <q-input
                     v-model="netTokens"
                     class="full-width"
-                    standout="bg-deep-purple-2 text-white"
+                    standout="bg-dropdown-dark text-white"
                     placeholder="0"
                     :lazy-rules="true"
                     :rules="inputRules"
@@ -173,7 +173,7 @@ export default defineComponent({
                 />
             </div>
         </div>
-        <div v-if="notEnoughTlosForTransaction" class="row text-red">Balance too low for transaction</div>
+        <div v-if="notEnoughTlosForTransaction" class="row stake-error-text">Balance too low for transaction</div>
         <div class="row">
             <div class="col-12 q-pt-md">
                 <q-btn
@@ -198,7 +198,10 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
-    border-radius: 4px
-    color: $grey-4
+    background: var(--q-primary)
+    border-radius: 8px
+    color: #FFFFFF
+
+.stake-error-text
+    color: #F97066
 </style>

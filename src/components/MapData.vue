@@ -30,7 +30,7 @@ export default defineComponent({
 </script>
 
 <template>
-<div class="row full-width text-center justify-center actor-font" :class="{'text-grey-3' : mapVisible}">
+<div class="row full-width text-center justify-center actor-font" :class="{'text-white' : mapVisible}">
     <div class="col-3">
         <div class="row">
             <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Head Block</div>

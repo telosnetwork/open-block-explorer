@@ -138,7 +138,7 @@ export default defineComponent({
                     </div>
                     <q-input
                         v-model="toSavingAmount"
-                        standout="bg-deep-purple-2 text-white"
+                        standout="bg-dropdown-dark text-white"
                         placeholder='0'
                         :lazy-rules='true'
                         :rules="[ val => val >= 0 && val <= eligibleStaked  || 'Invalid amount.' ]"
@@ -171,7 +171,7 @@ export default defineComponent({
                     </div>
                     <q-input
                         v-model="fromSavingAmount"
-                        standout="bg-deep-purple-2 text-white"
+                        standout="bg-dropdown-dark text-white"
                         placeholder='0'
                         :lazy-rules='true'
                         :rules="[ val => val >= 0 && val <= assetToAmount(rexSavings)  || 'Invalid amount.' ]"
@@ -204,9 +204,9 @@ export default defineComponent({
 
 <style lang="scss">
 .button-accent{
-  background: rgba(108, 35, 255, 1);
-  border-radius: 4px;
-  color: $grey-4;
+  background: var(--q-primary);
+  border-radius: 8px;
+  color: #FFFFFF;
 }
 .balance-amount:hover{
   color: $primary;

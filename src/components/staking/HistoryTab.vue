@@ -42,7 +42,7 @@ export default defineComponent({
                     <div class="col-6 text-weight-bold">{{formatDate(action.timestamp, false)}}</div>
                 </div>
             </div>
-            <q-separator color="grey-8"/>
+            <q-separator/>
         </div>
         <div v-if="rexActions.length === 0" class="row full-width">
             <div class="col-12">
@@ -56,12 +56,14 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
-    border-radius: 4px
-    color: $grey-4
+    background: var(--q-primary)
+    border-radius: 8px
+    color: #FFFFFF
 .container-refund
-  border: 1px solid $grey-8
-  border-radius: 13px
+  border: 1px solid rgba(255, 255, 255, 0.12)
+  border-radius: 16px
+  .q-separator
+    background: rgba(255, 255, 255, 0.12)
 .grey-3
-  color: $grey-3
+  color: #FFFFFF
 </style>

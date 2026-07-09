@@ -126,7 +126,7 @@ export default defineComponent({
 <style lang="sass">
 .account-card
   width: 550px
-  border-radius: .5rem
+  border-radius: 16px
   margin-top: 1rem
   margin-left: auto
   margin-right: auto

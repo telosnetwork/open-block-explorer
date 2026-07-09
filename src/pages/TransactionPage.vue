@@ -65,10 +65,9 @@ export default defineComponent({
         <div class="q-pt-lg">
             <q-tabs
                 v-model="tab"
-                class="text-grey text-grey-5 tab-text"
+                class="tab-text"
                 dense
-                indicator-color="grey-3"
-                active-color="grey-3"
+                active-color="white"
                 align="center"
                 no-caps
             >
@@ -100,7 +99,7 @@ export default defineComponent({
                 </div>
                 <q-tab name="raw" label="Raw"/>
             </q-tabs>
-            <q-separator color="grey-8"/>
+            <q-separator class="tabs-separator"/>
             <q-tab-panels v-model="tab" class="tab-panel">
                 <q-tab-panel name="actions">
                     <BlockTransactionsTable :account="Array.isArray(transaction) ? transaction[0] : transaction" :toggleEnabled="false" />
@@ -129,7 +128,15 @@ export default defineComponent({
 .bg-blur
   background: rgba(255,255,255,0.2)
   backdrop-filter: blur(5px)
-  border-radius: 5px
+  border-radius: 8px
 .full-vw
   width: 100vw
+.tab-text
+  color: #ACADB1
+  :deep(.q-tab__indicator)
+    background: var(--q-color-primary-gradient)
+    height: 3px
+    border-radius: 3px 3px 0 0
+.tabs-separator
+  background: var(--q-color-seperator-background)
 </style>

@@ -204,7 +204,7 @@ export default defineComponent({
     :bordered="false"
     :square="true"
     :title="title"
-    table-header-class="text-grey-7"
+    table-header-class="table-header"
     :rows="rows"
     :columns="columns"
     row-key="proposalName"
@@ -269,9 +269,14 @@ export default defineComponent({
                 <router-link class="text-primary cursor-pointer text-no-decoration" :to="'/account/' + props.row.proposer">{{props.row.proposer}}</router-link>
             </q-td>
             <q-td key="executed" :props="props">
-                <q-badge :color="props.row.executed ? 'green' : 'orange'" :label="props.row.executed ? 'EXECUTED' : 'NOT EXECUTED'"/>
+                <q-badge :color="props.row.executed ? 'positive' : 'warning'" :text-color="props.row.executed ? 'white' : 'black'" :label="props.row.executed ? 'EXECUTED' : 'NOT EXECUTED'"/>
             </q-td>
         </q-tr>
     </template>
 </q-table>
 </template>
+<style lang="sass">
+.table-header
+    color: #57595F !important
+    font-weight: 500
+</style>

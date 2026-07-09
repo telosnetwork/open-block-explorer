@@ -82,17 +82,17 @@ export default defineComponent({
 
 <style lang="sass">
 .container
-  border: 2px solid $grey-3
-  border-radius: 13px
+  border: 1px solid rgba(255, 255, 255, 0.12)
+  border-radius: 16px
 .grey-3
-  color: $grey-3
+  color: #FFFFFF
 hr
   content: ""
   display: block
   width: 100%
   border-size: 0.5rem
   border : 0px
-  border-bottom: 1px solid $grey-8
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12)
   margin-left: 1rem
   margin-right: 1rem
 </style>

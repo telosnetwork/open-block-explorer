@@ -180,7 +180,7 @@ export default defineComponent({
 }
 .map-data-position{
   margin-top: 1rem;
-  color: black;
+  color: var(--q-secondary);
   &.overlap-map{
     margin-top: -200px;
   }

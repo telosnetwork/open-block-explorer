@@ -133,7 +133,7 @@ export default defineComponent({
                                 <div class="row items-center full-height text-h6 q-px-md">{{producerRows.indexOf(bp) + 1}}</div>
                             </div>
                             <div class="col-3 q-py-md"><a class="hover-dec" :href=" '/account/' + bp.owner">
-                                                           <div class="text-uppercase text-h6 text-black">{{ bp.name|| bp.owner }}</div></a>
+                                                           <div class="text-uppercase text-h6 text-secondary">{{ bp.name|| bp.owner }}</div></a>
                                 <div class="text-body2">{{ bp.location }}</div>
                             </div>
                             <div class="col-2 q-py-md offset-1">
@@ -150,7 +150,6 @@ export default defineComponent({
                                         outline
                                         square
                                         color="primary"
-                                        text-color="white"
                                         label="Top 21"
                                     />
                                     <q-chip
@@ -158,7 +157,6 @@ export default defineComponent({
                                         outline
                                         square
                                         color="primary"
-                                        text-color="white"
                                         label="Standby"
                                     />
                                     <q-chip
@@ -166,7 +164,6 @@ export default defineComponent({
                                         outline
                                         square
                                         color="primary"
-                                        text-color="white"
                                         label="Unpaid Standby"
                                     />
                                 </div>
@@ -199,7 +196,7 @@ export default defineComponent({
                                     />
                                 </div>
                                 <div class="row full-selection justify-center">
-                                    <q-badge v-if="previousVote.includes(bp.owner)" color="green" label="VOTED"/>
+                                    <q-badge v-if="previousVote.includes(bp.owner)" color="positive" label="VOTED"/>
                                 </div>
                             </div>
                         </div>
@@ -227,6 +224,6 @@ export default defineComponent({
   text-decoration: none
   &:hover
     text-decoration: underline
-    color: black
+    color: var(--q-secondary)
 
 </style>

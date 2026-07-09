@@ -67,14 +67,14 @@ export default defineComponent({
                 v-close-popup
                 flat
                 label="Close"
-                text-color="grey-3"
+                text-color="white"
                 @click="reset"
             />
             <q-btn
                 v-if="Id"
                 flat
                 label="View transaction"
-                text-color="grey-3"
+                text-color="white"
                 @click="navToTransaction"
             />
         </q-card-actions>
@@ -86,10 +86,12 @@ export default defineComponent({
 <style lang="sass" scoped>
 
 .Card
-  color: $grey-3
-  background: rgba(84, 0, 253, 1)
+  color: #FFFFFF
+  background: var(--q-color-secondary-gradient)
+  border-radius: 12px
+  overflow: hidden
   .send-icon
     padding-bottom: 30px
   .color-grey-3
-    color: $grey-3
+    color: #E6E9EC
 </style>

@@ -103,7 +103,7 @@ export default defineComponent({
 <style lang="sass" scoped>
 .hover-dec
   text-decoration: none
-  color: var(--q-dark)
+  color: var(--q-primary)
   &:hover
     text-decoration: underline
 
@@ -111,9 +111,11 @@ export default defineComponent({
     margin-left: 50px
 
 .permission-card
-    background: #8A65D41A
+    background: #4FACFE1A
+    border-radius: 12px
+    overflow: hidden
     .permission-name-section
-        background: #8A65D41A
+        background: #4FACFE1A
         min-width: 8rem
         flex-shrink: 0
 
@@ -124,31 +126,31 @@ export default defineComponent({
 
 .permission-action-section
   min-width: 10rem
-  background: #945eff63
+  background: #4FACFE40
 
 .owner-permission
     .permission-card
-        background: #FB5B451A
+        background: #C471F51A
         .permission-name-section
-            background: #FB5B451A
+            background: #C471F51A
         .permission-action-section
           min-width: 8rem
-          background: #fb5b454d
+          background: #C471F54D
 
 .children
     .branch
         width: 50px
         .branch-corner
-            border-left: 2px solid #00000033
-            border-bottom: 2px solid #00000033
+            border-left: 2px solid #C7CCD0
+            border-bottom: 2px solid #C7CCD0
             border-radius: 0 8px
             margin-left: 20px
         .branch-side-top
-            border-bottom: 2px solid #00000033
-            border-left: 2px solid #00000033
+            border-bottom: 2px solid #C7CCD0
+            border-left: 2px solid #C7CCD0
             margin-left: 20px
         .branch-side
-            border-left: 2px solid #00000033
+            border-left: 2px solid #C7CCD0
             margin-left: 20px
     .borderless
         .branch-corner,.branch-side-top,.branch-side

@@ -54,7 +54,7 @@ export default defineComponent({
             copyToClipboard(value)
                 .then((): void => {
                     q.notify({
-                        color: 'green-4',
+                        color: 'positive',
                         textColor: 'white',
                         message: 'Copied to clipboard',
                         timeout: 1000,
@@ -62,7 +62,7 @@ export default defineComponent({
                 })
                 .catch(() => {
                     q.notify({
-                        color: 'red-8',
+                        color: 'negative',
                         textColor: 'white',
                         message: 'Could not copy',
                         timeout: 1000,
@@ -168,7 +168,7 @@ export default defineComponent({
                                 class="float-right"
                                 flat
                                 round
-                                color="black"
+                                color="secondary"
                                 icon="content_copy"
                                 size="sm"
                                 @click="copy(block_num.toString())"
@@ -184,7 +184,7 @@ export default defineComponent({
                 </q-card-section>
                 <template v-else>
                     <q-card-section>
-                        <div class="text-grey-7">SUMMARY</div>
+                        <div class="section-label">SUMMARY</div>
                     </q-card-section>
                     <div v-for="item in blockInfo" :key="item.key">
                         <q-separator class="card-separator" inset="inset"/>
@@ -205,4 +205,8 @@ export default defineComponent({
 
 </template>
 
-<style lang="sass"></style>
+<style lang="sass" scoped>
+.section-label
+    color: #57595F
+    font-weight: 500
+</style>

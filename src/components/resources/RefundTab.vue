@@ -166,13 +166,13 @@ export default defineComponent({
                     <div class="row">
                         <div class="col-7">{{refundCountdown()}}</div>
                         <div class="col-5 text-right text-weight-bold">
-                            <q-linear-progress class="q-mt-sm" :value="refundProgress()" color="grey-3"/>
+                            <q-linear-progress class="q-mt-sm" :value="refundProgress()" color="info"/>
                         </div>
                     </div>
                     <div class="row q-pt-sm">
                         <div class="col-7 q-pt-sm">Refund
                             <q-icon class="q-ml-xs" name="far fa-question-circle">
-                                <q-tooltip class="bg-deep-purple-12" anchor="top middle" self="center middle">If it has been more than 72 hours since your unstake transaction. Click on Refund to claim your tokens.</q-tooltip>
+                                <q-tooltip class="bg-secondary" anchor="top middle" self="center middle">If it has been more than 72 hours since your unstake transaction. Click on Refund to claim your tokens.</q-tooltip>
                             </q-icon>
                         </div>
                         <div class="col-5 text-right grey-3">
@@ -199,12 +199,12 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
-    border-radius: 4px
-    color: $grey-4
+    background: var(--q-primary)
+    border-radius: 8px
+    color: #FFFFFF
 .container-refund
-  border: 1px solid $grey-8
-  border-radius: 13px
+  border: 1px solid rgba(255, 255, 255, 0.12)
+  border-radius: 16px
 .grey-3
-  color: $grey-3
+  color: #E6E9EC
 </style>

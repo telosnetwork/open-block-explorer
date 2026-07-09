@@ -42,11 +42,11 @@ export default defineComponent({
                 </header>
                 <p class="text-h6 text-white q-ma-none q-mb-xl">
                     Check proposal at
-                    <router-link :to="'/proposal/' + proposalName" class="text-primary text-white cursor-pointer">
+                    <router-link :to="'/proposal/' + proposalName" class="text-white cursor-pointer">
                         {{ proposalName }}
                     </router-link>
                     and transaction at
-                    <router-link :to="'/transaction/' + transactionId" class="text-primary text-white cursor-pointer">
+                    <router-link :to="'/transaction/' + transactionId" class="text-white cursor-pointer">
                         {{ transactionId }}
                     </router-link>
                 </p>

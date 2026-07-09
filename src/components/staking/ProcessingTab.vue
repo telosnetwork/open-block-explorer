@@ -91,7 +91,7 @@ export default defineComponent({
                 <div class="row q-pa-sm">
                     <div class="col-7">{{maturitiesCountdown()}}</div>
                     <div class="col-5 text-right text-weight-bold">
-                        <q-linear-progress class="q-mt-sm" :value="refundProgress()" color="grey-3"/>
+                        <q-linear-progress class="gradient-color q-mt-sm" :value="refundProgress()"/>
                     </div>
                 </div>
             </div>
@@ -103,12 +103,12 @@ export default defineComponent({
 
 <style lang="sass">
 .button-accent
-    background: rgba(108, 35, 255, 1)
-    border-radius: 4px
-    color: $grey-4
+    background: var(--q-primary)
+    border-radius: 8px
+    color: #FFFFFF
 .container-refund
-  border: 1px solid $grey-8
-  border-radius: 13px
+  border: 1px solid rgba(255, 255, 255, 0.12)
+  border-radius: 16px
 .grey-3
-  color: $grey-3
+  color: #FFFFFF
 </style>

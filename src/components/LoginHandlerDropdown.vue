@@ -40,7 +40,7 @@ export default defineComponent({
     class="connect-button"
     color="primary"
     :label="account"
-    :content-style="{ backgroundColor: '#172c6c' }"
+    :content-style="{ backgroundColor: 'var(--q-color-dropdown-card)', borderRadius: '12px' }"
 >
     <q-card class="buttons-container">
         <q-card-section class="account-link">
@@ -70,7 +70,7 @@ export default defineComponent({
 </template>
 <style lang="sass" scoped>
 .q-menu
-  background-color: blue
+  background-color: var(--q-color-dropdown-card)
   min-width: unset
 .q-list
   width: 12rem
@@ -86,7 +86,7 @@ export default defineComponent({
   &:hover
     cursor: pointer
     transition: background-color .3s
-    background-color: color-mix(in oklab, var(--q-secondary) 88%, white 12%)
+    background-color: rgba(255, 255, 255, 0.08)
   a
     text-decoration: none
     div
@@ -95,5 +95,6 @@ export default defineComponent({
 .buttons-container
   width: 220px
   max-width: 80vw
+  border-radius: 12px
   background: var(--q-color-dropdown-card)
 </style>

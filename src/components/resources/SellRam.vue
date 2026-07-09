@@ -95,7 +95,7 @@ export default defineComponent({
             <q-input
                 v-model="sellAmount"
                 class="full-width"
-                standout="bg-deep-purple-2 text-white"
+                standout="bg-dropdown-dark text-white"
                 placeholder="0"
                 :lazy-rules="true"
                 :rules="inputRules"
@@ -130,13 +130,13 @@ export default defineComponent({
 
 <style scoped lang="sass">
 .button-accent
-  background: rgba(108, 35, 255, 1)
-  border-radius: 4px
-  color: $grey-4
+  background: var(--q-primary)
+  border-radius: 8px
+  color: #FFFFFF
 .grey-3
-  color: $grey-3
+  color: #E6E9EC
 
 .balance-amount:hover
-  color: $primary
+  color: var(--q-info)
   cursor: pointer
 </style>

@@ -110,7 +110,7 @@ export default defineComponent({
 <style lang="sass" scoped>
 .hover-dec
   text-decoration: none
-  color: var(--q-dark)
+  color: var(--q-primary)
   &:hover
     text-decoration: underline
 
@@ -122,8 +122,9 @@ export default defineComponent({
   grid-template-rows: min-content
 
 .token-card
-  background: rgba(138, 101, 212, 0.1)
-  border-radius: .2rem
+  background: var(--q-color-producer-card-background)
+  border: 1px solid #E6E9EC
+  border-radius: 12px
   box-shadow: none
   padding: 0.5rem 0
 </style>

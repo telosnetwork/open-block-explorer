@@ -49,10 +49,9 @@ export default defineComponent({
                     <div class="q-pt-lg">
                         <q-tabs
                             v-model="tab"
-                            class="text-grey-5 tab-text text-grey"
+                            class="tab-text tab-text-muted"
                             dense
-                            indicator-color="grey-3"
-                            active-color="grey-3"
+                            active-color="white"
                             narrow-indicator
                             align="left"
                             :breakpoint="0"
@@ -64,7 +63,7 @@ export default defineComponent({
                             <q-tab name="buyram" label="Buy RAM"/>
                             <q-tab name="sellram" label="Sell RAM"/>
                         </q-tabs>
-                        <q-separator color="grey-8"/>
+                        <q-separator class="dialog-separator"/>
                         <q-tab-panels v-model="tab" class="tab-panel">
                             <q-tab-panel name="stake">
                                 <StakingTab/>
@@ -94,40 +93,40 @@ export default defineComponent({
 <style lang="sass" scoped>
 
 .stakeCard
-  color: $grey-6
-  background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
+  color: #FFFFFF
+  background: var(--q-color-secondary-gradient)
   .send-icon
     padding-bottom: 30px
   .button-accent
-    background: rgba(108, 35, 255, 1)
-    border-radius: 4px
-    color: $grey-4
+    background: var(--q-primary)
+    border-radius: 8px
+    color: #FFFFFF
   .color-grey-3
-    color: $grey-3
+    color: #E6E9EC
 
 .sarrowButton
-  background: rgba($grey-9, 0.1)
+  background: rgba(255, 255, 255, 0.08)
 
 .selector-container
   cursor: pointer
-  background: rgba(108, 35, 255, 1)
-  border-radius: 4px
+  background: var(--q-color-dropdown-card)
+  border-radius: 12px
   height: 40px
   margin-top: 1px
-  color: var(--q-dark)
+  color: #FFFFFF
   &:hover
-    background: rgba($grey-4, 0.3)
-    border-color: $grey-1
-    border-radius: 4px
+    background: rgba(255, 255, 255, 0.08)
+    border-color: rgba(255, 255, 255, 0.12)
+    border-radius: 12px
   .arrowButton
-    color: $grey-4
+    color: #FFFFFF
 
   .text-h6
-    color: $grey-4
+    color: #FFFFFF
     font-weight: 600
     font-size: 1.1rem
   .subtitle
-    color: $grey-4
+    color: #ACADB1
 .send-img
   height: 35px
   max-width: 60px
@@ -137,6 +136,16 @@ export default defineComponent({
 
 .tab-text
   font-size: 30px !important
+  :deep(.q-tab__indicator)
+    background: var(--q-color-primary-gradient)
+    height: 3px
+    border-radius: 3px 3px 0 0
+
+.tab-text-muted
+  color: #ACADB1
+
+.dialog-separator
+  background: rgba(255, 255, 255, 0.12)
 
 .q-tab-panel
   padding-left: 0 !important

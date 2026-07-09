@@ -357,7 +357,7 @@ export default defineComponent({
             copyToClipboard(value)
                 .then((): void => {
                     $q.notify({
-                        color: 'green-4',
+                        color: 'positive',
                         textColor: 'white',
                         message: 'Copied to clipboard',
                         timeout: 1000,
@@ -365,7 +365,7 @@ export default defineComponent({
                 })
                 .catch(() => {
                     $q.notify({
-                        color: 'red-8',
+                        color: 'negative',
                         textColor: 'white',
                         message: 'Could not copy',
                         timeout: 1000,

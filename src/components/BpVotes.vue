@@ -115,6 +115,10 @@ watch(() => props.account, async () => {
                 a {
                     text-decoration: none;
                     color: var(--q-primary);
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
                 }
             }
         }

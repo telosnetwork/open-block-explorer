@@ -509,9 +509,14 @@ export default defineComponent({
         <h1 class="proposal-item__content-title text-h4 text-white q-ma-none ">Proposal {{proposalName}}</h1>
         <p class="proposal-item__content-sub text-caption text-white text-uppercase q-mt-xs">PROPOSER <router-link :to="'/account/' + proposer" class="text-white cursor-pointer">{{proposer}}</router-link> • APPROVAL STATUS {{approvalStatus}} • EXPIRATION {{expirationDate}}</p>
         <div class="q-mb-lg">
-            <q-badge v-if="isExecuted &amp;&amp; !isCanceled" color="green" label="EXECUTED"/>
-            <q-badge v-if="!isExecuted &amp;&amp; !isCanceled" color="orange" label="NOT EXECUTED"/>
-            <q-badge v-if="isCanceled" color="red" label="CANCELED"/>
+            <q-badge v-if="isExecuted &amp;&amp; !isCanceled" color="positive" label="EXECUTED"/>
+            <q-badge
+                v-if="!isExecuted &amp;&amp; !isCanceled"
+                color="warning"
+                text-color="black"
+                label="NOT EXECUTED"
+            />
+            <q-badge v-if="isCanceled" color="negative" label="CANCELED"/>
         </div>
         <div class="row q-gutter-sm justify-center items-center">
             <q-btn
@@ -571,14 +576,14 @@ export default defineComponent({
             />
         </q-expansion-item>
     </q-card>
-    <h2 class="text-h6 text-weight-regular q-mt-xl"><span>Requested Approvals</span><span class="text-body1 q-ml-sm text-grey">{{approvalStatus}}</span><span class="q-mx-sm">•</span><span>Active BPs</span><span class="text-body1 q-ml-sm text-grey">{{producersApprovalStatus}}</span></h2>
+    <h2 class="text-h6 text-weight-regular q-mt-xl"><span>Requested Approvals</span><span class="text-body1 q-ml-sm proposal-item__counter">{{approvalStatus}}</span><span class="q-mx-sm">•</span><span>Active BPs</span><span class="text-body1 q-ml-sm proposal-item__counter">{{producersApprovalStatus}}</span></h2>
     <q-card class="q-mb-xl">
         <q-table
             color="primary"
             flat
             :bordered="false"
             :square="true"
-            table-header-class="text-grey-7"
+            table-header-class="table-header"
             :rows="requestedApprovalsRows"
             :columns="requestedApprovalsColumns"
             row-key="index"
@@ -592,7 +597,7 @@ export default defineComponent({
                     </q-td>
                     <q-td key="permission" :props="props"><span>{{props.row.permission}}</span></q-td>
                     <q-td key="status" :props="props">
-                        <q-badge :color="props.row.status ? 'green' : 'orange'" :label="props.row.status ? 'APPROVED' : 'PENDING'"/>
+                        <q-badge :color="props.row.status ? 'positive' : 'warning'" :text-color="props.row.status ? 'white' : 'black'" :label="props.row.status ? 'APPROVED' : 'PENDING'"/>
                     </q-td>
                 </q-tr>
             </template>
@@ -609,5 +614,11 @@ export default defineComponent({
         padding-top: 6rem
     &__content-sub
         opacity: 0.5
+    &__counter
+        color: #7C7D83
+
+.table-header
+    color: #57595F !important
+    font-weight: 500
 
 </style>

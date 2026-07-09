@@ -55,7 +55,7 @@ export default defineComponent({
     </div>
     <q-separator/>
     <q-list>
-        <q-item v-if="error" :active="!!error" active-class="bg-red-1 text-grey-8">
+        <q-item v-if="error" :active="!!error" active-class="bg-error-light text-negative">
             <q-item-section>{{ error }}</q-item-section>
         </q-item>
     </q-list>
@@ -66,12 +66,16 @@ export default defineComponent({
 .fixed-full
   flex-direction: column
 .modal-container
-  background: radial-gradient(50% 67.35% at 50% 67.35%, #8A65D4 0%,  rgb(9, 26, 98, 100))
+  background: var(--q-color-secondary-gradient)
 .modal-header
   margin-left: 0.6rem
   color: white
   font-size: 2.25rem
+  font-weight: 600
+  letter-spacing: -0.01em
   width: 100%
+.bg-error-light
+  background: #FEF3F2
 .modal-header-container
   display: flex
   align-items: center

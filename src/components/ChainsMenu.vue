@@ -57,7 +57,7 @@ export default defineComponent({
 <template>
 <q-btn v-if="hasChainsInstalled" flat class="chain-button">
     <q-icon :name="menuIcon" size="md" />
-    <q-menu v-model="menuOpened">
+    <q-menu v-model="menuOpened" class="chains-menu-dropdown">
         <div class="chains-menu">
             <ChainsListSelector
                 :on-chain-selected="chainSelected"
@@ -74,4 +74,23 @@ export default defineComponent({
 
 .chains-menu
     width: 170px !important
+    background: var(--q-color-dropdown-card)
+    color: white
+    border-radius: 12px
+    overflow: hidden
+    :deep(.q-item:hover), :deep(.q-item.selected)
+        background-color: rgba(255, 255, 255, 0.08)
+    :deep(.separator)
+        background: rgba(255, 255, 255, 0.12)
+    :deep(.section-title)
+        color: #ACADB1
+</style>
+
+<style lang="sass">
+// q-menu content is teleported outside this component's scope — style the
+// wrapper globally so its default white background/corners don't peek
+.chains-menu-dropdown
+    background: var(--q-color-dropdown-card)
+    border-radius: 12px
+    overflow: hidden
 </style>

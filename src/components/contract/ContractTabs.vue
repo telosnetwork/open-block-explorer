@@ -44,8 +44,10 @@ export default defineComponent({
     <div class="col-12">
         <q-tabs
             v-model="tab"
+            class="contract-tabs"
             no-caps
             align="left"
+            active-color="primary"
             :breakpoint="0"
         >
             <q-tab name="tables" label="Tables"/>
@@ -77,4 +79,10 @@ export default defineComponent({
     </div>
 </div></template>
 
-<style lang="sass"></style>
+<style lang="sass" scoped>
+.contract-tabs
+    :deep(.q-tab__indicator)
+        background: var(--q-color-primary-gradient)
+        height: 3px
+        border-radius: 3px 3px 0 0
+</style>

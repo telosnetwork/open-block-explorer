@@ -42,15 +42,15 @@ describe('PercentCircle', () => {
             });
         });
         describe('strokeColor', () => {
-            it('sets color to "white" if usage < 90', () => {
-                expect(wrapper.vm.strokeColor).toBe('white');
+            it('sets color to brand blue if usage < 90', () => {
+                expect(wrapper.vm.strokeColor).toBe('#4FACFE');
             });
-            it('sets color to "red" if usage >= 90', async () => {
+            it('sets color to light error red if usage >= 90', async () => {
                 await wrapper.setProps({
                     fraction: 90,
                     total: 100,
                 });
-                expect(wrapper.vm.strokeColor).toBe('red');
+                expect(wrapper.vm.strokeColor).toBe('#F97066');
             });
         });
         describe('circumference', () => {

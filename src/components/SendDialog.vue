@@ -229,7 +229,7 @@ export default defineComponent({
                                 <q-input
                                     v-model="sendAmount"
                                     class="full-width"
-                                    standout="bg-deep-purple-2 text-white"
+                                    standout="bg-dropdown-dark text-white"
                                     placeholder="0"
                                     :debounce="1000"
                                     :rules="[val => val > 0 && val <= sendToken?.amount || 'invalid amount' ]"
@@ -247,7 +247,7 @@ export default defineComponent({
                                     <q-input
                                         v-model="memo"
                                         class="full-width send-input"
-                                        standout="bg-deep-purple-2 text-white"
+                                        standout="bg-dropdown-dark text-white"
                                         dark
                                         type="textarea"
                                     />
@@ -276,7 +276,7 @@ export default defineComponent({
                             </div>
                             <div class="col-12">
                                 Click to view transaction:
-                                <a class="ellipsis-overflow text-blue" @click="navToTransaction">{{ transactionId }}</a>
+                                <a class="ellipsis-overflow text-info" @click="navToTransaction">{{ transactionId }}</a>
                             </div>
                         </div>
                     </q-card-section>
@@ -312,43 +312,43 @@ export default defineComponent({
 
 
 .sendCard
-  color: $grey-6
-  background: radial-gradient(circle at 48% 100%, rgba(108, 35, 255, 1) 0%, rgba(84, 0, 253, 1) 20%, rgba(2, 27, 100, 1) 92%)
+  color: #FFFFFF
+  background: var(--q-color-secondary-gradient)
   .send-icon
     padding-bottom: 30px
   .button-accent
-    background: rgba(108, 35, 255, 1)
-    border-radius: 4px
-    color: $grey-4
+    background: var(--q-primary)
+    border-radius: 8px
+    color: #FFFFFF
   .color-grey-3
-    color: $grey-3
+    color: #E6E9EC
 
 .sarrowButton
-  background: rgba($grey-9, 0.1)
+  background: rgba(255, 255, 255, 0.08)
 
 .selector-container
   cursor: pointer
-  background: rgba(108, 35, 255, 1)
-  border-radius: 4px
+  background: var(--q-color-dropdown-card)
+  border-radius: 12px
   height: 40px
   margin-top: 1px
-  color: var(--q-dark)
+  color: #FFFFFF
   &:hover
-    background: rgba($grey-4, 0.3)
-    border-color: $grey-1
-    border-radius: 4px
+    background: #404142
+    border-color: rgba(255, 255, 255, 0.12)
+    border-radius: 12px
   .arrowButton
-    color: $grey-4
+    color: #C7CCD0
 
   .text-h6
-    color: $grey-4
+    color: #FFFFFF
     font-weight: 600
     font-size: 1.1rem
   .subtitle
-    color: $grey-4
+    color: #FFFFFF
 .send-img
   height: 35px !important
 
 .balance-amount:hover
-  color: $primary
+  color: var(--q-info)
 </style>

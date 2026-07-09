@@ -25,9 +25,16 @@ export default defineComponent({
             //   uncomment to fill area
             chart: {
                 type: 'area',
+                style: {
+                    fontFamily: '\'Silka\', -apple-system, BlinkMacSystemFont, \'Segoe UI\', \'Helvetica Neue\', Arial, sans-serif',
+                },
             },
             title: {
                 text: 'Past 24h',
+                style: {
+                    color: '#2C2B2F',
+                    fontWeight: '600',
+                },
             },
             xAxis: {
                 dateTimeLabelFormats: {
@@ -35,14 +42,33 @@ export default defineComponent({
                     millisecond: '%A, %b %e, %l %p',
                 },
                 type: 'datetime',
+                labels: {
+                    style: {
+                        color: '#7C7D83',
+                    },
+                },
+                lineColor: '#E6E9EC',
+                tickColor: '#E6E9EC',
             },
             yAxis: {
                 title: {
                     text: 'Price',
+                    style: {
+                        color: '#7C7D83',
+                    },
                 },
+                labels: {
+                    style: {
+                        color: '#7C7D83',
+                    },
+                },
+                gridLineColor: '#E6E9EC',
             },
             legend: {
                 enabled: true,
+                itemStyle: {
+                    color: '#2C2B2F',
+                },
             },
             plotOptions: {
                 area: {
@@ -55,8 +81,8 @@ export default defineComponent({
                             y2: 1,
                         },
                         stops: [
-                            // [0, '#571AFF'],
-                            [0, getCssVar('color-graph-shadow')],
+                            [0, 'rgba(79, 172, 254, 0.35)'],
+                            [1, 'rgba(196, 113, 245, 0.05)'],
                         ],
                     },
                     marker: {
@@ -74,13 +100,18 @@ export default defineComponent({
             series: [
                 {
                     name: chain.getSystemToken().symbol,
-                    color: getCssVar('primary'),
+                    color: getCssVar('info'),
                     data: [] as DateTuple[],
                 },
             ],
             tooltip: {
                 dateTimeLabelFormats: {
                     hour: '%A, %b %e, %l %p',
+                },
+                backgroundColor: '#2C2B2F',
+                borderColor: '#2C2B2F',
+                style: {
+                    color: '#FFFFFF',
                 },
             },
         });
@@ -188,8 +219,9 @@ $medium:750px
     width: 100%
     background-color:#ffffff
     background: #FFFFFF
-    box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
-    border-radius: 10px
+    box-shadow: 0px 1px 2px rgba(27, 27, 29, 0.06), 0px 8px 24px rgba(27, 27, 29, 0.08)
+    border: 1px solid #E6E9EC
+    border-radius: 16px
 
 .title
     font-style: normal
@@ -197,7 +229,7 @@ $medium:750px
     font-size: 14px
     line-height: 17px
     text-transform: uppercase
-    color: #071A5F
+    color: var(--q-secondary)
 .sub-title
     font-style: normal
     font-weight: normal
@@ -214,7 +246,7 @@ $medium:750px
 
 .highcharts-data-table table
   border-collapse: collapse
-  border: 1px solid #ebebeb
+  border: 1px solid #E6E9EC
   margin: 10px auto
   text-align: center
   width: 100%
@@ -223,7 +255,7 @@ $medium:750px
 .highcharts-data-table caption
   padding: 1em 0
   font-size: 1.2em
-  color: #555
+  color: #57595F
 
 .highcharts-data-table th
   font-weight: 600
@@ -236,10 +268,10 @@ $medium:750px
 
 .highcharts-data-table thead tr,
 .highcharts-data-table tr:nth-child(even)
-  background: #f8f8f8
+  background: #F9F9F9
 
 .highcharts-data-table tr:hover
-  background: #f1f7ff
+  background: rgba(79, 172, 254, 0.08)
 
 .highcharts-description
   height:250px

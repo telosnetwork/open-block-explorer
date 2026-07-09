@@ -73,9 +73,9 @@ export default defineComponent({
     </div>
     <q-tabs
         v-model="tab"
+        class="proposal-tabs"
         align="left"
         active-color="primary"
-        content-class="text-grey-7"
         no-caps
     >
         <q-tab v-if="isAuthenticated" name="myProposal" label="My proposals"/>
@@ -102,3 +102,12 @@ export default defineComponent({
     </q-tab-panels>
 </q-page>
 </template>
+<style lang="sass" scoped>
+.proposal-tabs
+    :deep(.q-tab)
+        color: #57595F
+    :deep(.q-tab__indicator)
+        background: var(--q-color-primary-gradient)
+        height: 3px
+        border-radius: 3px 3px 0 0
+</style>

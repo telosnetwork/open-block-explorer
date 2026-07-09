@@ -265,8 +265,7 @@ export default defineComponent({
                     outline
                     class="q-mr-sm"
                     padding="sm md"
-                    color="white"
-                    text-color="primary"
+                    color="primary"
                     label="Cancel"
                     to="/proposal"
                 />
@@ -341,8 +340,7 @@ export default defineComponent({
                     <q-btn
                         outline
                         padding="sm md"
-                        color="white"
-                        text-color="primary"
+                        color="primary"
                         label="Add"
                         @click="formData.requested.push({actor: '', permission: ''})"
                     />
@@ -505,7 +503,7 @@ export default defineComponent({
             @remove="formData.trx.actions.splice(index, 1)"
         />
         <q-card class="q-my-md">
-            <q-tabs v-model="actionsTab">
+            <q-tabs v-model="actionsTab" class="proposal-new__tabs" active-color="primary">
                 <q-tab name="one" label="One action"/>
                 <q-tab name="batch" label="Transfer in batch"/>
             </q-tabs>
@@ -516,8 +514,7 @@ export default defineComponent({
                         <q-btn
                             outline
                             padding="sm md"
-                            color="white"
-                            text-color="primary"
+                            color="primary"
                             label="Add action"
                             @click="onAddAction"
                         />
@@ -536,6 +533,14 @@ export default defineComponent({
 .proposal-success
     &__card
         &--background
-            background: '#E8E2F7'
+            background: var(--q-color-producer-card-background)
+            border: 1px solid #E6E9EC
+            border-radius: 16px
+
+.proposal-new__tabs
+    .q-tab__indicator
+        background: var(--q-color-primary-gradient)
+        height: 3px
+        border-radius: 3px 3px 0 0
 
 </style>
