@@ -114,7 +114,7 @@ export default defineComponent({
             series: [
                 {
                     name: chain.getSystemToken().symbol,
-                    color: '#1B6FAF',
+                    color: '#2C2B2F',
                     data: [] as DateTuple[],
                 },
             ],
@@ -269,7 +269,7 @@ $medium:750px
 .border-line
     width: 19px
     height: 2px
-    background: linear-gradient(90deg, #00F2FE 0%, #4FACFE 54%, #C471F5 100%)
+    background: var(--q-color-primary-gradient)
     border-radius: 4px
     @media screen and (max-width: $medium) // screen < $medium
         width: 126px !important
@@ -282,8 +282,8 @@ $medium:750px
     overflow: hidden
     z-index: 1
     width: 100%
-    background-color:#ffffff
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 252, 255, 0.98) 62%, rgba(246, 235, 255, 0.36) 100%)
+    background-color: #FFFFFF
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 249, 249, 0.98) 62%, rgba(230, 233, 236, 0.36) 100%)
     border: 1px solid rgba(79, 172, 254, 0.24)
     box-shadow: 0 14px 30px rgba(79, 172, 254, 0.16), 0 4px 12px rgba(44, 43, 47, 0.12)
     border-radius: 8px
@@ -322,7 +322,7 @@ $medium:750px
     font-weight: 600
     font-size: 24px
     line-height: 29px
-    color: #5E217A
+    color: var(--q-primary)
 
 .highcharts-figure,
 .highcharts-data-table table
@@ -332,7 +332,7 @@ $medium:750px
 
 .highcharts-data-table table
   border-collapse: collapse
-  border: 1px solid #ebebeb
+  border: 1px solid #E6E9EC
   margin: 10px auto
   text-align: center
   width: 100%
@@ -341,7 +341,7 @@ $medium:750px
 .highcharts-data-table caption
   padding: 1em 0
   font-size: 1.2em
-  color: #555
+  color: #57595F
 
 .highcharts-data-table th
   font-weight: 600
@@ -354,14 +354,14 @@ $medium:750px
 
 .highcharts-data-table thead tr,
 .highcharts-data-table tr:nth-child(even)
-  background: #f8f8f8
+  background: #F9F9F9
 
 .highcharts-data-table tr:hover
-  background: #f1f7ff
+  background: #E6E9EC
 
 @media screen and (max-width: $medium)
     .price-box
-        background: linear-gradient(180deg, #FFFFFF 0%, #FBFDFF 100%)
+        background: linear-gradient(180deg, #FFFFFF 0%, #F9F9F9 100%)
         border-color: rgba(79, 172, 254, 0.14)
         box-shadow: 0 8px 18px rgba(79, 172, 254, 0.1), 0 2px 8px rgba(44, 43, 47, 0.08)
         &::before

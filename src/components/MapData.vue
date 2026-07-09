@@ -123,7 +123,7 @@ hr
     max-width: 16px !important
   .hr-vertical
     height: 62px
-    border-right: 1px solid rgba(94, 33, 122, 0.58)
+    border-right: 1px solid rgba(172, 173, 177, 0.74)
     margin-top: 2px
   .stat-label
     font-size: 9px !important

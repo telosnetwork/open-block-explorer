@@ -439,7 +439,7 @@ export default defineComponent({
 
 .ol-popup
   position: absolute
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(230, 249, 255, 0.96) 52%, rgba(246, 235, 255, 0.96) 100%)
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(249, 249, 249, 0.96) 52%, rgba(230, 233, 236, 0.96) 100%)
   border: 1px solid rgba(0, 242, 254, 0.32)
   box-shadow: 0 14px 32px rgba(44, 43, 47, 0.18)
   padding: 8px
