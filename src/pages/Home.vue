@@ -38,10 +38,7 @@ export default defineComponent({
     height: 100vh
 
 .home-banner
-    background-image: url("/backgrounds/home.png")
-    background-repeat: no-repeat
-    background-position: center
-    background-size: cover
+    background: var(--q-color-header-support-background)
     display: flex
     align-items: center
     flex-direction: column
@@ -49,7 +46,8 @@ export default defineComponent({
     color: white
     text-align: center
     > h2
-        font-weight: 400
+        font-weight: 600
+        letter-spacing: -0.01em
 
 .antelope-logo
     max-height: 100px

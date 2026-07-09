@@ -272,8 +272,17 @@ export default defineComponent({
 
 <style lang="sass">
 .search-input
-  background: rgba(255, 255, 255, 0.15)
-  border-radius: 4px
+  background: rgba(255, 255, 255, 0.12)
+  border: 1px solid rgba(255, 255, 255, 0.08)
+  border-radius: 12px
+  transition: background 0.2s ease, border-color 0.2s ease
+
+.search-input:hover
+  background: rgba(255, 255, 255, 0.16)
+
+.search-input:focus-within
+  background: rgba(255, 255, 255, 0.18)
+  border-color: rgba(79, 172, 254, 0.6)
 
 .search-input .q-select__dropdown-icon
   color: white

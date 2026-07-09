@@ -1,22 +1,59 @@
 // app global css in Sass form
-@import url('https://fonts.googleapis.com/css2?family=Actor&display=swap')
+
+// Telos brand typeface — Silka (https://telos.net/branding)
+@font-face
+    font-family: 'Silka'
+    src: url('./fonts/silka-light-webfont.ttf') format('truetype')
+    font-weight: 300
+    font-style: normal
+    font-display: swap
+
+@font-face
+    font-family: 'Silka'
+    src: url('./fonts/silka-regular-webfont.woff2') format('woff2')
+    font-weight: 400
+    font-style: normal
+    font-display: swap
+
+@font-face
+    font-family: 'Silka'
+    src: url('./fonts/silka-medium-webfont.woff2') format('woff2')
+    font-weight: 500
+    font-style: normal
+    font-display: swap
+
+@font-face
+    font-family: 'Silka'
+    src: url('./fonts/silka-semibold-webfont.ttf') format('truetype')
+    font-weight: 600
+    font-style: normal
+    font-display: swap
+
+@font-face
+    font-family: 'Silka'
+    src: url('./fonts/silka-bold-webfont.woff2') format('woff2')
+    font-weight: 700
+    font-style: normal
+    font-display: swap
 
 a
     cursor: pointer
 
+// legacy alias kept for components still referencing it — now the brand typeface
 .actor-font
-    font-family: 'Actor'
+    font-family: 'Silka', sans-serif
 
 body
     overflow-x: hidden
     overflow-y: auto
+    color: #2C2B2F
 
 .bg-dropdown-dark
     background: var(--q-color-dropdown-card)
 
 .button-primary
     background: var(--q-primary)
-    border-radius: 4px
+    border-radius: 8px
     color: white
 
 .card-separator
@@ -48,8 +85,9 @@ body
 .info-card
     background-color: white
     background: white
-    box-shadow: 0px 9px 14px var(--q-color-seperator-background), 0px 1px 4px var(--q-color-card-shadow)
-    border-radius: 10px
+    border: 1px solid #E6E9EC
+    box-shadow: 0px 1px 2px rgba(27, 27, 29, 0.06), 0px 8px 24px var(--q-color-card-shadow)
+    border-radius: 16px
 
 .inline-block
     display: inline-block
@@ -69,25 +107,32 @@ body
 
 .panel-title
     font-style: normal
-    font-weight: normal
-    font-size: 22.75px
+    font-weight: 600
+    font-size: 22px
     line-height: 27px
+    letter-spacing: -0.01em
 
 .price-box-position
     margin-top: 1rem
     z-index: 1
 
 q-card.card--light-bg
-    background: #f4f0fb
+    background: #F9F9F9
 
 q-card-section.section--light-bg
-    background: #eae2f7
+    background: #E6E9EC
 
 .q-btn
     text-transform: capitalize
 
+.q-btn:not(.q-btn--round)
+    border-radius: 8px
+
 .q-dialog-plugin
     max-width: 100%
+
+.q-dialog .q-card
+    border-radius: 16px
 
 .q-page-container
     margin-left: auto
@@ -97,7 +142,7 @@ q-card-section.section--light-bg
     min-height: 2px
     border-radius: 4px
     padding-left: 20px
-    background: rgba(138, 101, 212, 0.1)
+    background: var(--q-color-seperator-background)
 
 .separator
     min-width: 100%
@@ -118,10 +163,11 @@ q-card-section.section--light-bg
     margin-top: 1rem
     margin-bottom: 1rem
     padding-bottom: .5rem
-    background-color:#ffffff
+    background-color: #ffffff
     background: #FFFFFF
-    box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
-    border-radius: 10px
+    border: 1px solid #E6E9EC
+    box-shadow: 0px 1px 2px rgba(27, 27, 29, 0.06), 0px 8px 24px var(--q-color-card-shadow)
+    border-radius: 16px
 
 @media screen and (max-width: 420px)
     .container-max-width

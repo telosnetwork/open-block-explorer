@@ -81,7 +81,6 @@ export default defineComponent({
     <div class="row justify-center col-12 q-pt-sm">
         <q-tabs
             active-class="active-tab"
-            indicator-color="white"
             align="justify"
             narrow-indicator
             color="white"
@@ -122,7 +121,14 @@ export default defineComponent({
 <style lang="sass" scoped>
 .q-tab
     text-transform: unset
-    font-size: 18px
+    font-size: 16px
+    font-weight: 500
+    letter-spacing: -0.01em
+
+.q-tab :deep(.q-tab__indicator)
+    background: var(--q-color-primary-gradient)
+    height: 3px
+    border-radius: 3px 3px 0 0
 
 .logo-header-container
     position: relative
@@ -140,8 +146,8 @@ export default defineComponent({
         margin-right: 4px
 
 .logo
-  width: 104px
-  height:40px
+  width: 114px
+  height: 40px
   object-fit: contain
 
 .logo-token
@@ -154,11 +160,13 @@ export default defineComponent({
     bottom: -20px
     color: white
     font-size: 10px
+    font-weight: 600
+    letter-spacing: 0.08em
     width: 100%
     height: min-content
     padding: 4px 8px
     border-radius: 4px
-    background-color: rgba(white, 0.1)
+    background: linear-gradient(90deg, rgba(0, 242, 254, 0.18), rgba(196, 113, 245, 0.18))
 
 .active-tab
   text-decoration: none
@@ -166,11 +174,11 @@ export default defineComponent({
   opacity: 1 !important
 
 .deactive
-  opacity: 0.65
-  font-size: 18px
+  opacity: 0.7
+  font-size: 16px
 
 .header-background
-  border-bottom: 2px solid var(--q-color-header-border)
+  border-bottom: 1px solid var(--q-color-header-border)
   background: var(--q-color-header-background)
 
 
