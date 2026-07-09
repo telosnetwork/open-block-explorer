@@ -301,7 +301,7 @@ export default defineComponent({
                 if (tokenModel.value) {
                     limit = 100;
                 }
-                const response = await api.getTransactions({
+                const response = await api.getAccountTransactions({
                     page,
                     limit,
                     account: account.value,

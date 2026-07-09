@@ -103,6 +103,7 @@ export type ApiClient = {
   getCreator: (address: string) => Promise<any>;
   getTokens: (address: string) => Promise<Token[]>;
   getTransactions: (filter: HyperionTransactionFilter) => Promise<GetActionsResponse>;
+  getAccountTransactions: (filter: HyperionTransactionFilter) => Promise<GetActionsResponse>;
   getTransaction: (address: string) => Promise<ActionData>;
   getChildren: (address: string) => Promise<Action[]>;
   getTableRows: (tableInput: GetTableRowsParams) => Promise<unknown>;

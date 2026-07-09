@@ -40,6 +40,8 @@ const url =
 
 const MAX_REQUESTS_COUNT = 5;
 const INTERVAL_MS = 10;
+const ACCOUNT_TOKEN_ISSUE_LIMIT = 100;
+const MAX_ACCOUNT_TOKEN_ISSUE_CONTRACTS = 25;
 let PENDING_REQUESTS = 0;
 
 /**
@@ -158,6 +160,144 @@ export const getTransactions = async function (
     return await hyperion.get<ActionData>('v2/history/get_actions', {
         params,
     });
+};
+
+const getActionIdentity = (action: Action): string => [
+    action.trx_id,
+    action.global_sequence,
+    action.action_ordinal,
+].join(':');
+
+const getActionTimestamp = (action: Action): number => (
+    new Date(action['@timestamp'] || action.timestamp || '').getTime()
+);
+
+const mergeActions = (actions: Action[], extras: Action[], sort: 'desc' | 'asc'): Action[] => {
+    const merged = new Map<string, Action>();
+    actions.concat(extras).forEach((action) => {
+        merged.set(getActionIdentity(action), action);
+    });
+
+    return Array.from(merged.values()).sort((a, b) => {
+        const diff = getActionTimestamp(a) - getActionTimestamp(b);
+        return sort === 'asc' ? diff : -diff;
+    });
+};
+
+const actionFilterAllows = (actionFilter: string, actionName: string): boolean => {
+    if (!actionFilter) {
+        return true;
+    }
+
+    const names = actionFilter.split(',').map(name => name.trim()).filter(Boolean);
+    const positiveNames = names.filter(name => !name.startsWith('!'));
+
+    if (positiveNames.length > 0) {
+        return positiveNames.includes(actionName);
+    }
+
+    return !names.includes('!' + actionName);
+};
+
+const getAccountActionExtras = (
+    filter: HyperionTransactionFilter,
+    extras: { [key: string]: string },
+): HyperionTransactionFilter => ({
+    page: 1,
+    limit: Math.max(filter.limit || 10, ACCOUNT_TOKEN_ISSUE_LIMIT),
+    sort: filter.sort,
+    after: filter.after,
+    before: filter.before,
+    extras: {
+        ...filter.extras,
+        ...extras,
+    },
+});
+
+const getActionsSafely = async (filter: HyperionTransactionFilter): Promise<Action[]> => {
+    try {
+        const response = await getTransactions(filter);
+        return response.data.actions || [];
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+};
+
+const getHeldTokenContracts = async (account: string, tokenContract?: string): Promise<string[]> => {
+    if (tokenContract) {
+        return [tokenContract];
+    }
+
+    const tokens = await getTokens(account) || [];
+    return Array.from(new Set(tokens.map((token: Token) => token.contract)))
+        .filter(Boolean)
+        .slice(0, MAX_ACCOUNT_TOKEN_ISSUE_CONTRACTS);
+};
+
+const isIssueToAccount = (action: Action, account: string): boolean => {
+    const issueData = action.act?.data as { to?: string };
+    return action.act?.name === 'issue' && issueData?.to === account;
+};
+
+export const getAccountTransactions = async function (
+    filter: HyperionTransactionFilter,
+): Promise<GetActionsResponse> {
+    const response = await getTransactions(filter);
+    const account = filter.account;
+
+    if (!account) {
+        return response;
+    }
+
+    const actionFilter = filter.extras?.['act.name'] || '';
+    const tokenContract = filter.extras?.['act.account'];
+    const supplementalPromises: Promise<Action[]>[] = [];
+
+    if (actionFilterAllows(actionFilter, 'transfer')) {
+        supplementalPromises.push(getActionsSafely(getAccountActionExtras(filter, {
+            'act.name': 'transfer',
+            'transfer.to': account,
+        })));
+    }
+
+    if (actionFilterAllows(actionFilter, 'issue')) {
+        const contracts = await getHeldTokenContracts(account, tokenContract);
+        supplementalPromises.push(...contracts.map(contract => (
+            getActionsSafely(getAccountActionExtras(filter, {
+                'act.account': contract,
+                'act.name': 'issue',
+            })).then(actions => actions.filter(action => isIssueToAccount(action, account)))
+        )));
+    }
+
+    if (supplementalPromises.length === 0) {
+        return response;
+    }
+
+    const supplementalActions = (await Promise.all(supplementalPromises)).reduce(
+        (allActions, actions) => allActions.concat(actions),
+        [] as Action[],
+    );
+    const mergedActions = mergeActions(
+        response.data.actions || [],
+        supplementalActions,
+        filter.sort || 'desc',
+    );
+    const limit = filter.limit || 10;
+    const uniqueExtrasCount = Math.max(0, mergedActions.length - (response.data.actions || []).length);
+
+    return {
+        ...response,
+        data: {
+            ...response.data,
+            actions: mergedActions.slice(0, limit),
+            total: {
+                ...response.data.total,
+                value: response.data.total.value + uniqueExtrasCount,
+            },
+        },
+    };
 };
 
 export const getTransaction = async function (
