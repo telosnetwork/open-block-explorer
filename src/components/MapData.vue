@@ -30,29 +30,29 @@ export default defineComponent({
 </script>
 
 <template>
-<div class="row full-width text-center justify-center actor-font" :class="{'text-grey-3' : mapVisible}">
-    <div class="col-3">
+<div class="row full-width text-center justify-center actor-font map-data" :class="{'map-data--visible text-grey-3' : mapVisible}">
+    <div class="col-3 stat-block">
         <div class="row">
-            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Head Block</div>
-            <div class="col-12 text-subtitle1 text-bold">{{HeadBlock.toLocaleString()}}</div>
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase stat-label">Head Block</div>
+            <div class="col-12 text-subtitle1 text-bold stat-value">{{HeadBlock.toLocaleString()}}</div>
         </div>
     </div>
     <div class="col-1">
         <div class="hr-vertical"> </div>
     </div>
-    <div class="col-3">
+    <div class="col-3 stat-block">
         <div class="row">
-            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Producing</div>
-            <div class="col-12 text-subtitle1 text-bold">{{HeadBlockProducer}}</div>
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase stat-label">Producing</div>
+            <div class="col-12 text-subtitle1 text-bold stat-value">{{HeadBlockProducer}}</div>
         </div>
     </div>
     <div class="col-1">
         <div class="hr-vertical"></div>
     </div>
-    <div class="col-3">
+    <div class="col-3 stat-block">
         <div class="row">
-            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase">Irreversible Block</div>
-            <div class="col-12 text-subtitle1 text-bold">{{lastIrreversibleBlock.toLocaleString()}}</div>
+            <div class="col-12 text-subtitle1 text-weight-thin text-uppercase stat-label">Irreversible Block</div>
+            <div class="col-12 text-subtitle1 text-bold stat-value">{{lastIrreversibleBlock.toLocaleString()}}</div>
         </div>
     </div>
 </div>
@@ -61,6 +61,29 @@ export default defineComponent({
 <style scoped lang="sass">
 .container
   margin-top: 9rem
+.map-data
+  position: relative
+  padding: 16px 12px
+  background: linear-gradient(90deg, rgba(0, 242, 254, 0.06) 0%, rgba(255, 255, 255, 0.94) 34%, rgba(196, 113, 245, 0.06) 100%)
+  border-top: 1px solid rgba(79, 172, 254, 0.18)
+  border-bottom: 1px solid rgba(79, 172, 254, 0.18)
+  box-shadow: 0 10px 20px rgba(79, 172, 254, 0.08)
+.map-data--visible
+  background: linear-gradient(90deg, rgba(44, 43, 47, 0.52) 0%, rgba(64, 65, 66, 0.42) 50%, rgba(79, 172, 254, 0.34) 100%)
+  border-color: rgba(255, 255, 255, 0.22)
+.stat-label
+  color: var(--q-secondary)
+  font-size: 14px
+  font-weight: 600
+  letter-spacing: 0
+.stat-value
+  color: var(--q-dark)
+  font-size: 18px
+  font-weight: 700
+.map-data--visible
+  .stat-label,
+  .stat-value
+    color: #FFFFFF
 hr
   content: ""
   display: block

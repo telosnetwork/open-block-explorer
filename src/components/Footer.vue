@@ -31,7 +31,11 @@ export default {
 .footer-background
     background: var(--q-color-footer-background)
     backdrop-filter: blur(14px)
+    border-top: 1px solid var(--q-color-header-border)
 .no-dec
     text-decoration: none
     color: white
+    font-size: 12px
+    font-weight: 600
+    letter-spacing: 0
 </style>

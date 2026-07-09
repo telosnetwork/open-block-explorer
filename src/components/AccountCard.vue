@@ -549,7 +549,7 @@ export default defineComponent({
                         :disable="tokensLoading || isLoading"
                         :label="tokensLoading ? 'Loading...' : 'Send'"
                         color="primary"
-                        class="full-width"
+                        class="full-width account-action-button"
                         @click="openSendDialog = true"
                     />
                 </div>
@@ -557,7 +557,7 @@ export default defineComponent({
                     <q-btn
                         :disable="tokensLoading || isLoading"
                         :label='tokensLoading ? "Loading..." : "Resources"'
-                        class="full-width"
+                        class="full-width account-action-button"
                         color="primary"
                         @click="openResourcesDialog = true"
                     />
@@ -566,7 +566,7 @@ export default defineComponent({
                     <q-btn
                         :disable="tokensLoading || isLoading"
                         :label='tokensLoading ? "Loading..." : "Staking (REX)"'
-                        class="ellipsis full-width"
+                        class="ellipsis full-width account-action-button"
                         color="primary"
                         @click="openStakingDialog = true"
                     />
@@ -718,6 +718,21 @@ $medium:750px
 .resource
   margin-right: 2rem
 
+.account-action-button
+  background-color: rgba(255, 255, 255, 0.1) !important
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.08) 100%) !important
+  border: 1px solid rgba(0, 242, 254, 0.38)
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.04)
+  color: #FFFFFF !important
+  font-weight: 600
+  min-height: 44px
+  &::before
+    border-color: transparent !important
+  &:hover, &:focus
+    background-color: rgba(0, 242, 254, 0.12) !important
+    border-color: rgba(196, 113, 245, 0.5)
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22), 0 0 18px rgba(0, 242, 254, 0.1)
+
 .text-right
   font-weight: bold
   &.total-loading-spinner
@@ -737,6 +752,10 @@ $medium:750px
   a
     cursor: pointer
     text-decoration: underline
+    color: var(--q-info, #00F2FE)
+    text-underline-offset: 2px
+    &:hover, &:focus
+      color: var(--q-accent, #C471F5)
 
 .total-amount
   color: white
@@ -776,10 +795,16 @@ $medium:750px
   a
     cursor: pointer
     text-decoration: underline
-    color: white
+    color: var(--q-info, #00F2FE)
     font-size: 16px
     font-weight: normal
+    text-underline-offset: 2px
+    &:hover, &:focus
+      color: var(--q-accent, #C471F5)
 
 .tx-link
   text-decoration: none !important
+  color: var(--q-info, #00F2FE)
+  &:hover, &:focus
+    color: var(--q-accent, #C471F5)
 </style>

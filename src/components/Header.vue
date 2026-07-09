@@ -22,7 +22,7 @@ export default defineComponent({
         const headerSettings = computed((): HeaderSettings => ConfigManager.get().getCurrentChain().getUiCustomization().headerSettings);
 
         const account = computed(() => accountStore.accountName);
-        const isLarge = computed((): boolean => $q.screen.gt.md);
+        const isLarge = computed((): boolean => $q.screen.gt.xs);
         const showMultichainSelector = computed(() => process.env.SHOW_MULTICHAIN_SELECTOR === 'true');
 
         const isTestnet = ref(getChain().isTestnet());
@@ -53,7 +53,7 @@ export default defineComponent({
 <template>
 <div class="header-background">
     <div class="row text-center q-pt-sm justify-between q-pt-md">
-        <div class="logo-container col-xs-3 col-sm-2 col-md-2 col-lg-2">
+        <div class="logo-container col-xs-3 col-sm-3 col-md-2 col-lg-2">
             <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
                 <div class="logo-header-container">
                     <div class="logo-chain-selector-container">
@@ -67,7 +67,7 @@ export default defineComponent({
                 </div>
             </div>
         </div>
-        <div class="col-xs-4 col-sm-6 col-md-4 col-lg-6">
+        <div class="col-xs-4 col-sm-5 col-md-4 col-lg-6">
             <div class="q-px-xs-xs q-px-sm-xs q-px-md-md q-px-lg-md">
                 <div class="row justify-center full-width">
                     <div class="col-12">
@@ -81,7 +81,7 @@ export default defineComponent({
     <div class="row justify-center col-12 q-pt-sm">
         <q-tabs
             active-class="active-tab"
-            indicator-color="white"
+            indicator-color="info"
             align="justify"
             narrow-indicator
             color="white"
@@ -122,7 +122,8 @@ export default defineComponent({
 <style lang="sass" scoped>
 .q-tab
     text-transform: unset
-    font-size: 18px
+    font-size: 16px
+    font-weight: 500
 
 .logo-header-container
     position: relative
@@ -136,12 +137,13 @@ export default defineComponent({
     display: flex
     flex-direction: row
     justify-content: space-between
+    align-items: center
     a
         margin-right: 4px
 
 .logo
-  width: 104px
-  height:40px
+  width: clamp(128px, 18vw, 150px)
+  height: 40px
   object-fit: contain
 
 .logo-token
@@ -158,20 +160,22 @@ export default defineComponent({
     height: min-content
     padding: 4px 8px
     border-radius: 4px
-    background-color: rgba(white, 0.1)
+    background: var(--q-color-tertiary-gradient)
 
 .active-tab
   text-decoration: none
   color: var(--q-color-header-text)
   opacity: 1 !important
+  font-weight: 600
 
 .deactive
-  opacity: 0.65
-  font-size: 18px
+  opacity: 0.72
+  font-size: 16px
 
 .header-background
-  border-bottom: 2px solid var(--q-color-header-border)
+  border-bottom: 1px solid var(--q-color-header-border)
   background: var(--q-color-header-background)
+  box-shadow: 0 12px 24px rgba(44, 43, 47, 0.16)
 
 
 </style>

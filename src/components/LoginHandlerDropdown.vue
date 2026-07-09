@@ -40,7 +40,7 @@ export default defineComponent({
     class="connect-button"
     color="primary"
     :label="account"
-    :content-style="{ backgroundColor: '#172c6c' }"
+    :content-style="{ backgroundColor: 'var(--q-color-dropdown-card)' }"
 >
     <q-card class="buttons-container">
         <q-card-section class="account-link">
@@ -70,7 +70,6 @@ export default defineComponent({
 </template>
 <style lang="sass" scoped>
 .q-menu
-  background-color: blue
   min-width: unset
 .q-list
   width: 12rem
@@ -79,8 +78,27 @@ export default defineComponent({
   margin: 15px
 .connect-button
   width: fit-content
-  height: 40px
+  height: 42px
+  min-height: 42px
   text-transform: lowercase
+  background-color: rgba(255, 255, 255, 0.06) !important
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.05) 100%) !important
+  border: 1px solid rgba(0, 242, 254, 0.22)
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16)
+  color: #FFFFFF !important
+  font-size: 15px
+  font-weight: 600
+  letter-spacing: 0
+  min-width: 168px
+  padding: 0 12px
+  &::before
+    border-color: transparent !important
+  &:hover, &:focus
+    border-color: rgba(0, 242, 254, 0.42)
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18), 0 0 12px rgba(0, 242, 254, 0.08)
+  :deep(.q-btn__content)
+    gap: 10px
+    line-height: 1
 
 .account-link
   &:hover

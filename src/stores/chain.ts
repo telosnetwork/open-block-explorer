@@ -90,6 +90,12 @@ export const useChainStore = defineStore('chain', {
         ).data as BP[];
                 let producers = (await api.getProducers()).rows;
                 producers = producers.filter(producer => producer.is_active === 1);
+                const activeProducerOwners = new Set(
+                    producers.map(producer => producer.owner),
+                );
+                const activeProducerData = producerData.filter(
+                    bp => activeProducerOwners.has(bp.owner),
+                );
                 producers = await Promise.all(producers.map(async (data) => {
                     const bp = producerData.find(
                         producer => producer.owner === data.owner,
@@ -128,10 +134,10 @@ export const useChainStore = defineStore('chain', {
                         };
                     }
                 }));
-                producerData.sort((a, b) => b.total_votes - a.total_votes);
+                activeProducerData.sort((a, b) => b.total_votes - a.total_votes);
                 producers.sort((a, b) => b.total_votes - a.total_votes);
                 this.setProducers(producers);
-                this.setBpList(producerData);
+                this.setBpList(activeProducerData);
             } catch (err) {
                 console.error(err);
             }
@@ -176,4 +182,3 @@ export const useChainStore = defineStore('chain', {
         },
     },
 });
-

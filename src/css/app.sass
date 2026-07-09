@@ -1,13 +1,49 @@
 // app global css in Sass form
-@import url('https://fonts.googleapis.com/css2?family=Actor&display=swap')
+@font-face
+    font-family: 'Silka'
+    src: url('/fonts/silka-light-webfont.ttf') format('truetype')
+    font-weight: 300
+    font-style: normal
+    font-display: swap
+
+@font-face
+    font-family: 'Silka'
+    src: url('/fonts/silka-regular-webfont.woff2') format('woff2')
+    font-weight: 400
+    font-style: normal
+    font-display: swap
+
+@font-face
+    font-family: 'Silka'
+    src: url('/fonts/silka-medium-webfont.woff2') format('woff2')
+    font-weight: 500
+    font-style: normal
+    font-display: swap
+
+@font-face
+    font-family: 'Silka'
+    src: url('/fonts/silka-semibold-webfont.ttf') format('truetype')
+    font-weight: 600
+    font-style: normal
+    font-display: swap
+
+@font-face
+    font-family: 'Silka'
+    src: url('/fonts/silka-bold-webfont.woff2') format('woff2')
+    font-weight: 700
+    font-style: normal
+    font-display: swap
 
 a
     cursor: pointer
 
 .actor-font
-    font-family: 'Actor'
+    font-family: 'Silka', Arial, sans-serif
 
 body
+    background: #F5F7FA
+    color: #2C2B2F
+    font-family: 'Silka', Arial, sans-serif
     overflow-x: hidden
     overflow-y: auto
 
@@ -15,9 +51,20 @@ body
     background: var(--q-color-dropdown-card)
 
 .button-primary
-    background: var(--q-primary)
+    background: var(--q-color-primary-gradient)
+    border: 1px solid rgba(255, 255, 255, 0.5)
     border-radius: 4px
-    color: white
+    box-shadow: 0 10px 24px rgba(79, 172, 254, 0.3), 0 2px 6px rgba(44, 43, 47, 0.16)
+    color: #2C2B2F
+    font-weight: 600
+
+.button-primary:hover
+    box-shadow: 0 14px 30px rgba(79, 172, 254, 0.38), 0 3px 10px rgba(44, 43, 47, 0.18)
+    transform: translateY(-1px)
+
+.button-primary:focus-visible
+    outline: 3px solid rgba(0, 242, 254, 0.5)
+    outline-offset: 2px
 
 .card-separator
     min-height: 2px
@@ -40,6 +87,7 @@ body
     height: 70vh
     width: 100%
     background: var(--q-color-header-support-background)
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.16)
 
 .gradient-color
     .q-linear-progress__model--determinate
@@ -47,9 +95,10 @@ body
 
 .info-card
     background-color: white
-    background: white
-    box-shadow: 0px 9px 14px var(--q-color-seperator-background), 0px 1px 4px var(--q-color-card-shadow)
-    border-radius: 10px
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFF 100%)
+    border: 1px solid rgba(79, 172, 254, 0.24)
+    box-shadow: 0 16px 34px var(--q-color-seperator-background), 0 3px 10px var(--q-color-card-shadow)
+    border-radius: 8px
 
 .inline-block
     display: inline-block
@@ -78,13 +127,14 @@ body
     z-index: 1
 
 q-card.card--light-bg
-    background: #f4f0fb
+    background: #F9F9F9
 
 q-card-section.section--light-bg
-    background: #eae2f7
+    background: #E6E9EC
 
 .q-btn
     text-transform: capitalize
+    transition: box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease
 
 .q-dialog-plugin
     max-width: 100%
@@ -119,9 +169,48 @@ q-card-section.section--light-bg
     margin-bottom: 1rem
     padding-bottom: .5rem
     background-color:#ffffff
-    background: #FFFFFF
-    box-shadow: 0px 9px 14px rgba(138, 101, 212, 0.1), 0px 1px 4px rgba(37, 42, 97, 0.3)
-    border-radius: 10px
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFF 100%)
+    border: 1px solid rgba(79, 172, 254, 0.24)
+    box-shadow: 0 16px 34px var(--q-color-seperator-background), 0 3px 10px var(--q-color-card-shadow)
+    border-radius: 8px
+    .trx-table--filter-buttons
+        .button-primary.q-btn
+            background-color: #FFFFFF !important
+            background-image: linear-gradient(180deg, #FFFFFF 0%, #F8FBFF 100%) !important
+            border: 1px solid rgba(79, 172, 254, 0.34)
+            box-shadow: 0 5px 12px rgba(44, 43, 47, 0.1)
+            color: #2C2B2F !important
+            font-weight: 600
+        .button-primary.q-btn:hover
+            border-color: rgba(196, 113, 245, 0.46)
+            box-shadow: 0 7px 16px rgba(79, 172, 254, 0.16), 0 2px 6px rgba(44, 43, 47, 0.1)
+        .q-btn--flat
+            background: rgba(196, 113, 245, 0.1)
+            color: #5E217A !important
+    .q-btn--outline
+        background-color: rgba(0, 242, 254, 0.06) !important
+        border: 1px solid rgba(0, 242, 254, 0.46)
+        border-radius: 4px
+        color: #2C2B2F !important
+        font-weight: 600
+    .q-btn--outline::before
+        border-color: transparent !important
+    .q-btn--outline:not(.disabled):not([disabled]):hover
+        background-color: rgba(0, 242, 254, 0.12) !important
+        border-color: rgba(196, 113, 245, 0.48)
+        color: #5E217A !important
+    .q-btn--outline.disabled, .q-btn--outline[disabled]
+        background-color: rgba(44, 43, 47, 0.04) !important
+        border-color: rgba(44, 43, 47, 0.12)
+        color: rgba(44, 43, 47, 0.38) !important
+    .q-toggle__inner--truthy
+        .q-toggle__track
+            background: var(--q-info)
+            opacity: .32
+        .q-toggle__thumb::after
+            background: var(--q-info)
+    .q-icon[role="presentation"]
+        color: #5E217A
 
 @media screen and (max-width: 420px)
     .container-max-width

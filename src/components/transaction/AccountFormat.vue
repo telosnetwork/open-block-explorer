@@ -29,7 +29,13 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .hover-dec
-  text-decoration: none
-  &:hover
-    text-decoration: underline
+  color: var(--q-primary, #2C2B2F)
+  font-weight: 600
+  text-decoration: underline
+  text-decoration-color: var(--q-info, #00F2FE)
+  text-decoration-thickness: 2px
+  text-underline-offset: 2px
+  &:hover, &:focus
+    color: #5E217A
+    text-decoration-color: var(--q-accent, #C471F5)
 </style>

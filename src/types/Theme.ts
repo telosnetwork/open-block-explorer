@@ -8,12 +8,16 @@ export interface Theme {
   info?: string;
   warning?: string;
   'color-map'?: string;
+  'color-sidebar-selected'?: string;
   'color-primary-gradient'?: string;
   'color-secondary-gradient'?: string;
   'color-tertiary-gradient'?: string;
   'color-progress-gradient'?: string;
   'color-producer-card-background'?: string;
   'color-select-box-background'?: string;
+  'color-seperator-background'?: string;
+  'color-card-shadow'?: string;
+  'color-dropdown-card'?: string;
   'color-header-background'?: string;
   'color-header-text'?: string;
   'color-header-border'?: string;
@@ -32,12 +36,16 @@ export const themeProps: (keyof Theme)[] = [
     'info',
     'warning',
     'color-map',
+    'color-sidebar-selected',
     'color-primary-gradient',
     'color-secondary-gradient',
     'color-tertiary-gradient',
     'color-progress-gradient',
     'color-producer-card-background',
     'color-select-box-background',
+    'color-seperator-background',
+    'color-card-shadow',
+    'color-dropdown-card',
     'color-header-background',
     'color-header-text',
     'color-header-border',
