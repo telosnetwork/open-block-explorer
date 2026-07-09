@@ -80,11 +80,10 @@ export default defineComponent({
     </div>
     <div class="row justify-center col-12 q-pt-sm">
         <q-tabs
+            class="header-tabs"
             active-class="active-tab"
-            indicator-color="white"
             align="justify"
             narrow-indicator
-            color="white"
         >
             <q-route-tab
                 v-if="!headerSettings.hideNetworkTab"
@@ -152,13 +151,19 @@ export default defineComponent({
 .testnet-text
     position: absolute
     bottom: -20px
-    color: white
+    color: var(--q-color-header-text)
     font-size: 10px
+    font-weight: 500
     width: 100%
     height: min-content
     padding: 4px 8px
     border-radius: 4px
-    background-color: rgba(white, 0.1)
+    background-color: color-mix(in srgb, var(--q-color-header-text) 10%, transparent)
+
+.header-tabs
+  color: var(--q-color-header-text)
+  :deep(.q-tab__indicator)
+    background: var(--q-color-primary-gradient)
 
 .active-tab
   text-decoration: none

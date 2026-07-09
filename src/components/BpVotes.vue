@@ -83,7 +83,7 @@ watch(() => props.account, async () => {
         }
 
         @media (min-width: $breakpoint-sm-min) {
-            border-left: 1px solid var(--q-color-seperator-background);
+            border-left: 1px solid var(--q-color-separator-background);
         }
     }
 

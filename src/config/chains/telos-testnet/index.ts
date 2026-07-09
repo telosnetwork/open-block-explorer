@@ -38,29 +38,37 @@ const S3_PRODUCER_BUCKET = 'https://telos-producer-validation.s3.amazonaws.com';
 const RPC_ENDPOINT = 'https://testnet.telos.net';
 const API_ENDPOINT = 'https://api-dev.telos.net/v1';
 const DISPLAY_MAP = false;
+// Telos brand system — https://telos.net/branding
+// Primary gradient: #00F2FE → #4FACFE → #C471F5; neutrals: ink #2C2B2F … grey50 #F9F9F9
 const THEME = {
-    primary: '#571aff',
-    secondary: '#071A5F',
-    accent: '#9C27B0',
-    dark: '#1d1d1d',
-    positive: '#21BA45',
-    negative: '#ff0000',
-    info: '#31CCEC',
+    primary: '#0088FF',
+    secondary: '#2C2B2F',
+    accent: '#C471F5',
+    dark: '#1B1B1D',
+    positive: '#027A48',
+    negative: '#B42318',
+    info: '#4FACFE',
     warning: '#F2C037',
-    'color-map': '#4325c2',
-    'color-primary-gradient': 'linear-gradient(90deg, #071A5F 0%, #571AFF 100%)',
+    'color-map': '#57595F',
+    'color-primary-gradient': 'linear-gradient(142deg, #00F2FE 14.14%, #4FACFE 50.81%, #C471F5 80.97%)',
     'color-secondary-gradient':
-    'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
+    'linear-gradient(180deg, #00F2FE 0%, #4FACFE 50%, #C471F5 147.34%)',
     'color-tertiary-gradient':
-    'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
-    'color-progress-gradient': '#571aff',
-    'color-producer-card-background': '#f5f4fe',
-    'color-select-box-background': '#e0dffb',
-    'color-header-background': '#071A5F',
-    'color-header-border': '#8a65d41a',
-    'color-header-support-background': 'linear-gradient(180deg, #071A5F 0%, #571aff 147.34%)',
-    'color-graph-shadow': '#571aff28',
-    'color-footer-background': '#071A5F',
+    'linear-gradient(90deg, #A5F8FF 0%, #BFE0FF 56.77%, #E9D4FC 100%)',
+    'color-progress-gradient': 'linear-gradient(142deg, #00F2FE 14.14%, #4FACFE 50.81%, #C471F5 80.97%)',
+    'color-producer-card-background': '#F9F9F9',
+    'color-select-box-background': '#E6E9EC',
+    'color-separator-background': 'rgba(44, 43, 47, 0.08)',
+    'color-card-shadow': 'rgba(44, 43, 47, 0.12)',
+    'color-dropdown-card': '#2C2B2F',
+    'color-sidebar-selected': '#E6E9EC',
+    'color-header-background': '#FFFFFF',
+    'color-header-text': '#2C2B2F',
+    'color-header-border': '#E6E9EC',
+    'color-header-support-background': 'linear-gradient(142deg, #2C2B2F 0%, #1B1B1D 100%)',
+    'color-graph-shadow': '#4facfe28',
+    'color-footer-background': '#FFFFFF',
+    'color-footer-text': '#2C2B2F',
 };
 
 export default class TelosTestnet extends BaseChain {
@@ -109,11 +117,11 @@ export default class TelosTestnet extends BaseChain {
     }
 
     getLargeLogoPath(): string {
-        return 'chains/telos/telos_logo.png';
+        return 'chains/telos-testnet/telos_logo.svg';
     }
 
     getSmallLogoPath(): string {
-        return 'chains/telos/tlos.png';
+        return 'chains/telos-testnet/telos_icon.svg';
     }
 
     getMapDisplay(): boolean {

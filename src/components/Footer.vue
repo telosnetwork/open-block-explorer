@@ -27,11 +27,13 @@ export default {
 <style lang="sass" scoped>
 .router-link
     text-decoration: none
-    color: #ffffff
+    color: var(--q-color-footer-text, #ffffff)
 .footer-background
     background: var(--q-color-footer-background)
     backdrop-filter: blur(14px)
+    border-top: 1px solid var(--q-color-header-border)
 .no-dec
     text-decoration: none
-    color: white
+    color: var(--q-color-footer-text, #ffffff)
+    font-weight: 500
 </style>

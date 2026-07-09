@@ -55,10 +55,12 @@ const THEME = {
     'linear-gradient(90deg, #CBCAF5 0%, #A9CAF3 56.77%, #63C9EF 100%)',
     'color-progress-gradient': '#28417c',
     'color-header-background': '#000000',
+    'color-header-text': '#FFFFFF',
     'color-header-border': '#444',
     'color-header-support-background': '#000',
     'color-graph-shadow': '#3f65c228',
     'color-footer-background': '#000000',
+    'color-footer-text': '#FFFFFF',
 };
 
 export default class TelosTestnet extends BaseChain {

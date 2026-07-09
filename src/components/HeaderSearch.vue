@@ -227,8 +227,8 @@ export default defineComponent({
     hide-selected
     fill-input
     hide-bottom-space
-    input-style="color:white"
-    color="white"
+    input-style="color:#2C2B2F"
+    color="primary"
     :loading="isLoading"
     :model-value="inputValue"
     :options="options"
@@ -239,9 +239,8 @@ export default defineComponent({
 >
     <template #prepend>
         <q-icon
-            class="rotate-90"
+            class="rotate-90 search-icon"
             name="search"
-            color="white"
             size="20px"
         />
     </template>
@@ -272,9 +271,15 @@ export default defineComponent({
 
 <style lang="sass">
 .search-input
-  background: rgba(255, 255, 255, 0.15)
-  border-radius: 4px
+  background: #FFFFFF
+  border: 1px solid #E6E9EC
+  border-radius: 100px
 
-.search-input .q-select__dropdown-icon
-  color: white
+.search-input.q-field--filled .q-field__control
+  background: transparent
+  border-radius: 100px
+
+.search-input .q-select__dropdown-icon,
+.search-input .search-icon
+  color: #7C7D83
 </style>
