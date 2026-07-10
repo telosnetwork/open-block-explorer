@@ -26,7 +26,7 @@ export default defineComponent({
         const symbol = chain.getSystemToken().symbol;
         const account = computed(() => accountStore.accountName);
         const balance = computed(
-            () => formatCurrency(lastWeight.value, 2, symbol),
+            () => formatCurrency(lastWeight.value / 10000, 2, symbol),
         );
         const activecount = computed(() => {
             if (chainStore.producers.length > 35) {
