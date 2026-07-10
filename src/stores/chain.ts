@@ -106,23 +106,41 @@ export const useChainStore = defineStore('chain', {
                         table: 'voters',
                         lower_bound: Name.from(data.owner),
                         limit: 1,
-                    }) as { rows:  { owner: string; self_stake_boost: number; producers: string[]; last_vote_weight: number }[] };
+                    }) as { rows:  { owner: string; self_stake_boost: number; staked: number; producers: string[]; last_vote_weight: number }[] };
                     let selfStakedBoost = 0;
-                    if (producerVote.rows.length > 0 && producerVote.rows[0].owner === data.owner && producerVote.rows[0].self_stake_boost > 0 && producerVote.rows[0].producers.includes(data.owner)) {
-                        selfStakedBoost = (producerVote.rows[0].self_stake_boost / 100) * producerVote.rows[0].last_vote_weight;
+                    let isSelfStaking = false;
+                    let selfStakedAmount = 0;
+                    let numProducersVoted = 0;
+                    if (producerVote.rows.length > 0 && producerVote.rows[0].owner === data.owner) {
+                        isSelfStaking = producerVote.rows[0].producers.includes(data.owner);
+                        selfStakedAmount = producerVote.rows[0].staked;
+                        numProducersVoted = producerVote.rows[0].producers.length;
+                        // self_stake_boost is a binary_extension<bool> on-chain; when active, the
+                        // system contract applies a 10x multiplier to the BP's own vote weight.
+                        // The API may return the raw value as a truthy number (e.g. 1000).
+                        const hasBoostFlag = producerVote.rows[0].self_stake_boost > 0;
+                        if (isSelfStaking && hasBoostFlag) {
+                            selfStakedBoost = 10 * producerVote.rows[0].last_vote_weight;
+                        }
                     }
+                    const extraFields = {
+                        self_staked_boost: selfStakedBoost,
+                        is_self_staking: isSelfStaking,
+                        self_staked_amount: selfStakedAmount,
+                        num_producers_voted: numProducersVoted,
+                    };
                     if (bp) {
                         try {
                             return {
                                 ...data,
                                 name: bp.org.candidate_name,
                                 location: bp.org.location.name,
-                                self_staked_boost: selfStakedBoost,
+                                ...extraFields,
                             };
                         } catch (error) {
                             return {
                                 ...data,
-                                self_staked_boost: selfStakedBoost,
+                                ...extraFields,
                             };
                         }
                     } else {
@@ -130,7 +148,7 @@ export const useChainStore = defineStore('chain', {
                             ...data,
                             name: data.owner,
                             location: '',
-                            self_staked_boost: selfStakedBoost,
+                            ...extraFields,
                         };
                     }
                 }));
